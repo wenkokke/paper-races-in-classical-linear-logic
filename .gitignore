@@ -1,3 +1,12 @@
+## Emacs files:
+auto/
+
+## Agda files:
+*.agdai
+
+## OS X files:
+.DS_Store
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -14,10 +23,9 @@
 ## Intermediate documents:
 *.dvi
 *-converted-to.*
-# these rules might exclude image files for figures etc.
-# *.ps
-# *.eps
-# *.pdf
+*.ps
+*.eps
+*.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl

@@ -1,0 +1,73 @@
+\documentclass{article}
+\input{preamble}
+
+\title{Session-Types and Non-Determinism}
+\author{Pepijn Kokke \\
+  CDT Pervasive Parallelism \\
+  \url{pepijn.kokke@ed.ac.uk}}
+
+\begin{document}
+\maketitle
+
+% Mention various applications that depend crucially on non-determinism.
+% Mention the example of a market place.
+% Mention "Conflation Confers Concurrency"
+% Mention "Linearity, Control Effects, and Behavioral Types"
+% Mention "Bounded Linear Logic"
+
+\begin{center}
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma, \oftype{x}{A} }$}
+    \RightLabel{\nod{}}
+    \UIC{$\seq[ P ]{ \Gamma, \oftype{x}{\nod[1]{A}} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma, \oftype{x}{\nod[m]{A}} }$}
+    \AXC{$\seq[ Q ]{ \Delta, \oftype{x}{\nod[n]{A}} }$}
+    \RightLabel{Pool}
+    \BIC{$\seq[ P|Q ]{ \Gamma, \Delta, \oftype{x}{\nod[m+n]{A}} }$}
+  \end{proofbox}
+\end{center}
+
+\begin{proofblock}
+  \AXC{}
+  \RightLabel{1}
+  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{1} }$}
+  \RightLabel{\nod{}}
+  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{\nod[1]{1}} }$}
+  \AXC{}
+  \RightLabel{1}
+  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{1} }$}
+  \RightLabel{\nod{}}
+  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{\nod[1]{1}} }$}
+  \RightLabel{Pool}
+  \BIC{$\seq[{ (x[].0 \mid x[].0) }]{ \oftype{x}{\nod[2]{1}} }$}
+  
+  \AXC{$\seq[ P ]{ \Gamma }$}
+  \RightLabel{$\bot$}
+  \UIC{$\seq[{ x().P }]{ \Gamma, \oftype{x}{\bot} }$}
+  \RightLabel{$\nod{}$}
+  \UIC{$\seq[{ x().P }]{ \Gamma, \oftype{x}{\nod[1]{\bot}} }$}
+  \AXC{$\seq[ Q ]{ \Delta }$}
+  \RightLabel{$\bot$}
+  \UIC{$\seq[{ x().Q }]{ \Delta, \oftype{x}{\bot} }$}
+  \RightLabel{$\nod{}$}
+  \UIC{$\seq[{ x().Q }]{ \Delta, \oftype{x}{\nod[1]{\bot}} }$}
+  \RightLabel{Pool}
+  \BIC{$\seq[{ (x().P \mid x().Q) }]{ \Gamma, \Delta, \nod[2]{\bot} }$}
+
+  \RightLabel{Cut}
+  \BIC{$\seq[{ (x[].0 \mid x[].0 \mid x().P \mid x().Q) }]{ \Gamma, \Delta }$}
+\end{proofblock}
+
+It seems as if we need to conflate $\client{A}$ and $\server{A}$, as both of them
+need a rule for pooling, neither of them need a rule for weakening, and -- it
+seems. Word is out on whether or not we need a rule for contraction for either
+of these. Once we add a pooling rule for both, it seems that \textsc{Mix} will
+become derivable.
+
+\bibliographystyle{apalike}
+\bibliography{main}
+\nocite{*}
+
+\end{document}

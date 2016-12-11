@@ -1,0 +1,38 @@
+\usepackage{cmap}
+\usepackage{alphabeta}
+\usepackage[greek,english]{babel}
+\languageattribute{greek}{polutoniko}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{lmodern}
+\usepackage{natbib}
+\usepackage{xcolor}
+
+\usepackage{amsmath, amscd, amsthm, amssymb, mathrsfs,amsfonts}
+\usepackage{graphicx}
+
+% linear logic
+\def\parr{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{$\&$}}}}
+\def\with{\ensuremath{\mathbin{\&}}}
+\def\plus{\ensuremath{\oplus}}
+\def\mult{\ensuremath{\otimes}}
+\newcommand{\oftype}[2]{\ensuremath{#1 \colon #2}}
+\newcommand{\seq}[2][]{\ensuremath{#1 \vdash #2}}
+\newcommand{\sub}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
+\newcommand{\server}[2][]{\ensuremath{!_{#1}{#2}}}
+\newcommand{\client}[2][]{\ensuremath{?_{#1}{#2}}}
+\newcommand{\nod}[2][]{\ensuremath{{\star}_{#1}{#2}}}
+
+\newcommand{\case}[3]{%
+  \ensuremath{\text{case} \; #1 \; \text{of} \; \{ #2 ; #3 \}}}
+
+\usepackage{bussproofs}
+\def\fCenter{\vdash}
+\EnableBpAbbreviations
+\newenvironment{proofbox}[1][0.9]%
+  {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
+  {\scalebox{\scalefactor}{\DisplayProof} \egroup}
+\newenvironment{proofblock}[1][0.9]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+
