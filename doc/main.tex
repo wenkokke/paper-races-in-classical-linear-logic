@@ -1,7 +1,9 @@
-\documentclass{article}
+\documentclass[twocolumn]{article}
 \input{preamble}
+\usepackage{lipsum}
 
-\title{Session-Types and Non-Determinism}
+\title{Give or take \\
+  {\large Non-Determinism and Session Types}}
 \author{Pepijn Kokke \\
   CDT Pervasive Parallelism \\
   \url{pepijn.kokke@ed.ac.uk}}
@@ -9,62 +11,467 @@
 \begin{document}
 \maketitle
 
-% Mention various applications that depend crucially on non-determinism.
-% Mention the example of a market place.
-% Mention "Conflation Confers Concurrency"
-% Mention "Linearity, Control Effects, and Behavioral Types"
-% Mention "Bounded Linear Logic"
+\begin{abstract}
+  The aim of this project is to extend the session-typed \textpi-calculus CP
+  \citep{wadler2012} with \emph{global} non-determinism---i.e.\ without using an
+  explicit program construct for non-determinism---which preserves the strong
+  guarantees of termination that are offered by the correspondence with
+  classical linear logic. 
+   
+  Our extended version of CP will allow us to model more complex concurrent
+  processes, such as an online ticket vendor which can sell some finite number
+  of tickets, with customers racing to obtain a ticket.
+  %
+  We will be able to model further complications, such as a ticket vendor for
+  which all tickets are distinct---e.g.\ by being labeled with distinct serial
+  numbers---and vendors who maintain a list detailing which customer bought
+  which ticket.
+  %
+  All of these are open problems for session-typed systems which guarantee
+  termination.
+\end{abstract}
 
+\section{Introduction}
+
+\section{Background}
+
+\subsection{Session Types and Linear Logic}
+\citet{caires2010}
+\citet{wadler2012}
+
+\subsection{Session Types and Non-Determinism}
+\citet{caires2014,atkey2016,caires2017}
+
+\section{Methodology}
+Classical Processes~\citep[CP;][]{wadler2012} is a process calculus with a
+Curry-Howard correspondence to classical linear logic, and for which computation
+is identified with cut elimination. One consequence of this is that computation
+is entirely deterministic.
+
+In this section, we will discuss which changes we will make to CP to be able to
+model non-deterministic computation. In addition, we will sketch process
+semantics for these constructs.
+
+\subsection{Give and take}
+Our aim is to add some construct for global non-determinism to CP.
+In the \textpi-calculus, the non-determinism comes from two things: channel
+sharing and the structural congruence relation.
+This allows you to write a process such as e.g.\ %
+\[
+  (x[u].x[v].P \mid x(y).Q \mid x(z).R)
+\]
+This process is non-deterministic, because it is not determined a priori which
+value sent along $x$ will be received by which process. 
+
+In CP, however, channels are strictly binary---all communication is introduced
+by the \textsc{Cut}-rule, which creates a channel with two endpoints, and hands
+each endpoint to \emph{one} process.
+\begin{proofblock}
+  \AXC{$\seq[P]{ \Gamma , \tm[x]{A} }$}
+  \AXC{$\seq[Q]{ \Delta , \tm[x]{A^\bot} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{\nu x.(P \mid Q)}]{ \Gamma , \Delta }$}
+\end{proofblock}
+Furthermore, CP defines its reduction semantics on \emph{typed} processes, and
+does away with structural congruence.
+As a consequence, computation in CP is completely deterministic.
+
+Our aim, therefore, is to capture safe name sharing.
+We do this by extending CP with a pair of exponentials---$\give[n]{A}$ (give)
+and $\take[n]{A}$ (take).
+We refer to the resulting system as \gtcp.
+The type $\give[n]{A}$ represents a process which communicates as $A$, $n$
+times, and these communications can depend on one another.
+For instance, a cake store could use the income from its sales to buy the
+ingredients for new cakes.
+The type $\take[n]{A}$ represents a \emph{pool} of $n$ processes, each of which
+communicates as $A$, and each of these communications should be independent.
+It is this \emph{pooling} which allows for name sharing, and therefore
+non-determinism.
 \begin{center}
   \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma, \oftype{x}{A} }$}
-    \RightLabel{\nod{}}
-    \UIC{$\seq[ P ]{ \Gamma, \oftype{x}{\nod[1]{A}} }$}
+    \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\give{}}
+    \UIC{$\seq[{?x[y].P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
   \end{proofbox}
   \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma, \oftype{x}{\nod[m]{A}} }$}
-    \AXC{$\seq[ Q ]{ \Delta, \oftype{x}{\nod[n]{A}} }$}
-    \RightLabel{Pool}
-    \BIC{$\seq[ P|Q ]{ \Gamma, \Delta, \oftype{x}{\nod[m+n]{A}} }$}
+    \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\take{}}
+    \UIC{$\seq[{!x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+  \end{proofbox}
+  \\[1\baselineskip]
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[x']{\give[n]{A}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[\subst{P}{x}{x'}]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
+  \end{proofbox}
+  \\[1\baselineskip]
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma , \tm[x]{\take[m]{A}} }$}
+    \AXC{$\seq[Q]{ \Delta , \tm[x]{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[P \mid Q]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
   \end{proofbox}
 \end{center}
+We eliminate the cut on a channel of type $\give[n]{A^\bot} / \take[n]{A}$
+by linking each communication of the process $\give[n]{A^\bot}$ to an arbitrary
+process from the pool of processes $\take[n]{A}$. 
+Thus, we can rewrite the above cut into $n$ smaller cuts.
+In addition, if the endsequent does not contain any channels of type
+$\give[n]{A}$ or $\take[n]{A}$, then we should be able to eliminate \emph{all}
+usage of the rules for non-determinism. This isn't surprising---after running a
+non-deterministic program, we should end up in \emph{some} deterministic end
+state. 
 
+\subsection{Relation with bounded linear logic}
+The connectives $\give[n]{A}$ and $\take[n]{A}$ were first used in the context
+of bounded linear logic~\citep[BLL;][]{girard1992}, a type system based on
+intuitionistic linear logic which guarantees polynomial time complexity.
+
+Here we use the connectives in a classical setting.
+However, this is not the only difference.
+The connectives in BLL do not have a pooling rule---instead, they have a
+\emph{storage} rule, which allows for arbitrary---but bounded---duplication.
+\begin{center}
+  \begin{proofbox}
+    \AXC{$\seq{ \give[m]{\Gamma} , \take[m]{A} }$}
+    \NOM{Store}
+    \UIC{$\seq{ \give[mn]{\Gamma} , \take[mn]{A} }$}
+  \end{proofbox}
+\end{center}
+We can show that, for $n \geq 1$, pooling is a generalization of
+storage.\footnote{%
+  BLL also has a weakening rule, which introduces a channel of type
+  $\give[0]{A}$. We have, so far, not found a use for weakening or the $0$-case.
+}
+However, this does require making $n$ copies of the proof.
+By induction.
+\begin{proofblock}
+  \AXC{IH}
+  \noLine
+  \UIC{$\vphantom{!}\smash[t]{\vdots}$}
+  \noLine
+  \UIC{$\seq{ \give[mn]{\Gamma} , \take[mn]{A} }$}
+  \AXC{ARG}
+  \noLine
+  \UIC{$\vphantom{!}\smash[t]{\vdots}$}
+  \noLine
+  \UIC{$\seq{ \give[m]{\Gamma} , \take[m]{A} }$}
+  \NOM{Pool}
+  \BIC{$\seq{ \give[mn]{\Gamma} , \give[m]{\Gamma} , \take[m(n+1)]{A} }$}
+  \NOM{Cont}
+  \UIC{$\seq{ \give[m(n+1)]{\Gamma} , \take[m(n+1)]{A} }$}
+\end{proofblock}
+In our system, the processes pooled under $\take[n]{A}$ can be distinct.
+Therefore, we most likely lose the time complexity guarantees offered by BLL.
+
+\subsection{A cake store and its customer}
+We can use the new connectives to implement non-deterministic programs.
+For instance, in \autoref{fig:cake-store}, we model a cake store which sells
+exactly one cake, yet can have two customers race for the cake.
+
+The first process represents a customer. Customers want a channel over which
+they either can buy a cake---trading a coin for a cake---or which tells them
+when cake is unavailable. This is represented using the type
+$(\coin\mult\cake^\bot)\with\bot$.
+The second process is the cake store itself. It offers up a channel of type
+$\give[2]{(\coin^\bot\parr\cake)\plus{1}}$---a channel over which two customers
+can try to purchase a cake simultaneously.
+
+In order to run the program, we pool two customers together, and have them
+communicate with the store.
+\begin{figure*}
+  \begin{mdframed}
+    \vspace*{1em}
+    \begin{proofblock}  
+      \AXC{$\vphantom{!}\smash[t]{\vdots}$}
+      \noLine
+      \UIC{$\seq[P]{ \Gamma , \tm[y]{\coin} }$}
+      \AXC{$\vphantom{!}\smash[t]{\vdots}$}
+      \noLine
+      \UIC{$\seq[Q]{ \Delta , \tm[z]{\cake^\bot} }$}
+      \BIC{$\seq[{y[z].(P \mid Q)}]{
+          \Gamma , \Delta , \tm[y]{\coin\mult\cake^\bot} }$}
+      \AXC{$\vphantom{!}\smash[t]{\vdots}$}
+      \noLine
+      \UIC{$\seq[R]{ \Gamma , \Delta }$}
+      \SYM{\bot}
+      \UIC{$\seq[{y().R}]{ \Gamma , \Delta , \tm[y]{\bot} }$}
+      \SYM{\with}
+      \BIC{$\seq[{\case{y}{y[z].(P \mid Q)}{y().R}}]{
+          \Gamma , \Delta , \tm[y]{(\coin\mult\cake^\bot) \with \bot} }$}
+      \SYM{\take{}}
+      \UIC{$\seq[{!x(y).\case{y}{y[z].(P \mid Q)}{y().R}}]{
+          \Gamma , \Delta ,
+          \tm[x]{\take[1]{((\coin\mult\cake^\bot) \with \bot)}} }$}
+    \end{proofblock}
+    \vspace*{0pt}
+    \begin{proofblock} 
+      \AXC{}
+      \SYM{1}
+      \UIC{$\seq[{y[].0}]{ \tm[y]{1} }$}
+      \SYM{\plus_2}
+      \UIC{$\seq[{\inr{y}{y[].0}}]{
+          \tm[y]{(\coin^\bot\parr\cake)\plus{1}} }$}
+      \SYM{\give{}}
+      \UIC{$\seq[{?x'[y].\inr{y}{y[].0}}]{
+          \tm[x']{\give[1]{((\coin^\bot\parr\cake)\plus{1})}} }$}
+      \noLine
+      \UIC{$\vphantom{!}\smash[t]{\vdots}$}
+      \noLine
+      \UIC{$\seq[{\mathcal{E}[{\inr{x'}{x'[].0}}]}]{
+          \Theta ,
+          \tm[z]{\coin^\bot\parr\cake} ,
+          \tm[x']{\give[1]{((\coin^\bot\parr\cake)\plus{1})}} }$}
+      \SYM{\plus_1}
+      \UIC{$\seq[\inl{z}{\mathcal{E}[{?x'(y).\inr{y}{y[].0}}]}]{
+          \Theta ,
+          \tm[z]{(\coin^\bot\parr\cake)\plus{1}} ,
+          \tm[x']{\give[1]{((\coin^\bot\parr\cake)\plus{1})}} }$}
+      \SYM{\give{}}
+      \UIC{$\seq[{?x[z].\inl{z}{\mathcal{E}[{?x'[y].\inr{y}{y[].0}}]}}]{
+          \Theta ,
+          \tm[x]{\give[1]{((\coin^\bot\parr\cake)\plus{1})}} ,
+          \tm[x']{\give[1]{((\coin^\bot\parr\cake)\plus{1})}} }$}
+      \NOM{Cont}
+      \UIC{$\seq[{?x[z].\inl{z}{\mathcal{E}[{?x[y].\inr{y}{y[].0}}]}}]{
+          \Theta ,
+          \tm[x]{\give[2]{((\coin^\bot\parr\cake)\plus{1})}} }$}
+    \end{proofblock}
+    \vspace*{0pt}
+  \end{mdframed}
+  \caption{A cake store and its customer.}\label{fig:cake-store}
+\end{figure*}
+
+\subsection{Take tensors, give pars}
+The bounded modalities give ($\give[n]{A}$) and take ($\take[n]{A}$) have a
+strong connection to par ($\parr$) and tensor ($\mult$).
+In some sense, they are vectors of pars and tensors.
+We can demonstrate this by showing that we can ``unroll'' a give into a series
+of pars.
 \begin{proofblock}
   \AXC{}
-  \RightLabel{1}
-  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{1} }$}
-  \RightLabel{\nod{}}
-  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{\nod[1]{1}} }$}
+  \NOM{Ax}
+  \UIC{$\seq{ A^\bot , A }$}
+  \SYM{\take{}}
+  \UIC{$\seq{ \take[1]{A^\bot} , A }$}
   \AXC{}
-  \RightLabel{1}
-  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{1} }$}
-  \RightLabel{\nod{}}
-  \UIC{$\seq[{ x[].0 }]{ \oftype{x}{\nod[1]{1}} }$}
-  \RightLabel{Pool}
-  \BIC{$\seq[{ (x[].0 \mid x[].0) }]{ \oftype{x}{\nod[2]{1}} }$}
-  
-  \AXC{$\seq[ P ]{ \Gamma }$}
-  \RightLabel{$\bot$}
-  \UIC{$\seq[{ x().P }]{ \Gamma, \oftype{x}{\bot} }$}
-  \RightLabel{$\nod{}$}
-  \UIC{$\seq[{ x().P }]{ \Gamma, \oftype{x}{\nod[1]{\bot}} }$}
-  \AXC{$\seq[ Q ]{ \Delta }$}
-  \RightLabel{$\bot$}
-  \UIC{$\seq[{ x().Q }]{ \Delta, \oftype{x}{\bot} }$}
-  \RightLabel{$\nod{}$}
-  \UIC{$\seq[{ x().Q }]{ \Delta, \oftype{x}{\nod[1]{\bot}} }$}
-  \RightLabel{Pool}
-  \BIC{$\seq[{ (x().P \mid x().Q) }]{ \Gamma, \Delta, \nod[2]{\bot} }$}
+  \NOM{Ax}
+  \UIC{$\seq{ \take[n]{A^\bot} , \give[n]{A} }$}
+  \NOM{Pool}
+  \BIC{$\seq{ \take[n+1]{A^\bot} , A , \give[n]{A} }$}
+  \SYM{\parr}
+  \UIC{$\seq{ \take[n+1]{A^\bot} , A \parr \give[n]{A} }$}
+  \SYM{\parr}
+  \UIC{$\seq{ \give[n+1]{A^\bot} \limp A \parr \give[n]{A} }$}
+\end{proofblock}
+And vice versa---we can roll a series of pars into a give.
+\begin{proofblock}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq{ A^\bot , A }$}
+  \SYM{\give{}}
+  \UIC{$\seq{ A^\bot , \give[1]{A} }$}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq{ \take[n]{A^\bot} , \give[n]{A} }$}
+  \SYM{\mult}
+  \BIC{$\seq{ A^\bot \mult \take[n]{A^\bot} , \give[1]{A} , \give[n]{A} }$}
+  \NOM{Cont}
+  \UIC{$\seq{ A^\bot \mult \take[n]{A^\bot} , \give[n+1]{A} }$}
+  \SYM{\parr}
+  \UIC{$\seq{ A \parr \give[n]{A} \limp \give[n+1]{A} }$}
+\end{proofblock}
+Thus, we have
+\[
+  \give[n+1]{A} \lequiv A \parr \give[n]{A}
+\]
+Similarly, for take and tensor we have
+\[
+  \take[n+1]{A} \lequiv A \mult \give[n]{A}
+\]
+And---both given the semantics, and the rules of the type system---it should
+come as no surprise that we have
+\begin{proofblock}
+  \AXC{}
+  \RightLabel{Ax}
+  \UIC{$\seq{A^\bot, A}$}
+  \RightLabel{\take{}(2)}
+  \UIC{$\seq{\take[1]{A^\bot}, \take[1]{A}}$}
+  \RightLabel{\parr}
+  \UIC{$\seq{\give[1]{A} \limp \take[1]{A}}$}
+  \AXC{}
+  \RightLabel{Ax}
+  \UIC{$\seq{A^\bot, A}$}
+  \RightLabel{\give{}(2)}
+  \UIC{$\seq{\give[1]{A^\bot}, \give[1]{A}}$}
+  \RightLabel{\parr}
+  \UIC{$\seq{\take[1]{A} \limp \give[1]{A}}$}
+  \RightLabel{\mult}
+  \BIC{$\seq{\give[1]{A} \lequiv \take[1]{A}}$}
+\end{proofblock}
+For unit vectors, it should not matter whether we build them using
+tensors or pars.
 
-  \RightLabel{Cut}
-  \BIC{$\seq[{ (x[].0 \mid x[].0 \mid x().P \mid x().Q) }]{ \Gamma, \Delta }$}
+\subsection{Conflating $\give[n]{A}$ and $\take[n]{A}$}
+Give and take impose a strict structure on the kinds of non-deterministic which
+we can model. Specifically, we always need one server process which offers to
+communicate $n$ times, and $n$ independent client processes
+There is a good reason for this. After cut elimination, we are left with a
+single, central process---the server process.
+However, this may not always be what we desire.
+Imagine a matchmaking service.
+This could be a dating site, an online market place---any process whose purpose
+it is to link \emph{two} pools of independent processes.
+In such a scenario, it is entirely reasonable to write programs which end up as
+several independent processes. For instance,
+\[
+  (x[u].P \mid x[v].Q \mid x(y).R \mid x(z).S)
+\]
+In the above program, the names in $P$, $Q$, $R$ and $S$ are disjoint, aside
+from $x$. This means that whichever way we choose to communicate along $x$, we
+will end up with two completely independent processes.
+Logically, allowing such processes corresponds to adding the \textsc{Mix}-rule.
+\begin{proofblock}
+  \AXC{$\seq[P]{ \Gamma }$}
+  \AXC{$\seq[Q]{ \Delta }$}
+  \NOM{Mix}
+  \BIC{$\seq[P \mid Q]{ \Gamma , \Delta }$}
+\end{proofblock}
+It is a well-known consequence of \textsc{Mix} that we get proofs of $\bot \limp
+1$ and $A \mult B \limp A \parr B$---a phenomenon which was recently
+investigated in the context of CP by~\citet{atkey2016}.
+\textsc{Mix} also gives us $\take[n]{A}\limp\give[n]{A}$, by induction on $n$.
+\begin{proofblock}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq{ A^\bot , A }$}
+  \SYM{\give{}(2)}
+  \UIC{$\seq{ \give[1]{A^\bot} , \give[1]{A} }$}
+  \AXC{IH}
+  \noLine
+  \UIC{$\vphantom{()}{\smash[t]{\vdots}}$}
+  \noLine
+  \UIC{$\seq{ \give[n]{A^\bot} , \give[n]{A} }$}
+  \NOM{Mix}
+  \BIC{$\seq{
+      \give[1]{A^\bot} , \give[1]{A} , \give[n]{A^\bot} , \give[n]{A} }$}
+  \NOM{Cont(2)}
+  \UIC{$\seq{ \give[n+1]{A^\bot} , \give[n+1]{A} }$}
 \end{proofblock}
 
-It seems as if we need to conflate $\client{A}$ and $\server{A}$, as both of them
-need a rule for pooling, neither of them need a rule for weakening, and -- it
-seems. Word is out on whether or not we need a rule for contraction for either
-of these. Once we add a pooling rule for both, it seems that \textsc{Mix} will
-become derivable.
+
+% Why do we want multicut? Because it's interesting, but also because it allows
+% us to do some new things. Namely, it allows us to construct the following
+% process:
+%
+% (x[u].P | x[v].Q)
+%
+
+\begin{proofblock}
+  \AXC{$\seq{ \Gamma , A_1^\bot , \ldots , A_n^\bot }$}
+  \AXC{$\seq{ \Delta , A_1     , \ldots , A_n     }$}
+  \NOM{MultiCut}
+  \BIC{$\seq{ \Gamma , \Delta }$}
+\end{proofblock}
+\begin{figure*}
+  \begin{mdframed}
+    \begin{proofblock}
+      \AXC{}
+      \NOM{Ax}
+      \UIC{$\seq{ A^\bot , A }$}
+      \SYM{\take{}}
+      \UIC{$\seq{ \take[1]{A^\bot} , A }$}
+      \AXC{$\ldots$}
+      \AXC{}
+      \NOM{Ax}
+      \UIC{$\seq{ A^\bot , A }$}
+      \SYM{\take{}}
+      \UIC{$\seq{ \take[1]{A^\bot} , A }$}
+      \NOM{Pool}
+      \TIC{$\seq{ \take[n]{A^\bot} , A , \ldots , A }$}
+      \AXC{}
+      \NOM{Ax}
+      \UIC{$\seq{ A^\bot , A }$}
+      \SYM{\take{}}
+      \UIC{$\seq{ A^\bot , \take[1]{A} }$}
+      \AXC{$\ldots$}
+      \AXC{}
+      \NOM{Ax}
+      \UIC{$\seq{ A^\bot , A }$}
+      \SYM{\take{}}
+      \UIC{$\seq{ A^\bot , \take[1]{A} }$}
+      \NOM{Pool}
+      \TIC{$\seq{ A^\bot , \ldots , A^\bot , \take[n]{A} }$}
+      \NOM{MultiCut}
+      \BIC{$\seq{ \take[n]{A^\bot} , \take[n]{A} }$}
+      \SYM{\parr}
+      \UIC{$\seq{ \give[n]{A} \limp \take[n]{A} }$}
+    \end{proofblock}
+  \end{mdframed}
+  \caption{Conflation of $\give[n]{A}$ and $\take[n]{A}$ in the presence of
+    \textsc{MultiCut}.}
+  \label{fig:conflate-give-and-take}
+\end{figure*}
+\begin{center}
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\nod{}}
+    \UIC{$\seq[x\nod{y}.P]{ \Gamma , \tm[x]{\nod[1]{A}} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma , \tm[y]{\nod[m]{A}} , \tm[z]{\nod[n]{A}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[\subst{P}{x}{y,z}]{ \Gamma , \tm[x]{\nod[m+n]{A}} }$}
+  \end{proofbox}
+\end{center}
+\begin{proofblock}
+  \AXC{$\seq{ \Gamma , \nod[m]{A} }$}
+  \AXC{$\seq{ \Delta , \nod[n]{A} }$}
+  \NOM{Mix}
+  \BIC{$\seq{ \Gamma , \Delta , \nod[m]{A} , \nod[n]{A} }$}
+  \NOM{Cont}
+  \UIC{$\seq{ \Gamma , \Delta , \nod[m+n]{A} }$}
+\end{proofblock}
+\begin{proofblock}
+  \AXC{$\seq{ \Gamma , A^\bot , \ldots , A^\bot  }$}
+  \SYM{\nod{}}
+  \UIC{$\seq{ \Gamma , \nod[1]{A^\bot} , \ldots , \nod[1]{A^\bot} }$}
+  \NOM{Cont}
+  \UIC{$\seq{ \Gamma , \nod[n]{A^\bot} }$}
+  \AXC{$\seq{ \Delta , A , \ldots , A }$}
+  \SYM{\nod{}}
+  \UIC{$\seq{ \Delta , \nod[1]{A} , \ldots , \nod[1]{A}     }$}
+  \NOM{Cont}
+  \UIC{$\seq{ \Delta , \nod[n]{A} }$}
+  \NOM{Cut}
+  \BIC{$\seq{ \Gamma , \Delta }$}
+\end{proofblock}
+
+\section{Evaluation}
+
+\section{Research outputs}
+By the end of this project, I hope to have:
+\begin{itemize}
+\renewcommand\labelitemi{--}
+\item%
+  formulated the system \gtcp, which extends CP with a pair of dual
+  exponentials, $\give[n]{A}$ and $\take[n]{A}$, for non-deterministic
+  computation; 
+\item%
+  given a cut-elimination procedure for \gtcp;
+\item%
+  characterized the non-determinism in \gtcp;
+\item%
+  formulated the system \ndcp, which collapses the dual exponentials
+  into a single, self-dual exponential $\nod[n]{A}$; 
+\item%
+  given a cut-elimination procedure for \ndcp;
+\item%
+  characterized the non-determinism in \ndcp;
+\end{itemize}
+
+\section{Workplan}
 
 \bibliographystyle{apalike}
 \bibliography{main}
