@@ -7,27 +7,51 @@
 \usepackage{lmodern}
 \usepackage{natbib}
 \usepackage{xcolor}
+\usepackage{mdframed}
 
 \usepackage{amsmath, amscd, amsthm, amssymb, mathrsfs,amsfonts}
+\usepackage{textcomp}
+\usepackage{txfonts}
 \usepackage{graphicx}
 
 % linear logic
-\def\parr{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{$\&$}}}}
-\def\with{\ensuremath{\mathbin{\&}}}
+\def\parr{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{\&}}}}
+\def\with{\ensuremath{\mathbin{\text{\&}}}}
 \def\plus{\ensuremath{\oplus}}
 \def\mult{\ensuremath{\otimes}}
-\newcommand{\oftype}[2]{\ensuremath{#1 \colon #2}}
-\newcommand{\seq}[2][]{\ensuremath{#1 \vdash #2}}
-\newcommand{\sub}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
-\newcommand{\server}[2][]{\ensuremath{!_{#1}{#2}}}
-\newcommand{\client}[2][]{\ensuremath{?_{#1}{#2}}}
-\newcommand{\nod}[2][]{\ensuremath{{\star}_{#1}{#2}}}
+\def\limp{\ensuremath{\multimap}}
+\def\lequiv{\ensuremath{\multimapboth}}
+\def\gtcp{\ensuremath{\text{CP}_{\text{ND}}}}
+\def\ndcp{\ensuremath{\text{CP}_{\text{ND}}^{\star}}}
 
+\newcommand{\tm}[2][]{%
+\toks0={#1}%
+\edef\param{\the\toks0}%
+\ifx\param\empty
+  \ensuremath{#2}%
+\else
+  \ensuremath{#1 \colon #2}%
+\fi}
+\newcommand{\seq}[2][]{\ensuremath{#1 \vdash #2}}
+\newcommand{\subst}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
+\newcommand{\nod}[2][]{\ensuremath{{\star}_{#1}{#2}}}
+\newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\newcommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
 \newcommand{\case}[3]{%
-  \ensuremath{\text{case} \; #1 \; \text{of} \; \{ #2 ; #3 \}}}
+  \ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}}
+\newcommand{\inl}[2]{%
+  \ensuremath{#1[\text{inl}].#2}}
+\newcommand{\inr}[2]{%
+  \ensuremath{#1[\text{inr}].#2}}
+\def\coin{\textsc{Coin}}
+\def\cake{\textsc{Cake}}
+\newcommand{\maybe}[1]{\textsc{Maybe}\;#1}
+
 
 \usepackage{bussproofs}
-\def\fCenter{\vdash}
+\def\fCenter{\ensuremath{\;\vdash\;}}
+\newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
+\newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
 \EnableBpAbbreviations
 \newenvironment{proofbox}[1][0.9]%
   {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
@@ -36,3 +60,6 @@
   {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
   {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
 
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
