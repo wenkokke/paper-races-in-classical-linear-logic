@@ -3,7 +3,7 @@
 \usepackage{lipsum}
 
 \title{Give or take \\
-  {\large Non-Determinism and Session Types}}
+  {\large Non-Determinism, Linear Logic and Session Types}}
 \author{Pepijn Kokke \\
   CDT Pervasive Parallelism \\
   \url{pepijn.kokke@ed.ac.uk}}
@@ -14,10 +14,10 @@
 \begin{abstract}
   The aim of this project is to extend the session-typed \textpi-calculus CP
   \citep{wadler2012} with \emph{global} non-determinism---i.e.\ without using an
-  explicit program construct for non-determinism---which preserves the strong
-  guarantees of termination that are offered by the correspondence with
-  classical linear logic. 
-   
+  explicit program construct for non-determinism---while preserving the strong
+  guarantees of termination and deadlock freedom that are offered by the
+  correspondence with classical linear logic. 
+  
   Our extended version of CP will allow us to model more complex concurrent
   processes, such as an online ticket vendor which can sell some finite number
   of tickets, with customers racing to obtain a ticket.
@@ -27,20 +27,50 @@
   numbers---and vendors who maintain a list detailing which customer bought
   which ticket.
   %
-  All of these are open problems for session-typed systems which guarantee
-  termination.
+  All of these are open problems for logic-inspired session-typed systems which
+  guarantee termination.
 \end{abstract}
 
 \section{Introduction}
+\remark{Feedback on this section will not be crucial, so I will briefly outline
+  what I am \emph{planning} to write.}\\
+\outline{I will briefly introduce the problem---logic-inspired session-typed
+  systems do not model non-deterministic processes. We would like to have
+  non-determinism, but we don't want non-termination or deadlocks.}
 
 \section{Background}
+\remark{Feedback on this section will not be crucial, so I will briefly outline
+  what I am \emph{planning} to write. Some of the content of this section is
+  currently in the methodology section, in order to make the current document an
+  easy read---e.g.\ the introduction of CP. This will be migrated upwards in the
+  final version.}
+
+\subsection{\textPi-calculus}
+\outline{I will briefly introduce the \textpi-calculus---it's syntax formally,
+  and its semantics informally, the latter due to the fact that the semantics of
+  the \textpi-calculus and CP differ slightly, and I don't want to introduce two
+  different semantics in the span of six or seven pages.} 
 
 \subsection{Session Types and Linear Logic}
-\citet{caires2010}
-\citet{wadler2012}
+\outline{I will briefly outline the work by \citet{girard1987, caires2010,
+    wadler2012}, and introduce the proof rules for the
+  simply-typed subset of CP.}
+\rfc{Should I mention previous work by e.g.\ \citet{abramsky1993, abramsky1994,
+    bellin1994} without going into too much---or any---detail?} 
 
 \subsection{Session Types and Non-Determinism}
-\citet{caires2014,atkey2016,caires2017}
+\outline{I will briefly outline the work on integrating local choice into linear
+logic based session types~\citep{caires2014,atkey2016,caires2017}. 
+I will explain why local non-determinism---i.e.\ having an explicit programming
+construct which says ``choose either, I don't care''---is an unpleasant way of
+writing non-deterministic programs. I will also informally explain the
+difference between global and local non-determinism.}
+
+\subsection{Bounded Linear Logic}
+\outline{I will briefly outline bounded linear logic~\citep{girard1992}, and its
+intended use. I will not go into any detail on the proof rules of BLL, as we are
+using a simplification of the rules of BLL, and even then our rules are very
+similar to what we end up using for non-determinism.}
 
 \section{Methodology}
 Classical Processes~\citep[CP;][]{wadler2012} is a process calculus with a
@@ -78,11 +108,11 @@ As a consequence, computation in CP is completely deterministic.
 
 Our aim, therefore, is to capture safe name sharing.
 We do this by extending CP with a pair of exponentials---$\give[n]{A}$ (give)
-and $\take[n]{A}$ (take).
+and $\take[n]{A}$ (take), where $n \in \mathbb{N}$.
 We refer to the resulting system as \gtcp.
 The type $\give[n]{A}$ represents a process which communicates as $A$, $n$
 times, and these communications can depend on one another.
-For instance, a cake store could use the income from its sales to buy the
+For instance, a p\^{a}tisserie could use the income from its sales to buy the
 ingredients for new cakes.
 The type $\take[n]{A}$ represents a \emph{pool} of $n$ processes, each of which
 communicates as $A$, and each of these communications should be independent.
@@ -92,12 +122,12 @@ non-determinism.
   \begin{proofbox}
     \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
     \SYM{\give{}}
-    \UIC{$\seq[{?x[y].P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+    \UIC{$\seq[{x[y].P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
   \end{proofbox}
   \begin{proofbox}
     \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
     \SYM{\take{}}
-    \UIC{$\seq[{!x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+    \UIC{$\seq[{x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
   \end{proofbox}
   \\[1\baselineskip]
   \begin{proofbox}
@@ -121,7 +151,10 @@ In addition, if the endsequent does not contain any channels of type
 $\give[n]{A}$ or $\take[n]{A}$, then we should be able to eliminate \emph{all}
 usage of the rules for non-determinism. This isn't surprising---after running a
 non-deterministic program, we should end up in \emph{some} deterministic end
-state. 
+state.
+
+\rfc{Should I briefly outline the reduction semantics for give and take, or can
+  I assume that they'll be clear from the \textpi-calculus terms I've given?}
 
 \subsection{Relation with bounded linear logic}
 The connectives $\give[n]{A}$ and $\take[n]{A}$ were first used in the context
@@ -140,10 +173,8 @@ The connectives in BLL do not have a pooling rule---instead, they have a
   \end{proofbox}
 \end{center}
 We can show that, for $n \geq 1$, pooling is a generalization of
-storage.\footnote{%
-  BLL also has a weakening rule, which introduces a channel of type
-  $\give[0]{A}$. We have, so far, not found a use for weakening or the $0$-case.
-}
+storage.
+
 However, this does require making $n$ copies of the proof.
 By induction.
 \begin{proofblock}
@@ -165,16 +196,19 @@ By induction.
 In our system, the processes pooled under $\take[n]{A}$ can be distinct.
 Therefore, we most likely lose the time complexity guarantees offered by BLL.
 
-\subsection{A cake store and its customer}
+BLL also has a weakening rule, which introduces a channel of type $\give[0]{A}$.
+We have, so far, not found a use for weakening or the $0$-case. 
+
+\subsection{A p\^{a}tisserie and its customer}
 We can use the new connectives to implement non-deterministic programs.
-For instance, in \autoref{fig:cake-store}, we model a cake store which sells
+For instance, in \autoref{fig:cake-store}, we model a p\^{a}tisserie which sells
 exactly one cake, yet can have two customers race for the cake.
 
 The first process represents a customer. Customers want a channel over which
 they either can buy a cake---trading a coin for a cake---or which tells them
 when cake is unavailable. This is represented using the type
 $(\coin\mult\cake^\bot)\with\bot$.
-The second process is the cake store itself. It offers up a channel of type
+The second process is the p\^{a}tisserie itself. It offers up a channel of type
 $\give[2]{(\coin^\bot\parr\cake)\plus{1}}$---a channel over which two customers
 can try to purchase a cake simultaneously.
 
@@ -240,14 +274,15 @@ communicate with the store.
     \end{proofblock}
     \vspace*{0pt}
   \end{mdframed}
-  \caption{A cake store and its customer.}\label{fig:cake-store}
+  \caption{A p\^{a}tisserie and its customer.}\label{fig:cake-store}
 \end{figure*}
+
 
 \subsection{Take tensors, give pars}
 The bounded modalities give ($\give[n]{A}$) and take ($\take[n]{A}$) have a
-strong connection to par ($\parr$) and tensor ($\mult$).
-In some sense, they are vectors of pars and tensors.
-We can demonstrate this by showing that we can ``unroll'' a give into a series
+strong connection to par ($\parr$) and tensor ($\mult$)---they are vectors of
+pars and tensors.
+We can demonstrate this by showing that we can unfold a give into a series
 of pars.
 \begin{proofblock}
   \AXC{}
@@ -263,7 +298,7 @@ of pars.
   \SYM{\parr}
   \UIC{$\seq{ \take[n+1]{A^\bot} , A \parr \give[n]{A} }$}
   \SYM{\parr}
-  \UIC{$\seq{ \give[n+1]{A^\bot} \limp A \parr \give[n]{A} }$}
+  \UIC{$\seq{ \give[n+1]{A} \limp A \parr \give[n]{A} }$}
 \end{proofblock}
 And vice versa---we can roll a series of pars into a give.
 \begin{proofblock}
@@ -282,16 +317,14 @@ And vice versa---we can roll a series of pars into a give.
   \SYM{\parr}
   \UIC{$\seq{ A \parr \give[n]{A} \limp \give[n+1]{A} }$}
 \end{proofblock}
-Thus, we have
-\[
-  \give[n+1]{A} \lequiv A \parr \give[n]{A}
-\]
-Similarly, for take and tensor we have
-\[
-  \take[n+1]{A} \lequiv A \mult \give[n]{A}
-\]
-And---both given the semantics, and the rules of the type system---it should
-come as no surprise that we have
+We can give similar proofs for take and tensor.
+Thus, we have both $\give[n+1]{A} \lequiv A \parr \give[n]{A}$ and
+$\take[n+1]{A} \lequiv A \mult \take[n]{A}$.
+
+Given our description of $\give[n]{A}$ and $\take[n]{A}$ as vectors, it should
+come as no surprise that we have $\give[1]{A} \lequiv \take[1]{A}$.
+For unit vectors, it should not matter whether we build them using tensors or
+pars.
 \begin{proofblock}
   \AXC{}
   \RightLabel{Ax}
@@ -310,8 +343,22 @@ come as no surprise that we have
   \RightLabel{\mult}
   \BIC{$\seq{\give[1]{A} \lequiv \take[1]{A}}$}
 \end{proofblock}
-For unit vectors, it should not matter whether we build them using
-tensors or pars.
+As mentioned before, BLL has a weakening rule. In our analogy as vectors, this
+rule corresponds to $\bot$, and the $0$-case for \textsc{Store} corresponds $1$.
+\begin{center}
+  \begin{proofbox}
+    \AXC{$\seq{ \Gamma }$}
+    \NOM{Weaken}
+    \UIC{$\seq{ \Gamma , \give[0]{A} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\vphantom{\Gamma}$}
+    \NOM{Store}
+    \UIC{$\seq{ \take[0]{A} }$}
+  \end{proofbox}
+\end{center}
+\rfc{Should I briefly describe what these foldings and unfoldings of give and
+  take do \emph{operationally}.}
 
 \subsection{Conflating $\give[n]{A}$ and $\take[n]{A}$}
 Give and take impose a strict structure on the kinds of non-deterministic which
@@ -338,10 +385,13 @@ Logically, allowing such processes corresponds to adding the \textsc{Mix}-rule.
   \NOM{Mix}
   \BIC{$\seq[P \mid Q]{ \Gamma , \Delta }$}
 \end{proofblock}
-It is a well-known consequence of \textsc{Mix} that we get proofs of $\bot \limp
-1$ and $A \mult B \limp A \parr B$---a phenomenon which was recently
-investigated in the context of CP by~\citet{atkey2016}.
-\textsc{Mix} also gives us $\take[n]{A}\limp\give[n]{A}$, by induction on $n$.
+If we add \textsc{Mix} to our type system, we get proofs of $\bot \limp 1$ and
+$A \mult B \limp A \parr B$. Vice versa, if we have a proof of $\bot \limp 1$,
+we can derive \textsc{Mix}.
+This phenomenon was recently investigated in the context of CP
+by~\citet{atkey2016}. 
+Unsurprisingly, due to the relation between $\give[n]{}/\take[n]{}$ and
+$\parr/\mult$, \textsc{Mix} also gives us $\take[n]{A}\limp\give[n]{A}$. 
 \begin{proofblock}
   \AXC{}
   \NOM{Ax}
@@ -359,21 +409,20 @@ investigated in the context of CP by~\citet{atkey2016}.
   \NOM{Cont(2)}
   \UIC{$\seq{ \give[n+1]{A^\bot} , \give[n+1]{A} }$}
 \end{proofblock}
+This relation holds the other way around as well---if we have a proof of
+$\give[2]{1}$, we can derive \textsc{Mix}.
 
-
-% Why do we want multicut? Because it's interesting, but also because it allows
-% us to do some new things. Namely, it allows us to construct the following
-% process:
-%
-% (x[u].P | x[v].Q)
-%
-
+From \citet{atkey2016}, we also know that if we add \textsc{MultiCut}, we get
+$1 \limp \bot$ and $A \parr B \limp A \mult B$ (and vice versa).
 \begin{proofblock}
   \AXC{$\seq{ \Gamma , A_1^\bot , \ldots , A_n^\bot }$}
   \AXC{$\seq{ \Delta , A_1     , \ldots , A_n     }$}
   \NOM{MultiCut}
   \BIC{$\seq{ \Gamma , \Delta }$}
 \end{proofblock}
+Adding \textsc{MultiCut} also gives us $\give[n]{A}\limp\take[n]{A}$, see
+\autoref{fig:conflate-give-and-take}, resulting in a proof of $\take[n]{A}
+\lequiv \give[n]{A}$.
 \begin{figure*}
   \begin{mdframed}
     \begin{proofblock}
@@ -413,6 +462,14 @@ investigated in the context of CP by~\citet{atkey2016}.
     \textsc{MultiCut}.}
   \label{fig:conflate-give-and-take}
 \end{figure*}
+The other way around, however, this relation does not hold.
+
+We formulate a system in which we conflate $\give[n]{A}$ and $\take[n]{A}$,
+following \citet{atkey2016} in calling this connective $\nod[n]{A}$---though,
+since they provide no pronunciation other than ``an access point of type $A$'',
+I will pronounce it as ``nod''.
+We add a rule for $\nod[1]{}$ elimination, a contraction rule and the
+\textsc{Mix} rule.
 \begin{center}
   \begin{proofbox}
     \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
@@ -425,6 +482,8 @@ investigated in the context of CP by~\citet{atkey2016}.
     \UIC{$\seq[\subst{P}{x}{y,z}]{ \Gamma , \tm[x]{\nod[m+n]{A}} }$}
   \end{proofbox}
 \end{center}
+There is no reason to add \textsc{Pool}, as it is derivable from \textsc{Cont}
+and \textsc{Mix}.
 \begin{proofblock}
   \AXC{$\seq{ \Gamma , \nod[m]{A} }$}
   \AXC{$\seq{ \Delta , \nod[n]{A} }$}
@@ -433,6 +492,12 @@ investigated in the context of CP by~\citet{atkey2016}.
   \NOM{Cont}
   \UIC{$\seq{ \Gamma , \Delta , \nod[m+n]{A} }$}
 \end{proofblock}
+We will refer to this system as \ndcp.
+
+In \ndcp, we can derive a restricted version of \textsc{MultiCut}.
+By applying \textsc{Cut} to a ``vector'' of $A$s, we can simulate communication
+on multiple channels, as long as all of these channels have the same session
+type.
 \begin{proofblock}
   \AXC{$\seq{ \Gamma , A^\bot , \ldots , A^\bot  }$}
   \SYM{\nod{}}
@@ -447,31 +512,171 @@ investigated in the context of CP by~\citet{atkey2016}.
   \NOM{Cut}
   \BIC{$\seq{ \Gamma , \Delta }$}
 \end{proofblock}
+It is possible that cut elimination for \ndcp\ terminates.
+The uses of \textsc{MultiCut} which lead to deadlocks invariably communicate on
+two channels of dual types, as in
+\begin{proofblock}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq[\link{x}{y}]{ \tm[x]{ A^\bot } , \tm[y]{ A } }$}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq[\link{y}{x}]{ \tm[y]{ A^\bot } , \tm[x]{ A } }$}
+  \NOM{MultiCut}
+  \BIC{$\seq[(\link{x}{y}\mid\link{y}{x})]{ }$}
+\end{proofblock}
+Why is \ndcp\ interesting?
+It models an even more permissive form of non-determinism than
+\gtcp+\textsc{Mix}.
+In the latter, we can model a program in which two pools of processes are
+non-deterministically linked together.
+However, we cannot model a program in which two pools of sequentially
+communicating processes are linked together. For instance,
+\[
+  (x[u_1].x[u_2].P \mid x[v].Q \mid x(w).R \mid x(z_1).x(z_2).S)
+\]
+We \emph{can} model such a process in \ndcp.
+Why would we want to?
+It may not unreasonable---in the case of a p\^{a}tisserie---to want to model a
+customer buying \emph{two or more} pastries.
+This would require us to have, on the one side, a process for the store which
+communicates with $n$ customers sequentially.
+On the other side, we would have a pool of processes which may communicate,
+several times, with the store.
+We could model this by having the store offer a transaction which can be used
+some bounded number of times, e.g.\ %
+\[
+  \give[n]{( \coin\mult\cake^\bot )}
+  \parr
+  ( \forall{m \leq n}.{\give[m]{( \coin\mult\cake^\bot )}} ),
+\]
+but a simpler solution is to just require the customer to return to the pool
+after the first transaction, and wait for another turn.
+
+\rfc{Should my examples be cake-related throughout? For instance, many
+  p\^{a}tisseries selling cakes to many customers, with each customer buying one
+  or more cakes, would be an example that we can model using $\nod[n]{}$, but
+  not using $\give[n]{}$ and $\take[n]{}$.}
+
+
+\subsection{Relation to recursion}
+There is still an obvious open question.
+In many of the proofs throughout this proposal, we've left open branches,
+labeled IH for induction hypothesis.
+However, as it stands we are unable to express these induction proofs
+\emph{within} the languages \gtcp\ or \ndcp.
+To do so, we would have to add some sort of induction principle.
+For instance,
+\begin{proofblock}
+  \AXC{$\seq{
+      \give[1]{\Gamma} , \take[1]{\Delta} }$}
+  \AXC{$\seq{
+      \forall{n} .
+      \take[n]{\Gamma^\bot} , \give[n]{\Delta^\bot} ,
+      \give[n+1]{\Gamma} , \take[n+1]{\Delta} }$}
+  \NOM{Ind}
+  \BIC{$\seq{
+      \forall{n} .
+      \give[n]{\Gamma^\bot} , \take[n]{\Delta} }$}
+\end{proofblock}
+\begin{proofblock}
+  \AXC{$\seq{\forall{n} . \give[n]{\Gamma} , \take[n]{\Delta}}$}
+  \SYM{\forall}
+  \UIC{$\seq{\give[m]{\Gamma} , \take[m]{\Delta}}$}
+\end{proofblock}
+This would add a restricted form of induction and polymorphism over resource
+variables to our language.
+
+\citet{lindley2016} describe an extension of CP, called \mucp, which adds
+connectives for structural recursion.
+It would be interesting to see what the interactions are between these recursion
+principles and induction on resource variables.
+
+Using the above induction principle, we can unfold a $\give[n]{A}/\take[n]{A}$
+into a stream or pars or tensors, i.e.\ %
+\begin{gather*}
+  \give[n]{A} \mult (\mu X.A \parr X) \limp (\mu X.A \parr X),\\
+  \take[n]{A} \mult (\mu X.A \mult X) \limp (\mu X.A \mult X),
+\end{gather*}
+or fold the first $n$ values from a stream into a $\give[n]{A}/\take[n]{A}$,
+\begin{gather*}
+  (\nu X.A \parr X) \limp (\give[n]{A} \parr \nu X.A \parr X),\\
+  (\nu X.A \mult X) \limp (\take[n]{A} \parr \nu X.A \mult X).
+\end{gather*}
+Equivalently, we can unfold a $\give[n]{A}/\take[n]{A}$ into a list,
+\begin{gather*}
+  \give[n]{A} \limp (\mu X. (A \parr X) \plus 1),\\
+  \take[n]{A} \limp (\mu X. (A \mult X) \plus 1),
+\end{gather*}
+though, in order to unfold a list into a $\take[n]{A}$, we would need to add
+existential quantification over resource variables.
+
+We could these constructions in order to, for example, implement a ticket server
+which sells $n$ tickets, labeled $1$ to $n$, by recursion.
+
+\subsection{Formalization}
+We plan to formalize the systems \gtcp\ and \ndcp\ using Agda, and implement
+their cut elimination procedures.
+This will give us a strong guarantee that the described cut elimination
+procedures are correct and terminating.
+For this, we will use the techniques for separating types and usages used in
+\citet{mcbride2016}.
+
+\rfc{While recent conversations with Guillaume Allais have convinced me that
+  formalizing these systems is practically feasible, I'm not sure about
+  including such a formalization as a goal and research output in my proposal.
+  Also, \citet{mcbride2016} is not the perfect body of work to cite, but I'm not 
+  entirely sure if Conor has written any of this down. I've enquired with
+  Guillaume.}
+
 
 \section{Evaluation}
+We can evaluate the success of this project by whether or not a
+non-deterministic but terminating cut elimination procedure can be formulated
+for \gtcp\ and \ndcp, and by the new kinds of non-deterministic programs which
+these systems will be able to model.
+We can reliably evaluate these conditions based on the formalizations of the
+systems \gtcp\ and \ndcp.
+
+\rfc{What should be the conditions for success w.r.t.\ induction and recursion?
+  We cannot expression $\mu/\nu$-recursion using resource variable induction, as
+  the latter is always bounded, but I'm not sure whether or not we can express
+  resource variable induction using $\mu/\nu$-recursion, since the former is, in
+  some sense, an induction principle, whereas the latter is a recursor.}
 
 \section{Research outputs}
 By the end of this project, I hope to have:
 \begin{itemize}
-\renewcommand\labelitemi{--}
 \item%
-  formulated the system \gtcp, which extends CP with a pair of dual
-  exponentials, $\give[n]{A}$ and $\take[n]{A}$, for non-deterministic
-  computation; 
+  formulated the system \gtcp---which extends CP with a pair of dual
+  exponentials, $\give[n]{A}$ and $\take[n]{A}$ for non-deterministic
+  computation---and given a cut elimination procedure;
 \item%
-  given a cut-elimination procedure for \gtcp;
+  formalized the system \gtcp;
 \item%
   characterized the non-determinism in \gtcp;
 \item%
-  formulated the system \ndcp, which collapses the dual exponentials
-  into a single, self-dual exponential $\nod[n]{A}$; 
+  formulated the system \ndcp---which collapses the dual exponentials
+  from \gtcp\ into a single, self-dual exponential $\nod[n]{A}$---and given a
+  cut elimination procedure;
 \item%
-  given a cut-elimination procedure for \ndcp;
+  formalized the system \ndcp;
 \item%
   characterized the non-determinism in \ndcp;
+\item%
+  characterized the interactions between the structural recursion in \mucp\ and
+  resource variable induction in \gtcp\ and \ndcp.
 \end{itemize}
+\rfc{Should I make (1) formulating the system, (2) giving a cut elimination
+  procedure, and (3) proving termination and deadlock freedom for the cut
+  elimination procedure separate research outputs?}
 
 \section{Workplan}
+\outline{What I'll say here is that I will work on \gtcp\ and \ndcp\ in
+  parallel. Both of these projects have the structure (1) formulate system, (2)
+  show cut elimination, (3) prove termination, with a formalization effort
+  running in parallel. Finally, I'll write throughout, and change my focus to
+  writing exclusively for the last month or two.}
 
 \bibliographystyle{apalike}
 \bibliography{main}
