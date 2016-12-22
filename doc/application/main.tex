@@ -1,0 +1,174 @@
+\documentclass{scrartcl}
+
+\title{Between Practice and Purity}
+\subtitle{Extending GV for practical concurrent programming}
+\author{Pepijn Kokke}
+
+\usepackage{natbib,hyperref}
+\usepackage{mathrsfs}
+\usepackage{textcomp,textgreek}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  The aim of this research project is to find extensions to the
+  functional language GV~\citep{wadler2012}, which facilitate practical
+  and (where possible) preexisting paradigms of concurrent
+  programming, without breaking the strong guarantees about deadlock
+  and race freeness offered by the correspondence with classical
+  linear logic.
+\end{abstract}
+
+\vspace{5ex}
+
+The Curry-Howard correspondence is an incredibly powerful principle
+for programming language design; a language constructed entirely
+within the boundaries of such a correspondence can eliminate huge
+classes of errors.
+One of these classes is non-termination---infinite recursion. This
+turns out to be both a blessing and a curse. Infinite recursion is
+notoriously hard to debug, and therefore we are more than glad to part
+with it, but it takes with it something that has an integral part of
+the functional programmer's toolbox: general recursion.
+
+Haskell addresses this problem by simply using general recursion
+anyway. This allows for non-termination, making the type system
+unsound. In practice, however, Haskell still makes for a safe and
+practical programming language, because programs will either be type
+correct, or won't terminate.
+
+On the other hand, there are many ways to approach the look and feel
+of recursive programming in a way that still guarantees all programs
+terminate. Examples of this are primitive recursion, structural
+recursion and, more recently, sized types~\citep{lee2001}.
+
+\vspace{5mm}
+
+Today, concurrency is one of the most pressing problems in computing
+science. In recent times, the growth in the speed of processor cores
+has stagnated, but amount of processor cores in a single processor is
+rapidly increasing. This makes concurrency essential. However, there
+is very little support in contemporary programming languages that
+helps the programmer reliably write correct concurrent code.
+
+Recently, research by~\citet{wadler2012,caires2010,gay2009} gave us a
+new correspondence between CP, a process calculus typed by classical
+linear logic \citep{girard1987}, and GV, a session-typed $\pi$-calculus
+\citep{honda1993,milner1992}.
+Where the Curry-Howard correspondence guides us in the design of
+programming languages free of type errors and non-termination, this
+new correspondence promises to guide us towards concurrent programs
+free of deadlocks and race conditions.
+
+However, as with the Curry-Howard correspondence, the freedom from
+deadlocks seems to come at a cost.
+\citet{lindley2015lightweight} note that the session-typed functional language
+GV is quite inflexible in the ways that it can construct concurrent programs.
+When faced with this dilemma---a well-behaved or a practical
+language?---\citet{lindley2015lightweight} opt to go the way of Haskell.
+Their implementation of session-typed Links is based on the canonical
+language GV. To remedy its inflexibility, they adopt `access points',
+a language construct inspired by service-oriented programming which
+they describe as ``a matchmaking service for processes.'' While the
+resulting language is certainly much more flexible, and---one
+assumes---more intuitive to programmers, it also loses almost all of
+the pleasant formal properties that GV enjoys.
+
+\citet{dardha2015} make this notion of inflexibility more precise by
+showing that there is a class of deadlock-free programs $\mathscr{K}$,
+which contains strictly more programs than typed by GV. These programs
+can be assigned a type in other session-typing systems, but, as they
+note, GV has one strong advantage over these other systems: its
+canonicity, which it gets through its correspondence with linear
+logic. Not keen on losing canonicity for expressivity, they define a
+procedure to systematically rewrite programs in $\mathscr{K}$ to
+programs in GV.
+
+\paragraph{What is my research purpose?}
+For this research project, I propose to bridge the two branches of
+research formed by \citet{lindley2015lightweight}, and \citet{dardha2015}, and
+develop techniques for concurrent programming analogous to size-based
+recursion for recursive programming.
+This means that I will aim to find find extensions to the functional
+language GV (or CP) which:
+\begin{enumerate}
+\item[a)]%
+  support a wide range of concurrent programs, ideally based on
+  existing language constructs and best practices in concurrent
+  programming; and
+\item[b)]%
+  can be systematically rewritten into the core language GV, either at
+  compile time or in run time, in a way that preserves the formal
+  properties of GV.
+\end{enumerate}
+There are good reasons for wanting to do this. The calculus GV is
+a very promising lead in one of the most pressing problems in
+computing science, but its current incarnation is too inexpressive for
+practical programming.
+
+Whereas using general recursion, and accepting the consequences worked
+in the case of Haskell, I would argue that in the case of access points
+such a compromise is unacceptable.
+Debugging an infinite recursion can be troublesome, but it at least
+occurs deterministically for certain inputs.
+Due to the non-determinism inherent in access points, programs written
+using the construct may contain deadlocks that only occur with a small
+probability. This makes debugging them that much more maddening.
+
+As an additional goal, I intend to formalise the GV and CP, their
+correspondence, eventual extension, and the rewrite procedure, using a
+proof assistant such as Agda~\citep{norell2009}.
+This will give me confidence in the correctness of my work, and in
+effect will result in a verified compiler, which can be made available
+to the community.
+
+\paragraph{What is my methodology?}
+I propose to start out by formalising GV and CP, using a proof
+assistant such as Agda. This will allow me to get more acquainted with
+the calculi and the correspondence.
+I have experience in formalising substructural logics and calculi, and
+cut-elimination \citep{kokke2015}, and recent work by \citet{allais2015}
+has paved the way for formalising linear logic specifically.
+
+Simultaneously, I would also conduct a review of the literature, in
+order to identify roughly what is missing from GV, and what kinds of
+language constructs---preferably already  used in concurrent
+programming---could be added to remedy this.
+During this literature review, I would single out a strong candidate
+for addition to GV, based on its expressivity and whether or not
+it has a basis in the concurrent programming literature.
+For the remainder of this section, let us assume that I have chosen
+access points.
+
+After having obtained an encoding and session-typing of the new
+language construct, and examining its effect on the formal properties
+of GV and the correspondence with CP, I would attempt to break it down
+to or more primitive operations.
+For instance, in \citet{lindley2015lightweight} it is mentioned that access
+points alone are sufficiently expressive to derive concurrent state,
+non-determination, and recursion. It seems plausible, reading over the
+definition of access points, that they could be implemented in terms
+of just these three operations.
+If this is indeed the case, then the cycle continues: I would examine
+the effects of the new primitives on the formal properties of GV, and
+attempt to break these down into more primitive operations.
+
+However, if it is not possible to implement access points in terms of
+these operations, new questions arise. Is there a restricted form of
+access points that can be implemented, and is this still sufficiently
+flexible? If there are such restrictions of access points that are
+more expressive, but better behaved, I will gladly take them.
+Otherwise, I would have to ask what kind of expressivity is missing
+that is needed to encode access points---it is the answer to that
+question that will lead to progress.
+
+\vspace{5mm}
+
+I thank you in advance for taking the time to consider this proposal.
+
+\bibliographystyle{abbrvnat}%
+\bibliography{main}%
+
+\end{document}
