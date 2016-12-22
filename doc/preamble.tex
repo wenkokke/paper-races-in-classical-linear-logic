@@ -6,7 +6,7 @@
 \usepackage{comment}
 \usepackage{lmodern}
 \usepackage{natbib}
-\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{mdframed}
 
 \usepackage{amsmath, amscd, amsthm, amssymb, mathrsfs,amsfonts}
@@ -23,6 +23,12 @@
 \def\lequiv{\ensuremath{\multimapboth}}
 \def\gtcp{\ensuremath{\text{CP}_{\text{ND}}}}
 \def\ndcp{\ensuremath{\text{CP}_{\text{ND}}^{\star}}}
+\def\mucp{\textmu CP}
+
+\newcommand{\rfc}[1]{\textcolor{Blue}{\textbf{RFC}. #1}}
+\newcommand{\remark}[1]{\textcolor{Blue}{\textbf{Remark.} #1}}
+\newcommand{\outline}[1]{\textcolor{Green}{\textbf{Outline.} #1}}
+\newcommand{\todo}[1]{\textcolor{Red}{\textbf{Todo.} #1}}
 
 \newcommand{\tm}[2][]{%
 \toks0={#1}%
@@ -37,6 +43,7 @@
 \newcommand{\nod}[2][]{\ensuremath{{\star}_{#1}{#2}}}
 \newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
 \newcommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+\newcommand{\link}[2]{\ensuremath{#1{\leftrightarrow}#2}}
 \newcommand{\case}[3]{%
   \ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}}
 \newcommand{\inl}[2]{%
