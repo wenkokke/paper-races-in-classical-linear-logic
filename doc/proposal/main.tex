@@ -31,11 +31,18 @@
 \end{abstract}
 
 \section{Introduction}
-\remark{Feedback on this section will not be crucial, so I will briefly outline
-  what I am \emph{planning} to write.}\\
-\outline{I will briefly introduce the problem---logic-inspired session-typed
-  systems do not model non-deterministic processes. We would like to have
-  non-determinism, but we don't want non-termination or deadlocks.}
+%\outline{I will briefly introduce the problem---logic-inspired session-typed
+%  systems do not model non-deterministic processes. We would like to have
+%  non-determinism, but we don't want non-termination or deadlocks.}
+Curry-Howard correspondences are an powerful tool in the design of programming
+languages.
+Once the correspondence between our programming language and a logical system is
+established, we can leverage any property of that system as a property of our
+programming language.
+One such property is termination. In Logic, it is crucial that cut elimination
+terminates, and through the lens of a Curry-Howard correspondence, cut
+elimination corresponds to computation.
+
 
 \section{Background}
 \remark{Feedback on this section will not be crucial, so I will briefly outline
@@ -678,6 +685,6 @@ By the end of this project, I hope to have:
   writing exclusively for the last month or two.}
 
 \bibliographystyle{apalike}
-\bibliography{proposal}
+\bibliography{main}
 
 \end{document}
