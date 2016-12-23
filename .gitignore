@@ -188,3 +188,4 @@ TSWLatexianTemp*
 *~[0-9]*
 old/
 *.bib-stamp
+feedback-*.txt
