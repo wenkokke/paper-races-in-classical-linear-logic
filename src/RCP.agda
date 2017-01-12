@@ -57,15 +57,15 @@ _^ : Type → Type
 (A ⊕ B) ^ = (A ^) & (B ^)
 (A & B) ^ = (A ^) ⊕ (B ^)
 
-^-inv : ∀ A →  A ^ ^ ≡ A
-^-inv 𝟏 = refl
-^-inv ⊥ = refl
-^-inv 𝟎 = refl
-^-inv ⊤ = refl
-^-inv (S₁ ⊗ S₂) rewrite ^-inv S₁ | ^-inv S₂ = refl
-^-inv (S₁ ⅋ S₂) rewrite ^-inv S₁ | ^-inv S₂ = refl
-^-inv (S₁ ⊕ S₂) rewrite ^-inv S₁ | ^-inv S₂ = refl
-^-inv (S₁ & S₂) rewrite ^-inv S₁ | ^-inv S₂ = refl
+^-del : ∀ A →  A ^ ^ ≡ A
+^-del 𝟏 = refl
+^-del ⊥ = refl
+^-del 𝟎 = refl
+^-del ⊤ = refl
+^-del (S₁ ⊗ S₂) rewrite ^-del S₁ | ^-del S₂ = refl
+^-del (S₁ ⅋ S₂) rewrite ^-del S₁ | ^-del S₂ = refl
+^-del (S₁ ⊕ S₂) rewrite ^-del S₁ | ^-del S₂ = refl
+^-del (S₁ & S₂) rewrite ^-del S₁ | ^-del S₂ = refl
 
 ^-posneg : ∀ {A} → Pos A → Neg (A ^)
 ^-posneg 𝟏 = ⊥
@@ -89,20 +89,7 @@ private
   module Ord        {k a} {A : Set a} = Preorder ([ k ]-Order A)
   module ×⊎         {k ℓ}             = CommutativeSemiring (×⊎-CommutativeSemiring k ℓ)
   module ListMonad  {ℓ}               = RawMonad (Data.List.monad {ℓ = ℓ})
-  module ListMonoid {a} {A : Set a}   = Monoid (Data.List.monoid A)
-  open ListMonoid using (identity; assoc)
-
-bagEq : {Γ Δ : Context}
-        (to   : ∀ {A} → A ∈ Γ → A ∈ Δ)
-        (from : ∀ {A} → A ∈ Δ → A ∈ Γ)
-        (inv₁ : ∀ {A} (i : A ∈ Γ) → from (to i) ≡ i)
-        (inv₂ : ∀ {A} (i : A ∈ Δ) → to (from i) ≡ i)
-        → Γ ∼[ bag ] Δ
-bagEq to from inv₁ inv₂ = record
-  { to         = P.→-to-⟶ to
-  ; from       = P.→-to-⟶ from
-  ; inverse-of = record { left-inverse-of = inv₁ ; right-inverse-of = inv₂ }
-  }
+  module ++ {a} {A : Set a}   = Monoid (Data.List.monoid A)
 
 
 infix 1 ⊢_
@@ -161,18 +148,82 @@ data ⊢_ : Context → Set where
          ⊢ Δ
 
 
+-- Helper functions.
+
+-- Delete (by index).
 _-_ : (Γ : Context) {A : Type} (i : A ∈ Γ) → Context
 (B ∷ Γ) - (here  _) = Γ
 (B ∷ Γ) - (there i) = B ∷ Γ - i
 
+-- Transport a membership proof along a bag equality.
+_⟨⇐⟩_ : {Γ Δ : Context} (x : Δ ∼[ bag ] Γ) {A : Type} (i : A ∈ Γ) → A ∈ Δ
+x ⟨⇐⟩ i = Inverse.from x ⟨$⟩ i
+
+_⟨⇒⟩_ : {Γ Δ : Context} (x : Δ ∼[ bag ] Γ) {A : Type} (i : A ∈ Δ) → A ∈ Γ
+x ⟨⇒⟩ i = Inverse.to x ⟨$⟩ i
+
+-- Split a context based on a proof of membership (used as index).
+split : ∀ (Γ {Δ} : Context) {A : Type} →
+           (i : A ∈ Γ ++ Δ) →
+           Σ[ j ∈ A ∈ Γ ] ((Γ ++ Δ) - i ≡ Γ - j ++ Δ) ⊎
+           Σ[ j ∈ A ∈ Δ ] ((Γ ++ Δ) - i ≡ Γ ++ Δ - j)
+split [] i = inj₂ (i , refl)
+split (_ ∷ Γ) (here px) = inj₁ (here px , refl)
+split (_ ∷ Γ) (there i) with split Γ i
+... | inj₁ (j , p) = inj₁ (there j , P.cong (_ ∷_) p)
+... | inj₂ (j , p) = inj₂ (j , P.cong (_ ∷_) p)
+
+
+module Permutation where
+
+  fwd' : (Γ {Δ} : Context) {A B : Type} →
+         B ∈ Γ ++ A ∷ Δ → B ∈ A ∷ Γ ++ Δ
+  fwd' []      i         = i
+  fwd' (C ∷ Γ) (here px) = there (here px)
+  fwd' (C ∷ Γ) (there i) with fwd' Γ i
+  ... | here px = here px
+  ... | there j = there (there j)
+
+  fwd  : (Γ Δ {Θ} : Context) {A B : Type} →
+         B ∈ Γ ++ Δ ++ A ∷ Θ → B ∈ Γ ++ A ∷ Δ ++ Θ
+  fwd []      Δ i         = fwd' Δ i
+  fwd (C ∷ Γ) Δ (here px) = here px
+  fwd (C ∷ Γ) Δ (there i) = there (fwd Γ Δ i)
+
+
 postulate
-  inv : {Γ Δ : Context} {A : Type} →
-        (x : Δ ∼[ bag ] Γ) (i : A ∈ Γ) →
-        Δ - (Inverse.from x ⟨$⟩ i) ∼[ bag ] Γ - i
+  -- There is a bijection between the context ΓΔAΘ
+  -- and the context ΓAΔΘ, in which the A has been
+  -- lifted over the context Δ.
+  fwd : (Γ Δ {Θ} : Context) {A : Type} →
+      Γ ++ Δ ++ A ∷ Θ ∼[ bag ] Γ ++ A ∷ Δ ++ Θ
+
+  -- There is a bijection between the context ΓΣΔΠ and
+  -- the similar contexts with Σ and Δ swapped.
   swp : (Γ Δ Σ {Π} : Context) →
-        Γ ++ Σ ++ Δ ++ Π ∼[ bag ] Γ ++ Δ ++ Σ ++ Π
+      Γ ++ Σ ++ Δ ++ Π ∼[ bag ] Γ ++ Δ ++ Σ ++ Π
+
+  -- If there is a bijection between Γ and Δ, then there
+  -- is a bijection between Γ minus i, and Δ minus the
+  -- image of i across the bijection.
+  del : {Γ Δ : Context} {A : Type} →
+        (x : Δ ∼[ bag ] Γ) (i : A ∈ Γ) →
+        Δ - (x ⟨⇐⟩ i) ∼[ bag ] Γ - i
+
+
+-- Move a context forwards over another context (w/ prefix).
+swp' : (Γ Δ {Θ} : Context) → Γ ++ Θ ++ Δ ∼[ bag ] Γ ++ Δ ++ Θ
+swp' Γ Δ {Θ} = P.subst₂ (λ Δ' Θ' → Γ ++ Θ ++ Δ' ∼[ bag ] Γ ++ Δ ++ Θ')
+               (proj₂ ++.identity Δ)
+               (proj₂ ++.identity Θ)
+               (swp Γ Δ Θ {[]})
+
+-- Rewrite by associativity.
+ass : (Γ Δ {Θ} : Context) → Γ ++ (Δ ++ Θ) ∼[ bag ] (Γ ++ Δ) ++ Θ
+ass Γ Δ {Θ} rewrite ++.assoc Γ Δ Θ = I.id
 
 mutual
+  -- Cut Elimination.
   cut : {Γ Δ : Context} {A : Type} →
 
         ⊢ A ∷ Γ → ⊢ A ^ ∷ Δ →
@@ -181,6 +232,8 @@ mutual
 
   cut f g = cutAt (here refl) (here refl) f g
 
+
+  -- Cut Elimination (using indices).
   cutAt : {Γ Δ : Context} {A : Type} →
          (i : A ∈ Γ) (j : A ^ ∈ Δ) →
 
@@ -194,16 +247,16 @@ mutual
       principal : {Γ Δ : Context} {A : Type} → ⊢ A ∷ Γ → ⊢ A ^ ∷ Δ → ⊢ Γ ++ Δ
       principal {Γ} {Δ} {𝟏} halt (wait g)
           = g
-      principal {Γ} {Δ} {⊥} (wait f) halt rewrite proj₂ identity Γ
+      principal {Γ} {Δ} {⊥} (wait f) halt rewrite proj₂ ++.identity Γ
           = f
       principal {.(Γ₁ ++ Γ₂)} {Δ} {A = A₁ ⊗ A₂} (send {Γ₁} {Γ₂} f h) (recv g)
-        rewrite assoc Γ₁ Γ₂ Δ
+        rewrite ++.assoc Γ₁ Γ₂ Δ
           = exch (swp [] Γ₁ Γ₂)
           $ cut h
-          $ exch (fwd Γ₁)
+          $ exch (fwd [] Γ₁)
           $ cut f g
       principal {Γ} {.(Δ₁ ++ Δ₂)} {A = A₁ ⅋ A₂} (recv f) (send {Δ₁} {Δ₂} g h)
-        rewrite P.sym (assoc Γ Δ₁ Δ₂)
+        rewrite P.sym (++.assoc Γ Δ₁ Δ₂)
           = flip cut h
           $ cut f g
       principal {Γ} {Δ} {A₁ ⊕ A₂} (sel₁ f) (case g h)
@@ -219,22 +272,22 @@ mutual
 
       -- Principal.
       principal {Γ} {Δ} {A} f (exch x g)
-          = exch (B.++-cong {xs₁ = Γ} I.id (inv x (here refl)))
-          $ cutAt (here refl) (Inverse.from x ⟨$⟩ here refl) f g
+          = exch (B.++-cong {xs₁ = Γ} I.id (del x (here refl)))
+          $ cutAt (here refl) (x ⟨⇐⟩ here refl) f g
       principal {Γ} {Δ} {A} (exch x f) g
-          = exch (B.++-cong {ys₁ = Δ} (inv x (here refl)) I.id)
-          $ cutAt (Inverse.from x ⟨$⟩ here refl) (here refl) f g
+          = exch (B.++-cong {ys₁ = Δ} (del x (here refl)) I.id)
+          $ cutAt (x ⟨⇐⟩ here refl) (here refl) f g
 
   -- Left.
   cutAt {.(A ⊗ B ∷ Γ₁ ++ Γ₂)} {Δ} (there i) j (send {Γ₁} {Γ₂} {A} {B} f h) g
-    with ++-split Γ₁ i
+    with split Γ₁ i
   ... | inj₁ (k , p) rewrite p
       = exch (ass  (A ⊗ B ∷ Γ₁ - k)  Γ₂ ∘
               swp' (A ⊗ B ∷ Γ₁ - k)  Γ₂ ∘ I.sym (
               ass  (A ⊗ B ∷ Γ₁ - k) (Δ - j)))
       $ send (cutAt (there k) j f g) h
   ... | inj₂ (k , p) rewrite p
-      | assoc (A ⊗ B ∷ Γ₁) (Γ₂ - k) (Δ - j)
+      | ++.assoc (A ⊗ B ∷ Γ₁) (Γ₂ - k) (Δ - j)
       = send f (cutAt (there k) j h g)
   cutAt (there i) j (recv f) g
       = recv (cutAt (there (there i)) j f g)
@@ -251,80 +304,51 @@ mutual
   cutAt (there i) j loop g
       = loop
   cutAt {Γ} {Δ} i j (exch x f) g
-      = exch (B.++-cong {ys₁ = Δ - j} (inv x i) I.id)
-      $ cutAt (Inverse.from x ⟨$⟩ i) j f g
+      = exch (B.++-cong {ys₁ = Δ - j} (del x i) I.id)
+      $ cutAt (x ⟨⇐⟩ i) j f g
 
   -- Right.
   cutAt {Γ} {.(A ⊗ B ∷ Δ₁ ++ Δ₂)} i (there j) f (send {Δ₁} {Δ₂} {A} {B} g h)
-    with ++-split Δ₁ j
+    with split Δ₁ j
   ... | inj₁ (k , p) rewrite p
-      = exch (I.sym (ass (A ⊗ B ∷ Γ - i) (Δ₁ - k) ∘ fwd (Γ - i)))
+      = exch (I.sym (ass (A ⊗ B ∷ Γ - i) (Δ₁ - k) ∘ fwd [] (Γ - i)))
       $ flip send h
-      $ exch (fwd (Γ - i))
+      $ exch (fwd [] (Γ - i))
       $ cutAt i (there k) f g
   ... | inj₂ (k , p) rewrite p
       = exch (I.sym (swp [] (A ⊗ B ∷ Δ₁) (Γ - i)))
       $ send g
-      $ exch (fwd (Γ - i))
+      $ exch (fwd [] (Γ - i))
       $ cutAt i (there k) f h
   cutAt {Γ} {.(A ⅋ B ∷ Δ)} i (there j) f (recv {Δ} {A} {B} g)
-      = exch (I.sym (fwd (Γ - i)))
+      = exch (I.sym (fwd [] (Γ - i)))
       $ recv
       $ exch (swp [] (A ∷ B ∷ []) (Γ - i))
       $ cutAt i (there (there j)) f g
   cutAt {Γ} {Δ} i (there j) f (sel₁ g)
-      = exch (I.sym (fwd (Γ - i)))
+      = exch (I.sym (fwd [] (Γ - i)))
       $ sel₁
-      $ exch (fwd (Γ - i))
+      $ exch (fwd [] (Γ - i))
       $ cutAt i (there j) f g
   cutAt {Γ} {Δ} i (there j) f (sel₂ g)
-      = exch (I.sym (fwd (Γ - i)))
+      = exch (I.sym (fwd [] (Γ - i)))
       $ sel₂
-      $ exch (fwd (Γ - i))
+      $ exch (fwd [] (Γ - i))
       $ cutAt i (there j) f g
   cutAt {Γ} {Δ} i (there j) f (case g h)
-      = exch (I.sym (fwd (Γ - i)))
-      $ case (exch (fwd (Γ - i)) $ cutAt i (there j) f g)
-             (exch (fwd (Γ - i)) $ cutAt i (there j) f h)
+      = exch (I.sym (fwd [] (Γ - i)))
+      $ case (exch (fwd [] (Γ - i)) $ cutAt i (there j) f g)
+             (exch (fwd [] (Γ - i)) $ cutAt i (there j) f h)
   cutAt {Γ} {.(𝟏 ∷ [])} i (there ()) f halt
   cutAt {Γ} {Δ} i (there j) f (wait g)
-      = exch (I.sym (fwd (Γ - i)))
+      = exch (I.sym (fwd [] (Γ - i)))
       $ wait
       $ cutAt i j f g
   cutAt {Γ} {Δ} i (there j) f loop
-      = exch (I.sym (fwd (Γ - i))) loop
+      = exch (I.sym (fwd [] (Γ - i))) loop
   cutAt {Γ} {Δ} i j f (exch x g)
-      = exch (B.++-cong {xs₁ = Γ - i} I.id (inv x j))
-      $ cutAt i (Inverse.from x ⟨$⟩ j) f g
-
-  -- Helper functions.
-
-  -- Swap two contexts occurring after Γ.
-  swp' : (Γ Δ {Θ} : Context) → Γ ++ Θ ++ Δ ∼[ bag ] Γ ++ Δ ++ Θ
-  swp' Γ Δ {Θ}
-      = P.subst₂ (λ Δ' Θ' → Γ ++ Θ ++ Δ' ∼[ bag ] Γ ++ Δ ++ Θ')
-        (proj₂ identity Δ)
-        (proj₂ identity Θ)
-        (swp Γ Δ Θ {[]})
-
-  -- Rewrite by associativity as a permutation.
-  ass : (Γ Δ {Θ} : Context) → Γ ++ (Δ ++ Θ) ∼[ bag ] (Γ ++ Δ) ++ Θ
-  ass Γ Δ {Θ} rewrite assoc Γ Δ Θ = I.id
-
-  -- Move a type forwards in a context.
-  fwd : (Γ {Θ} : Context) {A : Type} → Γ ++ A ∷ Θ ∼[ bag ] A ∷ Γ ++ Θ
-  fwd Γ = swp [] (_ ∷ []) Γ
-
-  -- Split a contexts based on a proof of inclusion.
-  ++-split : ∀ (Γ {Δ} : Context) {A : Type} →
-             (i : A ∈ Γ ++ Δ) →
-             Σ[ j ∈ A ∈ Γ ] ((Γ ++ Δ) - i ≡ Γ - j ++ Δ) ⊎
-             Σ[ j ∈ A ∈ Δ ] ((Γ ++ Δ) - i ≡ Γ ++ Δ - j)
-  ++-split [] i = inj₂ (i , refl)
-  ++-split (_ ∷ Γ) (here px) = inj₁ (here px , refl)
-  ++-split (_ ∷ Γ) (there i) with ++-split Γ i
-  ... | inj₁ (j , p) = inj₁ (there j , P.cong (_ ∷_) p)
-  ... | inj₂ (j , p) = inj₂ (j , P.cong (_ ∷_) p)
+      = exch (B.++-cong {xs₁ = Γ - i} I.id (del x j))
+      $ cutAt i (x ⟨⇐⟩ j) f g
 
 
 -- -}
