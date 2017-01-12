@@ -161,17 +161,16 @@ data ⊢_ : Context → Set where
          ⊢ Δ
 
 
-Rest : {Γ : Context} {A : Type} (i : A ∈ Γ) → Context
-Rest (here  {_} {Γ} _) = Γ
-Rest (there {A} {Γ} i) = A ∷ Rest i
-
+_-_ : (Γ : Context) {A : Type} (i : A ∈ Γ) → Context
+(B ∷ Γ) - (here  _) = Γ
+(B ∷ Γ) - (there i) = B ∷ Γ - i
 
 postulate
-  swp : (Γ Δ Σ {Π} : Context) →
-        Γ ++ Σ ++ Δ ++ Π ∼[ bag ] Γ ++ Δ ++ Σ ++ Π
   inv : {Γ Δ : Context} {A : Type} →
         (x : Δ ∼[ bag ] Γ) (i : A ∈ Γ) →
-        Rest (Inverse.from x ⟨$⟩ i) ∼[ bag ] Rest i
+        Δ - (Inverse.from x ⟨$⟩ i) ∼[ bag ] Γ - i
+  swp : (Γ Δ Σ {Π} : Context) →
+        Γ ++ Σ ++ Δ ++ Π ∼[ bag ] Γ ++ Δ ++ Σ ++ Π
 
 mutual
   cut : {Γ Δ : Context} {A : Type} →
@@ -187,7 +186,7 @@ mutual
 
          ⊢ Γ → ⊢ Δ →
          ------------------
-         ⊢ Rest i ++ Rest j
+         ⊢ Γ - i ++ Δ - j
 
   -- Principal Cuts.
   cutAt (here refl) (here refl) f g = principal f g
@@ -227,11 +226,15 @@ mutual
           $ cutAt (Inverse.from x ⟨$⟩ here refl) (here refl) f g
 
   -- Left.
-  cutAt (there i) j (send {Γ} {Δ} {A} {B} f h) g with ++-split Γ i
+  cutAt {.(A ⊗ B ∷ Γ₁ ++ Γ₂)} {Δ} (there i) j (send {Γ₁} {Γ₂} {A} {B} f h) g
+    with ++-split Γ₁ i
   ... | inj₁ (k , p) rewrite p
-      = exch (ass (_ ∷ Rest k) Δ ∘ swp' (_ ∷ Rest k) Δ ∘ I.sym (ass (_ ∷ Rest k) (Rest j)))
+      = exch (ass  (A ⊗ B ∷ Γ₁ - k)  Γ₂ ∘
+              swp' (A ⊗ B ∷ Γ₁ - k)  Γ₂ ∘ I.sym (
+              ass  (A ⊗ B ∷ Γ₁ - k) (Δ - j)))
       $ send (cutAt (there k) j f g) h
-  ... | inj₂ (k , p) rewrite p | assoc (A ⊗ B ∷ Γ) (Rest k) (Rest j)
+  ... | inj₂ (k , p) rewrite p
+      | assoc (A ⊗ B ∷ Γ₁) (Γ₂ - k) (Δ - j)
       = send f (cutAt (there k) j h g)
   cutAt (there i) j (recv f) g
       = recv (cutAt (there (there i)) j f g)
@@ -247,50 +250,51 @@ mutual
       = wait (cutAt i j f g)
   cutAt (there i) j loop g
       = loop
-  cutAt i j (exch x f) g
-      = exch (B.++-cong {ys₁ = Rest j} (inv x i) I.id)
+  cutAt {Γ} {Δ} i j (exch x f) g
+      = exch (B.++-cong {ys₁ = Δ - j} (inv x i) I.id)
       $ cutAt (Inverse.from x ⟨$⟩ i) j f g
 
   -- Right.
-  cutAt i (there j) f (send {Γ} g h) with ++-split Γ j
+  cutAt {Γ} {.(A ⊗ B ∷ Δ₁ ++ Δ₂)} i (there j) f (send {Δ₁} {Δ₂} {A} {B} g h)
+    with ++-split Δ₁ j
   ... | inj₁ (k , p) rewrite p
-      = exch (I.sym (ass (_ ∷ Rest i) (Rest k) ∘ fwd (Rest i)))
+      = exch (I.sym (ass (A ⊗ B ∷ Γ - i) (Δ₁ - k) ∘ fwd (Γ - i)))
       $ flip send h
-      $ exch (fwd (Rest i))
+      $ exch (fwd (Γ - i))
       $ cutAt i (there k) f g
   ... | inj₂ (k , p) rewrite p
-      = exch (I.sym (swp [] (_ ∷ Γ) (Rest i)))
+      = exch (I.sym (swp [] (A ⊗ B ∷ Δ₁) (Γ - i)))
       $ send g
-      $ exch (fwd (Rest i))
+      $ exch (fwd (Γ - i))
       $ cutAt i (there k) f h
-  cutAt i (there j) f (recv g)
-      = exch (I.sym (fwd (Rest i)))
+  cutAt {Γ} {.(A ⅋ B ∷ Δ)} i (there j) f (recv {Δ} {A} {B} g)
+      = exch (I.sym (fwd (Γ - i)))
       $ recv
-      $ exch (swp [] (_ ∷ _ ∷ []) (Rest i))
+      $ exch (swp [] (A ∷ B ∷ []) (Γ - i))
       $ cutAt i (there (there j)) f g
-  cutAt i (there j) f (sel₁ g)
-      = exch (I.sym (fwd (Rest i)))
+  cutAt {Γ} {Δ} i (there j) f (sel₁ g)
+      = exch (I.sym (fwd (Γ - i)))
       $ sel₁
-      $ exch (fwd (Rest i))
+      $ exch (fwd (Γ - i))
       $ cutAt i (there j) f g
-  cutAt i (there j) f (sel₂ g)
-      = exch (I.sym (fwd (Rest i)))
+  cutAt {Γ} {Δ} i (there j) f (sel₂ g)
+      = exch (I.sym (fwd (Γ - i)))
       $ sel₂
-      $ exch (fwd (Rest i))
+      $ exch (fwd (Γ - i))
       $ cutAt i (there j) f g
-  cutAt i (there j) f (case g h)
-      = exch (I.sym (fwd (Rest i)))
-      $ case (exch (fwd (Rest i)) $ cutAt i (there j) f g)
-             (exch (fwd (Rest i)) $ cutAt i (there j) f h)
-  cutAt i (there ()) f halt
-  cutAt i (there j) f (wait g)
-      = exch (I.sym (fwd (Rest i)))
+  cutAt {Γ} {Δ} i (there j) f (case g h)
+      = exch (I.sym (fwd (Γ - i)))
+      $ case (exch (fwd (Γ - i)) $ cutAt i (there j) f g)
+             (exch (fwd (Γ - i)) $ cutAt i (there j) f h)
+  cutAt {Γ} {.(𝟏 ∷ [])} i (there ()) f halt
+  cutAt {Γ} {Δ} i (there j) f (wait g)
+      = exch (I.sym (fwd (Γ - i)))
       $ wait
       $ cutAt i j f g
-  cutAt i (there j) f loop
-      = exch (I.sym (fwd (Rest i))) loop
-  cutAt i j f (exch x g)
-      = exch (B.++-cong {xs₁ = Rest i} I.id (inv x j))
+  cutAt {Γ} {Δ} i (there j) f loop
+      = exch (I.sym (fwd (Γ - i))) loop
+  cutAt {Γ} {Δ} i j f (exch x g)
+      = exch (B.++-cong {xs₁ = Γ - i} I.id (inv x j))
       $ cutAt i (Inverse.from x ⟨$⟩ j) f g
 
   -- Helper functions.
@@ -314,8 +318,8 @@ mutual
   -- Split a contexts based on a proof of inclusion.
   ++-split : ∀ (Γ {Δ} : Context) {A : Type} →
              (i : A ∈ Γ ++ Δ) →
-             Σ[ j ∈ A ∈ Γ ] (Rest i ≡ Rest j ++ Δ) ⊎
-             Σ[ j ∈ A ∈ Δ ] (Rest i ≡ Γ ++ Rest j)
+             Σ[ j ∈ A ∈ Γ ] ((Γ ++ Δ) - i ≡ Γ - j ++ Δ) ⊎
+             Σ[ j ∈ A ∈ Δ ] ((Γ ++ Δ) - i ≡ Γ ++ Δ - j)
   ++-split [] i = inj₂ (i , refl)
   ++-split (_ ∷ Γ) (here px) = inj₁ (here px , refl)
   ++-split (_ ∷ Γ) (there i) with ++-split Γ i
