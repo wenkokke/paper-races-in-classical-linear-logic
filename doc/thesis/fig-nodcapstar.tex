@@ -1,0 +1,35 @@
+\begin{figure*}
+  \centering
+   \[
+    \text{Type} \; A , B
+    \coloneqq \ldots
+    \mid \nod[n]{A}
+  \]
+       
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\nod[1]{}}
+    \UIC{$\seq[{x \star y.P}]{ \Gamma , \tm[x]{\nod[1]{A}} }$}
+  \end{proofbox}
+
+  \vspace{1\baselineskip}
+  
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma , \tm[x]{\nod[m]{A}} , \tm[x']{\nod[n]{A}} }$}
+    \NOM{Contract}
+    \UIC{$\seq[\subst{P}{x}{x'}]{ \Gamma , \tm[x]{\nod[m+n]{A}} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma , \tm[x]{\nod[m]{A}} }$}
+    \AXC{$\seq[Q]{ \Delta , \tm[x]{\nod[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[P \mid Q]{ \Gamma , \Delta , \tm[x]{\nod[m+n]{A}} }$}
+  \end{proofbox}
+ 
+  \caption{The type system \nodcap[\star].}
+  \label{fig:nodcapstar}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
