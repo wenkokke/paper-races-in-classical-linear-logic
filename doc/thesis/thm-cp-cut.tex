@@ -1,0 +1,144 @@
+\begin{figure*}
+  \begin{thm}[Cut Elimination]
+    \begin{proofblock}
+      \AXC{$\seq{\Gamma , A     , \Gamma'}$}
+      \AXC{$\seq{\Delta , A^\bot , \Delta'}$}
+      \NOM{CutIn}
+      \BIC{$\seq{\Gamma , \Gamma' , \Delta , \Delta'}$}
+    \end{proofblock}
+  \end{thm}
+  \begin{proof}[Cut Elimination]
+    \[\!
+      \begin{array}{lcl}
+        \text{Principal Cuts}
+        \\\\
+        \AXC{}
+        \SYM{\one}
+        \UIC{$\seq{\one}$} 
+        \AXC{$\seq{\Delta}$}
+        \SYM{\bot}
+        \UIC{$\seq{\bot \\\\
+        \AXC{$\seq{\Gamma , A , \Gamma'}$}
+        \AXC{$\seq{\Delta , A^\bot , \Delta'}$}
+        \SYM{\bot}
+        \UIC{$\seq{\bot , \Delta , A^\bot , \Delta'}$}
+        \NOM{Cut}
+        \BIC{$\seq{\Gamma' , \Gamma , \bot , \Delta , \Delta'}$}
+        \DisplayProof
+      & \Longrightarrow
+      & \AXC{$\Gamma , A , \Gamma'$}
+        \AXC{$\Delta , A^\bot , \Delta'$}
+        \NOM{Cut}
+        \BIC{$\Gamma , \Gamma' , \Delta , \Delta'$}
+        \SYM{\bot}
+        \UIC{$\bot , \Gamma , \Gamma' , \Delta , \Delta'$}
+        \DisplayProof
+      \end{array}
+    \]
+  \end{proof}
+
+  \caption{Cut Elimination Theorem for CP}
+  \label{fig:cp-cut}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
+, \Delta}$}       
+        \NOM{Cut}
+        \BIC{$\seq{\Delta}$}
+        \DisplayProof
+      & \Longrightarrow
+      & \AXC{$\seq{\Delta}$}
+        \DisplayProof
+        \\\\
+        \multicolumn{3}{c}{
+        \text{(no case for $\nil$ and $\top$)}}
+        \\\\
+        \AXC{$\seq{A , \Gamma }$}
+        \AXC{$\seq{B , \Gamma'}$}
+        \SYM{\tens}
+        \BIC{$\seq{A \tens B , \Gamma , \Gamma'}$}
+        \AXC{$\seq{A^\bot , B^\bot , \Delta}$}
+        \SYM{\parr}
+        \UIC{$\seq{A^\bot \parr B^\bot , \Delta}$}
+        \NOM{Cut}
+        \BIC{$\seq{\Gamma, \Gamma' , \Delta}$}
+        \DisplayProof
+      & \Longrightarrow
+      & \AXC{$\seq{B , \Gamma'}$}
+        \AXC{$\seq{A , \Gamma}$}
+        \AXC{$\seq{A^\bot , B^\bot , \Delta}$}
+        \NOM{Cut}
+        \BIC{$\seq{\Gamma , B^\bot , \Delta}$}
+        \NOM{Exch}
+        \UIC{$\seq{B^\bot , \Gamma , \Delta}$}
+        \NOM{Cut}
+        \BIC{$\seq{\Gamma' , \Gamma , \Delta}$}
+        \NOM{Exch}
+        \UIC{$\seq{\Gamma , \Gamma' , \Delta}$}        
+        \DisplayProof
+        \\\\
+        \AXC{$\seq{A , \Gamma}$}
+        \SYM{\plus_1}
+        \UIC{$\seq{A \plus B , \Gamma}$}
+        \AXC{$\seq{A^\bot , \Delta}$}
+        \AXC{$\seq{B^\bot , \Delta}$}
+        \SYM{\with}
+        \BIC{$\seq{A^\bot \with B^\bot , \Delta}$}
+        \NOM{Cut}
+        \BIC{$\seq{\Gamma , \Delta}$}
+        \DisplayProof
+      & \Longrightarrow
+      & \AXC{$\seq{A , \Gamma}$}
+        \AXC{$\seq{A^\bot , \Delta}$}
+        \NOM{Cut}
+        \BIC{$\seq{\Gamma , \Delta}$}
+        \DisplayProof
+        \\\\
+        \text{Permutation Cuts.}
+        \\\\
+        \AXC{$\seq{\Gamma , A , \Gamma'}$}
+        \SYM{\bot}
+        \UIC{$\seq{\bot , \Gamma , A , \Gamma'}$}
+        \AXC{$\seq{\Delta , A^\bot , \Delta'}$}
+        \NOM{Cut}
+        \BIC{$\seq{\bot , \Gamma' , \Gamma , \Delta , \Delta'}$}
+        \DisplayProof
+      & \Longrightarrow
+      & \AXC{$\Gamma , A , \Gamma'$}
+        \AXC{$\Delta , A^\bot , \Delta'$}
+        \NOM{Cut}
+        \BIC{$\Gamma , \Gamma' , \Delta , \Delta'$}
+        \SYM{\bot}
+        \UIC{$\bot , \Gamma , \Gamma' , \Delta , \Delta'$}
+        \DisplayProof
+        \\\\
+        \AXC{$\seq{\Gamma , A , \Gamma'}$}
+        \AXC{$\seq{\Delta , A^\bot , \Delta'}$}
+        \SYM{\bot}
+        \UIC{$\seq{\bot , \Delta , A^\bot , \Delta'}$}
+        \NOM{Cut}
+        \BIC{$\seq{\Gamma' , \Gamma , \bot , \Delta , \Delta'}$}
+        \DisplayProof
+      & \Longrightarrow
+      & \AXC{$\Gamma , A , \Gamma'$}
+        \AXC{$\Delta , A^\bot , \Delta'$}
+        \NOM{Cut}
+        \BIC{$\Gamma , \Gamma' , \Delta , \Delta'$}
+        \SYM{\bot}
+        \UIC{$\bot , \Gamma , \Gamma' , \Delta , \Delta'$}
+        \NOM{Exch}
+        \UIC{$\Gamma , \Gamma' , \bot , \Delta , \Delta'$}
+        \DisplayProof
+      \end{array}
+    \]
+  \end{proof}
+
+  \caption{Cut Elimination Theorem for CP}
+  \label{fig:cp-cut}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
