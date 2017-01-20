@@ -3,7 +3,7 @@ open import Data.List as L                             using (List; []; _∷_; [
 open import Data.List.Any                              using (here; there)
 open import Data.List.Any.BagAndSetEquality as B       using ()
 open        Data.List.Any.Membership-≡                 using (_∈_; _∼[_]_; bag)
-open import Data.Product                               using (proj₁; proj₂)
+open import Data.Product                               using (∃; ∃₂; _×_; proj₁; proj₂; _,_)
 open import Function                                   using (_$_)
 open import Function.Equality                          using (_⟨$⟩_)
 open import Function.Inverse                           using (id; _∘_)
@@ -100,11 +100,29 @@ _-_ : (xs : List A) {x : A} (i : x ∈ xs) → List A
 (x ∷ xs) - (there i) = x ∷ xs - i
 
 
-{-
+-- TODO figure out how to prove this equivalence such that `del` falls out
+
+lem : {xs : List A} {x : A} (i : x ∈ xs) →
+      ∃₂ λ xs₁ xs₂ → xs ≡ xs₁ ++ x ∷ xs₂
+                   × xs - i ≡ xs₁ ++ xs₂
+lem {x ∷ xs} (here P.refl) = ([] , xs , P.refl , P.refl)
+lem {x ∷ xs} (there i) with lem {xs} i
+... | (xs₁ , xs₂ , p₁ , p₂) = (x ∷ xs₁ , xs₂ , P.cong (x ∷_) p₁ , P.cong (x ∷_) p₂)
+
+
 del : {xs ys : List A} {x : A} →
       (eq : xs ∼[ bag ] ys) (i : x ∈ xs) →
       xs - i ∼[ bag ] ys - (to eq ⟨$⟩ i)
-del eq i = {!!}
+del {xs} {ys} eq i
+  with lem {xs} i
+... | (xs₁ , xs₂ , p₁ , p₂) rewrite p₁ | p₂
+  with lem {ys} (to eq ⟨$⟩ i)
+... | (ys₁ , ys₂ , q₁ , q₂) rewrite p₁ | q₂
+    = {!!}
+
+-- TODO getting closer but there is no guarantee now that
+--      both occurrences of x are pointed at by i, which is
+--      what I've lost in `lem`
 
 -- -}
 -- -}
