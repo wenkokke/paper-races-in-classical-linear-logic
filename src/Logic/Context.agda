@@ -5,7 +5,9 @@ open import Data.List.Any.BagAndSetEquality as B       using ()
 open        Data.List.Any.Membership-≡                 using (_∈_; _∼[_]_; bag)
 open import Data.Product                               using (proj₁; proj₂)
 open import Function                                   using (_$_)
-open import Function.Inverse as I                      using (_∘_)
+open import Function.Equality                          using (_⟨$⟩_)
+open import Function.Inverse                           using (id; _∘_)
+open        Function.Inverse.Inverse                   using (to; from)
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
 
@@ -56,7 +58,7 @@ fwd []       ys = fwd' ys
   where
     fwd' : (xs {ys} : List A) {w : A} →
            xs ++ w ∷ ys ∼[ bag ] w ∷ xs ++ ys
-    fwd' []       = I.id
+    fwd' []       = id
     fwd' (x ∷ xs) = bbl [] ∘ B.∷-cong P.refl (fwd' xs)
 
 
@@ -64,7 +66,7 @@ fwd []       ys = fwd' ys
 -- ΓΣΔΠ and the context ΓΔΣΠ.
 swp : (xs ys zs {ws} : List A) →
       xs ++ zs ++ ys ++ ws ∼[ bag ] xs ++ ys ++ zs ++ ws
-swp xs []       zs = I.id
+swp xs []       zs = id
 swp xs (y ∷ ys) zs =
   ( P.subst₂ _∼[ bag ]_ (++.assoc xs [ y ] _) (++.assoc xs [ y ] _)
   $ swp (xs ++ [ y ]) ys zs
@@ -89,4 +91,23 @@ swp' xs ys {zs} =
 -- these contexts are literally equal.
 ass : (xs ys {zs} : List A) →
       xs ++ (ys ++ zs) ∼[ bag ] (xs ++ ys) ++ zs
-ass xs ys {zs} rewrite ++.assoc xs ys zs = I.id
+ass xs ys {zs} rewrite ++.assoc xs ys zs = id
+
+
+
+_-_ : (xs : List A) {x : A} (i : x ∈ xs) → List A
+(x ∷ xs) - (here  _) = xs
+(x ∷ xs) - (there i) = x ∷ xs - i
+
+
+{-
+del : {xs ys : List A} {x : A} →
+      (eq : xs ∼[ bag ] ys) (i : x ∈ xs) →
+      xs - i ∼[ bag ] ys - (to eq ⟨$⟩ i)
+del eq i = {!!}
+
+-- -}
+-- -}
+-- -}
+-- -}
+-- -}
