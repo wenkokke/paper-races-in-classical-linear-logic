@@ -1,12 +1,15 @@
 open import Level renaming (suc to lsuc; zero to lzero)
 open import Algebra
 open import Data.Nat as ℕ using (ℕ)
+open import Data.Pos as ℤ⁺
 open import Data.List as L using (List; _∷_; []; _++_)
 open import Data.List.Properties as LP using ()
+open import Data.List.Properties.Ext as LPE using ()
 open import Data.List.Any as LA using (Any; here; there)
 open import Data.List.Any.BagAndSetEquality as B
 open import Data.Product using (∃; Σ; Σ-syntax; _,_; proj₁; proj₂)
 open import Data.Vec as V using (Vec; _∷_; [])
+open import Data.Vec.Properties as VP using ()
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Function using (_∘_; _$_; flip)
 open import Function.Equality using (_⟨$⟩_)
@@ -18,50 +21,6 @@ module nodcap (Atom : Set) where
 
 private
   module ++ {a} {A : Set a} = Monoid (L.monoid A)
-
-data ℤ⁺ : Set where
-  one : ℤ⁺
-  suc : ℤ⁺ → ℤ⁺
-
-_+_ : ℤ⁺ → ℤ⁺ → ℤ⁺
-one   + n = suc n
-suc m + n = suc (m + n)
-
-toℕ : ℤ⁺ → ℕ
-toℕ  one    = ℕ.suc ℕ.zero
-toℕ (suc n) = ℕ.suc (toℕ n)
-
-toℕ-+ : (m {n} : ℤ⁺) → toℕ m ℕ.+ toℕ n ≡ toℕ (m + n)
-toℕ-+  one    = P.refl
-toℕ-+ (suc m) = P.cong ℕ.suc (toℕ-+ m)
-
-private
-  concat-++ : ∀ {a} {A : Set a} (xs : List A) (xss : List (List A)) →
-              L.concat (xs ∷ xss) ≡ xs ++ L.concat xss
-  concat-++ []       xss = P.refl
-  concat-++ (x ∷ xs) xss = P.cong (x ∷_) (concat-++ xs xss)
-
-  concat-++-commute : ∀ {a} {A : Set a} (xss yss : List (List A)) →
-                      L.concat xss ++ L.concat yss ≡ L.concat (xss ++ yss)
-  concat-++-commute []         yss = P.refl
-  concat-++-commute (xs ∷ xss) yss =
-    begin
-      (xs ++ L.concat xss) ++ L.concat yss
-      ≡⟨ ++.assoc xs (L.concat xss) (L.concat yss) ⟩
-      xs ++ L.concat xss ++ L.concat yss
-      ≡⟨ P.cong (xs ++_) (concat-++-commute xss yss) ⟩
-      xs ++ L.concat (xss ++ yss)
-    ∎
-
-
-replicate : ∀ {a} {A : Set a} (n : ℤ⁺) (x : A) → List A
-replicate  one    x = x ∷ []
-replicate (suc n) x = x ∷ replicate n x
-
-replicate-++ : ∀ {a} {A : Set a} (m n : ℤ⁺) {x : A} →
-               replicate m x ++ replicate n x ≡ replicate (m + n) x
-replicate-++  one    n = P.refl
-replicate-++ (suc m) n = P.cong (_ ∷_) (replicate-++ m n)
 
 
 -- Types.
@@ -292,7 +251,7 @@ mutual
 
            ⊢ ⅋[ A ^ n ] ∷ Γ →
            --------------------
-           ⊢ replicate n A ++ Γ
+           ⊢ ℤ⁺.replicate n A ++ Γ
 
   expand {Γ} {A} {n} (exch b x)
     = exch (B.++-cong {xs₁ = replicate n A} I.id (del b (here P.refl)))

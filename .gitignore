@@ -190,3 +190,4 @@ old/
 *.bib-stamp
 feedback-*.txt
 depr/
+*.clean

@@ -10,6 +10,7 @@ open import Data.Product using (Σ; Σ-syntax; _,_; proj₁; proj₂)
 open import Function using (flip; _$_)
 open import Function.Equality using (module Π; Π; _⟶_; _⟨$⟩_)
 open import Function.Inverse as I using (Inverse; module Inverse; _∘_; _↔_)
+open import Logic.Context using (bbl; fwd; swp)
 open import Relation.Binary
 open import Relation.Binary.HeterogeneousEquality as H using (_≅_; refl)
 open import Relation.Binary.PropositionalEquality as P using (_≡_; refl)
@@ -157,105 +158,6 @@ data ⊢_ : Context → Set where
          --------------------
          ⊢ Δ
 
-
--- Permutation.
-
-module Permutation where
-
-  fwd' : (Γ {Δ} : Context) {A B : Type} →
-         B ∈ Γ ++ A ∷ Δ → B ∈ A ∷ Γ ++ Δ
-  fwd' []      i         = i
-  fwd' (C ∷ Γ) (here px) = there (here px)
-  fwd' (C ∷ Γ) (there i) with fwd' Γ i
-  ... | here px = here px
-  ... | there j = there (there j)
-
-  fwd  : (Γ Δ {Θ} : Context) {A B : Type} →
-         B ∈ Γ ++ Δ ++ A ∷ Θ → B ∈ Γ ++ A ∷ Δ ++ Θ
-  fwd []      Δ i         = fwd' Δ i
-  fwd (C ∷ Γ) Δ (here px) = here px
-  fwd (C ∷ Γ) Δ (there i) = there (fwd Γ Δ i)
-
-  module fwd where
-
-    identity' : (Γ {Θ} : Context) {A B : Type} →
-                (i : B ∈ Γ ++ A ∷ Θ) →
-                fwd Γ [] i ≅ i
-    identity' []       i        = H.refl
-    identity' (C ∷ Γ) (here px) = H.refl
-    identity' (C ∷ Γ) (there i) = H.cong there (identity' Γ i)
-
-  swp  : (Γ Δ Σ {Π} : Context) {A : Type} →
-         A ∈ Γ ++ Σ ++ Δ ++ Π → A ∈ Γ ++ Δ ++ Σ ++ Π
-  swp Γ []      Σ {Π} {A} i = i
-  swp Γ (B ∷ Δ) Σ {Π} {A} i
-    = P.subst (A ∈_) (++.assoc Γ (B ∷ []) (Δ ++ Σ ++ Π))
-    $ swp (Γ ++ B ∷ []) Δ Σ
-    $ P.subst (A ∈_) (P.sym (++.assoc Γ (B ∷ []) (Σ ++ Δ ++ Π)))
-    $ fwd Γ Σ i
-
-  module swp where
-
-    open H.≅-Reasoning
-
-    identity' : (Γ Δ {Π} : Context) {A : Type} →
-                (i : A ∈ Γ ++ Δ ++ Π) →
-                swp Γ Δ [] i ≅ i
-    identity' Γ []      {Π} {A} i = H.refl
-    identity' Γ (B ∷ Δ) {Π} {A} i =
-      begin
-        ( P.subst (A ∈_) lm1
-        $ swp (Γ ++ B ∷ []) Δ []
-        $ P.subst (A ∈_) (P.sym lm1)
-        $ fwd Γ [] i )
-        ≅⟨ H.≡-subst-removable (A ∈_) lm1 _ ⟩
-        ( swp (Γ ++ B ∷ []) Δ []
-        $ P.subst (A ∈_) (P.sym lm1)
-        $ fwd Γ [] i )
-        ≅⟨ identity' (Γ ++ B ∷ []) Δ _ ⟩
-        ( P.subst (A ∈_) (P.sym lm1)
-        $ fwd Γ [] i )
-        ≅⟨ H.≡-subst-removable (A ∈_) (P.sym lm1) _ ⟩
-        ( fwd Γ [] i )
-        ≅⟨ fwd.identity' Γ i ⟩
-        i
-      ∎
-      where
-        lm1 : (Γ ++ B ∷ []) ++ Δ ++ Π ≡ Γ ++ B ∷ Δ ++ Π
-        lm1 = ++.assoc Γ (B ∷ []) (Δ ++ Π)
-
-    inv' : (Γ Δ Σ {Π} : Context) {A : Type} →
-           (i : A ∈ Γ ++ Δ ++ Σ ++ Π) →
-           swp Γ Δ Σ (swp Γ Σ Δ i) ≅ i
-    inv' Γ []      Σ       {Π} {A} i = identity' Γ Σ i
-    inv' Γ Δ       []      {Π} {A} i = identity' Γ Δ i
-    inv' Γ (B ∷ Δ) (C ∷ Σ) {Π} {A} i =
-      begin
-        ( P.subst (A ∈_) lm1
-        $ swp (Γ ++ B ∷ []) Δ (C ∷ Σ)
-        $ P.subst (A ∈_) (P.sym lm2)
-        $ fwd Γ (C ∷ Σ)
-        $ P.subst (A ∈_) lm3
-        $ swp (Γ ++ C ∷ []) Σ (B ∷ Δ)
-        $ P.subst (A ∈_) (P.sym lm4)
-        $ fwd Γ (B ∷ Δ) i )
-        ≅⟨ H.≡-subst-removable (A ∈_) lm1 _ ⟩
-        ( swp (Γ ++ B ∷ []) Δ (C ∷ Σ)
-        $ P.subst (A ∈_) (P.sym lm2)
-        $ fwd Γ (C ∷ Σ)
-        $ P.subst (A ∈_) lm3
-        $ swp (Γ ++ C ∷ []) Σ (B ∷ Δ)
-        $ P.subst (A ∈_) (P.sym lm4)
-        $ fwd Γ (B ∷ Δ) i )
-        ≅⟨ {!inv' (Γ ++ B ∷ []) Δ (C ∷ Σ)!} ⟩
-        i
-      ∎
-      where
-        lm1 = ++.assoc Γ (B ∷ []) (Δ ++ C ∷ Σ ++ Π)
-        lm2 = ++.assoc Γ (B ∷ []) (C ∷ Σ ++ Δ ++ Π)
-        lm3 = ++.assoc Γ (C ∷ []) (Σ ++ B ∷ Δ ++ Π)
-        lm4 = ++.assoc Γ (C ∷ []) (B ∷ Δ ++ Σ ++ Π)
-
 mutual
 
   -- Principal Cuts.
@@ -393,17 +295,6 @@ mutual
 
 
   postulate
-    -- There is a bijection between the context ΓΔAΘ
-    -- and the context ΓAΔΘ, in which the A has been
-    -- lifted over the context Δ.
-    fwd : (Γ Δ {Θ} : Context) {A : Type} →
-        Γ ++ Δ ++ A ∷ Θ ∼[ bag ] Γ ++ A ∷ Δ ++ Θ
-
-    -- There is a bijection between the context ΓΣΔΠ and
-    -- the similar context with Σ and Δ swapped.
-    swp : (Γ Δ Σ {Π} : Context) →
-        Γ ++ Σ ++ Δ ++ Π ∼[ bag ] Γ ++ Δ ++ Σ ++ Π
-
     -- If there is a bijection between Γ and Δ, then there
     -- is a bijection between Γ minus i, and Δ minus the
     -- image of i across the bijection.
