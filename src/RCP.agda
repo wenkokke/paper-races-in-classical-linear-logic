@@ -10,7 +10,7 @@ open import Data.Product using (Σ; Σ-syntax; _,_; proj₁; proj₂)
 open import Function using (flip; _$_)
 open import Function.Equality using (module Π; Π; _⟶_; _⟨$⟩_)
 open import Function.Inverse as I using (Inverse; module Inverse; _∘_; _↔_)
-open import Logic.Context using (bbl; fwd; swp)
+open import Logic.Context using (bbl; fwd; swp; swp'; ass; _-_)
 open import Relation.Binary
 open import Relation.Binary.HeterogeneousEquality as H using (_≅_; refl)
 open import Relation.Binary.PropositionalEquality as P using (_≡_; refl)
@@ -96,10 +96,6 @@ Context = List Type
 open Data.List.Any.Membership-≡
 private
   module ++ {a} {A : Set a} = Monoid (Data.List.monoid A)
-
-_-_ : (Γ : Context) {A : Type} (i : A ∈ Γ) → Context
-(B ∷ Γ) - (here  _) = Γ
-(B ∷ Γ) - (there i) = B ∷ Γ - i
 
 
 -- Typing Rules.
@@ -301,19 +297,6 @@ mutual
     del : {Γ Δ : Context} {A : Type} →
           (x : Δ ∼[ bag ] Γ) (i : A ∈ Γ) →
           Δ - (x ⟨⇐⟩ i) ∼[ bag ] Γ - i
-
-
-  -- Move a context forwards over another context (w/ prefix).
-  swp' : (Γ Δ {Θ} : Context) → Γ ++ Θ ++ Δ ∼[ bag ] Γ ++ Δ ++ Θ
-  swp' Γ Δ {Θ} = P.subst₂ (λ Δ' Θ' → Γ ++ Θ ++ Δ' ∼[ bag ] Γ ++ Δ ++ Θ')
-                 (proj₂ ++.identity Δ)
-                 (proj₂ ++.identity Θ)
-                 (swp Γ Δ Θ {[]})
-
-  -- Rewrite by associativity.
-  ass : (Γ Δ {Θ} : Context) → Γ ++ (Δ ++ Θ) ∼[ bag ] (Γ ++ Δ) ++ Θ
-  ass Γ Δ {Θ} rewrite ++.assoc Γ Δ Θ = I.id
-
 
 -- -}
 -- -}
