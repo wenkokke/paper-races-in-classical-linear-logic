@@ -1,19 +1,21 @@
 open import Level renaming (suc to lsuc; zero to lzero)
 open import Algebra
-open import Data.Nat as ℕ using (ℕ)
+open import Data.Nat as ℕ                   using (ℕ)
 open import Data.Pos as ℤ⁺
-open import Data.List as L using (List; _∷_; []; _++_)
-open import Data.List.Properties as LP using ()
+open import Data.List as L                  using (List; _∷_; []; _++_)
+open import Data.List.Properties as LP      using ()
 open import Data.List.Properties.Ext as LPE using ()
-open import Data.List.Any as LA using (Any; here; there)
+open import Data.List.Any as LA             using (Any; here; there)
 open import Data.List.Any.BagAndSetEquality as B
-open import Data.Product using (∃; Σ; Σ-syntax; _,_; proj₁; proj₂)
-open import Data.Vec as V using (Vec; _∷_; [])
-open import Data.Vec.Properties as VP using ()
-open import Data.Sum using (_⊎_; inj₁; inj₂)
-open import Function using (_∘_; _$_; flip)
-open import Function.Equality using (_⟨$⟩_)
-open import Function.Inverse as I using (module Inverse)
+open import Data.Product                    using (∃; Σ; Σ-syntax; _,_; proj₁; proj₂)
+open import Data.Vec as V                   using (Vec; _∷_; [])
+open import Data.Vec.Properties as VP       using ()
+open import Data.Sum                        using (_⊎_; inj₁; inj₂)
+open import Function                        using (_∘_; _$_; flip)
+open import Function.Equality               using (_⟨$⟩_)
+open import Function.Inverse as I           using (module Inverse)
+open        Inverse                         using (to; from)
+open import Logic.Context                   
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 open P.≡-Reasoning
 
@@ -115,53 +117,8 @@ Context = List Type
 
 open LA.Membership-≡
 
-_-_ : (Γ : Context) {A : Type} (i : A ∈ Γ) → Context
-(B ∷ Γ) - (here  _) = Γ
-(B ∷ Γ) - (there i) = B ∷ Γ - i
 
-_⟨⇐⟩_ : {Γ Δ : Context} (b : Δ ∼[ bag ] Γ) {A : Type} (i : A ∈ Γ) → A ∈ Δ
-b ⟨⇐⟩ i = Inverse.from b ⟨$⟩ i
-
-
-postulate
-  -- There is a bijection between the context ΓΔAΘ
-  -- and the context ΓAΔΘ, in which the A has been
-  -- lifted over the context Δ.
-  fwd : (Γ Δ {Θ} : Context) {A : Type} →
-        Γ ++ Δ ++ A ∷ Θ ∼[ bag ] Γ ++ A ∷ Δ ++ Θ
-
-  -- There is a bijection between the context ΓΣΔΠ and
-  -- the similar context with Σ and Δ swapped.
-  swp' : (Γ Δ {Θ} : Context) →
-         Γ ++ Θ ++ Δ ∼[ bag ] Γ ++ Δ ++ Θ
-
-  -- There is a bijection between the context ΓΣΔΠ and
-  -- the similar context with Σ and Δ swapped.
-  swp : (Γ Δ Σ {Π} : Context) →
-        Γ ++ Σ ++ Δ ++ Π ∼[ bag ] Γ ++ Δ ++ Σ ++ Π
-
-  -- Ix there is a bijection between Γ and Δ, then there
-  -- is a bijection between Γ minus i, and Δ minus the
-  -- image ox i across the bijection.
-  del : {Γ Δ : Context} {A : Type} →
-        (b : Δ ∼[ bag ] Γ) (i : A ∈ Γ) →
-        Δ - (b ⟨⇐⟩ i) ∼[ bag ] Γ - i
-
-ass : (Γ Δ {Θ} : Context) → (Γ ++ Δ) ++ Θ ∼[ bag ] Γ ++ (Δ ++ Θ)
-ass Γ Δ {Θ} rewrite ++.assoc Γ Δ Θ = I.id
-
-split : ∀ (Γ {Δ} : Context) {A : Type} →
-        (i : A ∈ Γ ++ Δ) →
-        Σ[ j ∈ A ∈ Γ ] ((Γ ++ Δ) - i ≡ Γ - j ++ Δ) ⊎
-        Σ[ j ∈ A ∈ Δ ] ((Γ ++ Δ) - i ≡ Γ ++ Δ - j)
-split [] i = inj₂ (i , P.refl)
-split (_ ∷ Γ) (here px) = inj₁ (here px , P.refl)
-split (_ ∷ Γ) (there i) with split Γ i
-... | inj₁ (j , p) = inj₁ (there j , P.cong (_ ∷_) p)
-... | inj₂ (j , p) = inj₂ (j , P.cong (_ ∷_) p)
-
-
--- Typiny Rules.
+-- Typing Rules.
 
 infix 1 ⊢_
 
@@ -254,8 +211,8 @@ mutual
            ⊢ ℤ⁺.replicate n A ++ Γ
 
   expand {Γ} {A} {n} (exch b x)
-    = exch (B.++-cong {xs₁ = replicate n A} I.id (del b (here P.refl)))
-    $ expandIn (b ⟨⇐⟩ here P.refl) x
+    = exch (B.++-cong {xs₁ = replicate n A} I.id (del-from b (here P.refl)))
+    $ expandIn (from b ⟨$⟩ here P.refl) x
   expand {Γ} {A} {.(m + n)} (cont {.Γ} {.A} {m} {n} x)
     rewrite P.sym (replicate-++ m n {A})
           | ++.assoc (replicate m A) (replicate n A) Γ
@@ -279,7 +236,7 @@ mutual
     with split Γ i
   ... | inj₁ (j , p) rewrite p
       = exch (swp [] (replicate n A) (_ ∷ []) I.∘
-              ass (_ ∷ replicate n A) (Γ - j ))
+              I.sym (ass (_ ∷ replicate n A) (Γ - j )))
       $ flip send h
       $ exch (swp [] (_ ∷ []) (replicate n A))
       $ expandIn (there j) x
@@ -327,7 +284,7 @@ mutual
     with split Γ i
   ... | inj₁ (j , p) rewrite p
       = exch (swp [] (replicate n A) (_ ∷ []) I.∘
-              ass (_ ∷ replicate n A) (Γ - j))
+              I.sym (ass (_ ∷ replicate n A) (Γ - j)))
       $ flip pool h
       $ exch (swp [] (_ ∷ []) (replicate n A))
       $ expandIn (there j) x
@@ -347,8 +304,8 @@ mutual
     $ exch (swp [] (_ ∷ []) (replicate n A))
     $ expandIn (there i) x
   expandIn {Γ} {A} {n} i (exch b x)
-    = exch (B.++-cong {xs₁ = replicate n A} I.id (del b i))
-    $ expandIn (b ⟨⇐⟩ i) x
+    = exch (B.++-cong {xs₁ = replicate n A} I.id (del-from b i))
+    $ expandIn (from b ⟨$⟩ i) x
 
 
 
