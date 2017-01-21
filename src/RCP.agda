@@ -1,21 +1,19 @@
-open import Level as ℓ
-open import Algebra
-open import Category.Monad
-open import Data.List using (List; _∷_; []; _++_)
-open import Data.List.Any using (Any; here; there)
-open import Data.List.Any.Properties using (++↔)
+open import Algebra                  using (module Monoid)
+open import Data.List                using (List; _∷_; []; _++_)
+open import Data.List.Any            using (here; there)
 open import Data.List.Any.BagAndSetEquality as B
-open import Data.Sum using (_⊎_; inj₁; inj₂; [_,_])
-open import Data.Product using (Σ; Σ-syntax; _,_; proj₁; proj₂)
-open import Function using (flip; _$_)
-open import Function.Equality using (module Π; Π; _⟶_; _⟨$⟩_)
-open import Function.Inverse as I using (Inverse; module Inverse; _∘_; _↔_)
-open import Logic.Context using (bbl; fwd; swp; swp'; ass; _-_)
-open import Relation.Binary
-open import Relation.Binary.HeterogeneousEquality as H using (_≅_; refl)
-open import Relation.Binary.PropositionalEquality as P using (_≡_; refl)
+open import Data.Sum                 using (_⊎_; inj₁; inj₂)
+open import Data.Product             using (Σ-syntax; _,_; proj₁; proj₂)
+open import Function                 using (flip; _$_)
+open import Function.Equality        using (_⟨$⟩_)
+open import Function.Inverse         using (id; sym; _∘_)
+open        Function.Inverse.Inverse using (to; from)
+open import Logic.Context
+open import Relation.Binary.PropositionalEquality as P using (_≡_)
+
 
 module RCP where
+
 
 data Type : Set where
   𝟏 : Type
@@ -180,12 +178,12 @@ mutual
   cut {Γ} {Δ} {A₁ & A₂} (case f h) (sel₁ g) = cut f g
   cut {Γ} {Δ} {A₁ & A₂} (case f h) (sel₂ g) = cut h g
 
-  cut {Γ} {Δ} {A} f (exch x g)
-      = exch (B.++-cong {xs₁ = Γ} I.id (del x (here refl)))
-      $ cutIn (here refl) (x ⟨⇐⟩ here refl) f g
-  cut {Γ} {Δ} {A} (exch x f) g
-      = exch (B.++-cong {ys₁ = Δ} (del x (here refl)) I.id)
-      $ cutIn (x ⟨⇐⟩ here refl) (here refl) f g
+  cut {Γ} {Δ} {A} f (exch eq g)
+      = exch (B.++-cong {xs₁ = Γ} id (del-from eq (here P.refl)))
+      $ cutIn (here P.refl) (from eq ⟨$⟩ here P.refl) f g
+  cut {Γ} {Δ} {A} (exch eq f) g
+      = exch (B.++-cong {ys₁ = Δ} (del-from eq (here P.refl)) id)
+      $ cutIn (from eq ⟨$⟩ here P.refl) (here P.refl) f g
 
   -- Permutation Cuts,
   cutIn : {Γ Δ : Context} {A : Type} →
@@ -195,14 +193,14 @@ mutual
          ------------------
          ⊢ Γ - i ++ Δ - j
 
-  cutIn (here refl) (here refl) f g = cut f g
+  cutIn (here P.refl) (here P.refl) f g = cut f g
 
   -- Left.
   cutIn {.(A ⊗ B ∷ Γ₁ ++ Γ₂)} {Δ} (there i) j (send {Γ₁} {Γ₂} {A} {B} f h) g
     with split Γ₁ i
   ... | inj₁ (k , p) rewrite p
       = exch (ass  (A ⊗ B ∷ Γ₁ - k)  Γ₂ ∘
-              swp' (A ⊗ B ∷ Γ₁ - k)  Γ₂ ∘ I.sym (
+              swp' (A ⊗ B ∷ Γ₁ - k)  Γ₂ ∘ sym (
               ass  (A ⊗ B ∷ Γ₁ - k) (Δ - j)))
       $ send (cutIn (there k) j f g) h
   ... | inj₂ (k , p) rewrite p
@@ -222,81 +220,52 @@ mutual
       = wait (cutIn i j f g)
   cutIn (there i) j loop g
       = loop
-  cutIn {Γ} {Δ} i j (exch x f) g
-      = exch (B.++-cong {ys₁ = Δ - j} (del x i) I.id)
-      $ cutIn (x ⟨⇐⟩ i) j f g
+  cutIn {Γ} {Δ} i j (exch eq f) g
+      = exch (B.++-cong {ys₁ = Δ - j} (del-from eq i) id)
+      $ cutIn (from eq ⟨$⟩ i) j f g
 
   -- Right.
   cutIn {Γ} {.(A ⊗ B ∷ Δ₁ ++ Δ₂)} i (there j) f (send {Δ₁} {Δ₂} {A} {B} g h)
     with split Δ₁ j
   ... | inj₁ (k , p) rewrite p
-      = exch (I.sym (ass (A ⊗ B ∷ Γ - i) (Δ₁ - k) ∘ fwd [] (Γ - i)))
+      = exch (sym (ass (A ⊗ B ∷ Γ - i) (Δ₁ - k) ∘ fwd [] (Γ - i)))
       $ flip send h
       $ exch (fwd [] (Γ - i))
       $ cutIn i (there k) f g
   ... | inj₂ (k , p) rewrite p
-      = exch (I.sym (swp [] (A ⊗ B ∷ Δ₁) (Γ - i)))
+      = exch (sym (swp [] (A ⊗ B ∷ Δ₁) (Γ - i)))
       $ send g
       $ exch (fwd [] (Γ - i))
       $ cutIn i (there k) f h
   cutIn {Γ} {.(A ⅋ B ∷ Δ)} i (there j) f (recv {Δ} {A} {B} g)
-      = exch (I.sym (fwd [] (Γ - i)))
+      = exch (sym (fwd [] (Γ - i)))
       $ recv
       $ exch (swp [] (A ∷ B ∷ []) (Γ - i))
       $ cutIn i (there (there j)) f g
   cutIn {Γ} {Δ} i (there j) f (sel₁ g)
-      = exch (I.sym (fwd [] (Γ - i)))
+      = exch (sym (fwd [] (Γ - i)))
       $ sel₁
       $ exch (fwd [] (Γ - i))
       $ cutIn i (there j) f g
   cutIn {Γ} {Δ} i (there j) f (sel₂ g)
-      = exch (I.sym (fwd [] (Γ - i)))
+      = exch (sym (fwd [] (Γ - i)))
       $ sel₂
       $ exch (fwd [] (Γ - i))
       $ cutIn i (there j) f g
   cutIn {Γ} {Δ} i (there j) f (case g h)
-      = exch (I.sym (fwd [] (Γ - i)))
+      = exch (sym (fwd [] (Γ - i)))
       $ case (exch (fwd [] (Γ - i)) $ cutIn i (there j) f g)
              (exch (fwd [] (Γ - i)) $ cutIn i (there j) f h)
   cutIn {Γ} {.(𝟏 ∷ [])} i (there ()) f halt
   cutIn {Γ} {Δ} i (there j) f (wait g)
-      = exch (I.sym (fwd [] (Γ - i)))
+      = exch (sym (fwd [] (Γ - i)))
       $ wait
       $ cutIn i j f g
   cutIn {Γ} {Δ} i (there j) f loop
-      = exch (I.sym (fwd [] (Γ - i))) loop
-  cutIn {Γ} {Δ} i j f (exch x g)
-      = exch (B.++-cong {xs₁ = Γ - i} I.id (del x j))
-      $ cutIn i (x ⟨⇐⟩ j) f g
-
-  -- Helper functions.
-
-  -- Transport a membership proof along a bag equality.
-  _⟨⇐⟩_ : {Γ Δ : Context} (x : Δ ∼[ bag ] Γ) {A : Type} (i : A ∈ Γ) → A ∈ Δ
-  x ⟨⇐⟩ i = Inverse.from x ⟨$⟩ i
-
-  _⟨⇒⟩_ : {Γ Δ : Context} (x : Δ ∼[ bag ] Γ) {A : Type} (i : A ∈ Δ) → A ∈ Γ
-  x ⟨⇒⟩ i = Inverse.to x ⟨$⟩ i
-
-  -- Split a context based on a proof of membership (used as index).
-  split : ∀ (Γ {Δ} : Context) {A : Type} →
-          (i : A ∈ Γ ++ Δ) →
-          Σ[ j ∈ A ∈ Γ ] ((Γ ++ Δ) - i ≡ Γ - j ++ Δ) ⊎
-          Σ[ j ∈ A ∈ Δ ] ((Γ ++ Δ) - i ≡ Γ ++ Δ - j)
-  split [] i = inj₂ (i , refl)
-  split (_ ∷ Γ) (here px) = inj₁ (here px , refl)
-  split (_ ∷ Γ) (there i) with split Γ i
-  ... | inj₁ (j , p) = inj₁ (there j , P.cong (_ ∷_) p)
-  ... | inj₂ (j , p) = inj₂ (j , P.cong (_ ∷_) p)
-
-
-  postulate
-    -- If there is a bijection between Γ and Δ, then there
-    -- is a bijection between Γ minus i, and Δ minus the
-    -- image of i across the bijection.
-    del : {Γ Δ : Context} {A : Type} →
-          (x : Δ ∼[ bag ] Γ) (i : A ∈ Γ) →
-          Δ - (x ⟨⇐⟩ i) ∼[ bag ] Γ - i
+      = exch (sym (fwd [] (Γ - i))) loop
+  cutIn {Γ} {Δ} i j f (exch eq g)
+      = exch (B.++-cong {xs₁ = Γ - i} id (del-from eq j))
+      $ cutIn i (from eq ⟨$⟩ j) f g
 
 -- -}
 -- -}
