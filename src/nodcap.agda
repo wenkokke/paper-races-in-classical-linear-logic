@@ -7,7 +7,7 @@ open import Data.List.Properties as LP      using ()
 open import Data.List.Properties.Ext as LPE using ()
 open import Data.List.Any as LA             using (Any; here; there)
 open import Data.List.Any.BagAndSetEquality as B
-open import Data.Product                    using (∃; Σ; Σ-syntax; _,_; proj₁; proj₂)
+open import Data.Product as PR              using (∃; _×_; _,_; proj₁; proj₂)
 open import Data.Vec as V                   using (Vec; _∷_; [])
 open import Data.Vec.Properties as VP       using ()
 open import Data.Sum                        using (_⊎_; inj₁; inj₂)
@@ -15,7 +15,8 @@ open import Function                        using (_∘_; _$_; flip)
 open import Function.Equality               using (_⟨$⟩_)
 open import Function.Inverse as I           using (module Inverse)
 open        Inverse                         using (to; from)
-open import Logic.Context                   
+open import Logic.Context
+open import Logic.Environment
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 open P.≡-Reasoning
 
@@ -308,30 +309,22 @@ mutual
     $ expandIn (from b ⟨$⟩ i) x
 
 
+-- a series of identical sequents constructed from the Γmn in an Unpool instance
+[⊢_,_]m : {n : ℕ} {mkS : Context → Set} →
+          List (Vec (∃ λ Γij → mkS Γij) n) → Context → Set
+[⊢ Γmn , Δ ]m = Env (L.map (λ Γin → ⊢ L.concat (L.map proj₁ (V.toList Γin)) ++ Δ) Γmn)
 
-⌊_⌋ : {n : ℕ} {S : Context → Set} → Vec (∃ (λ Γi → S Γi)) n → Context
-⌊ Γn ⌋ = L.concat (L.map proj₁ (V.toList Γn))
 
-data Env : (m : ℕ) (Γ : Vec Set m) → Set where
-  [] : Env ℕ.zero []
-  _∷_ : {A : Set} (x : A) {n : ℕ} {Γ : Vec Set n} (xs : Env n Γ) → Env (ℕ.suc n) (A ∷ Γ)
+record Unpool (n : ℤ⁺) (Γ : Context) (mkS : Context → Set) : Set where
 
-record Unpool (n : ℤ⁺) (Γ : Context) (S : Context → Set) : Set where
-  constructor
-    [_,_,_]ᵁ
+  constructor UP[_,_]
 
   field
-    m : ℤ⁺
-    Γmn : Vec (Vec (∃ (λ Γij → S Γij)) (toℕ n)) (toℕ m)
+    Γmn : List (Vec (∃ λ Γij → mkS Γij) (toℕ n))
+    ΣnΓnmΔ→ΓΔ : {Δ : Context} →
 
-  ⌊Γmn⌋m : Vec Context (toℕ m)
-  ⌊Γmn⌋m = V.map ⌊_⌋ Γmn
-
-  field
-    ⌊Γmn⌋m→Γ : {Δ : Context} →
-
-      Env (toℕ m) (V.map (λ Γ′ → ⊢ Γ′ ++ Δ) ⌊Γmn⌋m) →
-      -----------------------------------------------
+      [⊢ Γmn , Δ ]m →
+      ---------------
       ⊢ Γ ++ Δ
 
 infix 1 Unpool
@@ -345,7 +338,14 @@ mutual
     -----------------------------
     Σ[i≤ n ]∃[ Γᵢ ⊆ Γ ] ⊢ A ∷ Γᵢ
 
-  unpool = {!!}
+  unpool (exch b x) = {!!}
+  unpool (pool x y) = {!!}
+  unpool (mk⊗₁ {Γ} {A} x) = UP[ Γ' , f' ]
+    where
+      Γ' : List (Vec (∃ (λ Γᵢ → ⊢ A ∷ Γᵢ)) 1)
+      Γ' = L.[ V.[ Γ , x ] ]
+      f' : {Δ : Context} → [⊢ Γ' , Δ ]m → ⊢ Γ ++ Δ
+      f' (x ∷ []) = P.subst ⊢_ (P.cong (_++ _) (proj₂ ++.identity Γ)) x
 
   unpoolIn : {Γ : Context} {A : Type} {n : ℤ⁺} →
              (i : ⊗[ A ^ n ] ∈ Γ) →
@@ -360,15 +360,21 @@ mutual
   unpoolIn (there i) (sel₁ x)   = {!!}
   unpoolIn (there i) (sel₂ x)   = {!!}
   unpoolIn (there i) (case {Γ} {A} {B} x y)
+
     with unpoolIn (there i) x | unpoolIn (there i) y
-  ... | [ mx , Γx , fx ]ᵁ | [ my , Γy , fy ]ᵁ = [ m' , Γ' , f' ]ᵁ
+  ... | UP[ Γx , fx ] | UP[ Γy , fy ] = UP[ Γx ++ Γy , {!!} ]
     where
-      m' = mx + my
-      Γ' = P.subst (Vec _) (toℕ-+ mx) (Γx V.++ Γy)
       f' : {Δ : Context} →
-           Env (toℕ m') (V.map (λ Γ' → ⊢ Γ' ++ Δ) (V.map ⌊_⌋ Γ')) →
+
+           [⊢ Γx ++ Γy , Δ ]m →
+           --------------------
            ⊢ A & B ∷ Γ - i ++ Δ
-      f' zs = {!fx!}
+
+      f' {Δ} zs = case (fx (proj₁ xs×ys)) (fy (proj₂ xs×ys))
+        where
+          xs×ys : [⊢ Γx , Δ ]m × [⊢ Γy , Δ ]m
+          xs×ys = splitEnv (P.subst Env (LP.map-++-commute _ Γx Γy) zs)
+
   unpoolIn (there i)  halt      = {!!}
   unpoolIn (there i) (wait x)   = {!!}
   unpoolIn (there i)  loop      = {!!}
