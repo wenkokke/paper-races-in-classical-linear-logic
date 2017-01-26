@@ -1,4 +1,5 @@
 open import Algebra
+open import Data.Nat 
 open import Data.List as L                             using (List; []; _∷_; [_]; _++_)
 open import Data.List.Any                              using (here; there)
 open import Data.List.Any.BagAndSetEquality as B       using ()
@@ -62,44 +63,53 @@ fwd []       ys = fwd' ys
     fwd' []       = id
     fwd' (x ∷ xs) = bbl [] ∘ B.∷-cong P.refl (fwd' xs)
 
+bwd : (xs ys {zs} : List A) {w : A} →
+      xs ++ w ∷ ys ++ zs ∼[ bag ] xs ++ ys ++ w ∷ zs
+bwd xs ys = sym (fwd xs ys)
 
 -- There is a bijection between indices into the context
 -- ΓΣΔΠ and the context ΓΔΣΠ.
-swp : (xs ys zs {ws} : List A) →
+swp₄ : (xs ys zs {ws} : List A) →
       xs ++ zs ++ ys ++ ws ∼[ bag ] xs ++ ys ++ zs ++ ws
-swp xs []       zs = id
-swp xs (y ∷ ys) zs =
+swp₄ xs []       zs = id
+swp₄ xs (y ∷ ys) zs =
   ( P.subst₂ _∼[ bag ]_ (++.assoc xs [ y ] _) (++.assoc xs [ y ] _)
-  $ swp (xs ++ [ y ]) ys zs
+  $ swp₄ (xs ++ [ y ]) ys zs
   ) ∘ fwd xs zs
 
+-- Alias for swp₄.
+swp = swp₄
 
 -- There is a bijection between indices into the context
 -- ΓΣΔ and the context ΓΔΣ. This is mostly a convenience
 -- function because of the annoyance of using ++.identity
 -- in the logic proofs.
-swp' : (xs ys {zs} : List A) →
+swp₃ : (xs ys {zs} : List A) →
        xs ++ zs ++ ys ∼[ bag ] xs ++ ys ++ zs
-swp' xs ys {zs} =
+swp₃ xs ys {zs} =
   ( P.subst₂ (λ ys' zs' → xs ++ zs ++ ys' ∼[ bag ] xs ++ ys ++ zs')
              (proj₂ ++.identity ys)
              (proj₂ ++.identity zs)
-  $ swp xs ys zs
+  $ swp₄ xs ys zs
   )
 
 -- There is a bijection between indices into the context
--- Γ[ΔΘ] and the context [ΓΔ]Θ. This is trivially true, because
--- these contexts are literally equal.
-ass : (xs ys {zs} : List A) →
-      xs ++ (ys ++ zs) ∼[ bag ] (xs ++ ys) ++ zs
-ass xs ys {zs} rewrite ++.assoc xs ys zs = id
-
+-- ΓΣΔ and the context ΓΔΣ. This is mostly a convenience
+-- function because of the annoyance of using ++.identity
+-- in the logic proofs.
+swp₂ : (xs {ys} : List A) →
+       ys ++ xs ∼[ bag ] xs ++ ys
+swp₂ = swp₃ []
 
 
 _-_ : (xs : List A) {x : A} (i : x ∈ xs) → List A
 (x ∷ xs) - (here  _) = xs
 (x ∷ xs) - (there i) = x ∷ xs - i
 
+
+del-[] : {x y : A} (i : y ∈ x ∷ []) → (x ∷ []) - i ≡ []
+del-[] (here px) = P.refl
+del-[] (there ())
 
 private
   -- Given a proof of membership x ∈ xs, we can be sure that
@@ -151,7 +161,6 @@ split (_ ∷ xs) (here px) = inj₁ (here px , P.refl)
 split (_ ∷ xs) (there i) with split xs i
 ... | inj₁ (j , p) = inj₁ (there j , P.cong (_ ∷_) p)
 ... | inj₂ (j , p) = inj₂ (j , P.cong (_ ∷_) p)
-
 
 
 -- -}
