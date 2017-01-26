@@ -1,4 +1,5 @@
 open import Algebra
+open import Data.Nat
 open import Data.List
 open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
@@ -27,3 +28,8 @@ concat-++-commute (xs ∷ xss) yss =
   ≡⟨ cong (xs ++_) (concat-++-commute xss yss) ⟩
     xs ++ concat (xss ++ yss)
   ∎
+
+replicate-++-commute : ∀ {a} {A : Set a} {x : A} (m n : ℕ) →
+  replicate m x ++ replicate n x ≡ replicate (m + n) x
+replicate-++-commute  zero   n = refl
+replicate-++-commute (suc m) n = cong (_ ∷_) (replicate-++-commute m n)

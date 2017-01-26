@@ -1,31 +1,30 @@
-open import Data.Nat as ℕ using (ℕ)
+open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.List as L using (List; _∷_; []; _++_)
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
 module Data.Pos where
 
+data ℕ⁺ : Set where
+  suc : ℕ → ℕ⁺
 
-data ℤ⁺ : Set where
-  one : ℤ⁺
-  suc : ℤ⁺ → ℤ⁺
+toℕ : ℕ⁺ → ℕ
+toℕ (suc n) = suc n
 
-_+_ : ℤ⁺ → ℤ⁺ → ℤ⁺
-one   + n = suc n
-suc m + n = suc (m + n)
+_+_ : ℕ⁺ → ℕ⁺ → ℕ⁺
+suc m + n = suc (m ℕ.+ toℕ n)
 
-toℕ : ℤ⁺ → ℕ
-toℕ  one    = ℕ.suc ℕ.zero
-toℕ (suc n) = ℕ.suc (toℕ n)
+toℕ-+ : (m {n} : ℕ⁺) → toℕ m ℕ.+ toℕ n ≡ toℕ (m + n)
+toℕ-+ (suc m) = P.refl
 
-toℕ-+ : (m {n} : ℤ⁺) → toℕ m ℕ.+ toℕ n ≡ toℕ (m + n)
-toℕ-+  one    = P.refl
-toℕ-+ (suc m) = P.cong ℕ.suc (toℕ-+ m)
+replicate⁺ : ∀ {a} {A : Set a} → ℕ⁺ → A → List A
+replicate⁺ (suc n) x = x ∷ L.replicate n x
 
-replicate : ∀ {a} {A : Set a} (n : ℤ⁺) (x : A) → List A
-replicate  one    x = x ∷ []
-replicate (suc n) x = x ∷ replicate n x
-
-replicate-++ : ∀ {a} {A : Set a} (m n : ℤ⁺) {x : A} →
-  replicate m x ++ replicate n x ≡ replicate (m + n) x
-replicate-++  one    n = P.refl
-replicate-++ (suc m) n = P.cong (_ ∷_) (replicate-++ m n)
+replicate⁺-++-commute : ∀ {a} {A : Set a} {x : A} (m n : ℕ⁺) →
+  replicate⁺ m x ++ replicate⁺ n x ≡ replicate⁺ (m + n) x
+replicate⁺-++-commute (suc m) (suc n)
+  = P.cong (_ ∷_) (replicate-++-commute m (suc n))
+  where
+    replicate-++-commute : ∀ {a} {A : Set a} {x : A} (m n : ℕ) →
+      L.replicate m x ++ L.replicate n x ≡ L.replicate (m ℕ.+ n) x
+    replicate-++-commute  zero   n = P.refl
+    replicate-++-commute (suc m) n = P.cong (_ ∷_) (replicate-++-commute m n)
