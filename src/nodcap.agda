@@ -300,7 +300,8 @@ mutual
     ---------------------
     ⊢ Γ ++ Δ
 
-  cut {_} {Δ} {𝟏} halt (wait y) = y
+  cut {_} {Δ} {𝟏} halt (wait y)
+    = y
   cut {Γ} {_} {⊥} (wait x) halt
     = P.subst ⊢_ (P.sym (proj₂ ++.identity Γ)) x
   cut {_} {Θ} {A ⊗ B} (send {Γ} {Δ} x y) (recv z)
@@ -312,10 +313,14 @@ mutual
   cut {Θ} {_} {A ⅋ B} (recv x) (send {Γ} {Δ} y z)
     = P.subst ⊢_ (++.assoc Θ Γ Δ)
     $ cut (cut x y) z
-  cut {Γ} {Δ} {A ⊕ B} (sel₁ x) (case y z) = cut x y
-  cut {Γ} {Δ} {A ⊕ B} (sel₂ x) (case y z) = cut x z
-  cut {Γ} {Δ} {A & B} (case x y) (sel₁ z) = cut x z
-  cut {Γ} {Δ} {A & B} (case x y) (sel₂ z) = cut y z
+  cut {Γ} {Δ} {A ⊕ B} (sel₁ x) (case y z)
+    = cut x y
+  cut {Γ} {Δ} {A ⊕ B} (sel₂ x) (case y z)
+    = cut x z
+  cut {Γ} {Δ} {A & B} (case x y) (sel₁ z)
+    = cut x z
+  cut {Γ} {Δ} {A & B} (case x y) (sel₂ z)
+    = cut y z
   cut {Γ} {Δ} {⊗[ ._ ] A} (mk⊗₁ x) y
     = cut x (expand y)
   cut {_} {Θ} {⊗[ ._ ] _} (pool {Γ} {Δ} x y) z
@@ -347,41 +352,138 @@ mutual
     ⊢ Γ - i ++ Δ - j
 
   cutIn (here P.refl) (here P.refl) x y = cut x y
-  cutIn i (there j) x (send y z) = {!!}
-  cutIn i (there j) x (recv y) = {!!}
-  cutIn i (there j) x (sel₁ y) = {!!}
-  cutIn i (there j) x (sel₂ y) = {!!}
-  cutIn i (there j) x (case y z) = {!!}
-  cutIn i (there j) x  halt = {!!}
-  cutIn i (there j) x (wait y) = {!!}
-  cutIn i (there j) x  loop = {!!}
-  cutIn i (there j) x (mk⅋₁ y) = {!!}
-  cutIn i (there j) x (mk⊗₁ y) = {!!}
-  cutIn i (there j) x (cont y) = {!!}
-  cutIn i (there j) x (pool y z) = {!!}
-  cutIn i (there j) x (exch b y) = {!!}
-  cutIn (there i) j (send x y) z = {!!}
-  cutIn (there i) j (recv x) y = {!!}
-  cutIn (there i) j (sel₁ x) y = {!!}
-  cutIn (there i) j (sel₂ x) y = {!!}
-  cutIn (there i) j (case x y) z = {!!}
-  cutIn (there i) j  halt y = {!!}
-  cutIn (there i) j (wait x) y = {!!}
-  cutIn (there i) j  loop y = {!!}
-  cutIn (there i) j (mk⅋₁ x) y = {!!}
-  cutIn (there i) j (mk⊗₁ x) y = {!!}
-  cutIn (there i) j (cont x) y = {!!}
-  cutIn (there i) j (pool x y) z = {!!}
-  cutIn (there i) j (exch b x) y = {!!}
+
+  cutIn {_} {Θ} (there i) j (send {Γ} {Δ} x y) z
+    with split Γ i
+  ... | inj₁ (k , p) rewrite p
+      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
+      $ exch (swp₃ (_ ∷ Γ - k) Δ)
+      $ P.subst ⊢_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
+      $ flip send y
+      $ cutIn (there k) j x z
+  ... | inj₂ (k , p) rewrite p
+      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
+      $ send x
+      $ cutIn (there k) j y z
+  cutIn (there i) j (recv x) y
+    = recv
+    $ cutIn (there (there i)) j x y
+  cutIn (there i) j (sel₁ x) y
+    = sel₁
+    $ cutIn (there i) j x y
+  cutIn (there i) j (sel₂ x) y
+    = sel₂
+    $ cutIn (there i) j x y
+  cutIn (there i) j (case x y) z
+    = case
+    ( cutIn (there i) j x z )
+    ( cutIn (there i) j y z )
+  cutIn (there ()) j halt y
+  cutIn (there i) j (wait x) y
+    = wait
+    $ cutIn i j x y
+  cutIn (there i) j loop y
+    = loop
+  cutIn {Γ} {Δ} (there i) j (mk⅋₁ x) y
+    = mk⅋₁
+    $ cutIn (there i) j x y
+  cutIn {Γ} {Δ} (there i) j (mk⊗₁ x) y
+    = mk⊗₁
+    $ cutIn (there i) j x y
+  cutIn {Γ} {Δ} (there i) j (cont x) y
+    = cont
+    $ cutIn (there (there i)) j x y
+  cutIn {_} {Θ} (there i) j (pool {Γ} {Δ} x y) z
+    with split Γ i
+  ... | inj₁ (k , p) rewrite p
+      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
+      $ exch (swp₃ (_ ∷ Γ - k) Δ)
+      $ P.subst ⊢_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
+      $ flip pool y
+      $ cutIn (there k) j x z
+  ... | inj₂ (k , p) rewrite p
+      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
+      $ pool x
+      $ cutIn (there k) j y z
+
+  cutIn {Θ} {_} i (there j) x (send {Γ} {Δ} y z)
+    with split Γ j
+  ... | inj₁ (k , p) rewrite p
+      = exch (bwd [] (Θ - i))
+      $ P.subst ⊢_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
+      $ flip send z
+      $ exch (fwd [] (Θ - i))
+      $ cutIn i (there k) x y
+  ... | inj₂ (k , p) rewrite p
+      = exch (swp [] (Θ - i) (_ ∷ Γ))
+      $ send y
+      $ exch (fwd [] (Θ - i))
+      $ cutIn i (there k) x z
+  cutIn {Γ} i (there j) x (recv {Δ} y)
+    = exch (bwd [] (Γ - i))
+    $ recv
+    $ exch (swp [] (_ ∷ _ ∷ []) (Γ - i))
+    $ cutIn i (there (there j)) x y
+  cutIn {Γ} {Δ} i (there j) x (sel₁ y)
+    = exch (bwd [] (Γ - i))
+    $ sel₁
+    $ exch (fwd [] (Γ - i))
+    $ cutIn i (there j) x y
+  cutIn {Γ} {Δ} i (there j) x (sel₂ y)
+    = exch (bwd [] (Γ - i))
+    $ sel₂
+    $ exch (fwd [] (Γ - i))
+    $ cutIn i (there j) x y
+  cutIn {Γ} {Δ} i (there j) x (case y z)
+    = exch (bwd [] (Γ - i))
+    $ case
+    ( exch (fwd [] (Γ - i)) $ cutIn i (there j) x y )
+    ( exch (fwd [] (Γ - i)) $ cutIn i (there j) x z )
+  cutIn {Γ} i (there ()) x halt
+  cutIn {Γ} {Δ} i (there j) x (wait y)
+    = exch (bwd [] (Γ - i))
+    $ wait
+    $ cutIn i j x y
+  cutIn {Γ} {Δ} i (there j) x loop
+    = exch (bwd [] (Γ - i)) loop
+  cutIn {Γ} {Δ} i (there j) x (mk⅋₁ y)
+    = exch (bwd [] (Γ - i))
+    $ mk⅋₁
+    $ exch (fwd [] (Γ - i))
+    $ cutIn i (there j) x y
+  cutIn {Γ} {Δ} i (there j) x (mk⊗₁ y)
+    = exch (bwd [] (Γ - i))
+    $ mk⊗₁
+    $ exch (fwd [] (Γ - i))
+    $ cutIn i (there j) x y
+  cutIn {Γ} {Δ} i (there j) x (cont y)
+    = exch (bwd [] (Γ - i))
+    $ cont
+    $ exch (swp [] (_ ∷ _ ∷ []) (Γ - i))
+    $ cutIn i (there (there j)) x y
+  cutIn {Θ} {_} i (there j) x (pool {Γ} {Δ} y z)
+    with split Γ j
+  ... | inj₁ (k , p) rewrite p
+      = exch (bwd [] (Θ - i))
+      $ P.subst ⊢_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
+      $ flip pool z
+      $ exch (fwd [] (Θ - i))
+      $ cutIn i (there k) x y
+  ... | inj₂ (k , p) rewrite p
+      = exch (swp [] (Θ - i) (_ ∷ Γ))
+      $ pool y
+      $ exch (fwd [] (Θ - i))
+      $ cutIn i (there k) x z
+
+  cutIn {Γ} {Δ} i j (exch b x) y
+    = exch (B.++-cong {ys₁ = Δ - j} (del-from b i ) I.id)
+    $ cutIn (from b ⟨$⟩ i) j x y
+  cutIn {Γ} {Δ} i j x (exch b y)
+    = exch (B.++-cong {xs₁ = Γ - i} I.id (del-from b j))
+    $ cutIn i (from b ⟨$⟩ j) x y
 
 
 
--- -}
--- -}
--- -}
--- -}
--- -}
--- -}
 -- -}
 -- -}
 -- -}
