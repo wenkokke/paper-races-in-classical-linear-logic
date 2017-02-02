@@ -3,7 +3,6 @@ open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺
 open import Data.List as L
 open import Data.List.Properties as LP
-open import Data.List.Properties.Ext as LPE
 open import Data.List.Any as LA using (Any; here; there)
 open import Data.List.Any.BagAndSetEquality as B
 open import Data.Product as PR using (∃; _×_; _,_; proj₁; proj₂)
@@ -13,15 +12,14 @@ open import Function.Equality using (_⟨$⟩_)
 open import Function.Inverse as I using ()
 open import Induction.Nat
 open import Logic.Context
-open import Logic.Environment
 open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
-open I.Inverse using (to; from)
-
-private
-  module ++ {a} {A : Set a} = Monoid (L.monoid A)
 
 module nodcap where
+
+
+open I.Inverse using (to; from)
+private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 
 
 -- Types.
