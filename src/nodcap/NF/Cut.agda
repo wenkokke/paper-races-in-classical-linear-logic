@@ -13,11 +13,12 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
 open import Logic.Context
 open import nodcap.Base
-open import nodcap.Contract
-open import nodcap.Expand
-open import nodcap.Redistribute
+open import nodcap.NF.Typing
+open import nodcap.NF.Contract
+open import nodcap.NF.Expand
+open import nodcap.NF.Redistribute
 
-module nodcap.Cut where
+module nodcap.NF.Cut where
 
 open I.Inverse using (to; from)
 private module ++ {a} {A : Set a} = Monoid (L.monoid A)
@@ -28,22 +29,22 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 mutual
   cut : {Γ Δ : Context} {A : Type} →
 
-    ⊢ A ∷ Γ → ⊢ A ^ ∷ Δ →
+    ⊢ⁿᶠ A ∷ Γ → ⊢ⁿᶠ A ^ ∷ Δ →
     ---------------------
-    ⊢ Γ ++ Δ
+    ⊢ⁿᶠ Γ ++ Δ
 
   cut {_} {Δ} {𝟏} halt (wait y)
     = y
   cut {Γ} {_} {⊥} (wait x) halt
-    = P.subst ⊢_ (P.sym (proj₂ ++.identity Γ)) x
+    = P.subst ⊢ⁿᶠ_ (P.sym (proj₂ ++.identity Γ)) x
   cut {_} {Θ} {A ⊗ B} (send {Γ} {Δ} x y) (recv z)
-    = P.subst ⊢_ (P.sym (++.assoc Γ Δ Θ))
+    = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
     $ exch (swp [] Γ Δ)
     $ cut y
     $ exch (fwd [] Γ)
     $ cut x z
   cut {Θ} {_} {A ⅋ B} (recv x) (send {Γ} {Δ} y z)
-    = P.subst ⊢_ (++.assoc Θ Γ Δ)
+    = P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
     $ cut (cut x y) z
   cut {Γ} {Δ} {A ⊕ B} (sel₁ x) (case y z)
     = cut x y
@@ -56,7 +57,7 @@ mutual
   cut {Γ} {Δ} {⊗[ ._ ] A} (mk⊗₁ x) y
     = cut x (expand y)
   cut {_} {Θ} {⊗[ ._ ] _} (pool {Γ} {Δ} x y) z
-    = P.subst ⊢_ (P.sym (++.assoc Γ Δ Θ))
+    = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
     $ exch (swp [] Γ Δ)
     $ cut y
     $ exch (fwd [] Γ)
@@ -65,7 +66,7 @@ mutual
   cut {Γ} {Δ} {⅋[ ._ ] A} x (mk⊗₁ y)
     = cut (expand x) y
   cut {Θ} {_} {⅋[ ._ ] A} x (pool {Γ} {Δ} y z)
-    = P.subst ⊢_ (++.assoc Θ Γ Δ)
+    = P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
     $ flip cut z
     $ flip cut y
     $ redistribute x
@@ -79,22 +80,22 @@ mutual
 
   cutIn : {Γ Δ : Context} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
 
-    ⊢ Γ → ⊢ Δ →
+    ⊢ⁿᶠ Γ → ⊢ⁿᶠ Δ →
     ----------------
-    ⊢ Γ - i ++ Δ - j
+    ⊢ⁿᶠ Γ - i ++ Δ - j
 
   cutIn (here P.refl) (here P.refl) x y = cut x y
 
   cutIn {_} {Θ} (there i) j (send {Γ} {Δ} x y) z
     with split Γ i
   ... | inj₁ (k , p) rewrite p
-      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
+      = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
       $ exch (swp₃ (_ ∷ Γ - k) Δ)
-      $ P.subst ⊢_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
+      $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
       $ flip send y
       $ cutIn (there k) j x z
   ... | inj₂ (k , p) rewrite p
-      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
+      = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
       $ send x
       $ cutIn (there k) j y z
   cutIn (there i) j (recv x) y
@@ -128,13 +129,13 @@ mutual
   cutIn {_} {Θ} (there i) j (pool {Γ} {Δ} x y) z
     with split Γ i
   ... | inj₁ (k , p) rewrite p
-      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
+      = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
       $ exch (swp₃ (_ ∷ Γ - k) Δ)
-      $ P.subst ⊢_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
+      $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
       $ flip pool y
       $ cutIn (there k) j x z
   ... | inj₂ (k , p) rewrite p
-      = P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
+      = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
       $ pool x
       $ cutIn (there k) j y z
 
@@ -142,7 +143,7 @@ mutual
     with split Γ j
   ... | inj₁ (k , p) rewrite p
       = exch (bwd [] (Θ - i))
-      $ P.subst ⊢_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
+      $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
       $ flip send z
       $ exch (fwd [] (Θ - i))
       $ cutIn i (there k) x y
@@ -197,7 +198,7 @@ mutual
     with split Γ j
   ... | inj₁ (k , p) rewrite p
       = exch (bwd [] (Θ - i))
-      $ P.subst ⊢_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
+      $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
       $ flip pool z
       $ exch (fwd [] (Θ - i))
       $ cutIn i (there k) x y

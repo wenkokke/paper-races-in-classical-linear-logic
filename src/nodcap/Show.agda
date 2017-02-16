@@ -18,6 +18,7 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
 open import Logic.Context
 open import nodcap.Base
+open import nodcap.Typing
 
 module nodcap.Show where
 
@@ -38,6 +39,25 @@ showTerm {Γ} x = proj₁ (go bound x state)
     fresh = get >>= λ{(x ∷ xs) → put (♭ xs) >> return x}
 
     go : {Γ : Context} (bound : {w : Type} → w ∈ Γ → String) → ⊢ Γ → State (Stream String) String
+    go bound ax
+      = return (boundˣ ++ "↔" ++ boundʸ)
+      where
+        boundˣ = bound (here P.refl)
+        boundʸ = bound (there (here P.refl))
+    go bound (cut {Γ} {Δ} {A} x y) = fresh >>= withFresh
+      where
+        withFresh : String → State (Stream String) String
+        withFresh boundˣ
+          = go bound₁ x >>= λ x'
+          → go bound₂ y >>= λ y'
+          → return ("ν" ++ boundˣ ++ ".(" ++ x' ++ "|" ++ y' ++ ")")
+          where
+            bound₁ : {w : Type} → w ∈ A ∷ Γ → String
+            bound₁ (here px) = boundˣ
+            bound₁ (there i) = bound (++ˡ i)
+            bound₂ : {w : Type} → w ∈ A ^ ∷ Δ → String
+            bound₂ (here px) = boundˣ
+            bound₂ (there i) = bound (++ʳ Γ i)
     go bound (send {Γ} {Δ} {A} {B} x y) = fresh >>= withFresh
       where
         withFresh : String → State (Stream String) String
