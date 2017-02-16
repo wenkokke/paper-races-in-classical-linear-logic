@@ -7,9 +7,12 @@
 \usepackage{lmodern}
 \usepackage{natbib}
 \usepackage[dvipsnames,table]{xcolor}
+\colorlet{tm}{Maroon}
+\colorlet{ty}{MidnightBlue}
 \usepackage{mdframed}
 
 \usepackage{amsmath, amscd, amsthm, amssymb, mathrsfs,amsfonts}
+\usepackage{tabularx,array}
 \usepackage{enumitem}
 \usepackage{textcomp}
 \usepackage{txfonts}
@@ -27,6 +30,7 @@
 \def\one{\ensuremath{\mathbf{1}}}
 \def\nil{\ensuremath{\mathbf{0}}}
 \def\lequiv{\ensuremath{\multimapboth}}
+\newcommand{\ddd}[1]{\ensuremath{\overset{#1}{\cdots}}}
 \newcommand{\nodcap}[1][]{\ensuremath{\text{CP}_{\text{ND}}^{#1}}}
 \newcommand{\nodcapstar}{\ensuremath{\text{CP}_{\text{ND}}^{\star}}}
 \newcommand{\ndcpusage}{\ensuremath{\text{CP}_{\text{ND}^{n}}}}
@@ -41,11 +45,11 @@
 \toks0={#1}%
 \edef\param{\the\toks0}%
 \ifx\param\empty
-  \ensuremath{#2}%
+  \ensuremath{{\color{ty}#2}}%
 \else
-  \ensuremath{#1 \colon #2}%
+  \ensuremath{{\color{tm}#1}\colon{\color{ty}#2}}%
 \fi}
-\newcommand{\seq}[2][]{\ensuremath{#1 \vdash #2}}
+\newcommand{\seq}[2][]{\ensuremath{{\color{tm}#1}\vdash{\color{ty}#2}}}
 \newcommand{\subst}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
 \newcommand{\nod}[2][]{\ensuremath{{\star}_{#1}{#2}}}
 \newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}

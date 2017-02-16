@@ -7,9 +7,9 @@
   \]
        
   \begin{proofbox}
-    \AXC{$\seq[P]{ \give[n]{\Gamma} , \tm[y]{A} }$}
+    \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
     \SYM{\take[1]{}}
-    \UIC{$\seq[{x(y).P}]{ \give[n]{\Gamma} , \tm[x]{\take[1]{A}} }$}
+    \UIC{$\seq[{x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
   \end{proofbox}
   \begin{proofbox}
     \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
@@ -33,27 +33,6 @@
   
   \caption{The type system \nodcap}
   \label{fig:nodcap}
-\end{figure*}
-
-\begin{figure*}
-  \centering
-  \(\!
-  \cancel{
-    \AXC{$\seq[P]{ \give[n]{\Gamma} , \tm[y]{A} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{x(y).P}]{ \give[n]{\Gamma} , \tm[x]{\take[1]{A}} }$}
-    \DisplayProof
-  }
-  \quad
-  {
-    \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
-    \DisplayProof
-  }
-  \)
-  \caption{The type system \nodcap[1]}
-  \label{fig:nodcap1}
 \end{figure*}
 
 %%% Local Variables:
