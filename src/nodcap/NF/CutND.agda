@@ -14,17 +14,17 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
 open import Logic.Context
 open import nodcap.Base
-open import nodcap.Contract
-open import nodcap.Expand
-open import nodcap.Redistribute
-open import nodcap.Cut
+open import nodcap.NF.Typing
+open import nodcap.NF.Contract
+open import nodcap.NF.Expand
+open import nodcap.NF.Cut
 
-module nodcap.CutND where
+module nodcap.NF.CutND where
 
 open I.Inverse using (to; from)
-private module LM {ℓ} = RawMonadPlus (L.monadPlus {ℓ})
+private
+  open module LM {ℓ} = RawMonadPlus (L.monadPlus {ℓ})
 private module ++ {a} {A : Set a} = Monoid (L.monoid A)
-open LM
 
 {-# TERMINATING #-}
 -- Theorem:
@@ -32,25 +32,25 @@ open LM
 mutual
   cutND : {Γ Δ : Context} {A : Type} →
 
-    ⊢ A ∷ Γ → ⊢ A ^ ∷ Δ →
+    ⊢ⁿᶠ A ∷ Γ → ⊢ⁿᶠ A ^ ∷ Δ →
     ---------------------
-    List (⊢ Γ ++ Δ)
+    List (⊢ⁿᶠ Γ ++ Δ)
 
   cutND {_} {Δ} {𝟏} halt (wait y)
     = return y
   cutND {Γ} {_} {⊥} (wait x) halt
     = return
-    $ P.subst ⊢_ (P.sym (proj₂ ++.identity Γ)) x
+    $ P.subst ⊢ⁿᶠ_ (P.sym (proj₂ ++.identity Γ)) x
   cutND {_} {Θ} {A ⊗ B} (send {Γ} {Δ} x y) (recv z)
     = return
-    ∘ P.subst ⊢_ (P.sym (++.assoc Γ Δ Θ))
+    ∘ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
     ∘ exch (swp [] Γ Δ)
     =<< cutND y
     ∘ exch (fwd [] Γ)
     =<< cutND x z
   cutND {Θ} {_} {A ⅋ B} (recv x) (send {Γ} {Δ} y z)
     = return
-    ∘ P.subst ⊢_ (++.assoc Θ Γ Δ)
+    ∘ P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
     =<< flip cutND z
     =<< cutND x y
   cutND {Γ} {Δ} {A ⊕ B} (sel₁ x) (case y z)
@@ -64,7 +64,7 @@ mutual
   cutND {Γ} {Δ} {⊗[ n ] A} x y
     = all (replicate⁺ n (A ^)) >>= return ∘ withPerm ∘ proj₂
     where
-      withPerm : {Θ : Context} → replicate⁺ n (A ^) ∼[ bag ] Θ → ⊢ Γ ++ Δ
+      withPerm : {Θ : Context} → replicate⁺ n (A ^) ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
       withPerm {Θ} b
         = cut x
         $ contract
@@ -73,11 +73,11 @@ mutual
   cutND {Γ} {Δ} {⅋[ n ] A} x y
     = all (replicate⁺ n A) >>= return ∘ withPerm ∘ proj₂
     where
-      withPerm : {Θ : Context} → replicate⁺ n A ∼[ bag ] Θ → ⊢ Γ ++ Δ
+      withPerm : {Θ : Context} → replicate⁺ n A ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
       withPerm {Θ} b
         = exch (swp₂ Γ)
         $ cut y
-        $ P.subst (λ A → ⊢ ⅋[ n ] A ∷ Γ) (P.sym (^-inv A))
+        $ P.subst (λ A → ⊢ⁿᶠ ⅋[ n ] A ∷ Γ) (P.sym (^-inv A))
         $ contract
         $ exch (B.++-cong (P.subst (_ ∼[ bag ]_) (all-replicate⁺ n (I.sym b)) b) I.id)
         $ expand x
@@ -93,9 +93,9 @@ mutual
 
   cutNDIn : {Γ Δ : Context} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
 
-    ⊢ Γ → ⊢ Δ →
+    ⊢ⁿᶠ Γ → ⊢ⁿᶠ Δ →
     ----------------------- 
-    List (⊢ Γ - i ++ Δ - j)
+    List (⊢ⁿᶠ Γ - i ++ Δ - j)
 
   cutNDIn (here P.refl) (here P.refl) x y = cutND x y
 
@@ -103,14 +103,14 @@ mutual
     with split Γ i
   ... | inj₁ (k , p) rewrite p
       = return
-      ∘ P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
+      ∘ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
       ∘  exch (swp₃ (_ ∷ Γ - k) Δ)
-      ∘  P.subst ⊢_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
+      ∘  P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
       ∘ flip send y
       =<< cutNDIn (there k) j x z
   ... | inj₂ (k , p) rewrite p
       = return
-      ∘ P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
+      ∘ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
       ∘ send x
       =<< cutNDIn (there k) j y z
   cutNDIn (there i) j (recv x) y
@@ -154,14 +154,14 @@ mutual
     with split Γ i
   ... | inj₁ (k , p) rewrite p
       = return
-      ∘ P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
+      ∘ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ - k) Δ (Θ - j)))
       ∘ exch (swp₃ (_ ∷ Γ - k) Δ)
-      ∘ P.subst ⊢_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
+      ∘ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Γ - k) (Θ - j) Δ)
       ∘ flip pool y
       =<< cutNDIn (there k) j x z
   ... | inj₂ (k , p) rewrite p
       = return
-      ∘ P.subst ⊢_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
+      ∘ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (_ ∷ Γ) (Δ - k) (Θ - j)))
       ∘ pool x
       =<< cutNDIn (there k) j y z
 
@@ -170,7 +170,7 @@ mutual
   ... | inj₁ (k , p) rewrite p
       = return
       ∘ exch (bwd [] (Θ - i))
-      ∘ P.subst ⊢_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
+      ∘ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
       ∘ flip send z
       ∘ exch (fwd [] (Θ - i))
       =<< cutNDIn i (there k) x y
@@ -239,7 +239,7 @@ mutual
   ... | inj₁ (k , p) rewrite p
       = return
       ∘ exch (bwd [] (Θ - i))
-      ∘ P.subst ⊢_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
+      ∘ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Θ - i) (Γ - k) Δ)
       ∘ flip pool z
       ∘ exch (fwd [] (Θ - i))
       =<< cutNDIn i (there k) x y

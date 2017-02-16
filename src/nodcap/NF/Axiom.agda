@@ -6,11 +6,9 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
 open import Logic.Context
 open import nodcap.Base
-open import nodcap.Contract
-open import nodcap.Expand
-open import nodcap.Redistribute
+open import nodcap.NF.Typing
 
-module nodcap.Axiom where
+module nodcap.NF.Axiom where
 
 {-# TERMINATING #-}
 -- Theorem:
@@ -20,7 +18,7 @@ module nodcap.Axiom where
 --   * in the recursive calls under ⅋n and ⊗n, it is the
 --     size of the resource index which is decreasing, not
 --     the size of the type itself.
-ax : {A : Type} → ⊢ A ∷ A ^ ∷ []
+ax : {A : Type} → ⊢ⁿᶠ A ∷ A ^ ∷ []
 ax {𝟏}
   = exch (bbl [])
   $ wait halt

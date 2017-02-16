@@ -7,10 +7,11 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
 open import Logic.Context
 open import nodcap.Base
-open import nodcap.Contract
-open import nodcap.Expand
+open import nodcap.NF.Typing
+open import nodcap.NF.Contract
+open import nodcap.NF.Expand
 
-module nodcap.Redistribute where
+module nodcap.NF.Redistribute where
 
 private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 
@@ -22,15 +23,15 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 --   that we get exactly two formulas with p and q where p = m and q = n.
 redistribute : {Γ : Context} {A : Type} {m n : ℕ⁺} →
 
-  ⊢ ⅋[ m + n ] A ∷ Γ →
+  ⊢ⁿᶠ ⅋[ m + n ] A ∷ Γ →
   ----------------------------
-  ⊢ ⅋[ m ] A ∷ ⅋[ n ] A ∷ Γ
+  ⊢ⁿᶠ ⅋[ m ] A ∷ ⅋[ n ] A ∷ Γ
 
 redistribute {Γ} {A} {m} {n} x
   = exch (bbl [])
   $ contract {n = n}
   $ exch (bwd [] (replicate⁺ n A))
   $ contract {n = m}
-  $ P.subst ⊢_ (++.assoc (replicate⁺ m A) (replicate⁺ n A) Γ)
-  $ P.subst (λ Γ' → ⊢ Γ' ++ Γ) (P.sym (replicate⁺-++-commute m n))
+  $ P.subst ⊢ⁿᶠ_ (++.assoc (replicate⁺ m A) (replicate⁺ n A) Γ)
+  $ P.subst (λ Γ' → ⊢ⁿᶠ Γ' ++ Γ) (P.sym (replicate⁺-++-commute m n))
   $ expand x

@@ -9,10 +9,10 @@ open import Function using (_$_; _∘_)
 
 open import Logic.Context
 open import nodcap.Base
-open import nodcap.Axiom
-open import nodcap.Cut
-open import nodcap.CutND
-open import nodcap.Show
+open import nodcap.Typing
+open import nodcap.Norm
+open import nodcap.Show renaming (showTerm to show)
+open import nodcap.NF.Show renaming (showTerm to showNF)
 
 module Example2 where
 
@@ -63,11 +63,11 @@ main = run (mapM′ putStrLn (fromList strs))
   where
     strs : List String
     strs = "Server:"
-         ∷ showTerm server
+         ∷ show server
          ∷ "Clients:"
-         ∷ showTerm clients
+         ∷ show clients
          ∷ "Result:"
-         ∷ map showTerm (cutND server clients)
+         ∷ map showNF (normND (cut server clients))
 
 -- -}
 -- -}

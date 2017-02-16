@@ -5,17 +5,18 @@ open import Data.List as L using (List; []; _∷_; _++_)
 
 open import Logic.Context
 open import nodcap.Base
+open import nodcap.NF.Typing
 
-module nodcap.Contract where
+module nodcap.NF.Contract where
 
 -- Lemma:
 --   We can contract n repetitions of A to an instance of ⅋[ n ] A,
 --   by induction on n.
 contract : {Γ : Context} {A : Type} {n : ℕ⁺} →
 
-  ⊢ replicate⁺ n A ++ Γ →
+  ⊢ⁿᶠ replicate⁺ n A ++ Γ →
   ----------------------
-  ⊢ ⅋[ n ] A ∷ Γ
+  ⊢ⁿᶠ ⅋[ n ] A ∷ Γ
 
 contract {n = suc zero}    x
   = mk⅋₁ x

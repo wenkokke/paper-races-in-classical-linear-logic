@@ -13,8 +13,9 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
 open import Logic.Context
 open import nodcap.Base
+open import nodcap.NF.Typing
 
-module nodcap.Expand where
+module nodcap.NF.Expand where
 
 open I.Inverse using (to; from)
 private module ++ {a} {A : Set a} = Monoid (L.monoid A)
@@ -30,14 +31,14 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 mutual
   expand : {Γ : Context} {A : Type} {n : ℕ⁺} →
 
-    ⊢ ⅋[ n ] A ∷ Γ →
+    ⊢ⁿᶠ ⅋[ n ] A ∷ Γ →
     --------------------
-    ⊢ replicate⁺ n A ++ Γ
+    ⊢ⁿᶠ replicate⁺ n A ++ Γ
 
   expand (mk⅋₁ x) = x
   expand (cont {Γ} {A} {m} {n} x)
-    = P.subst (λ Δ → ⊢ Δ ++ Γ) (replicate⁺-++-commute m n)
-    $ P.subst ⊢_ (P.sym (++.assoc (replicate⁺ m A) (replicate⁺ n A) Γ))
+    = P.subst (λ Δ → ⊢ⁿᶠ Δ ++ Γ) (replicate⁺-++-commute m n)
+    $ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (replicate⁺ m A) (replicate⁺ n A) Γ))
     $ exch (swp [] (replicate⁺ m A) (replicate⁺ n A))
     $ expand {n = n}
     $ exch (fwd [] (replicate⁺ m A))
@@ -48,16 +49,16 @@ mutual
 
   expandIn : {Γ : Context} {A : Type} {n : ℕ⁺} (i : ⅋[ n ] A ∈ Γ) →
 
-    ⊢ Γ →
+    ⊢ⁿᶠ Γ →
     ----------------------------
-    ⊢ replicate⁺ n A ++ Γ - i
+    ⊢ⁿᶠ replicate⁺ n A ++ Γ - i
 
   expandIn (here P.refl) x = expand x
   expandIn {_} {A} {n} (there i) (send {Γ} {Δ} x h)
     with split Γ i
   ... | inj₁ (j , p) rewrite p
       = exch (swp [] (replicate⁺ n A) (_ ∷ []))
-      $ P.subst ⊢_ (++.assoc (_ ∷ replicate⁺ n A) (Γ - j) Δ)
+      $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ replicate⁺ n A) (Γ - j) Δ)
       $ flip send h
       $ exch (swp [] (_ ∷ []) (replicate⁺ n A))
       $ expandIn (there j) x
@@ -115,7 +116,7 @@ mutual
     with split Γ i
   ... | inj₁ (j , p) rewrite p
       = exch (swp [] (replicate⁺ n A) (_ ∷ []))
-      $ P.subst ⊢_ (++.assoc (_ ∷ replicate⁺ n A) (Γ - j) Δ)
+      $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ replicate⁺ n A) (Γ - j) Δ)
       $ flip pool y
       $ exch (swp [] (_ ∷ []) (replicate⁺ n A))
       $ expandIn (there j) x
