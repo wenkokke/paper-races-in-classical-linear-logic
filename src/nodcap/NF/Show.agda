@@ -18,11 +18,11 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
 open import Logic.Context
 open import nodcap.Base
-open import nodcap.Norm
 open import nodcap.NF.Typing
+open import nodcap.Norm
 import nodcap.Show as S
 
 module nodcap.NF.Show where
 
 showTerm : {Γ : Context} → ⊢ⁿᶠ Γ → String
-showTerm x = S.showTerm (⊢ⁿᶠ→⊢ x)
+showTerm {Γ} x = S.showTerm (unNorm x) 
