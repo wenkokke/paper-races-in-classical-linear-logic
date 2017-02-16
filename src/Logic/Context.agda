@@ -1,6 +1,8 @@
 open import Algebra
 open import Data.Nat
-open import Data.List as L                             using (List; []; _∷_; [_]; _++_; map; concatMap)
+open import Data.Empty                                 using (⊥-elim)
+open import Data.Pos                                   using (ℕ⁺; suc; replicate⁺)
+open import Data.List as L                             using (List; []; _∷_; [_]; _++_; map; concatMap; replicate)
 open import Data.List.Any                              using (here; there)
 open import Data.List.Any.BagAndSetEquality as B       using ()
 open        Data.List.Any.Membership-≡                 using (_∈_; _∼[_]_; bag)
@@ -110,6 +112,45 @@ all (x ∷ xs) = concatMap insAll (all xs)
                → Σ[ zs ∈ List A ] x ∷ xs ∼[ bag ] zs
         insOne (ys₁ , ys₂ , p) = ys₁ ++ x ∷ ys₂ ,
           bwd [] ys₁ {ys₂} {x} ∘ B.∷-cong P.refl (P.subst (ys ∼[ bag ]_) p id ∘ b)
+
+
+-- Any element which is contained in a list created using replicate
+-- is equal to the replicated element.
+∈-replicate : {x y : A} (n : ℕ) → x ∈ y ∷ replicate n y → x ≡ y
+∈-replicate zero    (here px) = px
+∈-replicate zero    (there ())
+∈-replicate (suc n) (here px) = px
+∈-replicate (suc n) (there m) = ∈-replicate n m
+
+-- Any bag which is equivalent to the bag created using replicate,
+-- is equal to the bag created using replicate.
+all-replicate : {xs : List A} {y : A} (n : ℕ) →
+
+  xs ∼[ bag ] replicate n y → xs ≡ replicate n y
+
+all-replicate {[]}     {y} zero    b = P.refl
+all-replicate {[]}     {y} (suc n) b with from b ⟨$⟩ here P.refl; ... | ()
+all-replicate {x ∷ xs} {y} zero    b with to   b ⟨$⟩ here P.refl; ... | ()
+all-replicate {x ∷ xs} {y} (suc n) b = P.cong₂ _∷_ x=y (all-replicate n b')
+  where
+    x=y : x ≡ y
+    x=y = ∈-replicate n (to b ⟨$⟩ here P.refl)
+    b'  : xs ∼[ bag ] replicate n y
+    b'  = B.drop-cons (P.subst (λ x → x ∷ xs ∼[ bag ] y ∷ replicate n y) x=y b)
+
+-- The same lemma holds for replicate⁺.
+all-replicate⁺ : {xs : List A} {y : A} (n : ℕ⁺) →
+
+  xs ∼[ bag ] replicate⁺ n y → xs ≡ replicate⁺ n y
+
+all-replicate⁺ {[]}     {y} (suc n) b with from b ⟨$⟩ here P.refl; ... | ()
+all-replicate⁺ {x ∷ xs} {y} (suc n) b = P.cong₂ _∷_ x=y (all-replicate n b')
+  where
+    x=y : x ≡ y
+    x=y = ∈-replicate n (to b ⟨$⟩ here P.refl)
+    b'  : xs ∼[ bag ] replicate n y
+    b'  = B.drop-cons (P.subst (λ x → x ∷ xs ∼[ bag ] y ∷ replicate n y) x=y b)
+
 
 -- There is a bijection between indices into the context
 -- ΓΣΔΠ and the context ΓΔΣΠ.
