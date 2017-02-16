@@ -9,9 +9,9 @@ open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Function using (_$_; flip)
 open import Function.Equality using (_⟨$⟩_)
 open import Function.Inverse as I using ()
-open import Logic.Context
 open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
+open import Logic.Context
 open import nodcap.Base
 
 module nodcap.Expand where
@@ -23,8 +23,10 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 -- Lemma:
 --   We can expand an instance of ⅋[ n ] A into n repetitions of A,
 --   by induction on n.
---   The problematic call is the recursion under cont, where the index n
---   is split as n₁ + n₂, and Agda cannot figure out that n₁, n₂ < n.
+--
+-- Problematic calls:
+--   * in the recursive call under cont, the index n is split as
+--     n₁ + n₂, for which we have n₁, n₂ < n, but not definitionally.
 mutual
   expand : {Γ : Context} {A : Type} {n : ℕ⁺} →
 

@@ -1,12 +1,12 @@
 open import Algebra
-open import Data.Nat 
-open import Data.List as L                             using (List; []; _∷_; [_]; _++_)
+open import Data.Nat
+open import Data.List as L                             using (List; []; _∷_; [_]; _++_; map; concatMap)
 open import Data.List.Any                              using (here; there)
 open import Data.List.Any.BagAndSetEquality as B       using ()
 open        Data.List.Any.Membership-≡                 using (_∈_; _∼[_]_; bag)
 open import Data.Product                               using (Σ-syntax; ∃₂; _×_; proj₁; proj₂; _,_)
 open import Data.Sum                                   using (_⊎_; inj₁; inj₂)
-open import Function                                   using (_$_)
+open import Function                                   using (_$_; flip)
 open import Function.Equality                          using (_⟨$⟩_)
 open import Function.Inverse                           using (id; sym; _∘_)
 open        Function.Inverse.Inverse                   using (to; from)
@@ -66,6 +66,50 @@ fwd []       ys = fwd' ys
 bwd : (xs ys {zs} : List A) {w : A} →
       xs ++ w ∷ ys ++ zs ∼[ bag ] xs ++ ys ++ w ∷ zs
 bwd xs ys = sym (fwd xs ys)
+
+
+-- List all possible ways to split a list xs into two lists xs₁ and xs₂.
+allSplit : (xs : List A) → List (Σ[ xs₁ ∈ List A ] Σ[ xs₂ ∈ List A ] xs ≡ xs₁ ++ xs₂)
+allSplit []       = L.[ [] , [] , P.refl ]
+allSplit (x ∷ xs) = now ∷ later
+  where
+    now   = ([] , x ∷ xs , P.refl)
+    later = flip map (allSplit xs) $
+      λ{(xs₁ , xs₂ , p) → (x ∷ xs₁ , xs₂ , P.cong (x ∷_) p)}
+
+-- Test if allSplit does as advertised.
+{-
+private
+  module _ where
+
+    postulate x y z w : A
+
+    test-allSplit :
+      allSplit (x ∷ y ∷ z ∷ w ∷ []) ≡
+      ( ( []                    , (x ∷ y ∷ z ∷ w ∷ []) , P.refl )
+      ∷ ( (x ∷ [])              ,     (y ∷ z ∷ w ∷ []) , P.refl )
+      ∷ ( (x ∷ y ∷ [])          ,         (z ∷ w ∷ []) , P.refl )
+      ∷ ( (x ∷ y ∷ z ∷ [])      ,             (w ∷ []) , P.refl )
+      ∷ ( (x ∷ y ∷ z ∷ w ∷ [] ) ,                  []  , P.refl )
+      ∷ [] )
+    test-allSplit = P.refl
+-}
+
+-- It is possible to list all contexts Δ for which there
+-- exists a bijection between indices into the context Γ
+-- and the context Δ.
+all : (xs : List A) → List (Σ[ ys ∈ List A ] xs ∼[ bag ] ys)
+all [] = ([] , id) ∷ []
+all (x ∷ xs) = concatMap insAll (all xs)
+  where
+    insAll : Σ[ ys ∈ List A ] xs ∼[ bag ] ys
+           → List (Σ[ ys ∈ List A ] x ∷ xs ∼[ bag ] ys)
+    insAll (ys , b) = map insOne (allSplit ys)
+      where
+        insOne : Σ[ ys₁ ∈ List A ] Σ[ ys₂ ∈ List A ] ys ≡ ys₁ ++ ys₂
+               → Σ[ zs ∈ List A ] x ∷ xs ∼[ bag ] zs
+        insOne (ys₁ , ys₂ , p) = ys₁ ++ x ∷ ys₂ ,
+          bwd [] ys₁ {ys₂} {x} ∘ B.∷-cong P.refl (P.subst (ys ∼[ bag ]_) p id ∘ b)
 
 -- There is a bijection between indices into the context
 -- ΓΣΔΠ and the context ΓΔΣΠ.
