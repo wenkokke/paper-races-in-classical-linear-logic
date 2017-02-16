@@ -1,13 +1,15 @@
-open import IO using (run; putStrLn)
+open import IO using (run; putStrLn; mapM′)
 open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺ using (ℕ⁺; suc)
 open import Data.List using (List; []; _∷_)
-open import Function using (_$_)
+open import Data.Colist using (fromList)
+open import Function using (_$_; _∘_)
 
 open import Logic.Context
 open import nodcap.Base
 open import nodcap.Axiom
 open import nodcap.Cut
+open import nodcap.CutND
 open import nodcap.Show
 
 module Example2 where
@@ -54,4 +56,4 @@ clients : ⊢ ⊗[ suc (suc zero) ] (Sale ^) ∷ []
 clients
   = pool (mk⊗₁ client₁) (mk⊗₁ client₂)
 
-main = run (putStrLn (showTerm (cut server clients)))
+main = run (mapM′ (putStrLn ∘ showTerm) (fromList (cutND server clients)))
