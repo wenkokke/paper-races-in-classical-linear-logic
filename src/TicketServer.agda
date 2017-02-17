@@ -61,11 +61,11 @@ clients
 
 main = run (mapM′ putStrLn (fromList strs))
   where
-    strs : List String
+    proc = cut server clients
     strs = "Process:"
-         ∷ show (cut server clients)
+         ∷ show proc
          ∷ "Result:"
-         ∷ map showNF (normND (cut server clients))
+         ∷ map showNF (normND proc)
 
 -- -}
 -- -}
