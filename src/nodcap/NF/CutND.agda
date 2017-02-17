@@ -36,32 +36,32 @@ mutual
     ---------------------
     List (⊢ⁿᶠ Γ ++ Δ)
 
-  cutND {_} {Δ} {𝟏} halt (wait y)
+  cutND {_} {Δ} {A = 𝟏} halt (wait y)
     = return y
-  cutND {Γ} {_} {⊥} (wait x) halt
+  cutND {Γ} {_} {A = ⊥} (wait x) halt
     = return
     $ P.subst ⊢ⁿᶠ_ (P.sym (proj₂ ++.identity Γ)) x
-  cutND {_} {Θ} {A ⊗ B} (send {Γ} {Δ} x y) (recv z)
+  cutND {_} {Θ} {A = A ⊗ B} (send {Γ} {Δ} x y) (recv z)
     = return
     ∘ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
     ∘ exch (swp [] Γ Δ)
     =<< cutND y
     ∘ exch (fwd [] Γ)
     =<< cutND x z
-  cutND {Θ} {_} {A ⅋ B} (recv x) (send {Γ} {Δ} y z)
+  cutND {Θ} {_} {A = A ⅋ B} (recv x) (send {Γ} {Δ} y z)
     = return
     ∘ P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
     =<< flip cutND z
     =<< cutND x y
-  cutND {Γ} {Δ} {A ⊕ B} (sel₁ x) (case y z)
+  cutND {Γ} {Δ} {A = A ⊕ B} (sel₁ x) (case y z)
     = cutND x y
-  cutND {Γ} {Δ} {A ⊕ B} (sel₂ x) (case y z)
+  cutND {Γ} {Δ} {A = A ⊕ B} (sel₂ x) (case y z)
     = cutND x z
-  cutND {Γ} {Δ} {A & B} (case x y) (sel₁ z)
+  cutND {Γ} {Δ} {A = A & B} (case x y) (sel₁ z)
     = cutND x z
-  cutND {Γ} {Δ} {A & B} (case x y) (sel₂ z)
+  cutND {Γ} {Δ} {A = A & B} (case x y) (sel₂ z)
     = cutND y z
-  cutND {Γ} {Δ} {![ n ] A} x y
+  cutND {Γ} {Δ} {A = ![ n ] A} x y
     = all (replicate⁺ n (A ^)) >>= return ∘ withPerm ∘ proj₂
     where
       withPerm : {Θ : Context} → replicate⁺ n (A ^) ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
@@ -70,7 +70,7 @@ mutual
         $ contract
         $ exch (B.++-cong (P.subst (_ ∼[ bag ]_) (all-replicate⁺ n (I.sym b)) b) I.id)
         $ expand y
-  cutND {Γ} {Δ} {?[ n ] A} x y
+  cutND {Γ} {Δ} {A = ?[ n ] A} x y
     = all (replicate⁺ n A) >>= return ∘ withPerm ∘ proj₂
     where
       withPerm : {Θ : Context} → replicate⁺ n A ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ

@@ -14,7 +14,7 @@ open import nodcap.Norm
 open import nodcap.Show renaming (showTerm to show)
 open import nodcap.NF.Show renaming (showTerm to showNF)
 
-module Example2 where
+module TicketServer where
 
 Ticket UserId Sale Receipt : Type
 Ticket  = ⊥ ⊕ ⊥
