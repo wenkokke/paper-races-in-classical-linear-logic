@@ -33,39 +33,39 @@ mutual
     ---------------------
     ⊢ⁿᶠ Γ ++ Δ
 
-  cut {_} {Δ} {𝟏} halt (wait y)
+  cut {_} {Δ} {A = 𝟏} halt (wait y)
     = y
-  cut {Γ} {_} {⊥} (wait x) halt
+  cut {Γ} {_} {A = ⊥} (wait x) halt
     = P.subst ⊢ⁿᶠ_ (P.sym (proj₂ ++.identity Γ)) x
-  cut {_} {Θ} {A ⊗ B} (send {Γ} {Δ} x y) (recv z)
+  cut {_} {Θ} {A = A ⊗ B} (send {Γ} {Δ} x y) (recv z)
     = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
     $ exch (swp [] Γ Δ)
     $ cut y
     $ exch (fwd [] Γ)
     $ cut x z
-  cut {Θ} {_} {A ⅋ B} (recv x) (send {Γ} {Δ} y z)
+  cut {Θ} {_} {A = A ⅋ B} (recv x) (send {Γ} {Δ} y z)
     = P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
     $ cut (cut x y) z
-  cut {Γ} {Δ} {A ⊕ B} (sel₁ x) (case y z)
+  cut {Γ} {Δ} {A = A ⊕ B} (sel₁ x) (case y z)
     = cut x y
-  cut {Γ} {Δ} {A ⊕ B} (sel₂ x) (case y z)
+  cut {Γ} {Δ} {A = A ⊕ B} (sel₂ x) (case y z)
     = cut x z
-  cut {Γ} {Δ} {A & B} (case x y) (sel₁ z)
+  cut {Γ} {Δ} {A = A & B} (case x y) (sel₁ z)
     = cut x z
-  cut {Γ} {Δ} {A & B} (case x y) (sel₂ z)
+  cut {Γ} {Δ} {A = A & B} (case x y) (sel₂ z)
     = cut y z
-  cut {Γ} {Δ} {![ ._ ] A} (mk!₁ x) y
+  cut {Γ} {Δ} {A = ![ ._ ] A} (mk!₁ x) y
     = cut x (expand y)
-  cut {_} {Θ} {![ ._ ] _} (pool {Γ} {Δ} x y) z
+  cut {_} {Θ} {A = ![ ._ ] _} (pool {Γ} {Δ} x y) z
     = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
     $ exch (swp [] Γ Δ)
     $ cut y
     $ exch (fwd [] Γ)
     $ cut x
     $ redistribute z
-  cut {Γ} {Δ} {?[ ._ ] A} x (mk!₁ y)
+  cut {Γ} {Δ} {A = ?[ ._ ] A} x (mk!₁ y)
     = cut (expand x) y
-  cut {Θ} {_} {?[ ._ ] A} x (pool {Γ} {Δ} y z)
+  cut {Θ} {_} {A = ?[ ._ ] A} x (pool {Γ} {Δ} y z)
     = P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
     $ flip cut z
     $ flip cut y
