@@ -19,28 +19,28 @@ module nodcap.NF.Axiom where
 --     size of the resource index which is decreasing, not
 --     the size of the type itself.
 ax : {A : Type} → ⊢ⁿᶠ A ∷ A ^ ∷ []
-ax {𝟏}
+ax { 𝟏 }
   = exch (bbl [])
   $ wait halt
-ax {⊥}
+ax { ⊥ }
   = wait halt
-ax {𝟎}
+ax { 𝟎 }
   = exch (bbl [])
   $ loop
-ax {⊤}
+ax { ⊤ }
   = loop
-ax {A ⊗ B}
+ax { A ⊗ B }
   = exch (bbl [])
   $ recv
   $ exch (bwd [] (_ ∷ _ ∷ []))
   $ send ax ax
-ax {A ⅋ B}
+ax { A ⅋ B }
   = recv
   $ exch (bwd [] (_ ∷ _ ∷ []))
   $ send
   ( exch (bbl []) ax )
   ( exch (bbl []) ax )
-ax {A ⊕ B}
+ax { A ⊕ B }
   = exch (bbl [])
   $ case
   ( exch (bbl [])
@@ -49,7 +49,7 @@ ax {A ⊕ B}
   ( exch (bbl [])
   $ sel₂ ax
   )
-ax {A & B}
+ax { A & B }
   = case
   ( exch (bbl [])
   $ sel₁
@@ -59,24 +59,24 @@ ax {A & B}
   $ sel₂
   $ exch (bbl []) ax
   )
-ax {⊗[ suc zero ] A}
-  = mk⊗₁
+ax { ![ suc zero ] A }
+  = mk!₁
   $ exch (bbl [])
-  $ mk⅋₁
+  $ mk?₁
   $ exch (bbl []) ax
-ax {⊗[ suc (suc n) ] A}
+ax { ![ suc (suc n) ] A }
   = exch (bbl [])
   $ cont {m = suc zero} {n = suc n}
   $ exch (bwd [] (_ ∷ _ ∷ []))
   $ pool {m = suc zero} {n = suc n}
   ( ax )
   ( ax )
-ax {⅋[ suc zero ] A}
-  = mk⅋₁
+ax { ?[ suc zero ] A }
+  = mk?₁
   $ exch (bbl [])
-  $ mk⊗₁
+  $ mk!₁
   $ exch (bbl []) ax
-ax {⅋[ suc (suc n) ] A}
+ax { ?[ suc (suc n) ] A }
   = cont {m = suc zero} {n = suc n}
   $ exch (bwd [] (_ ∷ _ ∷ []))
   $ pool {m = suc zero} {n = suc n}

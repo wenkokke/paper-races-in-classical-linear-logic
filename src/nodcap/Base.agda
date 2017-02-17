@@ -19,8 +19,8 @@ data Type : Set where
   _⅋_ : (A B : Type) → Type
   _⊕_ : (A B : Type) → Type
   _&_ : (A B : Type) → Type
-  ⊗[_]_ : (n : ℕ⁺) (A : Type) → Type
-  ⅋[_]_ : (n : ℕ⁺) (A : Type) → Type
+  ![_]_ : (n : ℕ⁺) (A : Type) → Type
+  ?[_]_ : (n : ℕ⁺) (A : Type) → Type
 
 
 -- Duality.
@@ -34,8 +34,8 @@ _^ : Type → Type
 (A ⅋ B) ^ = (A ^) ⊗ (B ^)
 (A ⊕ B) ^ = (A ^) & (B ^)
 (A & B) ^ = (A ^) ⊕ (B ^)
-(⊗[ n ] A) ^ = ⅋[ n ] (A ^)
-(⅋[ n ] A) ^ = ⊗[ n ] (A ^)
+(![ n ] A) ^ = ?[ n ] (A ^)
+(?[ n ] A) ^ = ![ n ] (A ^)
 
 ^-inv : (A : Type) → A ^ ^ ≡ A
 ^-inv 𝟏 = P.refl
@@ -46,8 +46,8 @@ _^ : Type → Type
 ^-inv (A ⅋ B) = P.cong₂ _⅋_ (^-inv A) (^-inv B)
 ^-inv (A ⊕ B) = P.cong₂ _⊕_ (^-inv A) (^-inv B)
 ^-inv (A & B) = P.cong₂ _&_ (^-inv A) (^-inv B)
-^-inv (⊗[ n ] A) = P.cong ⊗[ n ]_ (^-inv A)
-^-inv (⅋[ n ] A) = P.cong ⅋[ n ]_ (^-inv A)
+^-inv (![ n ] A) = P.cong ![ n ]_ (^-inv A)
+^-inv (?[ n ] A) = P.cong ?[ n ]_ (^-inv A)
 
 -- Lollipop.
 
@@ -62,14 +62,14 @@ data Pos : (A : Type) → Set where
   𝟏 : Pos 𝟏
   _⊗_ : (A B : Type) → Pos (A ⊗ B)
   _⊕_ : (A B : Type) → Pos (A ⊕ B)
-  ⊗[_]_ : (n : ℕ⁺) (A : Type) → Pos (⊗[ n ] A)
+  ![_]_ : (n : ℕ⁺) (A : Type) → Pos (![ n ] A)
 
 data Neg : (A : Type) → Set where
   ⊥ : Neg ⊥
   ⊤ : Neg ⊤
   _⅋_ : (A B : Type) → Neg (A ⅋ B)
   _&_ : (A B : Type) → Neg (A & B)
-  ⅋[_]_ : (n : ℕ⁺) (A : Type) → Neg (⅋[ n ] A)
+  ?[_]_ : (n : ℕ⁺) (A : Type) → Neg (?[ n ] A)
 
 pol? : (A : Type) → Pos A ⊎ Neg A
 pol? 𝟏 = inj₁ 𝟏
@@ -80,22 +80,22 @@ pol? (A ⊗ B) = inj₁ (A ⊗ B)
 pol? (A ⅋ B) = inj₂ (A ⅋ B)
 pol? (A ⊕ B) = inj₁ (A ⊕ B)
 pol? (A & B) = inj₂ (A & B)
-pol? (⊗[ n ] A) = inj₁ (⊗[ n ] A)
-pol? (⅋[ n ] A) = inj₂ (⅋[ n ] A)
+pol? (![ n ] A) = inj₁ (![ n ] A)
+pol? (?[ n ] A) = inj₂ (?[ n ] A)
 
 ^-posneg : {A : Type} (P : Pos A) → Neg (A ^)
 ^-posneg 𝟎 = ⊤
 ^-posneg 𝟏 = ⊥
 ^-posneg (A ⊗ B) = (A ^) ⅋ (B ^)
 ^-posneg (A ⊕ B) = (A ^) & (B ^)
-^-posneg (⊗[ n ] A) = ⅋[ n ] (A ^)
+^-posneg (![ n ] A) = ?[ n ] (A ^)
 
 ^-negpos : {A : Type} (N : Neg A) → Pos (A ^)
 ^-negpos ⊥ = 𝟏
 ^-negpos ⊤ = 𝟎
 ^-negpos (A ⅋ B) = (A ^) ⊗ (B ^)
 ^-negpos (A & B) = (A ^) ⊕ (B ^)
-^-negpos (⅋[ n ] A) = ⊗[ n ] (A ^)
+^-negpos (?[ n ] A) = ![ n ] (A ^)
 
 
 -- Contexts.

@@ -61,7 +61,7 @@ mutual
     = cutND x z
   cutND {Γ} {Δ} {A & B} (case x y) (sel₂ z)
     = cutND y z
-  cutND {Γ} {Δ} {⊗[ n ] A} x y
+  cutND {Γ} {Δ} {![ n ] A} x y
     = all (replicate⁺ n (A ^)) >>= return ∘ withPerm ∘ proj₂
     where
       withPerm : {Θ : Context} → replicate⁺ n (A ^) ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
@@ -70,14 +70,14 @@ mutual
         $ contract
         $ exch (B.++-cong (P.subst (_ ∼[ bag ]_) (all-replicate⁺ n (I.sym b)) b) I.id)
         $ expand y
-  cutND {Γ} {Δ} {⅋[ n ] A} x y
+  cutND {Γ} {Δ} {?[ n ] A} x y
     = all (replicate⁺ n A) >>= return ∘ withPerm ∘ proj₂
     where
       withPerm : {Θ : Context} → replicate⁺ n A ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
       withPerm {Θ} b
         = exch (swp₂ Γ)
         $ cut y
-        $ P.subst (λ A → ⊢ⁿᶠ ⅋[ n ] A ∷ Γ) (P.sym (^-inv A))
+        $ P.subst (λ A → ⊢ⁿᶠ ?[ n ] A ∷ Γ) (P.sym (^-inv A))
         $ contract
         $ exch (B.++-cong (P.subst (_ ∼[ bag ]_) (all-replicate⁺ n (I.sym b)) b) I.id)
         $ expand x
@@ -138,13 +138,13 @@ mutual
   cutNDIn (there i) j loop y
     = return
     $ loop
-  cutNDIn {Γ} {Δ} (there i) j (mk⅋₁ x) y
+  cutNDIn {Γ} {Δ} (there i) j (mk?₁ x) y
     = return
-    ∘ mk⅋₁
+    ∘ mk?₁
     =<< cutNDIn (there i) j x y
-  cutNDIn {Γ} {Δ} (there i) j (mk⊗₁ x) y
+  cutNDIn {Γ} {Δ} (there i) j (mk!₁ x) y
     = return
-    ∘ mk⊗₁
+    ∘ mk!₁
     =<< cutNDIn (there i) j x y
   cutNDIn {Γ} {Δ} (there i) j (cont x) y
     = return
@@ -216,16 +216,16 @@ mutual
     = return
     ∘ exch (bwd [] (Γ - i))
     $ loop
-  cutNDIn {Γ} {Δ} i (there j) x (mk⅋₁ y)
+  cutNDIn {Γ} {Δ} i (there j) x (mk?₁ y)
     = return
     ∘ exch (bwd [] (Γ - i))
-    ∘ mk⅋₁
+    ∘ mk?₁
     ∘ exch (fwd [] (Γ - i))
     =<< cutNDIn i (there j) x y
-  cutNDIn {Γ} {Δ} i (there j) x (mk⊗₁ y)
+  cutNDIn {Γ} {Δ} i (there j) x (mk!₁ y)
     = return
     ∘ exch (bwd [] (Γ - i))
-    ∘ mk⊗₁
+    ∘ mk!₁
     ∘ exch (fwd [] (Γ - i))
     =<< cutNDIn i (there j) x y
   cutNDIn {Γ} {Δ} i (there j) x (cont y)

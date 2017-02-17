@@ -30,8 +30,8 @@ norm (case x y) = NF.case (norm x) (norm y)
 norm  halt      = NF.halt
 norm (wait x)   = NF.wait (norm x)
 norm  loop      = NF.loop
-norm (mk⅋₁ x)   = NF.mk⅋₁ (norm x)
-norm (mk⊗₁ x)   = NF.mk⊗₁ (norm x)
+norm (mk?₁ x)   = NF.mk?₁ (norm x)
+norm (mk!₁ x)   = NF.mk!₁ (norm x)
 norm (cont x)   = NF.cont (norm x)
 norm (pool x y) = NF.pool (norm x) (norm y)
 norm (exch b x) = NF.exch b (norm x)
@@ -47,8 +47,8 @@ normND (case x y) = normND x >>= λ x → normND y >>= λ y → return $ NF.case
 normND  halt      = return NF.halt
 normND (wait x)   = normND x >>= λ x → return (NF.wait x)
 normND  loop      = return NF.loop
-normND (mk⅋₁ x)   = normND x >>= λ x → return $ NF.mk⅋₁ x
-normND (mk⊗₁ x)   = normND x >>= λ x → return $ NF.mk⊗₁ x
+normND (mk?₁ x)   = normND x >>= λ x → return $ NF.mk?₁ x
+normND (mk!₁ x)   = normND x >>= λ x → return $ NF.mk!₁ x
 normND (cont x)   = normND x >>= λ x → return $ NF.cont x
 normND (pool x y) = normND x >>= λ x → normND y >>= λ y → return $ NF.pool x y
 normND (exch b x) = normND x >>= λ x → return $ NF.exch b x
@@ -62,8 +62,8 @@ unNorm (NF.case x y) = case (unNorm x) (unNorm y)
 unNorm  NF.halt      = halt
 unNorm (NF.wait x)   = wait (unNorm x)
 unNorm  NF.loop      = loop
-unNorm (NF.mk⅋₁ x)   = mk⅋₁ (unNorm x)
-unNorm (NF.mk⊗₁ x)   = mk⊗₁ (unNorm x)
+unNorm (NF.mk?₁ x)   = mk?₁ (unNorm x)
+unNorm (NF.mk!₁ x)   = mk!₁ (unNorm x)
 unNorm (NF.cont x)   = cont (unNorm x)
 unNorm (NF.pool x y) = pool (unNorm x) (unNorm y)
 unNorm (NF.exch x y) = exch x (unNorm y)

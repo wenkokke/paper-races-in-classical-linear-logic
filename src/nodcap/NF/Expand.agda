@@ -22,7 +22,7 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 
 {-# TERMINATING #-}
 -- Lemma:
---   We can expand an instance of ⅋[ n ] A into n repetitions of A,
+--   We can expand an instance of ?[ n ] A into n repetitions of A,
 --   by induction on n.
 --
 -- Problematic calls:
@@ -31,11 +31,11 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 mutual
   expand : {Γ : Context} {A : Type} {n : ℕ⁺} →
 
-    ⊢ⁿᶠ ⅋[ n ] A ∷ Γ →
+    ⊢ⁿᶠ ?[ n ] A ∷ Γ →
     --------------------
     ⊢ⁿᶠ replicate⁺ n A ++ Γ
 
-  expand (mk⅋₁ x) = x
+  expand (mk?₁ x) = x
   expand (cont {Γ} {A} {m} {n} x)
     = P.subst (λ Δ → ⊢ⁿᶠ Δ ++ Γ) (replicate⁺-++-commute m n)
     $ P.subst ⊢ⁿᶠ_ (P.sym (++.assoc (replicate⁺ m A) (replicate⁺ n A) Γ))
@@ -47,7 +47,7 @@ mutual
     = exch (B.++-cong {xs₁ = replicate⁺ n A} I.id (del-from b (here P.refl)))
     $ expandIn (from b ⟨$⟩ here P.refl) x
 
-  expandIn : {Γ : Context} {A : Type} {n : ℕ⁺} (i : ⅋[ n ] A ∈ Γ) →
+  expandIn : {Γ : Context} {A : Type} {n : ℕ⁺} (i : ?[ n ] A ∈ Γ) →
 
     ⊢ⁿᶠ Γ →
     ----------------------------
@@ -97,14 +97,14 @@ mutual
   expandIn {Γ} {A} {n} (there i)  loop
     = exch (swp [] (replicate⁺ n A) (_ ∷ []))
     $ loop
-  expandIn {Γ} {A} {n} (there i) (mk⅋₁ x)
+  expandIn {Γ} {A} {n} (there i) (mk?₁ x)
     = exch (swp [] (replicate⁺ n A) (_ ∷ []))
-    $ mk⅋₁
+    $ mk?₁
     $ exch (swp [] (_ ∷ []) (replicate⁺ n A))
     $ expandIn (there i) x
-  expandIn {Γ} {A} {n} (there i) (mk⊗₁ x)
+  expandIn {Γ} {A} {n} (there i) (mk!₁ x)
     = exch (swp [] (replicate⁺ n A) (_ ∷ []))
-    $ mk⊗₁
+    $ mk!₁
     $ exch (swp [] (_ ∷ []) (replicate⁺ n A))
     $ expandIn (there i) x
   expandIn {Γ} {A} {n} (there i) (cont x)

@@ -64,29 +64,29 @@ data ⊢ⁿᶠ_ : Context → Set where
        -------
        ⊢ⁿᶠ ⊤ ∷ Γ
 
-  mk⅋₁ : {Γ : Context} {A : Type} →
+  mk?₁ : {Γ : Context} {A : Type} →
 
        ⊢ⁿᶠ A ∷ Γ →
        ---------------------
-       ⊢ⁿᶠ ⅋[ suc zero ] A ∷ Γ
+       ⊢ⁿᶠ ?[ suc zero ] A ∷ Γ
 
-  mk⊗₁ : {Γ : Context} {A : Type} →
+  mk!₁ : {Γ : Context} {A : Type} →
 
        ⊢ⁿᶠ A ∷ Γ →
        ---------------------
-       ⊢ⁿᶠ ⊗[ suc zero ] A ∷ Γ
+       ⊢ⁿᶠ ![ suc zero ] A ∷ Γ
 
   cont : {Γ : Context} {A : Type} {m n : ℕ⁺} →
 
-       ⊢ⁿᶠ ⅋[ m ] A ∷ ⅋[ n ] A ∷ Γ →
+       ⊢ⁿᶠ ?[ m ] A ∷ ?[ n ] A ∷ Γ →
        ------------------------------
-       ⊢ⁿᶠ ⅋[ m + n ] A ∷ Γ
+       ⊢ⁿᶠ ?[ m + n ] A ∷ Γ
 
   pool : {Γ Δ : Context} {A : Type} {m n : ℕ⁺} →
 
-       ⊢ⁿᶠ ⊗[ m ] A ∷ Γ → ⊢ⁿᶠ ⊗[ n ] A ∷ Δ →
+       ⊢ⁿᶠ ![ m ] A ∷ Γ → ⊢ⁿᶠ ![ n ] A ∷ Δ →
        -------------------------------------
-       ⊢ⁿᶠ ⊗[ m + n ] A ∷ Γ ++ Δ
+       ⊢ⁿᶠ ![ m + n ] A ∷ Γ ++ Δ
 
   exch : {Γ Δ : Context} →
 
