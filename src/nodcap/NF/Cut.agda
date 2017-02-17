@@ -54,18 +54,18 @@ mutual
     = cut x z
   cut {Γ} {Δ} {A & B} (case x y) (sel₂ z)
     = cut y z
-  cut {Γ} {Δ} {⊗[ ._ ] A} (mk⊗₁ x) y
+  cut {Γ} {Δ} {![ ._ ] A} (mk!₁ x) y
     = cut x (expand y)
-  cut {_} {Θ} {⊗[ ._ ] _} (pool {Γ} {Δ} x y) z
+  cut {_} {Θ} {![ ._ ] _} (pool {Γ} {Δ} x y) z
     = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
     $ exch (swp [] Γ Δ)
     $ cut y
     $ exch (fwd [] Γ)
     $ cut x
     $ redistribute z
-  cut {Γ} {Δ} {⅋[ ._ ] A} x (mk⊗₁ y)
+  cut {Γ} {Δ} {?[ ._ ] A} x (mk!₁ y)
     = cut (expand x) y
-  cut {Θ} {_} {⅋[ ._ ] A} x (pool {Γ} {Δ} y z)
+  cut {Θ} {_} {?[ ._ ] A} x (pool {Γ} {Δ} y z)
     = P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
     $ flip cut z
     $ flip cut y
@@ -117,11 +117,11 @@ mutual
     $ cutIn i j x y
   cutIn (there i) j loop y
     = loop
-  cutIn {Γ} {Δ} (there i) j (mk⅋₁ x) y
-    = mk⅋₁
+  cutIn {Γ} {Δ} (there i) j (mk?₁ x) y
+    = mk?₁
     $ cutIn (there i) j x y
-  cutIn {Γ} {Δ} (there i) j (mk⊗₁ x) y
-    = mk⊗₁
+  cutIn {Γ} {Δ} (there i) j (mk!₁ x) y
+    = mk!₁
     $ cutIn (there i) j x y
   cutIn {Γ} {Δ} (there i) j (cont x) y
     = cont
@@ -179,14 +179,14 @@ mutual
     $ cutIn i j x y
   cutIn {Γ} {Δ} i (there j) x loop
     = exch (bwd [] (Γ - i)) loop
-  cutIn {Γ} {Δ} i (there j) x (mk⅋₁ y)
+  cutIn {Γ} {Δ} i (there j) x (mk?₁ y)
     = exch (bwd [] (Γ - i))
-    $ mk⅋₁
+    $ mk?₁
     $ exch (fwd [] (Γ - i))
     $ cutIn i (there j) x y
-  cutIn {Γ} {Δ} i (there j) x (mk⊗₁ y)
+  cutIn {Γ} {Δ} i (there j) x (mk!₁ y)
     = exch (bwd [] (Γ - i))
-    $ mk⊗₁
+    $ mk!₁
     $ exch (fwd [] (Γ - i))
     $ cutIn i (there j) x y
   cutIn {Γ} {Δ} i (there j) x (cont y)

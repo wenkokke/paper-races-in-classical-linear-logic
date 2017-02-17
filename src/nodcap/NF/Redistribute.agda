@@ -16,16 +16,16 @@ module nodcap.NF.Redistribute where
 private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 
 -- Lemma:
---   A formula of the form ⅋[ m + n ] is introduced by a contraction on two
---   formulas of the form ⅋[ p ] A and ⅋[ q ] A. While we know p + q = m + n,
+--   A formula of the form ?[ m + n ] is introduced by a contraction on two
+--   formulas of the form ?[ p ] A and ?[ q ] A. While we know p + q = m + n,
 --   it isn't necessarily true that p = m or p = n.
 --   Using expansion and contraction, we can redistribute the subproofs, such
 --   that we get exactly two formulas with p and q where p = m and q = n.
 redistribute : {Γ : Context} {A : Type} {m n : ℕ⁺} →
 
-  ⊢ⁿᶠ ⅋[ m + n ] A ∷ Γ →
+  ⊢ⁿᶠ ?[ m + n ] A ∷ Γ →
   ----------------------------
-  ⊢ⁿᶠ ⅋[ m ] A ∷ ⅋[ n ] A ∷ Γ
+  ⊢ⁿᶠ ?[ m ] A ∷ ?[ n ] A ∷ Γ
 
 redistribute {Γ} {A} {m} {n} x
   = exch (bbl [])

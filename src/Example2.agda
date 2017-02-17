@@ -44,19 +44,19 @@ client₁ client₂ : ⊢ Sale ^ ∷ []
 client₁ = send (sel₁ halt) (case halt halt)
 client₂ = send (sel₂ halt) (case halt halt)
 
-server : ⊢ ⅋[ suc (suc zero) ] Sale ∷ Receipt ∷ Receipt ∷ 𝟏 ∷ []
+server : ⊢ ?[ suc (suc zero) ] Sale ∷ Receipt ∷ Receipt ∷ 𝟏 ∷ []
 server
   = cont
-  $ mk⅋₁
+  $ mk?₁
   $ exch (bwd (_ ∷ []) (_ ∷ []))
   $ sale₁
-  $ mk⅋₁
+  $ mk?₁
   $ sale₂
   $ halt
 
-clients : ⊢ ⊗[ suc (suc zero) ] (Sale ^) ∷ []
+clients : ⊢ ![ suc (suc zero) ] (Sale ^) ∷ []
 clients
-  = pool (mk⊗₁ client₁) (mk⊗₁ client₂)
+  = pool (mk!₁ client₁) (mk!₁ client₂)
 
 
 main = run (mapM′ putStrLn (fromList strs))

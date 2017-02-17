@@ -126,7 +126,7 @@ showTerm {Γ} x = proj₁ (go bound x state)
       = return ("case " ++ boundˣ ++ " {;}")
       where
         boundˣ = bound (here P.refl)
-    go bound (mk⅋₁ {Γ} {A} x) = fresh >>= withFresh
+    go bound (mk?₁ {Γ} {A} x) = fresh >>= withFresh
       where
         withFresh : String → State (Stream String) String
         withFresh boundʸ
@@ -137,7 +137,7 @@ showTerm {Γ} x = proj₁ (go bound x state)
             bound₁ : {w : Type} → w ∈ A ∷ Γ → String
             bound₁ (here px) = boundʸ
             bound₁ (there i) = bound (there i)
-    go bound (mk⊗₁ {Γ} {A} x) = fresh >>= withFresh
+    go bound (mk!₁ {Γ} {A} x) = fresh >>= withFresh
       where
         withFresh : String → State (Stream String) String
         withFresh boundʸ
@@ -152,7 +152,7 @@ showTerm {Γ} x = proj₁ (go bound x state)
       = go bound₁ x
       where
         boundˣ = bound (here P.refl)
-        bound₁ : {w : Type} → w ∈ ⅋[ m ] A ∷ ⅋[ n ] A ∷ Γ → String
+        bound₁ : {w : Type} → w ∈ ?[ m ] A ∷ ?[ n ] A ∷ Γ → String
         bound₁ (here px) = boundˣ
         bound₁ (there (here px)) = boundˣ
         bound₁ (there (there i)) = bound (there i)
@@ -162,10 +162,10 @@ showTerm {Γ} x = proj₁ (go bound x state)
       → return ("(" ++ x' ++ "|" ++ y' ++ ")")
       where
         boundˣ = bound (here P.refl)
-        bound₁ : {w : Type} → w ∈ ⊗[ m ] A ∷ Γ → String
+        bound₁ : {w : Type} → w ∈ ![ m ] A ∷ Γ → String
         bound₁ (here px) = boundˣ
         bound₁ (there i) = bound (there (++ˡ i))
-        bound₂ : {w : Type} → w ∈ ⊗[ n ] A ∷ Δ → String
+        bound₂ : {w : Type} → w ∈ ![ n ] A ∷ Δ → String
         bound₂ (here px) = boundˣ
         bound₂ (there i) = bound (there (++ʳ Γ i))
     go bound (exch b x) = go (bound ∘ (to b ⟨$⟩_)) x
