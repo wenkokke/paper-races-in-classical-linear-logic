@@ -40,7 +40,7 @@ showTerm {Γ} x = proj₁ (go bound x state)
 
     go : {Γ : Context} (bound : {w : Type} → w ∈ Γ → String) → ⊢ Γ → State (Stream String) String
     go bound ax
-      = return (boundˣ ++ "↔" ++ boundʸ)
+      = return (boundˣ ++ "<->" ++ boundʸ)
       where
         boundˣ = bound (here P.refl)
         boundʸ = bound (there (here P.refl))
@@ -50,7 +50,7 @@ showTerm {Γ} x = proj₁ (go bound x state)
         withFresh boundˣ
           = go bound₁ x >>= λ x'
           → go bound₂ y >>= λ y'
-          → return ("ν" ++ boundˣ ++ ".(" ++ x' ++ "|" ++ y' ++ ")")
+          → return ("new " ++ boundˣ ++ ".(" ++ x' ++ "|" ++ y' ++ ")")
           where
             bound₁ : {w : Type} → w ∈ A ∷ Γ → String
             bound₁ (here px) = boundˣ
