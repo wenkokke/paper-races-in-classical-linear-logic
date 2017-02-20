@@ -193,3 +193,4 @@ depr/
 *.clean
 MAlonzo/
 src/TicketServer
+src/LocalChoice
