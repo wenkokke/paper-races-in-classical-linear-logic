@@ -1,0 +1,31 @@
+\usepackage{cmap}
+\usepackage{alphabeta}
+\usepackage[greek,english]{babel}
+\languageattribute{greek}{polutoniko}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{lmodern}
+
+%%% TikZ and QTree
+
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+
+%%% Term Language
+\newcommand{\subst}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
+\newcommand{\case}[3]{%
+\toks0={#2#3}%
+\edef\param{\the\toks0}%
+\ifx\param\empty
+  \ensuremath{\text{case} \; #1 \; \{\}}
+\else
+  \ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}
+\fi}
+\newcommand{\inl}[2]{%
+  \ensuremath{#1[\text{inl}].#2}}
+\newcommand{\inr}[2]{%
+  \ensuremath{#1[\text{inr}].#2}}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
