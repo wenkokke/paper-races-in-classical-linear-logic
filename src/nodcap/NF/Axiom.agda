@@ -66,9 +66,9 @@ ax { ![ suc zero ] A }
   $ exch (bbl []) ax
 ax { ![ suc (suc n) ] A }
   = exch (bbl [])
-  $ cont {m = suc zero} {n = suc n}
+  $ cont {m = 1} {n = suc n}
   $ exch (bwd [] (_ ∷ _ ∷ []))
-  $ pool {m = suc zero} {n = suc n}
+  $ pool {m = 1} {n = suc n}
   ( ax )
   ( ax )
 ax { ?[ suc zero ] A }
@@ -77,8 +77,8 @@ ax { ?[ suc zero ] A }
   $ mk!₁
   $ exch (bbl []) ax
 ax { ?[ suc (suc n) ] A }
-  = cont {m = suc zero} {n = suc n}
+  = cont {m = 1} {n = suc n}
   $ exch (bwd [] (_ ∷ _ ∷ []))
-  $ pool {m = suc zero} {n = suc n}
+  $ pool {m = 1} {n = suc n}
   ( exch (bbl []) ax )
   ( exch (bbl []) ax )

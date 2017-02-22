@@ -1,11 +1,26 @@
-open import Data.Nat as ℕ using (ℕ; suc; zero)
-open import Data.List as L using (List; _∷_; []; _++_)
+open import Agda.Builtin.FromNat
+open import Data.Nat.Base  as ℕ using (ℕ; suc; zero; _>_; _≤?_)
+open import Data.List.Base as L using (List; _∷_; []; _++_)
+open import Relation.Nullary.Decidable using (True)
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
 module Data.Pos where
 
+open import Data.Nat.FromNat public
+
 data ℕ⁺ : Set where
   suc : ℕ → ℕ⁺
+
+instance
+  NumberPos : Number ℕ⁺
+  NumberPos = record { Constraint = Pos; fromNat = fromℕ }
+    where
+      Pos : ℕ → Set
+      Pos n = True (suc zero ≤? n)
+      fromℕ : (n : ℕ) {{p : Pos n}} → ℕ⁺
+      fromℕ zero {{()}}
+      fromℕ (suc zero)    = suc zero
+      fromℕ (suc (suc n)) = suc (suc n)
 
 toℕ : ℕ⁺ → ℕ
 toℕ (suc n) = suc n

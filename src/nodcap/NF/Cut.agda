@@ -16,7 +16,6 @@ open import nodcap.Base
 open import nodcap.NF.Typing
 open import nodcap.NF.Contract
 open import nodcap.NF.Expand
-open import nodcap.NF.Redistribute
 
 module nodcap.NF.Cut where
 
@@ -54,22 +53,13 @@ mutual
     = cut x z
   cut {Γ} {Δ} {A = A & B} (case x y) (sel₂ z)
     = cut y z
-  cut {Γ} {Δ} {A = ![ ._ ] A} (mk!₁ x) y
-    = cut x (expand y)
-  cut {_} {Θ} {A = ![ ._ ] _} (pool {Γ} {Δ} x y) z
-    = P.subst ⊢ⁿᶠ_ (P.sym (++.assoc Γ Δ Θ))
-    $ exch (swp [] Γ Δ)
-    $ cut y
-    $ exch (fwd [] Γ)
-    $ cut x
-    $ redistribute z
-  cut {Γ} {Δ} {A = ?[ ._ ] A} x (mk!₁ y)
-    = cut (expand x) y
-  cut {Θ} {_} {A = ?[ ._ ] A} x (pool {Γ} {Δ} y z)
-    = P.subst ⊢ⁿᶠ_ (++.assoc Θ Γ Δ)
-    $ flip cut z
-    $ flip cut y
-    $ redistribute x
+  cut {Γ} {Δ} {A = ![ n ] A} x y
+    = interleaveIn (here P.refl) x (expand y)
+  cut {Γ} {Δ} {A = ?[ n ] A} x y
+    = exch (swp₂ Γ)
+    $ interleaveIn {_ ∷ Δ} {Γ} (here P.refl) y
+    $ P.subst (λ A → ⊢ⁿᶠ replicate⁺ n A ++ Γ) (P.sym $ ^-inv A)
+    $ expand x
   cut {Γ} {Δ} {A} (exch b x) y
     = exch (B.++-cong {ys₁ = Δ} (del-from b (here P.refl)) I.id)
     $ cutIn (from b ⟨$⟩ here P.refl) (here P.refl) x y
@@ -214,3 +204,79 @@ mutual
   cutIn {Γ} {Δ} i j x (exch b y)
     = exch (B.++-cong {xs₁ = Γ - i} I.id (del-from b j))
     $ cutIn i (from b ⟨$⟩ j) x y
+
+  interleaveIn : {Γ Δ : Context} {A : Type} {n : ℕ⁺} (i : ![ n ] A ∈ Γ) →
+
+    ⊢ⁿᶠ Γ → ⊢ⁿᶠ replicate⁺ n (A ^) ++ Δ →
+    -----------------------------------------------
+    ⊢ⁿᶠ Γ - i ++ Δ
+
+  interleaveIn (here P.refl) (mk!₁ {Γ} x) z
+    = cut x z
+  interleaveIn {._} {Θ} (here P.refl) (pool {Γ} {Δ} {A} {m} {n} x y) z
+    = P.subst ⊢ⁿᶠ_ (P.sym $ ++.assoc Γ Δ Θ)
+    $ interleaveIn (here P.refl) x
+    $ exch (swp [] (replicate⁺ m _) Δ)
+    $ interleaveIn (here P.refl) y
+    $ exch (swp [] (replicate⁺ n _) (replicate⁺ m _))
+    $ P.subst ⊢ⁿᶠ_ (++.assoc (replicate⁺ m _) (replicate⁺ n _) Θ)
+    $ P.subst (λ Γ → ⊢ⁿᶠ Γ ++ Θ) (P.sym $ replicate⁺-++-commute m n) z
+  interleaveIn {._} {Θ} (there i) (send {Γ} {Δ} {A} {B} x y) z
+    with split Γ i
+  ... | inj₁ (j , p) rewrite p
+    = P.subst ⊢ⁿᶠ_ (P.sym $ ++.assoc (_ ∷ Γ - j) Δ Θ)
+    $ exch (swp₃ (_ ∷ Γ - j) Δ {Θ})
+    $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Γ - j) Θ Δ)
+    $ flip send y
+    $ interleaveIn (there j) x z
+  ... | inj₂ (j , p) rewrite p
+    = P.subst ⊢ⁿᶠ_ (P.sym $ ++.assoc (_ ∷ Γ) (Δ - j) Θ)
+    $ send x
+    $ interleaveIn (there j) y z
+  interleaveIn (there i) (recv x)   z
+    = recv
+    $ interleaveIn (there (there i)) x z
+  interleaveIn (there i) (sel₁ x)   z
+    = sel₁
+    $ interleaveIn (there i) x z
+  interleaveIn (there i) (sel₂ x)   z
+    = sel₂
+    $ interleaveIn (there i) x z
+  interleaveIn (there i) (case x y) z
+    = case (interleaveIn (there i) x z) (interleaveIn (there i) y z)
+  interleaveIn (there ()) halt z
+  interleaveIn (there i) (wait x)   z
+    = wait
+    $ interleaveIn i x z
+  interleaveIn (there i)  loop      z
+    = loop
+  interleaveIn (there i) (mk?₁ x)   z
+    = mk?₁
+    $ interleaveIn (there i) x z
+  interleaveIn (there i) (mk!₁ x)   z
+    = mk!₁
+    $ interleaveIn (there i) x z
+  interleaveIn (there i) (cont x)   z
+    = cont
+    $ interleaveIn (there (there i)) x z
+  interleaveIn {._} {Θ} (there i) (pool {Γ} {Δ} x y) z
+    with split Γ i
+  ... | inj₁ (j , p) rewrite p
+    = P.subst ⊢ⁿᶠ_ (P.sym $ ++.assoc (_ ∷ Γ - j) Δ Θ)
+    $ exch (swp₃ (_ ∷ Γ - j) Δ {Θ})
+    $ P.subst ⊢ⁿᶠ_ (++.assoc (_ ∷ Γ - j) Θ Δ)
+    $ flip pool y
+    $ interleaveIn (there j) x z
+  ... | inj₂ (j , p) rewrite p
+    = P.subst ⊢ⁿᶠ_ (P.sym $ ++.assoc (_ ∷ Γ) (Δ - j) Θ)
+    $ pool x
+    $ interleaveIn (there j) y z
+  interleaveIn {Γ} {Δ} i (exch b x) z
+    = exch (B.++-cong {ys₁ = Δ} (del-from b i) I.id)
+    $ interleaveIn (from b ⟨$⟩ i) x z
+
+-- -}
+-- -}
+-- -}
+-- -}
+-- -}

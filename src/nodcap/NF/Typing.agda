@@ -68,13 +68,13 @@ data ⊢ⁿᶠ_ : Context → Set where
 
        ⊢ⁿᶠ A ∷ Γ →
        ---------------------
-       ⊢ⁿᶠ ?[ suc zero ] A ∷ Γ
+       ⊢ⁿᶠ ?[ 1 ] A ∷ Γ
 
   mk!₁ : {Γ : Context} {A : Type} →
 
        ⊢ⁿᶠ A ∷ Γ →
        ---------------------
-       ⊢ⁿᶠ ![ suc zero ] A ∷ Γ
+       ⊢ⁿᶠ ![ 1 ] A ∷ Γ
 
   cont : {Γ : Context} {A : Type} {m n : ℕ⁺} →
 

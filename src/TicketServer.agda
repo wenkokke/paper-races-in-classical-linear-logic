@@ -1,7 +1,7 @@
 open import IO using (run; putStrLn; mapM′; _>>_)
 open import Coinduction using (♯_)
 open import Data.Nat as ℕ using (ℕ; suc; zero)
-open import Data.Pos as ℕ⁺ using (ℕ⁺; suc)
+open import Data.Pos as ℕ⁺ using (ℕ⁺; suc; NumberPos)
 open import Data.String using (String)
 open import Data.List using (List; []; _∷_; map)
 open import Data.Colist using (fromList)
@@ -54,7 +54,7 @@ server
   $ sale₂
   $ halt
 
-clients : ⊢ ![ suc (suc zero) ] (Sale ^) ∷ []
+clients : ⊢ ![ 2 ] (Sale ^) ∷ []
 clients
   = pool (mk!₁ client₁) (mk!₁ client₂)
 
