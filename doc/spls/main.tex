@@ -9,21 +9,21 @@
 
 \maketitle
 
-\begin{frame}{This is how I write \textpi-calculus things}
+\begin{frame}{This is how I write \textpi-calculus things\dots}
   \[\!
     \begin{aligned}
-      P, Q ::=&\;\nu x.P        &&\text{create a new channel $x$}
-      \\  \mid&\;x[y].P         &&\text{send a channel $y$ over $x$, then run P}
-      \\  \mid&\;x(y).P         &&\text{receive a channel $y$ over $x$, then run P}
-      \\  \mid&\;0              &&\text{halt}
-      \\  \mid&\;\inl{x}P       &&\text{send a bit (inl) over $x$, then run P}
-      \\  \mid&\;\inr{x}P       &&\text{send a bit (inr) over $x$, then run P}
-      \\  \mid&\;\case{x}{P}{Q} &&\text{receive a bit over $x$, then run P or Q}
-      \\  \mid&\;x[].P          &&\text{send a ping over $x$, then run P}
-      \\  \mid&\;x().P          &&\text{receive a ping over $x$, then run P}
-      \\  \mid&\;\case{x}{}{}   &&\text{loop}\]
-  \end{aligned}
-  
+      P, Q ::=&\;\nu x.P        &&\text{// create a new channel $x$}
+      \\  \mid&\;x[y].P         &&\text{// send a channel $y$ over $x$, then run P}
+      \\  \mid&\;x(y).P         &&\text{// receive a channel $y$ over $x$, then run P}
+      \\  \mid&\;0              &&\text{// halt}
+      \\  \mid&\;\inl{x}P       &&\text{// send a bit (inl) over $x$, then run P}
+      \\  \mid&\;\inr{x}P       &&\text{// send a bit (inr) over $x$, then run P}
+      \\  \mid&\;\case{x}{P}{Q} &&\text{// receive a bit over $x$, then run P or Q}
+      \\  \mid&\;x[].P          &&\text{// send a ping over $x$, then run P}
+      \\  \mid&\;x().P          &&\text{// receive a ping over $x$, then run P}
+      \\  \mid&\;\case{x}{}{}   &&\text{// loop}
+    \end{aligned}
+  \] 
 \end{frame}
 
 \begin{frame}{Local choice}
@@ -80,21 +80,21 @@
 
 \begin{frame}{Local choice is not modular}
   \only<1>{%
-    If we extend...
+    If we extend\dots
     \[
       \nu x.(x(y).P \mid x(z).Q \mid x[a].x[b].0)
     \]
-    ...to...
+    \dots to\dots
     \[
       \nu x.(x(y).P \mid x(z).Q \mid x(w).R \mid x[a].x[b].x[c].0)
     \]
   }
   \only<2>{%
-    Then we must extend...
+    Then we must extend\dots
     \[
       (\subst{P}{a}{y} \mid \subst{Q}{b}{z}) + (\subst{P}{b}{y} \mid \subst{Q}{a}{z})
     \]
-    ...to...
+    \dots to\dots
     \[\!
       \begin{array}{cc}
         (\subst{P}{a}{y} \mid \subst{Q}{b}{z} \mid \subst{R}{c}{w}) &+ \\
@@ -108,5 +108,79 @@
   }
 \end{frame}
 
+\begin{frame}{}
+  \centering
+   \(
+   \text{Type} \; A , B ::=
+   \alpha \mid \alpha^\bot
+   \mid \one      \mid \bot      \mid \nil      \mid \top
+   \mid A \tens B \mid A \parr B \mid A \plus B \mid A \with B
+   \)
+  
+  \begin{proofbox}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$\seq[ \link{x}{y} ]{ \tm[x]{A} , \tm[y]{A^\bot} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
+    \NOM{Cut}
+    \BIC{$\seq[ \nu x.(P \mid Q) ]{ \Gamma , \Delta }$}
+  \end{proofbox}
+  
+  \vspace{1\baselineskip}
+  
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+    \SYM{\tens}
+    \BIC{$\seq[{ x[y].(P \mid Q) }]{
+        \Gamma , \Delta , \tm[x]{A \tens B} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm{x}{B} }$}
+    \SYM{\parr}
+    \UIC{$\seq[ x(y).P ]{ \Gamma , \tm[x]{A \parr B} }$}
+  \end{proofbox}
+
+  \vspace{1\baselineskip}
+
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+    \SYM{\plus_1}
+    \UIC{$\seq[{ \inl{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{B} }$}
+    \SYM{\plus_2}
+    \UIC{$\seq[{ \inr{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+    \SYM{\with}
+    \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
+  \end{proofbox}
+
+  \vspace{1\baselineskip}
+  
+  \begin{proofbox}
+    \AXC{}
+    \SYM{\one}
+    \UIC{$\seq[{ x[].0 }]{ \tm[x]{\one} }$}
+  \end{proofbox}
+  \begin{proofbox}
+    \AXC{$\seq[P]{ \Gamma }$}
+    \SYM{\bot}
+    \UIC{$\seq[{x().P}]{ \Gamma , \tm[x]{\bot} }$}
+  \end{proofbox}
+  (no rule for \nil)
+  \begin{proofbox}
+    \AXC{}
+    \SYM{\top}
+    \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
+  \end{proofbox}
+\end{frame}
 
 \end{document}

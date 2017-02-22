@@ -11,8 +11,31 @@
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 
+%%% Type Language
+\def\parr{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{\&}}}}
+\def\with{\ensuremath{\mathbin{\text{\&}}}}
+\def\plus{\ensuremath{\oplus}}
+\def\tens{\ensuremath{\otimes}}
+\def\limp{\ensuremath{\multimap}}
+\def\one{\ensuremath{\mathbf{1}}}
+\def\nil{\ensuremath{\mathbf{0}}}
+\def\lequiv{\ensuremath{\multimapboth}}
+
 %%% Term Language
+\newcommand{\tm}[2][]{%
+\toks0={#1}%
+\edef\param{\the\toks0}%
+\ifx\param\empty
+  \ensuremath{{\color{ty}#2}}%
+\else
+  \ensuremath{{\color{tm}#1}\colon{\color{ty}#2}}%
+\fi}
+\newcommand{\seq}[2][]{\ensuremath{{\color{tm}#1}\vdash{\color{ty}#2}}}
 \newcommand{\subst}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
+\newcommand{\nod}[2][]{\ensuremath{{\star}_{#1}{#2}}}
+\newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\newcommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+\newcommand{\link}[2]{\ensuremath{#1{\leftrightarrow}#2}}
 \newcommand{\case}[3]{%
 \toks0={#2#3}%
 \edef\param{\the\toks0}%
@@ -25,6 +48,19 @@
   \ensuremath{#1[\text{inl}].#2}}
 \newcommand{\inr}[2]{%
   \ensuremath{#1[\text{inr}].#2}}
+
+%%% Inference Rules
+\usepackage{bussproofs}
+\def\fCenter{\ensuremath{\;\vdash\;}}
+\newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
+\newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
+\EnableBpAbbreviations
+\newenvironment{proofbox}[1][0.9]%
+  {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
+  {\scalebox{\scalefactor}{\DisplayProof} \egroup}
+\newenvironment{proofblock}[1][0.9]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
 
 %%% Local Variables:
 %%% TeX-master: "main"
