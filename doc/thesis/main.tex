@@ -4,9 +4,35 @@
 
 \include{fig-cp}
 \include{fig-nodcap}
+
+\paragraph{Admissible rules}
+\begin{proofblock}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq[{ \link{x}{y} }]{ \tm[x]{A^\bot}, \tm[y]{A} }$}
+\end{proofblock}
+\begin{proofblock}
+  \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+  \NOM{Exp}
+  \UIC{$\seq[{ \expn{x}{x_1 \cdots x_n}P }]{ \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A} }$}
+\end{proofblock}
+\begin{proofblock}
+  \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\take[n]{A}} }$}
+  \AXC{$\seq[{ Q }]{ \Delta, \tm[y_1]{A^\bot}\cdots\tm[y_n]{A^\bot} }$}
+  \NOM{Int}
+  \BIC{$\seq[{ \intl{x}{y_1 \cdots y_n}(P \mid Q)}]{ \Gamma, \Delta } $}
+\end{proofblock}
+\begin{proofblock}
+  \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A} }$}
+  \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{A^\bot} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{ \cut{x}(P \mid Q) }]{ \Gamma, \Delta }$}
+\end{proofblock}
+
+
 \include{fig-nodcap-ax}
-\include{fig-nodcap-expand}
-\include{fig-nodcap-interleave}
+\include{fig-nodcap-expn}
+\include{fig-nodcap-intl}
 \include{fig-nodcap-cut}
 
 \bibliography{main}

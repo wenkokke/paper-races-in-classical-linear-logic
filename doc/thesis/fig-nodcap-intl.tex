@@ -1,0 +1,83 @@
+\begin{figure*}
+  \centering
+  \begin{tabular}{ccc}
+    \begin{proofbox}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A} }$}
+      \SYM{\take[1]{}}
+      \UIC{$
+        \seq[{ \take{\recv{z}{x}}P }]
+        { \Gamma, \tm[z]{\take[1]{A}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[y_1]{A^\bot}}$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{z}{y_1}(P \mid Q) }]
+        { \Gamma, \Delta }$}
+    \end{proofbox}
+    &$\Longrightarrow$&
+    \begin{proofbox}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[y_1]{A^\bot}}$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(P \mid \subst{Q}{x}{y_1}) }]
+        { \Gamma, \Delta }$}
+    \end{proofbox}
+    \\\\
+    \multicolumn{3}{l}{%
+    \begin{proofbox}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[m]{A}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[x]{\take[n]{A}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (P \mid Q) }]
+        { \Gamma, \Delta, \tm[x]{\take[m+n]{A}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[y_1]{A^\bot}\cdots\tm[y_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{y_1 \cdots y_{m+n}}((P \mid Q) \mid R) }]
+        { \Gamma, \Delta, \Theta }$}
+    \end{proofbox}
+    $\Longrightarrow$
+    }
+    \\\\
+    \multicolumn{3}{r}{%
+    \begin{proofbox}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[x]{\take[n]{A}} }$}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[m]{A}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[y_1]{A^\bot}\cdots\tm[y_m]{A^\bot},
+          \tm[y_{m+1}]{A^\bot}\cdots\tm[y_{m+n}]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{y_1 \cdots y_m}P }]
+        { \Gamma, \Theta, \tm[y_{m+1}]{A^\bot}\cdots\tm[y_{m+n}]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{y_{m+1} \cdots y_{m+n}}\intl{x}{y_1 \cdots y_m}P }]
+        { \Gamma, \Delta, \Theta }$}
+    \end{proofbox}
+    }
+  \end{tabular}
+  
+  \caption{Principal interleavings for \nodcap}
+  \label{fig:nodcap-intl-prin}
+\end{figure*}
