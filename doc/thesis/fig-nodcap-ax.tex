@@ -67,9 +67,11 @@
       \UIC{$
         \seq[{ \link{z}{w} }]
         { \tm[z]{A^\bot}, \tm[w]{B} }$}
+      \SYM{$\take[1]{}$}
       \UIC{$
         \seq[{ \take{\recv{y}{w}}\link{z}{w} }]
         { \tm[z]{A^\bot}, \tm[y]{\take[1]{A}} }$}
+      \SYM{$\give[1]{}$}
       \UIC{$
         \seq[{ \give{\send{x}{z}}\take{\recv{y}{w}}\link{z}{w} }]
         { \tm[x]{\give[1]{A^\bot}}, \tm[y]{\take[1]{A}} }$}
@@ -83,8 +85,8 @@
       \AXC{}
       \NOM{Ax}
       \UIC{$
-        \seq[{ \link{z}{w} }]
-        { \tm[z]{\give[n]{A^\bot}}, \tm[w]{\take[n]{A}} }$}
+        \seq[{ \link{z}{y} }]
+        { \tm[z]{\give[n]{A^\bot}}, \tm[y]{\take[n]{A}} }$}
       \NOM{Pool}
       \BIC{$
         \seq[{ (\link{x}{y}\mid\link{z}{y}) }]

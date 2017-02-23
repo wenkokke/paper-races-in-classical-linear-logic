@@ -1,4 +1,3 @@
-\newgeometry{left=0.75cm,right=0.75cm}
 \begin{figure*}
   \centering
   \begin{tabular}{ccc}
@@ -12,7 +11,7 @@
         { \Gamma, \tm[x]{\give[1]{A}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1}\give{\send{x}{y}}P }]
+        \seq[{ \expn{x}{x_1}\give{\send{x}{y}}P }]
         { \Gamma, \tm[x_1]{A} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -32,7 +31,7 @@
         { \Gamma, \tm[x]{\give[m+n]{A}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_{m+n}}\subst{P}{x}{y} }]
+        \seq[{ \expn{x}{x_1 \cdots x_{m+n}}\subst{P}{x}{y} }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -42,19 +41,20 @@
         { \Gamma, \tm[x]{\give[m]{A}}, \tm[y]{\give[n]{A}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_m}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_m}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_m], \tm[y]{\give[n]{A}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{y}{x_{m+1} \cdots x_{m+n}}\expand{x}{x_1 \cdots x_m}P }]
+        \seq[{ \expn{y}{x_{m+1} \cdots x_{m+n}}\expn{x}{x_1 \cdots x_m}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
     \end{proofbox}
   \end{tabular}
   
   \caption{Principal expansions for \nodcap}
-  \label{fig:nodcap-expand-principal}
+  \label{fig:nodcap-expand-prin}
 \end{figure*}
 
+\newgeometry{left=0.75cm,right=0.75cm}
 \begin{figure*}
   \begin{tabular}{ccc}
     \begin{proofbox}
@@ -67,7 +67,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\bot} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\wait{y}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\wait{y}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\bot} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -77,11 +77,11 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x_1 \cdots x_n}{x}P }]
+        \seq[{ \expn{x_1 \cdots x_n}{x}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta }$}
       \SYM{\bot}
       \UIC{$
-        \seq[{ \wait{y}\expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \wait{y}\expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\bot} }$}
     \end{proofbox}
     \\\\
@@ -95,7 +95,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\top} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[\expand{x}{x_1\cdots x_n}\case{y}{}{}]
+        \seq[\expn{x}{x_1\cdots x_n}\case{y}{}{}]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\top} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -119,7 +119,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[z]{B \parr C} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\recv{z}{y}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\recv{z}{y}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{B \parr C} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -129,11 +129,11 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B}, \tm[z]{C} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B}, \tm[z]{C} }$}
       \SYM{\parr}
       \UIC{$
-        \seq[{ \recv{z}{y}\expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \recv{z}{y}\expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{B \parr C} }$}
     \end{proofbox}
     \\\\
@@ -150,7 +150,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \Theta, \tm[z]{A \tens B} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[z]{A \tens B} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -160,14 +160,14 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \tm[y]{B} }$}
       \AXC{$
         \seq[{ Q }]
         { \Theta, \tm[z]{C} }$}
       \SYM{\tens}
       \BIC{$
-        \seq[{ \send{z}{y}(\expand{x}{x_1 \cdots x_n}P \mid Q) }]
+        \seq[{ \send{z}{y}(\expn{x}{x_1 \cdots x_n}P \mid Q) }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[z]{A \tens B} }$}
     \end{proofbox}
 %   \\\\
@@ -184,7 +184,7 @@
 %       { \Gamma, \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[z]{A \tens B} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }]
+%       \seq[{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }]
 %       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[z]{B \tens C} }$}
 %   \end{proofbox}
 %   &$\Longrightarrow$&
@@ -197,11 +197,11 @@
 %       { \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[z]{C} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x}{x_1 \cdots x_n}Q }]
+%       \seq[{ \expn{x}{x_1 \cdots x_n}Q }]
 %       { \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[z]{C} }$}
 %     \SYM{\tens}
 %     \BIC{$
-%       \seq[{ \send{z}{y}(P \mid \expand{x}{x_1 \cdots x_n}Q) }]
+%       \seq[{ \send{z}{y}(P \mid \expn{x}{x_1 \cdots x_n}Q) }]
 %       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[z]{B \tens C} }$}
 %   \end{proofbox}
     \\\\
@@ -218,7 +218,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B \with C} } $}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\case{y}{P}{Q} }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\case{y}{P}{Q} }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \with C} } $}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -230,18 +230,18 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
       \AXC{$
         \seq[{ Q }]
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{C} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}Q }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}Q }]
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{C} }$}
       \SYM{\with}
       \BIC{$
-        \seq[{ \case{y}{\expand{x}{x_1 \cdots x_n}P}{\expand{x}{x_1 \cdots x_n}Q} }]
+        \seq[{ \case{y}{\expn{x}{x_1 \cdots x_n}P}{\expn{x}{x_1 \cdots x_n}Q} }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \with C} } $}
     \end{proofbox}
     }
@@ -256,7 +256,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B \plus C} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\inl{y}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\inl{y}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \plus C} }$} 
     \end{proofbox}
     &$\Longrightarrow$&
@@ -266,11 +266,11 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B} }$}
       \SYM{\plus_1}
       \UIC{$
-        \seq[{ \inl{y}\expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \inl{y}\expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \plus C} }$} 
     \end{proofbox}
 %   \\\\
@@ -284,7 +284,7 @@
 %       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B \plus C} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x}{x_1 \cdots x_n}\inl{y}P }]
+%       \seq[{ \expn{x}{x_1 \cdots x_n}\inl{y}P }]
 %       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \plus C} }$} 
 %   \end{proofbox}
 %   &$\Longrightarrow$&
@@ -294,11 +294,11 @@
 %       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{C} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x}{x_1 \cdots x_n}P }]
+%       \seq[{ \expn{x}{x_1 \cdots x_n}P }]
 %       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{C} }$}
 %     \SYM{\plus_2}
 %     \UIC{$
-%       \seq[{ \inl{y}\expand{x}{x_1 \cdots x_n}P }]
+%       \seq[{ \inl{y}\expn{x}{x_1 \cdots x_n}P }]
 %       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \plus C} }$} 
 %   \end{proofbox}                    
     \\\\
@@ -312,7 +312,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[z]{\give[1]{B}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\give[1]{B}} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -322,11 +322,11 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x_1 \cdots x_n}{x}P }]
+        \seq[{ \expn{x_1 \cdots x_n}{x}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B} }$}
       \SYM{\give[1]{}}
       \UIC{$
-        \seq[{ \give{\send{z}{y}}\expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\give[1]{B}} }$}
     \end{proofbox}
     \\\\
@@ -340,7 +340,7 @@
 %       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[z]{\take[1]{B}} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }]
+%       \seq[{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }]
 %       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\take[1]{B}} }$}
 %   \end{proofbox}
 %   &$\Longrightarrow$&
@@ -350,11 +350,11 @@
 %       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x_1 \cdots x_n}{x}P }]
+%       \seq[{ \expn{x_1 \cdots x_n}{x}P }]
 %       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B} }$}
 %     \SYM{\take[1]{}}
 %     \UIC{$
-%       \seq[{ \give{\send{z}{y}}\expand{x}{x_1 \cdots x_n}P }]
+%       \seq[{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }]
 %       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\take[1]{B}} }$}
 %   \end{proofbox}
     (case for $\take[1]{}$ as above)
@@ -369,7 +369,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\give[p+q]{B}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\recv{z}{y}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\recv{z}{y}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p+q]{B}} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -379,11 +379,11 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\give[p]{B}}, \tm[z]{\give[q]{B}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p]{B}}, \tm[z]{\give[q]{B}} }$}
       \NOM{Cont}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}\subst{P}{y}{z} }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\subst{P}{y}{z} }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p+q]{B}} }$}
     \end{proofbox}
     \\\\
@@ -400,7 +400,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}(P \mid Q) }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -412,14 +412,14 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\take[p]{B}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expand{x}{x_1 \cdots x_n}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \tm[y]{\take[p]{B}} }$}
       \AXC{$
         \seq[{ Q }]
         { \Theta, \tm[y]{\take[q]{B}} }$}
       \NOM{Pool}
       \BIC{$
-        \seq[{ (\expand{x}{x_1 \cdots x_n}P \mid Q) }]
+        \seq[{ (\expn{x}{x_1 \cdots x_n}P \mid Q) }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
     \end{proofbox}
     }
@@ -437,7 +437,7 @@
 %       { \Gamma, \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[z]{\take[p+q]{B}} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x}{x_1 \cdots x_n}(P \mid Q) }]
+%       \seq[{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }]
 %       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[y]{\take[p+q]{B}} }$}
 %   \end{proofbox}
 %   &$\Longrightarrow$&
@@ -450,16 +450,16 @@
 %       { \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[y]{\take[q]{B}} }$}
 %     \NOM{Exp}
 %     \UIC{$
-%       \seq[{ \expand{x}{x_1 \cdots x_n}Q }]
+%       \seq[{ \expn{x}{x_1 \cdots x_n}Q }]
 %       { \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[y]{\take[p+q]{B}} }$}
 %     \NOM{Pool}
 %     \BIC{$
-%       \seq[{ (P \mid \expand{x}{x_1 \cdots x_n}Q) }]
+%       \seq[{ (P \mid \expn{x}{x_1 \cdots x_n}Q) }]
 %       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[y]{\take[p+q]{B}} }$}
 %   \end{proofbox}
   \end{tabular}
 
   \caption{Permutation expansions for \nodcap}
-  \label{fig:nodcap-expand-permutation}
+  \label{fig:nodcap-expn-perm}
 \end{figure*}
 \restoregeometry
