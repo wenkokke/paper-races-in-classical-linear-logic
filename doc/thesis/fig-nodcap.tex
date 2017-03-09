@@ -1,35 +1,34 @@
 \begin{figure*}
-  \centering
   \[
-    \text{Type} \; A , B
-    \coloneqq \ldots
-    \mid \give[n]{A} \mid \take[n]{A}
+    \text{Type} \; A,B ::= \dots \mid \give[n]{A} \mid \take[n]{A}
   \]
-       
-  \begin{proofbox}
-    \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
-  \end{proofbox}
-  \begin{proofbox}
-    \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
-    \SYM{\give[1]{}}
-    \UIC{$\seq[{x[y].P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
-  \end{proofbox}
 
-  \vspace{1\baselineskip}
-  
-  \begin{proofbox}
-    \AXC{$\seq[P]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[x']{\give[n]{A}} }$}
-    \NOM{Contract}
-    \UIC{$\seq[\subst{P}{x}{x'}]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
-  \end{proofbox}
-  \begin{proofbox}
-    \AXC{$\seq[P]{ \Gamma , \tm[x]{\take[m]{A}} }$}
-    \AXC{$\seq[Q]{ \Delta , \tm[x]{\take[n]{A}} }$}
-    \NOM{Pool}
-    \BIC{$\seq[P \mid Q]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
-  \end{proofbox}
+  \begin{center}
+    \begin{proofbox}[1]
+      \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\give[1]{}}
+      \UIC{$\seq[{x[y].P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+    \end{proofbox}
+    \begin{proofbox}[1]
+      \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\take[1]{}}
+      \UIC{$\seq[{x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+    \end{proofbox}
+  \end{center}
+
+  \begin{center}
+    \begin{proofbox}[1]
+      \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
+      \NOM{Contract}
+      \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
+    \end{proofbox}
+    \begin{proofbox}[1]
+      \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}
+      \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\take[n]{A}} }$}
+      \NOM{Pool}
+      \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
+    \end{proofbox}
+  \end{center}
   
   \caption{The type system \nodcap}
   \label{fig:nodcap}

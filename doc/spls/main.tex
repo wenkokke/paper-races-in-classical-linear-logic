@@ -1,10 +1,21 @@
-\documentclass{beamer}
+\documentclass[xcolor={dvipsnames}]{beamer}
 \usetheme{metropolis}
 \title{Global Non-Determinism With Termination}
 \date{\today}
 \author{Pepijn Kokke}
 \institute{University of Edinburgh}
 \input{preamble}
+
+\newcommand{\amb}[3]{%
+  \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
+    \Tree
+    [.{$\color{tm}#1$}
+    \edge[->]; {$\color{tm}#2$}
+    \edge[->]; {$\color{tm}#3$}
+    ]
+  \end{tikzpicture}
+}
+
 \begin{document}
 
 \maketitle
@@ -12,90 +23,83 @@
 \begin{frame}{This is how I write \textpi-calculus things\dots}
   \[\!
     \begin{aligned}
-      P, Q ::=&\;\nu x.P        &&\text{// create a new channel $x$}
-      \\  \mid&\;x[y].P         &&\text{// send a channel $y$ over $x$, then run P}
-      \\  \mid&\;x(y).P         &&\text{// receive a channel $y$ over $x$, then run P}
-      \\  \mid&\;0              &&\text{// halt}
-      \\  \mid&\;\inl{x}P       &&\text{// send a bit (inl) over $x$, then run P}
-      \\  \mid&\;\inr{x}P       &&\text{// send a bit (inr) over $x$, then run P}
-      \\  \mid&\;\case{x}{P}{Q} &&\text{// receive a bit over $x$, then run P or Q}
-      \\  \mid&\;x[].P          &&\text{// send a ping over $x$, then run P}
-      \\  \mid&\;x().P          &&\text{// receive a ping over $x$, then run P}
-      \\  \mid&\;\case{x}{}{}   &&\text{// loop}
+      \text{Term} \; {\color{tm}P}, {\color{tm}Q}, {\color{tm}R}\\
+      \only<1>{%
+      \quad ::=&\;{\color{tm}\link{x}{y}    }&&\text{forward all messages on $x$ to $y$ and vice versa}
+      \\   \mid&\;{\color{tm}\nu x.P        }&&\text{create a new channel $x$, then run P}
+      \\   \mid&\;{\color{tm}x[y].P         }&&\text{send a channel $y$ over $x$, then run P}
+      \\   \mid&\;{\color{tm}x(y).P         }&&\text{receive a channel $y$ over $x$, then run P}
+      \\   \mid&\;{\color{tm}0              }&&\text{halt}
+      }
+      \only<2>{%
+      \quad ::=&\;\dots
+      \\   \mid&\;{\color{tm}\inl{x}P       }&&\text{send a bit ({\bf inl}) over $x$, then run P}
+      \\   \mid&\;{\color{tm}\inr{x}P       }&&\text{send a bit ({\bf inr}) over $x$, then run P}
+      \\   \mid&\;{\color{tm}\case{x}{P}{Q} }&&\text{receive a bit over $x$, then run P or Q}
+      }
+      \only<3>{%
+      \quad ::=&\;\dots
+      \\   \mid&\;{\color{tm}x[].P          }&&\text{send a ping over $x$, then run P}
+      \\   \mid&\;{\color{tm}x().P          }&&\text{receive a ping over $x$, then run P}
+      \\   \mid&\;{\color{tm}\case{x}{}{}   }&&\text{loop}
+      }
     \end{aligned}
   \] 
 \end{frame}
 
 \begin{frame}{Local choice}
   \centering
-  \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
-    \Tree
-    [.{$P + Q$} \edge[->]; {$P$} \edge[->]; {$Q$} ]
-  \end{tikzpicture}
+  \amb{P + Q}{P}{Q}
 \end{frame}
 
-\begin{frame}{Non-determinism in the \textpi-calculus}
+\begin{frame}[label=ndinpi]{Non-determinism in the \textpi-calculus}
   \centering
-  \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
-    \Tree
-    [.{$\nu x.(x(y).P \mid x(z).Q \mid x[a].x[b].0)$}
-    \edge[->]; {$(\subst{P}{a}{y} \mid \subst{Q}{b}{z})$}
-    \edge[->]; {$(\subst{P}{b}{y} \mid \subst{Q}{a}{z})$}
-    ]
-  \end{tikzpicture}
+  \amb{\nu x.(x(y).P \mid x(z).Q \mid x[a].x[b].0)}%
+      {(\subst{P}{a}{y} \mid \subst{Q}{b}{z})}%
+      {(\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
 \end{frame}
 
-\begin{frame}{``Local'' choice in the \textpi-calculus}
+\begin{frame}{Encoding local choice in the \textpi-calculus}
   \centering
   \only<1>{%
-    \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
-      \Tree
-      [.{$\nu x.(x().P \mid x().Q \mid x[].0)$}
-      \edge[->]; {$\nu x.(P \mid x().Q)$}
-      \edge[->]; {$\nu x.(x().P \mid Q)$}
-      ]
-    \end{tikzpicture}
+    \amb{\nu x.(x().P \mid x().Q \mid x[].0)}%
+        {\nu x.(P \mid x().Q)}%
+        {\nu x.(x().P \mid Q)}%
   }
   \only<2>{%
-    \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
-      \Tree
-      [.{$\nu x.(\case{x}{P}{0} \mid \case{x}{Q}{0} \mid \inl{x}\inr{x}{0})$}
-      \edge[->]; {$P$}
-      \edge[->]; {$Q$}
-      ]
-    \end{tikzpicture}
+    \amb{\nu x.(\case{x}{P}{0} \mid \case{x}{Q}{0} \mid \inl{x}\inr{x}{0})}%
+        {P}%
+        {Q}%
   }
 \end{frame}
 
-\begin{frame}{Non-determinism in the \textpi-calculus using local choice}
+\againframe{ndinpi}
+
+\begin{frame}{Encoding non-determinism using local choice}
   \centering
-  \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
-    \Tree
-    [.{$(\subst{P}{a}{y} \mid \subst{Q}{b}{z}) + (\subst{P}{b}{y} \mid \subst{Q}{a}{z})$}
-    \edge[->]; {$(\subst{P}{a}{y} \mid \subst{Q}{b}{z})$}
-    \edge[->]; {$(\subst{P}{b}{y} \mid \subst{Q}{a}{z})$}
-    ]
-  \end{tikzpicture}
+  \amb{(\subst{P}{a}{y} \mid \subst{Q}{b}{z}) + (\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
+      {(\subst{P}{a}{y} \mid \subst{Q}{b}{z})}%
+      {(\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
 \end{frame}
 
 \begin{frame}{Local choice is not modular}
   \only<1>{%
     If we extend\dots
-    \[
+    \[\color{tm}
       \nu x.(x(y).P \mid x(z).Q \mid x[a].x[b].0)
     \]
     \dots to\dots
-    \[
+    \[\color{tm}
       \nu x.(x(y).P \mid x(z).Q \mid x(w).R \mid x[a].x[b].x[c].0)
     \]
   }
   \only<2>{%
     Then we must extend\dots
-    \[
+    \[\color{tm}
       (\subst{P}{a}{y} \mid \subst{Q}{b}{z}) + (\subst{P}{b}{y} \mid \subst{Q}{a}{z})
     \]
     \dots to\dots
-    \[\!
+    \[\color{tm}
       \begin{array}{cc}
         (\subst{P}{a}{y} \mid \subst{Q}{b}{z} \mid \subst{R}{c}{w}) &+ \\
         (\subst{P}{b}{y} \mid \subst{Q}{a}{z} \mid \subst{R}{c}{w}) &+ \\
@@ -108,79 +112,133 @@
   }
 \end{frame}
 
-\begin{frame}{}
-  \centering
-   \(
-   \text{Type} \; A , B ::=
-   \alpha \mid \alpha^\bot
-   \mid \one      \mid \bot      \mid \nil      \mid \top
-   \mid A \tens B \mid A \parr B \mid A \plus B \mid A \with B
-   \)
+\begin{frame}
+  \only<1>{\frametitle{Classical Processes---Input and Output}}
+  \only<2>{\frametitle{Classical Processes---Choice and Selection}}
+  \only<3>{\frametitle{Classical Processes---Units}}
   
-  \begin{proofbox}
-    \AXC{}
-    \NOM{Ax}
-    \UIC{$\seq[ \link{x}{y} ]{ \tm[x]{A} , \tm[y]{A^\bot} }$}
-  \end{proofbox}
-  \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
-    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
-    \NOM{Cut}
-    \BIC{$\seq[ \nu x.(P \mid Q) ]{ \Gamma , \Delta }$}
-  \end{proofbox}
-  
-  \vspace{1\baselineskip}
-  
-  \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
-    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
-    \SYM{\tens}
-    \BIC{$\seq[{ x[y].(P \mid Q) }]{
-        \Gamma , \Delta , \tm[x]{A \tens B} }$}
-  \end{proofbox}
-  \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm{x}{B} }$}
-    \SYM{\parr}
-    \UIC{$\seq[ x(y).P ]{ \Gamma , \tm[x]{A \parr B} }$}
-  \end{proofbox}
+  \[
+    \text{Type} \; \tm{A} , \tm{B} ::=
+    \only<1>{%
+      \tm{\alpha} \mid \tm{\alpha^\bot} \mid \tm{A \tens B} \mid \tm{A \parr B}
+    }
+    \only<2>{%
+      \dots \mid \tm{A \plus B} \mid \tm{A \with B}
+    }
+    \only<3>{%
+      \dots \mid \tm{\one} \mid \tm{\bot} \mid \tm{\nil} \mid \tm{\top}
+    }
+  \]
 
-  \vspace{1\baselineskip}
+  \only<1>{%
+    \begin{proofblock}[1]
+      \AXC{}
+      \NOM{Ax}
+      \UIC{$\seq[ \link{x}{y} ]{ \tm[x]{A} , \tm[y]{A^\bot} }$}
+    \end{proofblock}
+    \begin{proofblock}[1]
+      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+      \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
+      \NOM{Cut}
+      \BIC{$\seq[ \nu x.(P \mid Q) ]{ \Gamma , \Delta }$}
+    \end{proofblock}
+    \begin{proofblock}[1]
+      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
+      \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+      \SYM{\tens}
+      \BIC{$\seq[{ x[y].(P \mid Q) }]{
+          \Gamma , \Delta , \tm[x]{A \tens B} }$}
+    \end{proofblock}
+    \begin{proofblock}[1]
+      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B} }$}
+      \SYM{\parr}
+      \UIC{$\seq[ x(y).P ]{ \Gamma , \tm[x]{A \parr B} }$}
+    \end{proofblock}
+  }
+  \only<2>{%
+    \begin{center}
+      \begin{proofbox}[1]
+        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+        \SYM{\plus_1}
+        \UIC{$\seq[{ \inl{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
+      \end{proofbox}
+      \begin{proofbox}[1]
+        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{B} }$}
+        \SYM{\plus_2}
+        \UIC{$\seq[{ \inr{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
+      \end{proofbox}
+    \end{center}
+    \begin{center}
+      \begin{proofbox}[1]
+        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+        \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+        \SYM{\with}
+        \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
+      \end{proofbox}
+    \end{center}
+  }
+  \only<3>{% 
+    \begin{center}
+      \begin{proofbox}[1]
+        \AXC{}
+        \SYM{\one}
+        \UIC{$\seq[{ x[].0 }]{ \tm[x]{\one} }$}
+      \end{proofbox}
+      \begin{proofbox}[1]
+        \AXC{$\seq[P]{ \Gamma }$}
+        \SYM{\bot}
+        \UIC{$\seq[{x().P}]{ \Gamma , \tm[x]{\bot} }$}
+      \end{proofbox}
+    \end{center} 
+    \begin{center}
+      (no rule for \nil)
+      \begin{proofbox}[1]
+        \AXC{}
+        \SYM{\top}
+        \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
+      \end{proofbox}
+    \end{center}
+  }
+\end{frame}
 
-  \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
-    \SYM{\plus_1}
-    \UIC{$\seq[{ \inl{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
-  \end{proofbox}
-  \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{B} }$}
-    \SYM{\plus_2}
-    \UIC{$\seq[{ \inr{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
-  \end{proofbox}
-  \begin{proofbox}
-    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
-    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
-    \SYM{\with}
-    \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
-  \end{proofbox}
+\begin{frame}
+  \frametitle{Non-Deterministic Classical Processes}
+  \[
+    \text{Type} \; \tm{A}, \tm{B} ::= \dots \mid \tm{\give[n]{A}} \mid \tm{\take[n]{A}}
+  \]
+  \[\!
+    \begin{aligned}
+      \text{Term} \; {\color{tm}P}, {\color{tm}Q}, {\color{tm}R} ::= \dots
+      \mid {\color{tm}\give{x[y].P}}
+      \mid {\color{tm}\take{x(y).P}}
+    \end{aligned}
+  \]
 
-  \vspace{1\baselineskip}
-  
-  \begin{proofbox}
-    \AXC{}
-    \SYM{\one}
-    \UIC{$\seq[{ x[].0 }]{ \tm[x]{\one} }$}
-  \end{proofbox}
-  \begin{proofbox}
-    \AXC{$\seq[P]{ \Gamma }$}
-    \SYM{\bot}
-    \UIC{$\seq[{x().P}]{ \Gamma , \tm[x]{\bot} }$}
-  \end{proofbox}
-  (no rule for \nil)
-  \begin{proofbox}
-    \AXC{}
-    \SYM{\top}
-    \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
-  \end{proofbox}
+
+  \begin{center}
+    \begin{proofbox}[1]
+      \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\give[1]{}}
+      \UIC{$\seq[{\give{x[y].P}}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+    \end{proofbox}
+    \begin{proofbox}[1]
+      \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\take[1]{}}
+      \UIC{$\seq[{\take{x(y).P}}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+    \end{proofbox}
+  \end{center}
+
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
+    \NOM{Contract}
+    \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
+  \end{proofblock}
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
+  \end{proofblock}
 \end{frame}
 
 \end{document}

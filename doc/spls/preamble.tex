@@ -5,6 +5,9 @@
 \usepackage{hyperref}
 \usepackage{comment}
 \usepackage{lmodern}
+\usepackage[dvipsnames]{xcolor}
+\colorlet{tm}{red}
+\colorlet{ty}{blue}
 
 %%% TikZ and QTree
 
@@ -28,7 +31,7 @@
 \ifx\param\empty
   \ensuremath{{\color{ty}#2}}%
 \else
-  \ensuremath{{\color{tm}#1}\colon{\color{ty}#2}}%
+  \ensuremath{{\color{tm}#1}\color{black}:{\color{ty}#2}}%
 \fi}
 \newcommand{\seq}[2][]{\ensuremath{{\color{tm}#1}\vdash{\color{ty}#2}}}
 \newcommand{\subst}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
@@ -45,9 +48,9 @@
   \ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}
 \fi}
 \newcommand{\inl}[2]{%
-  \ensuremath{#1[\text{inl}].#2}}
+  \ensuremath{#1[\textbf{inl}].#2}}
 \newcommand{\inr}[2]{%
-  \ensuremath{#1[\text{inr}].#2}}
+  \ensuremath{#1[\textbf{inr}].#2}}
 
 %%% Inference Rules
 \usepackage{bussproofs}

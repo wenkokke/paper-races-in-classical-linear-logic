@@ -1,6 +1,6 @@
 \begin{figure*}
   \begin{center}
-    \begin{proofbox}
+    \begin{proofbox}[1]
       \AXC{}
       \SYM{\one}
       \UIC{$\seq[{ \halt{y} }]{ \tm[y]{\one} }$}
@@ -14,7 +14,7 @@
     \end{proofbox}
   \end{center}
   
-  \begin{proofblock}
+  \begin{proofblock}[1]
     \AXC{}
     \NOM{Ax}
     \UIC{$
@@ -35,7 +35,7 @@
       { \tm[z]{A^\bot \parr B^\bot}, \tm[w]{A \tens B}}$}
   \end{proofblock}
   
-  \begin{proofblock}
+  \begin{proofblock}[1]
     \AXC{}
     \NOM{Ax}
     \UIC{$
@@ -60,47 +60,47 @@
       { \tm[x]{A^\bot \with B^\bot}, \tm[y]{A \plus B} }$}
   \end{proofblock}
 
-  \begin{center}
-    \begin{proofbox}
-      \AXC{}
-      \NOM{Ax}
-      \UIC{$
-        \seq[{ \link{z}{w} }]
-        { \tm[z]{A^\bot}, \tm[w]{B} }$}
-      \SYM{$\take[1]{}$}
-      \UIC{$
-        \seq[{ \take{\recv{y}{w}}\link{z}{w} }]
-        { \tm[z]{A^\bot}, \tm[y]{\take[1]{A}} }$}
-      \SYM{$\give[1]{}$}
-      \UIC{$
-        \seq[{ \give{\send{x}{z}}\take{\recv{y}{w}}\link{z}{w} }]
-        { \tm[x]{\give[1]{A^\bot}}, \tm[y]{\take[1]{A}} }$}
-    \end{proofbox}  
-    \begin{proofbox}
-      \AXC{}
-      \NOM{Ax}
-      \UIC{$
-        \seq[{ \link{x}{y} }]
-        { \tm[x]{\give[1]{A^\bot}}, \tm[y]{\take[1]{A}} }$}
-      \AXC{}
-      \NOM{Ax}
-      \UIC{$
-        \seq[{ \link{z}{y} }]
-        { \tm[z]{\give[n]{A^\bot}}, \tm[y]{\take[n]{A}} }$}
-      \NOM{Pool}
-      \BIC{$
-        \seq[{ (\link{x}{y}\mid\link{z}{y}) }]
-        { \tm[x]{\give[1]{A^\bot}}, \tm[z]{\give[n]{A^\bot}}, \tm[y]{\take[n+1]{A}} }$}
-      \NOM{Contract}
-      \UIC{$
-        \seq[{ (\link{x}{y}\mid\link{x}{y}) }]
-        { \tm[x]{\give[n+1]{A^\bot}}, \tm[y]{\take[n+1]{A}} }$}
-    \end{proofbox}
-  \end{center}
+  \begin{proofblock}[1]
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{z}{w} }]
+      { \tm[z]{A^\bot}, \tm[w]{B} }$}
+    \SYM{$\take[1]{}$}
+    \UIC{$
+      \seq[{ \take{\recv{y}{w}}\link{z}{w} }]
+      { \tm[z]{A^\bot}, \tm[y]{\take[1]{A}} }$}
+    \SYM{$\give[1]{}$}
+    \UIC{$
+      \seq[{ \give{\send{x}{z}}\take{\recv{y}{w}}\link{z}{w} }]
+      { \tm[x]{\give[1]{A^\bot}}, \tm[y]{\take[1]{A}} }$}
+  \end{proofblock}  
+
+  \begin{proofblock}[1]
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{x}{y} }]
+      { \tm[x]{\give[1]{A^\bot}}, \tm[y]{\take[1]{A}} }$}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{z}{y} }]
+      { \tm[z]{\give[n]{A^\bot}}, \tm[y]{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$
+      \seq[{ (\link{x}{y}\mid\link{z}{y}) }]
+      { \tm[x]{\give[1]{A^\bot}}, \tm[z]{\give[n]{A^\bot}}, \tm[y]{\take[n+1]{A}} }$}
+    \NOM{Contract}
+    \UIC{$
+      \seq[{ (\link{x}{y}\mid\link{x}{y}) }]
+      { \tm[x]{\give[n+1]{A^\bot}}, \tm[y]{\take[n+1]{A}} }$}
+  \end{proofblock}
 
   \caption{Proof of identity expansion for \nodcap}
   \label{fig:nodcap-ax}
 \end{figure*}
+
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
