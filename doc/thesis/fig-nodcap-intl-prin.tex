@@ -1,7 +1,7 @@
 \begin{figure*}
   \centering
   \begin{tabular}{ccc}
-    \begin{proofbox}
+    \begin{proofbox}[1]
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{A} }$}
@@ -18,7 +18,7 @@
         { \Gamma, \Delta }$}
     \end{proofbox}
     &$\Longrightarrow$&
-    \begin{proofbox}
+    \begin{proofbox}[1]
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{A} }$}
@@ -32,7 +32,7 @@
     \end{proofbox}
     \\\\
     \multicolumn{3}{l}{%
-    \begin{proofbox}
+    \begin{proofbox}[1]
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{\take[m]{A}} }$}
@@ -55,7 +55,7 @@
     }
     \\\\
     \multicolumn{3}{r}{%
-    \begin{proofbox}
+    \begin{proofbox}[1]
       \AXC{$
         \seq[{ Q }]
         { \Delta, \tm[x]{\take[n]{A}} }$}
@@ -81,3 +81,7 @@
   \caption{Principal interleavings for \nodcap}
   \label{fig:nodcap-intl-prin}
 \end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

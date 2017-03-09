@@ -1,61 +1,6 @@
+\newgeometry{left=1.8cm,right=1.8cm}
 \begin{figure*}
-  \centering
-  \begin{tabular}{ccc}
-    \begin{proofbox}
-      \AXC{$
-        \seq[{ P }]
-        { \Gamma, \tm[y]{A} }$}
-      \SYM{\give[1]{}}
-      \UIC{$
-        \seq[{ \give{\send{x}{y}}P }]
-        { \Gamma, \tm[x]{\give[1]{A}} }$}
-      \NOM{Exp}
-      \UIC{$
-        \seq[{ \expn{x}{x_1}\give{\send{x}{y}}P }]
-        { \Gamma, \tm[x_1]{A} }$}
-    \end{proofbox}
-    &$\Longrightarrow$&
-    \begin{proofbox}
-      \AXC{$
-        \seq[{ \subst{P}{x_1}{y} }]
-        { \Gamma, \tm[x_1]{A} }$}
-    \end{proofbox}
-    \\\\
-    \begin{proofbox}
-      \AXC{$
-        \seq[{ P }]
-        { \Gamma, \tm[x]{\give[m]{A}}, \tm[y]{\give[n]{A}} }$}
-      \NOM{Cont}
-      \UIC{$
-        \seq[{ \subst{P}{x}{y} }]
-        { \Gamma, \tm[x]{\give[m+n]{A}} }$}
-      \NOM{Exp}
-      \UIC{$
-        \seq[{ \expn{x}{x_1 \cdots x_{m+n}}\subst{P}{x}{y} }]
-        { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
-    \end{proofbox}
-    &$\Longrightarrow$&
-    \begin{proofbox}
-      \AXC{$
-        \seq[{ P }]
-        { \Gamma, \tm[x]{\give[m]{A}}, \tm[y]{\give[n]{A}} }$}
-      \NOM{Exp}
-      \UIC{$
-        \seq[{ \expn{x}{x_1 \cdots x_m}P }]
-        { \Gamma, \tm[x_1]{A}\cdots\tm[x_m], \tm[y]{\give[n]{A}} }$}
-      \NOM{Exp}
-      \UIC{$
-        \seq[{ \expn{y}{x_{m+1} \cdots x_{m+n}}\expn{x}{x_1 \cdots x_m}P }]
-        { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
-    \end{proofbox}
-  \end{tabular}
-  
-  \caption{Principal expansions for \nodcap}
-  \label{fig:nodcap-expand-prin}
-\end{figure*}
-
-\newgeometry{left=0.75cm,right=0.75cm}
-\begin{figure*}
+  \thispagestyle{empty}
   \begin{tabular}{ccc}
     \begin{proofbox}
       \AXC{$
@@ -77,7 +22,7 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expn{x_1 \cdots x_n}{x}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta }$}
       \SYM{\bot}
       \UIC{$
@@ -137,6 +82,7 @@
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{B \parr C} }$}
     \end{proofbox}
     \\\\
+    \multicolumn{3}{l}{%
     \begin{proofbox}
       \AXC{$
         \seq[{ P }]
@@ -151,9 +97,12 @@
       \NOM{Exp}
       \UIC{$
         \seq[{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }]
-        { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[z]{A \tens B} }$}
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \Theta, \tm[z]{B \tens C} }$}
     \end{proofbox}
-    &$\Longrightarrow$&
+    $\Longrightarrow$
+    }
+    \\\\
+    \multicolumn{3}{r}{%
     \begin{proofbox}
       \AXC{$
         \seq[{ P }]
@@ -161,50 +110,18 @@
       \NOM{Exp}
       \UIC{$
         \seq[{ \expn{x}{x_1 \cdots x_n}P }]
-        { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \tm[y]{B} }$}
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B} }$}
       \AXC{$
         \seq[{ Q }]
         { \Theta, \tm[z]{C} }$}
       \SYM{\tens}
       \BIC{$
         \seq[{ \send{z}{y}(\expn{x}{x_1 \cdots x_n}P \mid Q) }]
-        { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[z]{A \tens B} }$}
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \Theta, \tm[z]{A \tens B} }$}
     \end{proofbox}
-%   \\\\
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[y]{B} }$}
-%     \AXC{$
-%       \seq[{ Q }]
-%       { \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[z]{C} }$}
-%     \SYM{\tens}
-%     \BIC{$
-%       \seq[{ \send{z}{y}(P \mid Q) }]
-%       { \Gamma, \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[z]{A \tens B} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }]
-%       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[z]{B \tens C} }$}
-%   \end{proofbox}
-%   &$\Longrightarrow$&
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[y]{B} }$}
-%     \AXC{$
-%       \seq[{ Q }]
-%       { \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[z]{C} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x}{x_1 \cdots x_n}Q }]
-%       { \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[z]{C} }$}
-%     \SYM{\tens}
-%     \BIC{$
-%       \seq[{ \send{z}{y}(P \mid \expn{x}{x_1 \cdots x_n}Q) }]
-%       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[z]{B \tens C} }$}
-%   \end{proofbox}
+    }
     \\\\
+    \multicolumn{3}{l}{%
     \begin{proofbox}
       \AXC{$
         \seq[{ P }]
@@ -221,7 +138,8 @@
         \seq[{ \expn{x}{x_1 \cdots x_n}\case{y}{P}{Q} }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \with C} } $}
     \end{proofbox}
-    &$\Longrightarrow$&
+    $\Longrightarrow$
+    }
     \\\\
     \multicolumn{3}{r}{%
     \begin{proofbox}
@@ -273,34 +191,8 @@
         \seq[{ \inl{y}\expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \plus C} }$} 
     \end{proofbox}
-%   \\\\
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{C} }$}
-%     \SYM{\plus_2}
-%     \UIC{$
-%       \seq[{ \inl{y}P }]
-%       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B \plus C} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x}{x_1 \cdots x_n}\inl{y}P }]
-%       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \plus C} }$} 
-%   \end{proofbox}
-%   &$\Longrightarrow$&
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{C} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x}{x_1 \cdots x_n}P }]
-%       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{C} }$}
-%     \SYM{\plus_2}
-%     \UIC{$
-%       \seq[{ \inl{y}\expn{x}{x_1 \cdots x_n}P }]
-%       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B \plus C} }$} 
-%   \end{proofbox}                    
+    \\\\
+    (case for $\plus_2$ as above)
     \\\\
     \begin{proofbox}
       \AXC{$
@@ -330,33 +222,6 @@
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\give[1]{B}} }$}
     \end{proofbox}
     \\\\
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
-%     \SYM{\take[1]{}}
-%     \UIC{$
-%       \seq[{ \give{\send{z}{y}}P }]
-%       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[z]{\take[1]{B}} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }]
-%       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\take[1]{B}} }$}
-%   \end{proofbox}
-%   &$\Longrightarrow$&
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x_1 \cdots x_n}{x}P }]
-%       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B} }$}
-%     \SYM{\take[1]{}}
-%     \UIC{$
-%       \seq[{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }]
-%       { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\take[1]{B}} }$}
-%   \end{proofbox}
     (case for $\take[1]{}$ as above)
     \\\\
     \begin{proofbox}
@@ -365,11 +230,11 @@
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\give[p]{B}}, \tm[z]{\give[q]{B}} }$}
       \NOM{Cont}
       \UIC{$
-        \seq[{ \recv{z}{y}P }]
+        \seq[{ \subst{P}{y}{z} }]
         { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\give[p+q]{B}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expn{x}{x_1 \cdots x_n}\recv{z}{y}P }]
+        \seq[{ \expn{x}{x_1 \cdots x_n}\subst{P}{y}{z} }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p+q]{B}} }$}
     \end{proofbox}
     &$\Longrightarrow$&
@@ -387,6 +252,7 @@
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p+q]{B}} }$}
     \end{proofbox}
     \\\\
+    \multicolumn{3}{l}{%
     \begin{proofbox}
       \AXC{$
         \seq[{ P }]
@@ -401,9 +267,10 @@
       \NOM{Exp}
       \UIC{$
         \seq[{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }]
-        { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
     \end{proofbox}
-    &$\Longrightarrow$&
+    $\Longrightarrow$
+    }
     \\\\
     \multicolumn{3}{r}{%
     \begin{proofbox}
@@ -423,40 +290,6 @@
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
     \end{proofbox}
     }
-%   \\\\
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[y]{\take[p]{B}} }$}
-%     \AXC{$
-%       \seq[{ Q }]
-%       { \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[y]{\take[q]{B}} }$}
-%     \NOM{Pool}
-%     \BIC{$
-%       \seq[{ (P \mid Q) }]
-%       { \Gamma, \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[z]{\take[p+q]{B}} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }]
-%       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[y]{\take[p+q]{B}} }$}
-%   \end{proofbox}
-%   &$\Longrightarrow$&
-%   \begin{proofbox}
-%     \AXC{$
-%       \seq[{ P }]
-%       { \Gamma, \tm[y]{\take[p]{B}} }$}
-%     \AXC{$
-%       \seq[{ Q }]
-%       { \Delta, \tm[x]{\give[n]{A}}, \Theta, \tm[y]{\take[q]{B}} }$}
-%     \NOM{Exp}
-%     \UIC{$
-%       \seq[{ \expn{x}{x_1 \cdots x_n}Q }]
-%       { \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[y]{\take[p+q]{B}} }$}
-%     \NOM{Pool}
-%     \BIC{$
-%       \seq[{ (P \mid \expn{x}{x_1 \cdots x_n}Q) }]
-%       { \Gamma, \Delta, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Theta, \tm[y]{\take[p+q]{B}} }$}
-%   \end{proofbox}
   \end{tabular}
 
   \caption{Permutation expansions for \nodcap}
