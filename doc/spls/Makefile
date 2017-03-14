@@ -1,5 +1,5 @@
 NAME= main
-TEXSRCS= preamble.tex fig-*.tex
-BIBTEXSRCS= main.bib
+TEXSRCS= preamble.tex
+BIBTEXSRCS= 
 
 include /usr/local/share/latex-mk/latex.gmk

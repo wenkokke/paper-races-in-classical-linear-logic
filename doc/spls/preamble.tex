@@ -8,6 +8,9 @@
 \usepackage[dvipsnames]{xcolor}
 \colorlet{tm}{red}
 \colorlet{ty}{blue}
+\usepackage{ifthen}
+\usepackage{mdframed}
+\usepackage{tikzsymbols,wasysym}
 
 %%% TikZ and QTree
 
@@ -51,6 +54,14 @@
   \ensuremath{#1[\textbf{inl}].#2}}
 \newcommand{\inr}[2]{%
   \ensuremath{#1[\textbf{inr}].#2}}
+\newcommand{\wait}[1]{#1().}
+\newcommand{\halt}[1]{#1[].0}
+\newcommand{\send}[2]{#1[#2].}
+\newcommand{\recv}[2]{#1(#2).}
+\newcommand{\expn}[2]{#1 \uparrow #2.}
+\newcommand{\intl}[2]{#1 \downarrow #2.}
+\newcommand{\cut}[1]{\nu #1.}
+
 
 %%% Inference Rules
 \usepackage{bussproofs}
@@ -62,8 +73,8 @@
   {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
   {\scalebox{\scalefactor}{\DisplayProof} \egroup}
 \newenvironment{proofblock}[1][0.9]%
-  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
-  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+  {\gdef\scalefactor{#1}\center\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \endcenter }
 
 %%% Local Variables:
 %%% TeX-master: "main"
