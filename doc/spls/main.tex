@@ -16,6 +16,17 @@
   \end{tikzpicture}
 }
 
+% Example:
+\def\PW{\stackrel{\makebox[0pt]%
+    {\mbox{\normalfont\tiny PW}}}{\;\Strichmaxerl\;}}
+\def\GM{\stackrel{\makebox[0pt]%
+    {\mbox{\normalfont\tiny GM}}}{\;\Strichmaxerl\;}}
+\def\YY{\stackrel{\makebox[0pt]%
+    {\mbox{\normalfont\tiny Cake}}}{\vphantom{[]}\smiley}}
+\def\NN{\stackrel{\makebox[0pt]%
+    {\mbox{\normalfont\tiny Sad}}}{\vphantom{[]}\frownie}}
+\def\mood{\text{m}}
+
 \begin{document}
 
 \maketitle
@@ -25,11 +36,12 @@
     \begin{aligned}
       \text{Term} \; {\color{tm}P}, {\color{tm}Q}, {\color{tm}R}\\
       \only<1>{%
-      \quad ::=&\;{\color{tm}\link{x}{y}    }&&\text{forward all messages on $x$ to $y$ and vice versa}
-      \\   \mid&\;{\color{tm}\nu x.P        }&&\text{create a new channel $x$, then run P}
-      \\   \mid&\;{\color{tm}x[y].P         }&&\text{send a channel $y$ over $x$, then run P}
-      \\   \mid&\;{\color{tm}x(y).P         }&&\text{receive a channel $y$ over $x$, then run P}
+      \quad ::=&\;{\color{tm}\cut{x}P       }&&\text{create a new channel $x$, then run P}
+      \\   \mid&\;{\color{tm}\send{x}{y}P   }&&\text{send a channel $y$ over $x$, then run P}
+      \\   \mid&\;{\color{tm}\recv{x}{y}P   }&&\text{receive a channel $y$ over $x$, then run P}
       \\   \mid&\;{\color{tm}0              }&&\text{halt}
+      \\   \vdots
+      \\   \mid&\;{\color{tm}\link{x}{y}    }&&\text{forward all messages on $x$ to $y$ and vice versa}
       }
       \only<2>{%
       \quad ::=&\;\dots
@@ -39,12 +51,12 @@
       }
       \only<3>{%
       \quad ::=&\;\dots
-      \\   \mid&\;{\color{tm}x[].P          }&&\text{send a ping over $x$, then run P}
-      \\   \mid&\;{\color{tm}x().P          }&&\text{receive a ping over $x$, then run P}
+      \\   \mid&\;{\color{tm}\send{x}{}P    }&&\text{send a ping over $x$, then run P}
+      \\   \mid&\;{\color{tm}\recv{x}{}P    }&&\text{receive a ping over $x$, then run P}
       \\   \mid&\;{\color{tm}\case{x}{}{}   }&&\text{loop}
       }
     \end{aligned}
-  \] 
+  \]
 \end{frame}
 
 \begin{frame}{Local choice}
@@ -52,45 +64,62 @@
   \amb{P + Q}{P}{Q}
 \end{frame}
 
-\begin{frame}[label=ndinpi]{Non-determinism in the \textpi-calculus}
+\begin{frame}[label=ndinpi]
+  \only<1>{\frametitle{Non-determinism in the \textpi-calculus (or ``global'' choice)}}
+  \only<2>{\frametitle{Example: a p\^{a}tisserie}}
   \centering
-  \amb{\nu x.(x(y).P \mid x(z).Q \mid x[a].x[b].0)}%
-      {(\subst{P}{a}{y} \mid \subst{Q}{b}{z})}%
-      {(\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
-\end{frame}
-
-\begin{frame}{Encoding local choice in the \textpi-calculus}
-  \centering
-  \only<1>{%
-    \amb{\nu x.(x().P \mid x().Q \mid x[].0)}%
-        {\nu x.(P \mid x().Q)}%
-        {\nu x.(x().P \mid Q)}%
+  \only<1>{
+    \amb{\cut{x}(\recv{x}{y}P \mid x(z).Q \mid x[a].x[b].0)}%
+    {(\subst{P}{a}{y} \mid \subst{Q}{b}{z})}%
+    {(\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
   }
-  \only<2>{%
-    \amb{\nu x.(\case{x}{P}{0} \mid \case{x}{Q}{0} \mid \inl{x}\inr{x}{0})}%
-        {P}%
-        {Q}%
+  \only<2>{
+    \amb{\cut{x}(
+      \quad\recv{x}{\mood}\PW\quad\mid
+      \quad\recv{x}{\mood}\GM\quad\mid
+      \quad\send{x}{\YY}\send{x}{\NN}0\quad)}%
+    {(\subst{\PW\!\!}{\smiley}{\mood} \mid \subst{\GM\!\!}{\frownie}{\mood})}%
+    {(\subst{\PW\!\!}{\frownie}{\mood} \mid \subst{\GM\!\!}{\smiley}{\mood})}%
   }
 \end{frame}
 
-\againframe{ndinpi}
+%\begin{frame}
+%  \frametitle{Pros and cons}
+%  \begin{tabular}{ll}
+%    \textbf{Local choice} & \textbf{Global choice} \\
+%    \\
+%    Pros: & Pros: \\
+%    $\circ$ It's pretty simple\dots & $\circ$ It's inherent in the \textpi-calculus! \\
+%    $\circ$ We have typing rules\dots \\
+%    \\
+%    Cons: & Cons: \\
+%    $\circ$ Everything else! & $\circ$ We don't have typing rules\dots
+%  \end{tabular}
+%\end{frame}
 
-\begin{frame}{Encoding non-determinism using local choice}
+\begin{frame}{Encoding global choice using local choice}
   \centering
-  \amb{(\subst{P}{a}{y} \mid \subst{Q}{b}{z}) + (\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
-      {(\subst{P}{a}{y} \mid \subst{Q}{b}{z})}%
-      {(\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
+  \only<1>{
+    \amb{(\subst{P}{a}{y} \mid \subst{Q}{b}{z}) + (\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
+    {(\subst{P}{a}{y} \mid \subst{Q}{b}{z})}%
+    {(\subst{P}{b}{y} \mid \subst{Q}{a}{z})}%
+  }
+  \only<2>{
+    \def\ALTA{(\subst{\PW\!\!}{\smiley}{\mood} \mid \subst{\GM\!\!}{\frownie}{\mood})}%
+    \def\ALTB{(\subst{\PW\!\!}{\frownie}{\mood} \mid \subst{\GM\!\!}{\smiley}{\mood})}%
+    \amb{\ALTA + \ALTB}{\ALTA}{\ALTB}
+  }
 \end{frame}
 
 \begin{frame}{Local choice is not modular}
   \only<1>{%
     If we extend\dots
     \[\color{tm}
-      \nu x.(x(y).P \mid x(z).Q \mid x[a].x[b].0)
+      \cut{x}(\recv{x}{y}P \mid x(z).Q \mid x[a].x[b].0)
     \]
     \dots to\dots
     \[\color{tm}
-      \nu x.(x(y).P \mid x(z).Q \mid x(w).R \mid x[a].x[b].x[c].0)
+      \cut{x}(\recv{x}{y}P \mid x(z).Q \mid x(w).R \mid x[a].x[b].x[c].0)
     \]
   }
   \only<2>{%
@@ -112,96 +141,123 @@
   }
 \end{frame}
 
-\begin{frame}
-  \only<1>{\frametitle{Classical Processes---Input and Output}}
-  \only<2>{\frametitle{Classical Processes---Choice and Selection}}
-  \only<3>{\frametitle{Classical Processes---Units}}
-  
-  \[
-    \text{Type} \; \tm{A} , \tm{B} ::=
-    \only<1>{%
-      \tm{\alpha} \mid \tm{\alpha^\bot} \mid \tm{A \tens B} \mid \tm{A \parr B}
-    }
-    \only<2>{%
-      \dots \mid \tm{A \plus B} \mid \tm{A \with B}
-    }
-    \only<3>{%
-      \dots \mid \tm{\one} \mid \tm{\bot} \mid \tm{\nil} \mid \tm{\top}
-    }
-  \]
-
-  \only<1>{%
-    \begin{proofblock}[1]
-      \AXC{}
-      \NOM{Ax}
-      \UIC{$\seq[ \link{x}{y} ]{ \tm[x]{A} , \tm[y]{A^\bot} }$}
-    \end{proofblock}
-    \begin{proofblock}[1]
-      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
-      \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
-      \NOM{Cut}
-      \BIC{$\seq[ \nu x.(P \mid Q) ]{ \Gamma , \Delta }$}
-    \end{proofblock}
-    \begin{proofblock}[1]
-      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
-      \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
-      \SYM{\tens}
-      \BIC{$\seq[{ x[y].(P \mid Q) }]{
-          \Gamma , \Delta , \tm[x]{A \tens B} }$}
-    \end{proofblock}
-    \begin{proofblock}[1]
-      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B} }$}
-      \SYM{\parr}
-      \UIC{$\seq[ x(y).P ]{ \Gamma , \tm[x]{A \parr B} }$}
-    \end{proofblock}
-  }
-  \only<2>{%
-    \begin{center}
-      \begin{proofbox}[1]
-        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
-        \SYM{\plus_1}
-        \UIC{$\seq[{ \inl{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
-      \end{proofbox}
-      \begin{proofbox}[1]
-        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{B} }$}
-        \SYM{\plus_2}
-        \UIC{$\seq[{ \inr{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
-      \end{proofbox}
-    \end{center}
-    \begin{center}
-      \begin{proofbox}[1]
-        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
-        \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
-        \SYM{\with}
-        \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
-      \end{proofbox}
-    \end{center}
-  }
-  \only<3>{% 
-    \begin{center}
-      \begin{proofbox}[1]
-        \AXC{}
-        \SYM{\one}
-        \UIC{$\seq[{ x[].0 }]{ \tm[x]{\one} }$}
-      \end{proofbox}
-      \begin{proofbox}[1]
-        \AXC{$\seq[P]{ \Gamma }$}
-        \SYM{\bot}
-        \UIC{$\seq[{x().P}]{ \Gamma , \tm[x]{\bot} }$}
-      \end{proofbox}
-    \end{center} 
-    \begin{center}
-      (no rule for \nil)
-      \begin{proofbox}[1]
-        \AXC{}
-        \SYM{\top}
-        \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
-      \end{proofbox}
-    \end{center}
-  }
+\begin{frame}{Encoding local choice using global choice}
+  \centering
+  \amb{\cut{x}(\case{x}{P}{0} \mid \case{x}{Q}{0} \mid \inl{x}\inr{x}{0})}{P}{Q}%
 \end{frame}
 
-\begin{frame}
+\againframe<2>{ndinpi}
+
+\begin{frame}[label=cp1]{Classical Processes---Input and Output}
+  \centering
+  \[
+    \text{Type} \; \tm{A} , \tm{B} ::=
+    \tm{\alpha} \mid \tm{\alpha^\bot} \mid \tm{A \tens B} \mid \tm{A \parr B}
+  \]
+
+  \only<1>{\mdframed}
+  \begin{proofblock}[1]
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$\seq[ \link{x}{y} ]{ \tm[x]{A} , \tm[y]{A^\bot} }$}
+  \end{proofblock}
+  \only<1>{\endmdframed}
+  % You can link the output end of one channel to the input end of another only
+  % if they communicate the same type of stuff.
+  \only<2>{\mdframed}
+  \begin{proofblock}[1]
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
+    \NOM{Cut}
+    \BIC{$\seq[ \cut{x}(P \mid Q) ]{ \Gamma , \Delta }$}
+  \end{proofblock}
+  \only<2>{\endmdframed}
+  % Two processes can only ever share a single channel, and each channel can
+  % only be shared by two processes.
+  \only<3>{\mdframed}
+  \begin{proofblock}[1]
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+    \SYM{\tens}
+    \BIC{$\seq[{ \send{x}{y}(P \mid Q) }]{
+        \Gamma , \Delta , \tm[x]{A \tens B} }$}
+  \end{proofblock}
+  \only<3>{\endmdframed}
+  % We can fork off a new process, to form a pair of processes, as long as we
+  % promise that our old and our new process are independent, i.e. share no
+  % channels.
+  \only<4>{\mdframed}
+  \begin{proofblock}[1]
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B} }$}
+    \SYM{\parr}
+    \UIC{$\seq[ \recv{x}{y}P ]{ \Gamma , \tm[x]{A \parr B} }$}
+  \end{proofblock}
+  \only<4>{\endmdframed}
+  % We can interact with such a forked pair of processes, and we can decide in
+  % what order we interact with them.
+\end{frame}
+
+\begin{frame}{Classical Processes---Choice and Selection}
+  \[
+    \text{Type} \; \tm{A} , \tm{B} ::=
+    \dots \mid \tm{A \plus B} \mid \tm{A \with B}
+  \]
+
+  \begin{center}
+    \begin{proofbox}[1]
+      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+      \SYM{\plus_1}
+      \UIC{$\seq[{ \inl{x}P }]{ \Gamma , \tm[x]{A \plus B} }$}
+    \end{proofbox}
+    \begin{proofbox}[1]
+      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{B} }$}
+      \SYM{\plus_2}
+      \UIC{$\seq[{ \inr{x}P }]{ \Gamma , \tm[x]{A \plus B} }$}
+    \end{proofbox}
+  \end{center}
+  \begin{center}
+    \begin{proofbox}[1]
+      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+      \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+      \SYM{\with}
+      \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
+    \end{proofbox}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Classical Processes---Units}
+  \[
+    \text{Type} \; \tm{A} , \tm{B} ::=
+    \dots \mid \tm{\one} \mid \tm{\bot} \mid \tm{\nil} \mid \tm{\top}
+  \]
+
+  \begin{center}
+    \begin{proofbox}[1]
+      \AXC{}
+      \SYM{\one}
+      \UIC{$\seq[{ \send{x}{}0 }]{ \tm[x]{\one} }$}
+    \end{proofbox}
+    \begin{proofbox}[1]
+      \AXC{$\seq[P]{ \Gamma }$}
+      \SYM{\bot}
+      \UIC{$\seq[{ \recv{x}{}P }]{ \Gamma , \tm[x]{\bot} }$}
+    \end{proofbox}
+  \end{center}
+  \begin{center}
+    (no rule for \nil)
+    \begin{proofbox}[1]
+      \AXC{}
+      \SYM{\top}
+      \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
+    \end{proofbox}
+  \end{center}
+\end{frame}
+
+\againframe<2>{ndinpi}
+
+\againframe<2>{cp1}
+
+\begin{frame}[label=nodcap]
   \frametitle{Non-Deterministic Classical Processes}
   \[
     \text{Type} \; \tm{A}, \tm{B} ::= \dots \mid \tm{\give[n]{A}} \mid \tm{\take[n]{A}}
@@ -209,22 +265,21 @@
   \[\!
     \begin{aligned}
       \text{Term} \; {\color{tm}P}, {\color{tm}Q}, {\color{tm}R} ::= \dots
-      \mid {\color{tm}\give{x[y].P}}
-      \mid {\color{tm}\take{x(y).P}}
+      \mid {\color{tm}\give{\send{x}{y}P}}
+      \mid {\color{tm}\take{\recv{x}{y}P}}
     \end{aligned}
   \]
-
 
   \begin{center}
     \begin{proofbox}[1]
       \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
       \SYM{\give[1]{}}
-      \UIC{$\seq[{\give{x[y].P}}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+      \UIC{$\seq[{\give{\send{x}{y}P}}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
     \end{proofbox}
     \begin{proofbox}[1]
       \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
       \SYM{\take[1]{}}
-      \UIC{$\seq[{\take{x(y).P}}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+      \UIC{$\seq[{\take{\recv{x}{y}P}}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
     \end{proofbox}
   \end{center}
 
@@ -240,5 +295,100 @@
     \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
   \end{proofblock}
 \end{frame}
+
+
+\begin{frame}{Example: a p\^{a}tisserie}
+  \makebox[\linewidth][c]{%
+    \begin{minipage}{\dimexpr\textwidth+4cm\relax}
+      \only<1>{
+        \def\P{P} \def\Q{Q} \def\R{R}
+        \def\a{a} \def\b{b} \def\A{A}
+      }
+      \only<2>{
+        \def\P{\PW} \def\Q{\GM} \def\R{0}
+        \def\a{\smiley} \def\b{\frownie} \def\A{A}
+      }
+      \begin{proofblock}[0.70]
+        \AXC{$\seq[{ \P }]{ \Gamma, \tm[y]{\A^\bot} }$}
+        \SYM{\take{}}
+        \UIC{$\seq%
+          [{ \take{\recv{x}{y}\P} }]%
+          { \Gamma, \tm[x]{\take[1]{\A^\bot}} }$}
+        \AXC{$\seq[{ \Q }]{ \Delta, \tm[z]{\A^\bot} }$}
+        \SYM{\take{}}
+        \UIC{$\seq%
+          [{ \take{\recv{x}{z}\Q} }]%
+          { \Delta, \tm[x]{\take[1]{\A^\bot}} }$}
+        \NOM{Pool}
+        \BIC{$\seq%
+          [{(\take{\recv{x}{y}\P}\mid\take{\recv{x}{z}}\Q)}]%
+          { \Gamma, \Delta, \tm[x]{\take[2]{\A^\bot}} }$}
+        \AXC{$\seq%
+          [{ \R }]%
+          { \Theta, \tm[a]{\A}, \tm[b]{\A} }$}
+        \SYM{\give{(2)}}
+        \UIC{$\seq%
+          [{\give{\send{x}{\a}}\give{\send{w}{\b}}\R}]%
+          { \Theta, \tm[x]{\give[1]{\A}}, \tm[w]{\give[1]{\A}} }$}
+        \NOM{Cont}
+        \UIC{$\seq%
+          [{\give{\send{x}{\a}}\give{\send{x}{\b}}\R}]%
+          { \Theta, \tm[x]{\give[2]{\A}} }$}
+        \NOM{Cut}
+        \BIC{$\seq%
+          [{\cut{x}(\take{\recv{x}{y}}\P\mid\take{\recv{x}{z}}\Q\mid
+            \give{\send{x}{\a}}\give{\send{x}{\b}}\R)}]%
+          { \Gamma, \Delta, \Theta }$}
+      \end{proofblock}
+    \end{minipage}%
+  }%
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cut-elimination procedure}
+  \only<1,3>{%
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \cut{x}(P \mid Q) }]{ \Gamma, \Delta }$}
+  \end{proofblock}}
+  \only<2>{%
+    \begin{proofblock}[1]
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+      \NOM{Exp}
+      \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+    \end{proofblock}
+    \begin{proofblock}[1]
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[y_1]{A}\cdots\tm[y_n]{A} }$}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+      \NOM{Int}
+      \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}Q }]{ \Delta }$}
+    \end{proofblock}}
+  \only<3>{%
+    \[\Downarrow\]
+    \begin{proofblock}[1]
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+      \NOM{Exp}
+      \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+      \NOM{Int}
+      \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}(\expn{x}{{y_1}\cdots{y_n}}P \mid Q) }]{ \Delta }$}
+    \end{proofblock}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Non-determinism}
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+    \NOM{Exp}
+    \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+    \NOM{ND}
+    \UIC{$\seq[{ \expn{x}{\textit{shuffle}({y_1}\cdots{y_n})}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+    \noLine\UIC{$\vdots$}
+  \end{proofblock}
+\end{frame}
+
+\againframe{nodcap}
 
 \end{document}
