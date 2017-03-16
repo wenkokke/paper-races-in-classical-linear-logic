@@ -1,0 +1,45 @@
+\documentclass{beamer}
+\usetheme{metropolis}
+\author{Pepijn Kokke}
+\title{Give or Take: Non-Determinism, Linear Logic and Session Types}
+\institute{University of Edinburgh}
+\input{preamble}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+ \frametitle{Example: dramatis person\ae}
+ \setboolean{toplabel}{false}
+ \centering\Huge
+ \begin{tabular}{lll}
+   \mary   && Mary \\
+   \john   && John \\
+   \cake   && Cake \\
+   \nocake && No Cake
+ \end{tabular}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: buying cake at the p\^{a}tisserie}
+  \setboolean{toplabel}{false}
+  \wide[4cm]{%
+    \begin{center}
+      \amb
+      {\cut{x}({
+          \quad \recv{x}{y}\john \quad \mid
+          \quad \recv{x}{z}\mary \quad \mid
+          \quad \send{x}{\cake}\send{x}{\nocake}\halt \quad
+        })}
+      {(\; \subst{\john}{\cake}{y}   \mid\: \subst{\mary}{\nocake}{z} \;)}
+      {(\; \subst{\john}{\nocake}{y} \mid\: \subst{\mary}{\cake}{z}   \;)}
+    \end{center}
+  }
+\end{frame}
+
+\end{document}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

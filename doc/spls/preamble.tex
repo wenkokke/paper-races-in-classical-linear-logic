@@ -1,0 +1,46 @@
+% wider
+\newcommand{\wide}[2][4cm]%
+{\makebox[\linewidth][c]{\begin{minipage}{\dimexpr\textwidth+#1\relax}#2\end{minipage}}}
+
+% toplabel
+\usepackage{ifthen}
+\newboolean{toplabel}
+\setboolean{toplabel}{true}
+\newcommand{\toplabel}[2]{%
+  \ifthenelse{\boolean{toplabel}}{%
+    \stackrel{\makebox[0pt]{\mbox{\normalfont\tiny #1}}}{#2}
+  }{%
+    #2
+  }}
+
+% emoji
+\newcommand{\emoji}[2][twitter]%
+{\ensuremath{\vcenter{\hbox{\includegraphics[width=1em]{coloremoji/emoji_images/#1/#2}}}}}
+\def\mary{\toplabel{Mary}{\emoji[twitter]{1F469}}}
+\def\john{\toplabel{John}{\emoji[twitter]{1F466}}}
+\def\cake{\toplabel{Cake}{\emoji[twitter]{1F382}}}
+\def\nocake{\toplabel{No Cake}{\emoji[twitter]{1F64C}}}
+
+% pi-calculus syntax
+\newcommand{\cut}[1]{\nu #1.}
+\newcommand{\recv}[2]{#1(#2).}
+\newcommand{\send}[2]{#1[#2].}
+\newcommand{\halt}[0]{0}
+\newcommand{\subst}[3]{#1\{#2/#3\}}
+
+% ambiguous reduction
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\newcommand{\amb}[3]{%
+  \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
+    \Tree
+    [.{$#1$}
+    \edge[->]; {$#2$}
+    \edge[->]; {$#3$}
+    ]
+  \end{tikzpicture}
+}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
