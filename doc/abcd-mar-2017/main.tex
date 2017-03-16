@@ -31,7 +31,7 @@
 
 \maketitle
 
-\begin{frame}{This is how I write \textpi-calculus things\dots}
+\begin{frame}{This is how I write $\pi$-calculus things\dots}
   \[\!
     \begin{aligned}
       \text{Term} \; {\color{tm}P}, {\color{tm}Q}, {\color{tm}R}\\
@@ -40,7 +40,7 @@
       \\   \mid&\;{\color{tm}\send{x}{y}P   }&&\text{send a channel $y$ over $x$, then run P}
       \\   \mid&\;{\color{tm}\recv{x}{y}P   }&&\text{receive a channel $y$ over $x$, then run P}
       \\   \mid&\;{\color{tm}0              }&&\text{halt}
-      \\   \vdots
+      \\   \mid&\;{\color{tm}(P \mid Q)     }&&\text{run P and Q in parallel}
       \\   \mid&\;{\color{tm}\link{x}{y}    }&&\text{forward all messages on $x$ to $y$ and vice versa}
       }
       \only<2>{%
@@ -65,7 +65,7 @@
 \end{frame}
 
 \begin{frame}[label=ndinpi]
-  \only<1>{\frametitle{Non-determinism in the \textpi-calculus (or ``global'' choice)}}
+  \only<1>{\frametitle{Non-determinism in the $\pi$-calculus (or ``global'' choice)}}
   \only<2>{\frametitle{Example: a p\^{a}tisserie}}
   \centering
   \only<1>{
@@ -83,19 +83,19 @@
   }
 \end{frame}
 
-%\begin{frame}
-%  \frametitle{Pros and cons}
-%  \begin{tabular}{ll}
-%    \textbf{Local choice} & \textbf{Global choice} \\
-%    \\
-%    Pros: & Pros: \\
-%    $\circ$ It's pretty simple\dots & $\circ$ It's inherent in the \textpi-calculus! \\
-%    $\circ$ We have typing rules\dots \\
-%    \\
-%    Cons: & Cons: \\
-%    $\circ$ Everything else! & $\circ$ We don't have typing rules\dots
-%  \end{tabular}
-%\end{frame}
+\begin{frame}
+  \frametitle{Pros and cons}
+  \begin{tabular}{ll}
+    \textbf{Local choice} & \textbf{Global choice} \\
+    \\
+    Pros: & Pros: \\
+    $\circ$ It's pretty simple\dots & $\circ$ It's inherent in the $\pi$-calculus! \\
+    $\circ$ We have typing rules\dots \\
+    \\
+    Cons: & Cons: \\
+    $\circ$ Everything else! & $\circ$ We don't have typing rules\dots
+  \end{tabular}
+\end{frame}
 
 \begin{frame}{Encoding global choice using local choice}
   \centering
