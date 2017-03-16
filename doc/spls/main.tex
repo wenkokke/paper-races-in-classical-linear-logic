@@ -38,6 +38,23 @@
   }
 \end{frame}
 
+\begin{frame}
+  \frametitle{Example: what does it mean?}
+  \setboolean{toplabel}{false}
+  \newboolean{showpvar}
+  \newcommand{\pvar}[2][\cdots]{\ifthenelse{\boolean{showpvar}}{#2}{#1}}
+  \only<1>{\setboolean{showpvar}{false}}
+  \only<2>{\setboolean{showpvar}{true}}
+  \centering\Large
+  \begin{tabular}{lll}
+    $\cut{x}\pvar{P}$                   && \\
+    $\recv{x}{y}\pvar[\john]{P}$        && \\
+    $\send{x}{\pvar[\cake]{y}}\pvar{P}$ && \\
+    $(\pvar{P}\mid\pvar{Q})$            && \\
+    $\halt$                             && \\
+  \end{tabular}
+\end{frame}
+
 \end{document}
 
 %%% Local Variables:
