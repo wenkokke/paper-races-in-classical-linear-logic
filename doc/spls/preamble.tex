@@ -14,19 +14,25 @@
   }}
 
 % emoji
-\newcommand{\emoji}[2][twitter]%
-{\ensuremath{\vcenter{\hbox{\includegraphics[width=1em]{coloremoji/emoji_images/#1/#2}}}}}
-\def\mary{\toplabel{Mary}{\emoji[twitter]{1F469}}}
-\def\john{\toplabel{John}{\emoji[twitter]{1F466}}}
-\def\cake{\toplabel{Cake}{\emoji[twitter]{1F382}}}
-\def\nocake{\toplabel{No Cake}{\emoji[twitter]{1F64C}}}
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{}
+\newcommand{\emoji}[1]{\ensuremath{\vcenter{\hbox{\includegraphics[width=1em]{twemoji/assets/#1.ai}}}}}
+\def\mary{\toplabel{Mary}{\emoji{1f469}}}
+\def\john{\toplabel{John}{\emoji{1f466}}}
+\def\cake{\toplabel{Cake}{\emoji{1f382}}}
+\def\nocake{\toplabel{No Cake}{\emoji{1f64c}}}
+\def\money{\toplabel{Money}{\emoji{1f4b0}}}
 
 % pi-calculus syntax
-\newcommand{\cut}[1]{\nu #1.}
-\newcommand{\recv}[2]{#1(#2).}
-\newcommand{\send}[2]{#1[#2].}
-\newcommand{\halt}[0]{0}
-\newcommand{\subst}[3]{#1\{#2/#3\}}
+\newcommand{\PP}{{\color{tm}P}}
+\newcommand{\QQ}{{\color{tm}Q}}
+\newcommand{\RR}{{\color{tm}R}}
+\newcommand{\cut}[1]{{\color{tm}\nu #1.}}
+\newcommand{\recv}[2]{{\color{tm}#1(#2).}}
+\newcommand{\send}[2]{{\color{tm}#1[#2].}}
+\newcommand{\halt}[0]{{\color{tm}0}}
+\newcommand{\parr}[0]{\mathbin{\color{tm}\mid}}
+\newcommand{\paren}[1]{{\color{tm}(}#1{\color{tm})}}
+\newcommand{\subst}[3]{{\color{tm}#1\{#2/#3\}}}
 
 % ambiguous reduction
 \usepackage{tikz}
