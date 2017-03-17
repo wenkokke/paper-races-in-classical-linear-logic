@@ -4,9 +4,6 @@
 \title{Give or Take: Non-Determinism, Linear Logic and Session Types}
 \institute{University of Edinburgh}
 \input{preamble}
-\usepackage[dvipsnames]{xcolor}
-\colorlet{tm}{red}
-\colorlet{ty}{blue}
 
 \begin{document}
 
@@ -14,29 +11,27 @@
 
 \begin{frame}
  \frametitle{Example: dramatis person\ae}
- \setboolean{toplabel}{false}
  \centering\Huge
  \begin{tabular}{lll}
-   \mary   && Mary    \\
-   \john   && John    \\
-   \cake   && Cake    \\
-   \nocake && No Cake \\
-   \money  && Money
+   \mary   && Mary           \\
+   \john   && John           \\
+   \store  && P\^{a}tisserie \\
+   \cake   && Cake           \\
+   \nocake && No Cake
  \end{tabular}
 \end{frame}
 
-\begin{frame}[label=ex1]
+\begin{frame}[label=frmex]
   \frametitle{Example: buying cake at the p\^{a}tisserie}
-  \setboolean{toplabel}{false}
   \wide[4cm]{%
     \begin{center}
       \amb
-      {\cut{x}\paren{
-          \quad \recv{x}{y}\john \quad \parr%
-          \quad \recv{x}{z}\mary \quad \parr%
-          \quad \send{x}{\cake}\send{x}{\nocake}\halt \quad}}
-      {\paren{\: \subst{\john}{\cake}{y}   \:\parr\: \subst{\mary}{\nocake}{z} \:}}
-      {\paren{\: \subst{\john}{\nocake}{y} \:\parr\: \subst{\mary}{\cake}{z}   \:}}
+      {\new{x}\paren{
+          \quad \recv{x}{y}\john \quad \conc%
+          \quad \recv{x}{z}\mary \quad \conc%
+          \quad \send{x}{\cake}\send{x}{\nocake}\store \quad}}
+      {\paren{\: \subst{\john}{\cake}{y}   \:\conc\: \subst{\mary}{\nocake}{z} \:\conc\: \store \:}}
+      {\paren{\: \subst{\john}{\nocake}{y} \:\conc\: \subst{\mary}{\cake}{z}   \:\conc\: \store \:}}
     \end{center}
   }
 \end{frame}
@@ -46,21 +41,121 @@
   \[\!
     \begin{aligned}
       \text{Term}\;\PP,\QQ,\RR\\
-      \quad  ::=&\;{\cut{x}\PP         }&&\text{create a new channel $x$, then run P}
+      \quad  ::=&\;{\new{x}\PP         }&&\text{create a new channel $x$, then run P}
       \\    \mid&\;{\send{x}{y}\PP     }&&\text{send a channel $y$ over $x$, then run P}
       \\    \mid&\;{\recv{x}{y}\PP     }&&\text{receive a channel $y$ over $x$, then run P}
-      \\    \mid&\;{\paren{\PP\parr\QQ}}&&\text{run P and Q in parallel}
+      \\    \mid&\;{\paren{\PP\conc\QQ}}&&\text{run P and Q in parallel}
       \\    \mid&\;{\halt              }&&\text{halt}
     \end{aligned}
   \]
 \end{frame}
 
-\againframe{ex1}
+\againframe{frmex}
 
 \begin{frame}
-  \frametitle{Pitfalls in $\pi$-calculus}
-  
+  \frametitle{Pitfall: illegal resale of cake}
+  \centering
+  \vfill\Huge
+  \begin{tabular}{lll}
+    \money && Money \\
+  \end{tabular}
+  \vfill\Large
+  \[
+    \new{x}\paren{
+      \quad
+      \recv{x}{\money}\send{x}{\cake}\john
+      \quad\conc\quad
+      \recv{x}{\cake}\send{x}{\money}\mary
+      \quad
+    }
+  \]
+  \vfill
 \end{frame}
+
+\begin{frame}[label=frmty]
+  \frametitle{Session types to the rescue}
+  \centering
+  \only<1,2,3>{
+    \vfill
+    {\Large
+      \[
+        \text{Type} \; \tm{A} , \tm{B} ::=
+        \tm{\alpha} \mid \tm{\alpha^\bot} \mid \tm{A \tens B} \mid \tm{A \parr B}
+        \mid \dots
+      \]
+    }
+    \vfill  
+  }
+  \only<1>{
+    \def\hinuf{\vphantom{{}^\bot}}
+    \begin{tabular}{lll}
+      \Large $\tm[x_1]{\cake^\bot}$      && channel from which you \textbf{get cake} \\
+      \Large $\tm[x_2]{\cake\hinuf}$     && channel in which you \textbf{put cake} \\ 
+      \Large $\tm[x_3]{\money^\bot}$     && channel from which you \textbf{get money} \\
+      \Large $\tm[x_4]{\money\hinuf}$    && channel in which you \textbf{put money} \\
+      \Large $\tm[x_5]{A \tens B\hinuf}$ && \textbf{independent} pair of channels \\
+      \Large $\tm[x_6]{A \parr B\hinuf}$ && possibly \textbf{dependent} pair of channels
+    \end{tabular}
+    \vfill
+  }
+  \only<3>{
+    {
+      \Large
+      \begin{proofblock}[1]
+        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+        \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[ \new{x}(P \conc Q) ]{ \Gamma , \Delta }$}
+      \end{proofblock}
+      \vfill
+    }
+  }
+  \only<2>{
+    {
+      \Large
+      \begin{proofblock}[1]
+        \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
+        \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+        \SYM{\tens}
+        \BIC{$\seq[ \new{y}\send{x}{y}(P \conc Q) ]{ \Gamma , \Delta , \tm[x]{A \tens B}}$}
+      \end{proofblock}
+      \begin{proofblock}[1]
+        \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B}}$}
+        \SYM{\parr}
+        \UIC{$\seq[ \recv{x}{y}P ]{ \Gamma , \tm[x]{A \parr B}}$}
+      \end{proofblock}
+    }
+    \vfill
+  }
+  \only<4>{
+    \Large
+    \[\!
+      \arraycolsep=0.25em%
+      \def\arraystretch{1.5}%
+      \begin{array}{ccc}
+        & \text{Type of $\color{tm}x$ used by \john}
+        & \text{Type of $\color{tm}x$ used by \mary}
+        \\ \cline{2-3}
+        \good & \tm{\money^\bot \parr \cake} & \tm{\money \tens \cake^\bot} \\ 
+        \good & \tm{\money^\bot \tens \cake} & \tm{\money \parr \cake^\bot} \\ \cline{2-3}
+        \bad  & \tm{\money^\bot \parr \cake} & \tm{\money \parr \cake^\bot} \\
+        \bad  & \tm{\money^\bot \tens \cake} & \tm{\money \tens \cake^\bot}
+      \end{array}
+    \]
+  }
+  \only<5>{
+    {
+      \Large
+      \[
+        \new{x}\paren{\quad\recv{x}{y}\john\quad\conc\quad\new{w}\send{x}{w}\paren{\;\link{w}{\money}\;\conc\;\recv{x}{z}\mary\;}\quad}
+      \]
+    }
+  }
+\end{frame}
+
+\againframe{frmex}
+
+\againframe<2>{frmty}
 
 \end{document}
 

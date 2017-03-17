@@ -1,3 +1,8 @@
+% color
+\usepackage[dvipsnames]{xcolor}
+\colorlet{tm}{red}
+\colorlet{ty}{blue}
+
 % wider
 \newcommand{\wide}[2][4cm]%
 {\makebox[\linewidth][c]{\begin{minipage}{\dimexpr\textwidth+#1\relax}#2\end{minipage}}}
@@ -5,7 +10,7 @@
 % toplabel
 \usepackage{ifthen}
 \newboolean{toplabel}
-\setboolean{toplabel}{true}
+\setboolean{toplabel}{false}
 \newcommand{\toplabel}[2]{%
   \ifthenelse{\boolean{toplabel}}{%
     \stackrel{\makebox[0pt]{\mbox{\normalfont\tiny #1}}}{#2}
@@ -21,24 +26,37 @@
 \def\cake{\toplabel{Cake}{\emoji{1f382}}}
 \def\nocake{\toplabel{No Cake}{\emoji{1f64c}}}
 \def\money{\toplabel{Money}{\emoji{1f4b0}}}
+\def\store{\toplabel{Store}{\emoji{1f3e0}}}
+\def\good{\emoji{2714}}
+\def\bad{\emoji{2716}}
 
 % pi-calculus syntax
 \newcommand{\PP}{{\color{tm}P}}
 \newcommand{\QQ}{{\color{tm}Q}}
 \newcommand{\RR}{{\color{tm}R}}
-\newcommand{\cut}[1]{{\color{tm}\nu #1.}}
+\newcommand{\new}[1]{{\color{tm}\nu #1.}}
 \newcommand{\recv}[2]{{\color{tm}#1(#2).}}
-\newcommand{\send}[2]{{\color{tm}#1[#2].}}
+\newcommand{\send}[2]{{\color{tm}#1\langle #2 \rangle.}}
 \newcommand{\halt}[0]{{\color{tm}0}}
-\newcommand{\parr}[0]{\mathbin{\color{tm}\mid}}
+\newcommand{\link}[2]{{\color{tm}#1{\leftrightarrow}#2}}
+\newcommand{\conc}[0]{\mathbin{\color{tm}\mid}}
 \newcommand{\paren}[1]{{\color{tm}(}#1{\color{tm})}}
 \newcommand{\subst}[3]{{\color{tm}#1\{#2/#3\}}}
+\newcommand{\tm}[2][]{%
+\toks0={#1}%
+\edef\param{\the\toks0}%
+\ifx\param\empty
+  \ensuremath{{\color{ty}#2}}%
+\else
+  \ensuremath{{\color{tm}#1}\color{black}:{\color{ty}#2}}%
+\fi}
+\newcommand{\seq}[2][]{\ensuremath{{\color{tm}#1}\vdash{\color{ty}#2}}}
 
 % ambiguous reduction
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 \newcommand{\amb}[3]{%
-  \begin{tikzpicture}[sibling distance=3cm,level distance=3cm]
+  \begin{tikzpicture}[sibling distance=1cm,level distance=3cm]
     \Tree
     [.{$#1$}
     \edge[->]; {$#2$}
@@ -46,6 +64,30 @@
     ]
   \end{tikzpicture}
 }
+
+% type syntax
+\def\parr{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{\&}}}}
+\def\with{\ensuremath{\mathbin{\text{\&}}}}
+\def\plus{\ensuremath{\oplus}}
+\def\tens{\ensuremath{\otimes}}
+\def\limp{\ensuremath{\multimap}}
+\def\one{\ensuremath{\mathbf{1}}}
+\def\nil{\ensuremath{\mathbf{0}}}
+\def\lequiv{\ensuremath{\multimapboth}}
+
+% proof syntax
+\usepackage{bussproofs}
+\def\fCenter{\ensuremath{\;\vdash\;}}
+\newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
+\newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
+\EnableBpAbbreviations
+\newenvironment{proofbox}[1][0.9]%
+  {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
+  {\scalebox{\scalefactor}{\DisplayProof} \egroup}
+\newenvironment{proofblock}[1][0.9]%
+  {\gdef\scalefactor{#1}\center\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \endcenter }
+
 
 %%% Local Variables:
 %%% TeX-master: "main"
