@@ -1,9 +1,12 @@
-\documentclass{beamer}
+\documentclass[xcolor={dvipsnames}]{beamer}
 \usetheme{metropolis}
 \author{Pepijn Kokke}
 \title{Give or Take: Non-Determinism, Linear Logic and Session Types}
 \institute{University of Edinburgh}
 \input{preamble}
+\usepackage[dvipsnames]{xcolor}
+\colorlet{tm}{red}
+\colorlet{ty}{blue}
 
 \begin{document}
 
@@ -14,45 +17,49 @@
  \setboolean{toplabel}{false}
  \centering\Huge
  \begin{tabular}{lll}
-   \mary   && Mary \\
-   \john   && John \\
-   \cake   && Cake \\
-   \nocake && No Cake
+   \mary   && Mary    \\
+   \john   && John    \\
+   \cake   && Cake    \\
+   \nocake && No Cake \\
+   \money  && Money
  \end{tabular}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[label=ex1]
   \frametitle{Example: buying cake at the p\^{a}tisserie}
   \setboolean{toplabel}{false}
   \wide[4cm]{%
     \begin{center}
       \amb
-      {\cut{x}({
-          \quad \recv{x}{y}\john \quad \mid
-          \quad \recv{x}{z}\mary \quad \mid
-          \quad \send{x}{\cake}\send{x}{\nocake}\halt \quad
-        })}
-      {(\; \subst{\john}{\cake}{y}   \mid\: \subst{\mary}{\nocake}{z} \;)}
-      {(\; \subst{\john}{\nocake}{y} \mid\: \subst{\mary}{\cake}{z}   \;)}
+      {\cut{x}\paren{
+          \quad \recv{x}{y}\john \quad \parr%
+          \quad \recv{x}{z}\mary \quad \parr%
+          \quad \send{x}{\cake}\send{x}{\nocake}\halt \quad}}
+      {\paren{\: \subst{\john}{\cake}{y}   \:\parr\: \subst{\mary}{\nocake}{z} \:}}
+      {\paren{\: \subst{\john}{\nocake}{y} \:\parr\: \subst{\mary}{\cake}{z}   \:}}
     \end{center}
   }
 \end{frame}
 
 \begin{frame}
-  \frametitle{Example: what does it mean?}
-  \setboolean{toplabel}{false}
-  \newboolean{showpvar}
-  \newcommand{\pvar}[2][\cdots]{\ifthenelse{\boolean{showpvar}}{#2}{#1}}
-  \only<1>{\setboolean{showpvar}{false}}
-  \only<2>{\setboolean{showpvar}{true}}
-  \centering\Large
-  \begin{tabular}{lll}
-    $\cut{x}\pvar{P}$                   && \\
-    $\recv{x}{y}\pvar[\john]{P}$        && \\
-    $\send{x}{\pvar[\cake]{y}}\pvar{P}$ && \\
-    $(\pvar{P}\mid\pvar{Q})$            && \\
-    $\halt$                             && \\
-  \end{tabular}
+  \frametitle{The $\pi$-calculus: syntax}
+  \[\!
+    \begin{aligned}
+      \text{Term}\;\PP,\QQ,\RR\\
+      \quad  ::=&\;{\cut{x}\PP         }&&\text{create a new channel $x$, then run P}
+      \\    \mid&\;{\send{x}{y}\PP     }&&\text{send a channel $y$ over $x$, then run P}
+      \\    \mid&\;{\recv{x}{y}\PP     }&&\text{receive a channel $y$ over $x$, then run P}
+      \\    \mid&\;{\paren{\PP\parr\QQ}}&&\text{run P and Q in parallel}
+      \\    \mid&\;{\halt              }&&\text{halt}
+    \end{aligned}
+  \]
+\end{frame}
+
+\againframe{ex1}
+
+\begin{frame}
+  \frametitle{Pitfalls in $\pi$-calculus}
+  
 \end{frame}
 
 \end{document}
