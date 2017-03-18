@@ -29,9 +29,9 @@
       {\new{x}\paren{
           \quad \recv{x}{y}\john \quad \conc%
           \quad \recv{x}{z}\mary \quad \conc%
-          \quad \send{x}{\cake}\send{x}{\nocake}\store \quad}}
-      {\paren{\: \subst{\john}{\cake}{y}   \:\conc\: \subst{\mary}{\nocake}{z} \:\conc\: \store \:}}
-      {\paren{\: \subst{\john}{\nocake}{y} \:\conc\: \subst{\mary}{\cake}{z}   \:\conc\: \store \:}}
+          \quad \send[u]{x}{\cake}\send[u]{x}{\nocake}\store \quad}}
+      {\paren{\: \subst{\john}{\cake}{y} \:\conc\: \subst{\mary}{\nocake}{z} \:\conc\: \store \:}}
+      {\paren{\: \subst{\john}{\nocake}{y} \:\conc\: \subst{\mary}{\cake}{z} \:\conc\: \store \:}}
     \end{center}
   }
 \end{frame}
@@ -42,7 +42,7 @@
     \begin{aligned}
       \text{Term}\;\PP,\QQ,\RR\\
       \quad  ::=&\;{\new{x}\PP         }&&\text{create a new channel $x$, then run P}
-      \\    \mid&\;{\send{x}{y}\PP     }&&\text{send a channel $y$ over $x$, then run P}
+      \\    \mid&\;{\send[u]{x}{y}\PP  }&&\text{send a channel $y$ over $x$, then run P}
       \\    \mid&\;{\recv{x}{y}\PP     }&&\text{receive a channel $y$ over $x$, then run P}
       \\    \mid&\;{\paren{\PP\conc\QQ}}&&\text{run P and Q in parallel}
       \\    \mid&\;{\halt              }&&\text{halt}
@@ -63,9 +63,9 @@
   \[
     \new{x}\paren{
       \quad
-      \recv{x}{\money}\send{x}{\cake}\john
+      \recv{x}{\money}\send[u]{x}{\cake}\john
       \quad\conc\quad
-      \recv{x}{\cake}\send{x}{\money}\mary
+      \recv{x}{\cake}\send[u]{x}{\money}\mary
       \quad
     }
   \]
@@ -83,10 +83,10 @@
         \tm{\alpha} \mid \tm{\alpha^\bot} \mid \tm{A \tens B} \mid \tm{A \parr B}
         \mid \dots
       \]
-    }
-    \vfill  
+    }  
   }
   \only<1>{
+    \vfill
     \def\hinuf{\vphantom{{}^\bot}}
     \begin{tabular}{lll}
       \Large $\tm[x_1]{\cake^\bot}$      && channel from which you \textbf{get cake} \\
@@ -98,26 +98,18 @@
     \end{tabular}
     \vfill
   }
-  \only<3>{
+  \only<2,3>{
     {
       \Large
-      \begin{proofblock}[1]
-        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
-        \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
-        \NOM{Cut}
-        \BIC{$\seq[ \new{x}(P \conc Q) ]{ \Gamma , \Delta }$}
-      \end{proofblock}
+      \onslide<3>{\(
+        \send{x}{y}\PP ::= \send[b]{x}{y}\PP
+      \)}
       \vfill
-    }
-  }
-  \only<2>{
-    {
-      \Large
       \begin{proofblock}[1]
         \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
         \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
         \SYM{\tens}
-        \BIC{$\seq[ \new{y}\send{x}{y}(P \conc Q) ]{ \Gamma , \Delta , \tm[x]{A \tens B}}$}
+        \BIC{$\seq[{ \only<2>{\send[b]{x}{y}}\only<3>{\send{x}{y}}(P \conc Q) }]{ \Gamma , \Delta , \tm[x]{A \tens B}}$}
       \end{proofblock}
       \begin{proofblock}[1]
         \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B}}$}
@@ -128,7 +120,19 @@
     \vfill
   }
   \only<4>{
-    \Large
+    {
+      \vfill\Large
+      \begin{proofblock}[1]
+        \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+        \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[ \new{x}(P \conc Q) ]{ \Gamma , \Delta }$}
+      \end{proofblock}
+      \vfill
+    }
+  }
+  \only<5>{
+    \vfill\Large
     \[\!
       \arraycolsep=0.25em%
       \def\arraystretch{1.5}%
@@ -143,11 +147,13 @@
       \end{array}
     \]
   }
-  \only<5>{
+  \only<6>{
     {
       \Large
       \[
-        \new{x}\paren{\quad\recv{x}{y}\john\quad\conc\quad\new{w}\send{x}{w}\paren{\;\link{w}{\money}\;\conc\;\recv{x}{z}\mary\;}\quad}
+        \new{x}\paren{
+          \quad\recv{x}{y}\john\quad\conc\quad\send{x}{w}
+          \paren{\;\link{w}{\money}\;\conc\;\recv{x}{z}\mary\;}\quad}
       \]
     }
   }
@@ -155,7 +161,108 @@
 
 \againframe{frmex}
 
-\againframe<2>{frmty}
+\begin{frame}
+  \frametitle{Non-Deterministic Classical Processes}
+  \vspace*{1\baselineskip}
+  \vfill
+  \only<1>{
+    \Large
+    \begin{proofblock}[1]
+      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+      \AXC{$\seq[ Q ]{ \Delta , \tm[x]{A^\bot} }$}
+      \NOM{Cut}
+      \BIC{$\seq[ \new{x}(P \conc Q) ]{ \Gamma , \Delta }$}
+    \end{proofblock}
+  }
+  \only<2-4>{
+    \wide{
+      \centering
+      \amb{%
+        \def\pSeq{\ensuremath{%
+            \seq[ P ]{ \Gamma , \tm[y]{A} }}}
+        \def\qSeq{\ensuremath{%
+            \seq[ Q ]{ \Delta , \tm[z]{A} }}}
+        \def\rSeq{\ensuremath{%
+            \seq[ R ]{ \Theta , \tm[u]{A^\bot}, \tm[v]{A^\bot} }}}
+        \def\lhsTm{\ensuremath{%
+            \paren{\; \recv{x}{y}P \;\conc\; \recv{x}{z}Q \;}}}
+        \def\rhsTm{\ensuremath{%
+            \send{x}{u}\send{x}{v}{R}}}
+        \def\finTm{\ensuremath{%
+            \new{x}\paren{\; \lhsTm \;\conc\; \rhsTm \;}}}
+        \def\finSeq{\ensuremath{%
+            \seq[ \finTm ]{ \Gamma , \Delta, \Theta }}}
+        \only<2>{%
+          \begin{proofbox}[1]
+            \AXC{\pSeq}
+            \AXC{\qSeq}
+            \AXC{\rSeq}
+            \noLine\TIC{$\vdots$}\noLine
+            \UIC{\finSeq}
+          \end{proofbox}
+        }
+        \only<3,4>{%
+          \begin{proofbox}[1]
+            \AXC{\pSeq}
+            \AXC{\qSeq}
+            \noLine\BIC{$\vdots$}\noLine
+            \UIC{$\seq[\lhsTm]{\Gamma, \Delta,
+                \tm[x]{\only<3>{???}\only<4>{\take[2]{A}} }}$}
+            \AXC{\rSeq}
+            \noLine\UIC{$\vdots$}\noLine
+            \UIC{$\seq[\rhsTm]{\Theta,
+                \tm[x]{\only<3>{???}\only<4>{\give[2]{A^\bot}}} }$}
+            \NOM{Cut}
+            \BIC{\finSeq}
+          \end{proofbox}
+        }
+      }%
+      {\paren{\; \subst{P}{u}{y} \;\conc\; \subst{Q}{v}{z} \;\conc\; \RR \;}}%
+      {\paren{\; \subst{P}{v}{y} \;\conc\; \subst{Q}{u}{z} \;\conc\; \RR \;}}%
+    }
+  }
+  \vfill
+\end{frame}
+
+\begin{frame}[label=nodcap]
+  \frametitle{Non-Deterministic Classical Processes}
+  \[
+    \text{Type} \; \tm{A}, \tm{B} ::= \dots \mid \tm{\give[n]{A}} \mid \tm{\take[n]{A}}
+  \]
+  \[\!
+    \begin{aligned}
+      \text{Term} \; {\color{tm}P}, {\color{tm}Q}, {\color{tm}R} ::= \dots
+      \mid {\color{tm}{\send{x}{y}P}}
+      \mid {\color{tm}{\recv{x}{y}P}}
+    \end{aligned}
+  \]
+
+  \begin{center}
+    \begin{proofbox}[1]
+      \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\give[1]{}}
+      \UIC{$\seq[{{\send{x}{y}P}}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+    \end{proofbox}
+    \begin{proofbox}[1]
+      \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\take[1]{}}
+      \UIC{$\seq[{{\recv{x}{y}P}}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+    \end{proofbox}
+  \end{center}
+
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
+    \NOM{Contract}
+    \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
+  \end{proofblock}
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
+  \end{proofblock}
+\end{frame}
+
 
 \end{document}
 
