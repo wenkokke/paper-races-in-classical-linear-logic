@@ -36,7 +36,22 @@
 \newcommand{\RR}{{\color{tm}R}}
 \newcommand{\new}[1]{{\color{tm}\nu #1.}}
 \newcommand{\recv}[2]{{\color{tm}#1(#2).}}
-\newcommand{\send}[2]{{\color{tm}#1\langle #2 \rangle.}}
+\newcommand{\send}[3][]{{%
+    \color{tm}
+    \toks0={#1}%
+    \edef\param{\the\toks0}%
+    \edef\bound{b}%
+    \edef\unbound{u}%
+    \ifx\param\bound%
+    \new{#3}\send[u]{#2}{#3}
+    \else%
+      \ifx\param\unbound%
+      #2\langle #3 \rangle.
+      \else%
+      #2[#3].
+      \fi
+    \fi
+  }}
 \newcommand{\halt}[0]{{\color{tm}0}}
 \newcommand{\link}[2]{{\color{tm}#1{\leftrightarrow}#2}}
 \newcommand{\conc}[0]{\mathbin{\color{tm}\mid}}
@@ -74,6 +89,8 @@
 \def\one{\ensuremath{\mathbf{1}}}
 \def\nil{\ensuremath{\mathbf{0}}}
 \def\lequiv{\ensuremath{\multimapboth}}
+\newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\newcommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
 
 % proof syntax
 \usepackage{bussproofs}
