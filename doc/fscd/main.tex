@@ -1,0 +1,49 @@
+\documentclass[a4paper,UKenglish]{lipics-v2016}
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+\bibliographystyle{plainurl}% the recommended bibstyle
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Give or Take: Non-Determinism, Linearity, and Session Types}
+\titlerunning{Give or Take}
+\author[1]{Pepijn Kokke}
+\affil[1]{LFCS, University of Edinburgh, Edinburgh, United Kingdom\\
+  \texttt{pepijn.kokke@ed.ac.uk}}
+\authorrunning{P. Kokke}
+\Copyright{Pepijn Kokke}
+\subjclass{D.3.2. Concurrent, distributed, and parallel languages}
+\keywords{Dummy keyword -- please provide 1--5 keywords}% mandatory: Please provide 1-5 keywords
+% Author macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\EventEditors{John Q. Open and Joan R. Acces}
+\EventNoEds{2}
+\EventLongTitle{42nd Conference on Very Important Topics (CVIT 2016)}
+\EventShortTitle{CVIT 2016}
+\EventAcronym{CVIT}
+\EventYear{2016}
+\EventDate{December 24--27, 2016}
+\EventLocation{Little Whinging, United Kingdom}
+\EventLogo{}
+\SeriesVolume{42}
+\ArticleNo{23}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract} %TODO you can't just copy your talk abstract
+The $\pi$-calculus is great for modeling concurrent systems. However, as a basis
+for a programming language it has all sorts of pitfalls---e.g. non-termination,
+deadlocks. The system CP, by Wadler (2012), gets rid of many of these pitfalls.
+Through a correspondence with linear logic, it guarantees, amongst other things,
+termination. However, it also excludes non-determinism, and with that, race
+conditions. This makes it a less than ideal tool for modeling concurrent
+systems. In this paper, we introduce Nodcap, a variant of CP which allows
+non-deterministic programs while still keeping the ties with logic and with that
+the guarantees about session fidelity and termination. 
+\end{abstract}
+
+%% Bibliography
+\bibliography{main}
+
+\end{document}
