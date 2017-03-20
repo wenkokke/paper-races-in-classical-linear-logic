@@ -11,6 +11,7 @@
 
 \begin{frame}
  \frametitle{Example: dramatis person\ae}
+ \vfill
  \centering\Huge
  \begin{tabular}{lll}
    \mary   && Mary           \\
@@ -21,17 +22,16 @@
  \end{tabular}
 \end{frame}
 
-\def\sm{u}% send mode
-
+\newcommand{\sendx}[2]{\send[u]{#1}{#2}}%send mode
 \begin{frame}[label=frmex]
   \frametitle{Example: buying cake at the p\^{a}tisserie}
-  \wide[4cm]{%
+  \wide{%
     \begin{center}
       \amb
       {\new{x}\paren{
           \quad \recv{x}{y}\john \quad \conc%
           \quad \recv{x}{z}\mary \quad \conc%
-          \quad \send[\sm]{x}{\cake}\send[\sm]{x}{\nocake}\store \quad}}
+          \quad \sendx{x}{\cake}\sendx{x}{\nocake}\store \quad}}
       {\paren{\: \subst{\john}{\cake}{y} \:\conc\: \subst{\mary}{\nocake}{z} \:\conc\: \store \:}}
       {\paren{\: \subst{\john}{\nocake}{y} \:\conc\: \subst{\mary}{\cake}{z} \:\conc\: \store \:}}
     \end{center}
@@ -91,12 +91,12 @@
     \vfill
     \def\hinuf{\vphantom{{}^\bot}}
     \begin{tabular}{lll}
-      \Large $\tm[x_1]{\cake^\bot}$      && channel from which you \textbf{get cake} \\
-      \Large $\tm[x_2]{\cake\hinuf}$     && channel in which you \textbf{put cake} \\ 
-      \Large $\tm[x_3]{\money^\bot}$     && channel from which you \textbf{get money} \\
-      \Large $\tm[x_4]{\money\hinuf}$    && channel in which you \textbf{put money} \\
-      \Large $\tm[x_5]{A \tens B\hinuf}$ && \textbf{independent} pair of channels \\
-      \Large $\tm[x_6]{A \parr B\hinuf}$ && possibly \textbf{dependent} pair of channels
+      \Large $\tm{\plato^\bot}$     && channel from which you \textbf{get cake} \\
+      \Large $\tm{\plato\hinuf}$    && channel in which you \textbf{put cake} \\ 
+      \Large $\tm{\money^\bot}$     && channel from which you \textbf{get money} \\
+      \Large $\tm{\money\hinuf}$    && channel in which you \textbf{put money} \\
+      \Large $\tm{A \tens B\hinuf}$ && pair of \textbf{independent} channels \\
+      \Large $\tm{A \parr B\hinuf}$ && pair of possibly \textbf{dependent} channels
     \end{tabular}
     \vfill
   }
@@ -138,8 +138,8 @@
         \text{Type of $\color{tm}x$ used by \john}
         & \text{Type of $\color{tm}x$ used by \mary}
         \\ \hline
-        \tm{\money^\bot \parr \cake} & \tm{\money \tens \cake^\bot} \\ 
-        \tm{\money^\bot \tens \cake} & \tm{\money \parr \cake^\bot}
+        \tm{\money^\bot \parr \plato} & \tm{\money \tens \plato^\bot} \\ 
+        \tm{\money^\bot \tens \plato} & \tm{\money \parr \plato^\bot}
       \end{array}
     \]
     \vfill
@@ -163,22 +163,22 @@
   }
 \end{frame}
 
-\def\sm{}% send mode
+\renewcommand{\sendx}[2]{\send{#1}{#2}}%send mode
 \againframe{frmex}
 
 \def\pSeq{\ensuremath{%
-    \seq[ \john ]{ \Gamma , \tm[y]{\cake^\bot} }}}
+    \seq[ \john ]{ \Gamma , \tm[y]{\plato^\bot} }}}
 \def\qSeq{\ensuremath{%
-    \seq[ \mary ]{ \Delta , \tm[z]{\cake^\bot} }}}
+    \seq[ \mary ]{ \Delta , \tm[z]{\plato^\bot} }}}
 \def\rSeq{\ensuremath{%
-    \seq[ \store ]{ \Theta , \tm[\cake]{\cake}, \tm[\nocake]{\cake} }}}
+    \seq[ \store ]{ \Theta , \tm[\cake]{\plato}, \tm[\nocake]{\plato} }}}
 \def\lhsTm{\ensuremath{%
     \paren{\; \recv{x}{y}\john \;\conc\; \recv{x}{z}\mary \;}}}
-\newcommand{\lhsSeq}[1][{\take[2]{\cake^\bot}}]{\ensuremath{%
+\newcommand{\lhsSeq}[1][{\take[2]{\plato^\bot}}]{\ensuremath{%
     \seq[\lhsTm]{\Gamma, \Delta, \tm[x]{#1}}}}
 \def\rhsTm{\ensuremath{%
     \send{x}{\cake}\send{x}{\nocake}{\store}}}
-\newcommand{\rhsSeq}[1][{\give[2]{\cake}}]{\ensuremath{%
+\newcommand{\rhsSeq}[1][{\give[2]{\plato}}]{\ensuremath{%
   \seq[\rhsTm]{\Theta, \tm[x]{#1} }}}
 \def\finTm{\ensuremath{%
     \new{x}\paren{\; \lhsTm \;\conc\; \rhsTm \;}}}
@@ -234,7 +234,7 @@
   \vfill
 \end{frame}
 
-\begin{frame}
+\begin{frame}[label=howtopc]
   \frametitle{Non-Deterministic Classical Proccesses}
   \[
     \text{Type} \; \tm{A}, \tm{B} ::= \dots \mid \tm{\give[n]{A}} \mid \tm{\take[n]{A}}
@@ -243,10 +243,10 @@
     \begin{proofblock}[1]
       \AXC{\pSeq}
       \SYM{\take[1]{}}
-      \UIC{$\seq[{ \recv{x}{y}\john }]{ \Gamma, \tm[x]{\take[1]{\cake^\bot}} }$}
+      \UIC{$\seq[{ \recv{x}{y}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
       \AXC{\qSeq}
       \SYM{\take[1]{}}
-      \UIC{$\seq[{ \recv{x}{z}\mary }]{ \Delta, \tm[x]{\take[1]{\cake^\bot}} }$}
+      \UIC{$\seq[{ \recv{x}{z}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
       \NOM{Pool}
       \BIC{\lhsSeq}
     \end{proofblock}
@@ -256,13 +256,13 @@
       \AXC{\rSeq}
       \SYM{\give[1]{}}
       \UIC{$\seq[ \send{x'}{\nocake}\store ]%
-        { \Theta , \tm[\cake]{\cake}, \tm[x']{\give[1]{\cake}} }$}
+        { \Theta , \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
       \SYM{\give[1]{}}
       \UIC{$\seq[ \send{x}{\cake}\send{x'}{\nocake}\store ]%
-        { \Theta , \tm[x]{\give[1]{\cake}}, \tm[x']{\give[1]{\cake}} }$}
+        { \Theta , \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
       \NOM{Contract}
       \UIC{$\seq[ \send{x}{\cake}\send{x}{\nocake}\store ]%
-        { \Theta , \tm[x]{\give[2]{\cake}} }$}
+        { \Theta , \tm[x]{\give[2]{\plato}} }$}
     \end{proofblock} 
   }
 \end{frame}
@@ -301,38 +301,152 @@
 
 \begin{frame}
   \frametitle{Cut-elimination/Communication}
-  \only<1,3>{%
   \begin{proofblock}[1]
     \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
     \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
     \NOM{Cut}
     \BIC{$\seq[{ \new{x}(P \mid Q) }]{ \Gamma, \Delta }$}
-  \end{proofblock}}
-  \only<2>{%
-    \begin{proofblock}[1]
-      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
-      \NOM{Exp}
-      \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+  \end{proofblock}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cut-elimination/Communication}
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+    \NOM{Exp}
+    \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+  \end{proofblock}
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[y_1]{A}\cdots\tm[y_n]{A} }$}
+    \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+    \NOM{Int}
+    \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}Q }]{ \Delta }$}
+  \end{proofblock}
+\end{frame}
+
+\againframe<2>{howtopc}
+
+\againframe<1>{howtopc}
+
+\begin{frame}
+  \frametitle{Cut-elimination/Communication}
+  \wide{
+    \centering
+    \begin{proofblock}[0.85]
+      \AXC{$\seq[{
+          \subst{\john}{\cake}{y}
+        }]{
+          \Gamma, \tm[\cake]{\plato^\bot}
+        }$}
+      \AXC{\rSeq}
+      \NOM{Cut}
+      \BIC{$\seq[{
+          \new{\cake}\paren{\:\subst{\john}{\cake}{y}\:\conc\:\store\:}
+        }]
+        {
+          \Gamma, \Theta, \tm[\nocake]{\plato}
+        }$}
+      \AXC{$\seq[{
+          \subst{\mary}{\nocake}{z}
+        }]{
+          \Delta, \tm[\nocake]{\plato^\bot}
+        }$}
+      \NOM{Cut}
+      \BIC{$\seq[{
+          \new{\nocake}\paren{\:\subst{\mary}{\nocake}{z}\:\conc\:
+            \new{\cake}\paren{\:\subst{\john}{\cake}{y}\:\conc\:\store\:}
+            \:}
+        }]{
+          \Gamma, \Theta
+        }$}
     \end{proofblock}
-    \begin{proofblock}[1]
-      \AXC{$\seq[{ P }]{ \Gamma, \tm[y_1]{A}\cdots\tm[y_n]{A} }$}
-      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
-      \NOM{Int}
-      \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}Q }]{ \Delta }$}
-    \end{proofblock}}
-  \only<3>{%
-    \[\Downarrow\]
-    \begin{proofblock}[1]
-      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
-      \NOM{Exp}
-      \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
-      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
-      \NOM{Int}
-      \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}(\expn{x}{{y_1}\cdots{y_n}}P \mid Q) }]{ \Delta }$}
-    \end{proofblock}}
+    \vfill
+    \begin{proofblock}[0.85]
+      \AXC{$\seq[{
+          \subst{\mary}{\cake}{y}
+        }]{
+          \Gamma, \tm[\cake]{\plato^\bot}
+        }$}
+      \AXC{\rSeq}
+      \NOM{Cut}
+      \BIC{$\seq[{
+          \new{\cake}\paren{\:\subst{\mary}{\cake}{y}\:\conc\:\store\:}
+        }]
+        {
+          \Gamma, \Theta, \tm[\nocake]{\plato}
+        }$}
+      \AXC{$\seq[{
+          \subst{\john}{\nocake}{z}
+        }]{
+          \Delta, \tm[\nocake]{\plato^\bot}
+        }$}
+      \NOM{Cut}
+      \BIC{$\seq[{
+          \new{\nocake}\paren{\:\subst{\john}{\nocake}{z}\:\conc\:
+            \new{\cake}\paren{\:\subst{\mary}{\cake}{y}\:\conc\:\store\:}
+            \:}
+        }]{
+          \Gamma, \Theta
+        }$}
+    \end{proofblock}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cut-elimination/Communication}
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \new{x}(P \mid Q) }]{ \Gamma, \Delta }$}
+  \end{proofblock}
+  \[\Downarrow\]
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+    \NOM{Exp}
+    \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+    \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+    \NOM{Int}
+    \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}(\expn{x}{{y_1}\cdots{y_n}}P \mid Q) }]{ \Delta }$}
+  \end{proofblock}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Related and Future Work}
+  I should mention\dots
+  \begin{itemize}
+  \item type system implemented in Agda;
+  \item cut-elimination procedure implemented in Agda;
+  \end{itemize}
+  And I'm looking into\dots
+  \begin{itemize}
+  \item extension with resource quantifiers;
+  \item embedding CP back into $\text{CP}_{\text{NP}}$.
+  \end{itemize}
 \end{frame}
 
 \againframe{nodcap}
+
+\begin{frame}
+  \frametitle{Resource Quantifiers}
+  \[
+    \text{Type} \; \tm{A},\tm{B} ::= \ldots \mid \tm{\forall{n}.A} \mid \tm{\exists{n}.A} 
+  \]
+  \vfill
+  \[\!
+    \begin{aligned}
+      \tm{\take{A}} &:= \tm{\forall{n}.\take[n]{A}} \\ 
+      \tm{\give{A}} &:= \tm{\exists{n}.\give[n]{A}}
+    \end{aligned}
+  \]
+  \vfill
+  \[\!
+    \begin{aligned}
+      \tm{\text{Server}(A)} &:= \tm{\forall{n}.\give[n]{A}} \\ 
+      \tm{\text{Client}(A)} &:= \tm{\exists{n}.\take[n]{A}}
+    \end{aligned}
+  \]
+\end{frame}
 
 \end{document}
 
