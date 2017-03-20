@@ -21,6 +21,8 @@
  \end{tabular}
 \end{frame}
 
+\def\sm{u}% send mode
+
 \begin{frame}[label=frmex]
   \frametitle{Example: buying cake at the p\^{a}tisserie}
   \wide[4cm]{%
@@ -29,7 +31,7 @@
       {\new{x}\paren{
           \quad \recv{x}{y}\john \quad \conc%
           \quad \recv{x}{z}\mary \quad \conc%
-          \quad \send[u]{x}{\cake}\send[u]{x}{\nocake}\store \quad}}
+          \quad \send[\sm]{x}{\cake}\send[\sm]{x}{\nocake}\store \quad}}
       {\paren{\: \subst{\john}{\cake}{y} \:\conc\: \subst{\mary}{\nocake}{z} \:\conc\: \store \:}}
       {\paren{\: \subst{\john}{\nocake}{y} \:\conc\: \subst{\mary}{\cake}{z} \:\conc\: \store \:}}
     \end{center}
@@ -42,8 +44,8 @@
     \begin{aligned}
       \text{Term}\;\PP,\QQ,\RR\\
       \quad  ::=&\;{\new{x}\PP         }&&\text{create a new channel $x$, then run P}
-      \\    \mid&\;{\send[u]{x}{y}\PP  }&&\text{send a channel $y$ over $x$, then run P}
-      \\    \mid&\;{\recv{x}{y}\PP     }&&\text{receive a channel $y$ over $x$, then run P}
+      \\    \mid&\;{\recv{x}{y}\PP     }&&\text{receive $y$ over $x$, then run P}
+      \\    \mid&\;{\send[u]{x}{y}\PP  }&&\text{send $y$ over $x$, then run P}
       \\    \mid&\;{\paren{\PP\conc\QQ}}&&\text{run P and Q in parallel}
       \\    \mid&\;{\halt              }&&\text{halt}
     \end{aligned}
@@ -98,18 +100,14 @@
     \end{tabular}
     \vfill
   }
-  \only<2,3>{
+  \only<2>{
     {
-      \Large
-      \onslide<3>{\(
-        \send{x}{y}\PP ::= \send[b]{x}{y}\PP
-      \)}
-      \vfill
+      \vfill\Large
       \begin{proofblock}[1]
         \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
         \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
         \SYM{\tens}
-        \BIC{$\seq[{ \only<2>{\send[b]{x}{y}}\only<3>{\send{x}{y}}(P \conc Q) }]{ \Gamma , \Delta , \tm[x]{A \tens B}}$}
+        \BIC{$\seq[{ \send[b]{x}{y}(P \conc Q) }]{ \Gamma , \Delta , \tm[x]{A \tens B}}$}
       \end{proofblock}
       \begin{proofblock}[1]
         \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B}}$}
@@ -119,7 +117,7 @@
     }
     \vfill
   }
-  \only<4>{
+  \only<3>{
     {
       \vfill\Large
       \begin{proofblock}[1]
@@ -131,35 +129,61 @@
       \vfill
     }
   }
-  \only<5>{
+  \only<4>{
     \vfill\Large
     \[\!
       \arraycolsep=0.25em%
       \def\arraystretch{1.5}%
-      \begin{array}{ccc}
-        & \text{Type of $\color{tm}x$ used by \john}
+      \begin{array}{cc}
+        \text{Type of $\color{tm}x$ used by \john}
         & \text{Type of $\color{tm}x$ used by \mary}
-        \\ \cline{2-3}
-        \good & \tm{\money^\bot \parr \cake} & \tm{\money \tens \cake^\bot} \\ 
-        \good & \tm{\money^\bot \tens \cake} & \tm{\money \parr \cake^\bot} \\ \cline{2-3}
-        \bad  & \tm{\money^\bot \parr \cake} & \tm{\money \parr \cake^\bot} \\
-        \bad  & \tm{\money^\bot \tens \cake} & \tm{\money \tens \cake^\bot}
+        \\ \hline
+        \tm{\money^\bot \parr \cake} & \tm{\money \tens \cake^\bot} \\ 
+        \tm{\money^\bot \tens \cake} & \tm{\money \parr \cake^\bot}
       \end{array}
     \]
+    \vfill
   }
-  \only<6>{
+  \only<5,6>{
     {
-      \Large
+      \vfill\Large
+      \onslide<6>{
+        \[
+          \send{x}{y}\PP ::= \send[b]{x}{y}\PP
+        \]
+      }
       \[
         \new{x}\paren{
-          \quad\recv{x}{y}\john\quad\conc\quad\send{x}{w}
+          \quad\recv{x}{y}\john\quad\conc\quad
+          \only<5>{\send[b]{x}{w}}\only<6>{\send{x}{w}}
           \paren{\;\link{w}{\money}\;\conc\;\recv{x}{z}\mary\;}\quad}
       \]
+      \vfill
     }
   }
 \end{frame}
 
+\def\sm{}% send mode
 \againframe{frmex}
+
+\def\pSeq{\ensuremath{%
+    \seq[ \john ]{ \Gamma , \tm[y]{\cake^\bot} }}}
+\def\qSeq{\ensuremath{%
+    \seq[ \mary ]{ \Delta , \tm[z]{\cake^\bot} }}}
+\def\rSeq{\ensuremath{%
+    \seq[ \store ]{ \Theta , \tm[\cake]{\cake}, \tm[\nocake]{\cake} }}}
+\def\lhsTm{\ensuremath{%
+    \paren{\; \recv{x}{y}\john \;\conc\; \recv{x}{z}\mary \;}}}
+\newcommand{\lhsSeq}[1][{\take[2]{\cake^\bot}}]{\ensuremath{%
+    \seq[\lhsTm]{\Gamma, \Delta, \tm[x]{#1}}}}
+\def\rhsTm{\ensuremath{%
+    \send{x}{\cake}\send{x}{\nocake}{\store}}}
+\newcommand{\rhsSeq}[1][{\give[2]{\cake}}]{\ensuremath{%
+  \seq[\rhsTm]{\Theta, \tm[x]{#1} }}}
+\def\finTm{\ensuremath{%
+    \new{x}\paren{\; \lhsTm \;\conc\; \rhsTm \;}}}
+\def\finSeq{\ensuremath{%
+    \seq[ \finTm ]{ \Gamma , \Delta, \Theta }}}
 
 \begin{frame}
   \frametitle{Non-Deterministic Classical Processes}
@@ -175,23 +199,9 @@
     \end{proofblock}
   }
   \only<2-4>{
-    \wide{
+    \wide[6cm]{
       \centering
       \amb{%
-        \def\pSeq{\ensuremath{%
-            \seq[ P ]{ \Gamma , \tm[y]{A} }}}
-        \def\qSeq{\ensuremath{%
-            \seq[ Q ]{ \Delta , \tm[z]{A} }}}
-        \def\rSeq{\ensuremath{%
-            \seq[ R ]{ \Theta , \tm[u]{A^\bot}, \tm[v]{A^\bot} }}}
-        \def\lhsTm{\ensuremath{%
-            \paren{\; \recv{x}{y}P \;\conc\; \recv{x}{z}Q \;}}}
-        \def\rhsTm{\ensuremath{%
-            \send{x}{u}\send{x}{v}{R}}}
-        \def\finTm{\ensuremath{%
-            \new{x}\paren{\; \lhsTm \;\conc\; \rhsTm \;}}}
-        \def\finSeq{\ensuremath{%
-            \seq[ \finTm ]{ \Gamma , \Delta, \Theta }}}
         \only<2>{%
           \begin{proofbox}[1]
             \AXC{\pSeq}
@@ -206,35 +216,61 @@
             \AXC{\pSeq}
             \AXC{\qSeq}
             \noLine\BIC{$\vdots$}\noLine
-            \UIC{$\seq[\lhsTm]{\Gamma, \Delta,
-                \tm[x]{\only<3>{???}\only<4>{\take[2]{A}} }}$}
+            \only<3>{\UIC{\lhsSeq[???]}}\only<4>{\UIC{\lhsSeq}}
             \AXC{\rSeq}
             \noLine\UIC{$\vdots$}\noLine
-            \UIC{$\seq[\rhsTm]{\Theta,
-                \tm[x]{\only<3>{???}\only<4>{\give[2]{A^\bot}}} }$}
+            \only<3>{\UIC{\rhsSeq[???]}}\only<4>{\UIC{\rhsSeq}}
             \NOM{Cut}
             \BIC{\finSeq}
           \end{proofbox}
         }
       }%
-      {\paren{\; \subst{P}{u}{y} \;\conc\; \subst{Q}{v}{z} \;\conc\; \RR \;}}%
-      {\paren{\; \subst{P}{v}{y} \;\conc\; \subst{Q}{u}{z} \;\conc\; \RR \;}}%
+      {\paren{\; \subst{\john}{\cake}{y}   \;\conc\;
+                 \subst{\mary}{\nocake}{z} \;\conc\; \store \;}}%
+      {\paren{\; \subst{\john}{\nocake}{y} \;\conc\;
+                 \subst{\mary}{\cake}{z}   \;\conc\; \store \;}}%
     }
   }
   \vfill
+\end{frame}
+
+\begin{frame}
+  \frametitle{Non-Deterministic Classical Proccesses}
+  \[
+    \text{Type} \; \tm{A}, \tm{B} ::= \dots \mid \tm{\give[n]{A}} \mid \tm{\take[n]{A}}
+  \]
+  \only<1>{%
+    \begin{proofblock}[1]
+      \AXC{\pSeq}
+      \SYM{\take[1]{}}
+      \UIC{$\seq[{ \recv{x}{y}\john }]{ \Gamma, \tm[x]{\take[1]{\cake^\bot}} }$}
+      \AXC{\qSeq}
+      \SYM{\take[1]{}}
+      \UIC{$\seq[{ \recv{x}{z}\mary }]{ \Delta, \tm[x]{\take[1]{\cake^\bot}} }$}
+      \NOM{Pool}
+      \BIC{\lhsSeq}
+    \end{proofblock}
+  }
+  \only<2>{%
+    \begin{proofblock}[1]
+      \AXC{\rSeq}
+      \SYM{\give[1]{}}
+      \UIC{$\seq[ \send{x'}{\nocake}\store ]%
+        { \Theta , \tm[\cake]{\cake}, \tm[x']{\give[1]{\cake}} }$}
+      \SYM{\give[1]{}}
+      \UIC{$\seq[ \send{x}{\cake}\send{x'}{\nocake}\store ]%
+        { \Theta , \tm[x]{\give[1]{\cake}}, \tm[x']{\give[1]{\cake}} }$}
+      \NOM{Contract}
+      \UIC{$\seq[ \send{x}{\cake}\send{x}{\nocake}\store ]%
+        { \Theta , \tm[x]{\give[2]{\cake}} }$}
+    \end{proofblock} 
+  }
 \end{frame}
 
 \begin{frame}[label=nodcap]
   \frametitle{Non-Deterministic Classical Processes}
   \[
     \text{Type} \; \tm{A}, \tm{B} ::= \dots \mid \tm{\give[n]{A}} \mid \tm{\take[n]{A}}
-  \]
-  \[\!
-    \begin{aligned}
-      \text{Term} \; {\color{tm}P}, {\color{tm}Q}, {\color{tm}R} ::= \dots
-      \mid {\color{tm}{\send{x}{y}P}}
-      \mid {\color{tm}{\recv{x}{y}P}}
-    \end{aligned}
   \]
 
   \begin{center}
@@ -263,6 +299,40 @@
   \end{proofblock}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Cut-elimination/Communication}
+  \only<1,3>{%
+  \begin{proofblock}[1]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \new{x}(P \mid Q) }]{ \Gamma, \Delta }$}
+  \end{proofblock}}
+  \only<2>{%
+    \begin{proofblock}[1]
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+      \NOM{Exp}
+      \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+    \end{proofblock}
+    \begin{proofblock}[1]
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[y_1]{A}\cdots\tm[y_n]{A} }$}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+      \NOM{Int}
+      \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}Q }]{ \Delta }$}
+    \end{proofblock}}
+  \only<3>{%
+    \[\Downarrow\]
+    \begin{proofblock}[1]
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+      \NOM{Exp}
+      \UIC{$\seq[{ \expn{x}{{y_1}\cdots{y_n}}P }]{ \Gamma, y_1:A \cdots y_n:A }$}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A^\bot}} }$}
+      \NOM{Int}
+      \BIC{$\seq[{ \intl{x}{{y_1}\cdots{y_n}}(\expn{x}{{y_1}\cdots{y_n}}P \mid Q) }]{ \Delta }$}
+    \end{proofblock}}
+\end{frame}
+
+\againframe{nodcap}
 
 \end{document}
 
