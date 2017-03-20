@@ -19,6 +19,7 @@ auto/
 *.fot
 *.cb
 *.cb2
+*.vtc
 
 ## Intermediate documents:
 *.dvi
