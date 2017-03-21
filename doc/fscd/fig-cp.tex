@@ -1,0 +1,69 @@
+\begin{figure*}
+  \centering
+  \(
+    \text{Type} \; A,B ::=
+    \bot \mid \one \mid \top \mid \nil \mid
+    A \parr B \mid A \tens B \mid
+    A \with B \mid A \plus B
+  \)
+
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm{x}{B} }$}
+      \SYM{\parr}
+      \UIC{$\seq[ x(y).P ]{ \Gamma , \tm[x]{A \parr B} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
+      \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+      \SYM{\tens}
+      \BIC{$\seq[{ x[y].(P \mid Q) }]{ \Gamma , \Delta , \tm[x]{A \tens B} }$}
+    \end{prooftree*}
+  \end{center}
+
+  \begin{prooftree}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+    \SYM{\with}
+    \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
+  \end{prooftree}
+  
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+      \SYM{\plus_1}
+      \UIC{$\seq[{ \inl{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{$\seq[ P ]{ \Gamma , \tm[x]{B} }$}
+      \SYM{\plus_2}
+      \UIC{$\seq[{ \inr{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
+    \end{prooftree*}
+  \end{center}
+  
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{$\seq[P]{ \Gamma }$}
+      \SYM{\bot}
+      \UIC{$\seq[{x().P}]{ \Gamma , \tm[x]{\bot} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \SYM{\one}
+      \UIC{$\seq[{ x[].0 }]{ \tm[x]{\one} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \SYM{\top}
+      \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
+    \end{prooftree*}
+    (no rule for \nil)
+  \end{center}
+
+  \caption{The rudimentary subset of CP~\cite{wadler2012}}
+  \label{fig:cp}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

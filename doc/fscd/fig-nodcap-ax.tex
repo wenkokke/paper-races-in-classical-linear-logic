@@ -1,0 +1,106 @@
+\begin{figure*}
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{}
+      \SYM{\one}
+      \UIC{$\seq[{ \halt{y} }]{ \tm[y]{\one} }$}
+      \SYM{\bot}
+      \UIC{$\seq[{ \wait{x}\halt{y} }]{ \tm[x]{\bot}, \tm[y]{\one} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \SYM{\top}
+      \UIC{$\seq[{ \case{x}{}{} }]{ \tm[x]{\top}, \tm[y]{\nil} }$}
+    \end{prooftree*}
+  \end{center}
+  
+  \begin{prooftree}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{x}{y} }]
+      { \tm[x]{A^\bot}, \tm[y]{A} }$}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{z}{w} }]
+      { \tm[z]{B^\bot}, \tm[w]{B} }$}
+    \SYM{\tens}
+    \BIC{$
+      \seq[{ \send{w}{y}(\link{x}{y}\mid\link{z}{w}) }]
+      { \tm[x]{A^\bot}, \tm[z]{B^\bot}, \tm[w]{A \tens B} }$}
+    \SYM{\parr}
+    \UIC{$
+      \seq[{ \recv{z}{x}\send{w}{y}(\link{x}{y}\mid\link{z}{w}) }]
+      { \tm[z]{A^\bot \parr B^\bot}, \tm[w]{A \tens B}}$}
+  \end{prooftree}
+  
+  \begin{prooftree}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{x}{y} }]
+      { \tm[x]{A^\bot}, \tm[y]{A} }$}
+    \SYM{\plus}
+    \UIC{$
+      \seq[{ \inl{y}\link{x}{y} }]
+      { \tm[x]{A^\bot}, \tm[y]{A \plus B} }$}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{x}{y} }]
+      { \tm[x]{B^\bot}, \tm[y]{B} }$}
+    \SYM{\plus}
+    \UIC{$
+      \seq[{ \inr{y}\link{x}{y} }]
+      { \tm[x]{B^\bot}, \tm[y]{A \plus B} }$}
+    \SYM{\with}
+    \BIC{$
+      \seq[{ \case{x}{\inl{y}\link{x}{y}}{\inr{y}\link{x}{y}} }]
+      { \tm[x]{A^\bot \with B^\bot}, \tm[y]{A \plus B} }$}
+  \end{prooftree}
+
+  \begin{prooftree}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{z}{w} }]
+      { \tm[z]{A^\bot}, \tm[w]{B} }$}
+    \SYM{$\take[1]{}$}
+    \UIC{$
+      \seq[{ \take{\recv{y}{w}}\link{z}{w} }]
+      { \tm[z]{A^\bot}, \tm[y]{\take[1]{A}} }$}
+    \SYM{$\give[1]{}$}
+    \UIC{$
+      \seq[{ \give{\send{x}{z}}\take{\recv{y}{w}}\link{z}{w} }]
+      { \tm[x]{\give[1]{A^\bot}}, \tm[y]{\take[1]{A}} }$}
+  \end{prooftree}  
+
+  \begin{prooftree}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{x}{y} }]
+      { \tm[x]{\give[1]{A^\bot}}, \tm[y]{\take[1]{A}} }$}
+    \AXC{}
+    \NOM{Ax}
+    \UIC{$
+      \seq[{ \link{z}{y} }]
+      { \tm[z]{\give[n]{A^\bot}}, \tm[y]{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$
+      \seq[{ (\link{x}{y}\mid\link{z}{y}) }]
+      { \tm[x]{\give[1]{A^\bot}}, \tm[z]{\give[n]{A^\bot}}, \tm[y]{\take[n+1]{A}} }$}
+    \NOM{Contract}
+    \UIC{$
+      \seq[{ (\link{x}{y}\mid\link{x}{y}) }]
+      { \tm[x]{\give[n+1]{A^\bot}}, \tm[y]{\take[n+1]{A}} }$}
+  \end{prooftree}
+
+  \caption{Proof of identity expansion for \(\text{CP}_{\text{ND}}\)}
+  \label{fig:nodcap-ax}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

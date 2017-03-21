@@ -1,0 +1,40 @@
+\begin{figure*}
+  \centering
+  \(
+    \text{Type} \; A,B ::= \dots \mid \give[n]{A} \mid \take[n]{A}
+  \)
+
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\give[1]{}}
+      \UIC{$\seq[{x[y].P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
+      \NOM{Contract}
+      \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
+    \end{prooftree*}
+  \end{center}
+
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
+      \SYM{\take[1]{}}
+      \UIC{$\seq[{x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}
+      \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\take[n]{A}} }$}
+      \NOM{Pool}
+      \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
+    \end{prooftree*}
+  \end{center}
+  
+  \caption{The type system \(\text{CP}_{\text{ND}}\)}
+  \label{fig:nodcap}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
