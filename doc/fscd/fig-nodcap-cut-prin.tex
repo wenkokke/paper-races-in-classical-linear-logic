@@ -1,0 +1,38 @@
+\begin{figure*}
+  \centering
+  \bgroup
+  \def\arraystretch{4}
+  \begin{tabular}{lr}
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A}} }$}
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{x}(P \mid Q) }]{ \Gamma, \Delta }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A}} }$} 
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
+      \NOM{Exp}
+      \UIC{$\seq
+        [{ \expn{x}{x_1 \cdots x_n}P }]
+        { \Gamma, \tm[x_1]{A^\bot}\cdots\tm[x_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$\seq
+        [{ \intl{x}{y_1 \cdots y_n}(Q \mid (\expn{x}{x_1 \cdots x_n}P) }]
+        { \Gamma, \Delta }$}
+    \end{prooftree*}
+    }
+  \end{tabular}
+  \egroup
+  
+  \caption{Principal cuts for \(\text{CP}_{\text{ND}}\)}
+  \label{fig:nodcap-cut-prin}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

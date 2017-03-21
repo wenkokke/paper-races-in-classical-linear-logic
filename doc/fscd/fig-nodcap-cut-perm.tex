@@ -1,0 +1,135 @@
+\begin{figure*}
+  \bgroup
+  \def\arraystretch{4}%
+  \begin{tabular}{lr}
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[w]{B} }$}
+      \SYM{\give[1]{}}
+      \UIC{$
+        \seq[{ \give{\send{y}{w}}P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\give[1]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(\give{\send{y}{w}}P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[z]{\give[1]{B}} }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[w]{B} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[w]{B} }$}
+      \SYM{\give[1]{}}
+      \UIC{$
+        \seq[{ \give{\send{y}{w}}\cut{x}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[1]{B}} }$}
+    \end{prooftree*}
+    }
+    \\
+    \multicolumn{2}{c}{(case for $\take[1]{}$ as above)}
+    \\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\give[p]{B}}, \tm[w]{\give[q]{B}} }$}
+      \NOM{Cont}
+      \UIC{$
+        \seq[{ \subst{P}{y}{w} }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\give[p+q]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(\subst{P}{y}{w} \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[p+q]{B}} }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\give[p]{B}}, \tm[w]{\give[q]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[p]{B}}, \tm[w]{\give[q]{B}} }$}
+      \NOM{Cont}
+      \UIC{$
+        \seq[{ \cut{x}(\subst{P}{y}{z} \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[p+q]{B}} }$}
+    \end{prooftree*}
+    }
+    \\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Theta, \tm[y]{\take[q]{B}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (P \mid Q) }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Xi, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}((P \mid Q) \mid R) }]
+        { \Gamma, \Delta, \Theta, \Xi, \tm[y]{\take[p+q]{B}} }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Xi, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(P \mid R) }]
+        { \Gamma, \Delta, \Xi, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Theta, \tm[y]{\take[q]{B}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (\cut{x}(P \mid R) \mid Q) }]
+        { \Gamma, \Delta, \Theta, \Xi, \tm[y]{\take[p+q]{B}} }$}
+    \end{prooftree*}
+    }
+  \end{tabular}
+  \egroup
+
+  \caption{Permutation cuts for \nodcap}
+  \label{fig:nodcap-cut-perm}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
