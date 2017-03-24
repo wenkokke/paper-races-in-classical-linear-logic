@@ -1,27 +1,27 @@
 \begin{figure*}
   \centering
   \begin{tabular}{ccc}
-    \begin{proofbox}[1]
+    \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[y]{A} }$}
       \SYM{\give[1]{}}
       \UIC{$
-        \seq[{ \give{\send{x}{y}}P }]
+        \seq[{ \send{x}{y}P }]
         { \Gamma, \tm[x]{\give[1]{A}} }$}
       \NOM{Exp}
       \UIC{$
-        \seq[{ \expn{x}{x_1}\give{\send{x}{y}}P }]
+        \seq[{ \expn{x}{x_1}\send{x}{y}P }]
         { \Gamma, \tm[x_1]{A} }$}
-    \end{proofbox}
+    \end{prooftree*}
     &$\Longrightarrow$&
-    \begin{proofbox}[1]
+    \begin{prooftree*}
       \AXC{$
         \seq[{ \subst{P}{x_1}{y} }]
         { \Gamma, \tm[x_1]{A} }$}
-    \end{proofbox}
+    \end{prooftree*}
     \\\\
-    \begin{proofbox}[1]
+    \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{\give[m]{A}}, \tm[y]{\give[n]{A}} }$}
@@ -33,11 +33,11 @@
       \UIC{$
         \seq[{ \expn{x}{x_1 \cdots x_{m+n}}\subst{P}{x}{y} }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
-    \end{proofbox}
+    \end{prooftree*}
     &$\Longrightarrow$
     \\\\
     \multicolumn{3}{r}{%
-    \begin{proofbox}[1]
+    \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{\give[m]{A}}, \tm[y]{\give[n]{A}} }$}
@@ -49,7 +49,7 @@
       \UIC{$
         \seq[{ \expn{y}{x_{m+1} \cdots x_{m+n}}\expn{x}{x_1 \cdots x_m}P }]
         { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
-    \end{proofbox}
+    \end{prooftree*}
     }
   \end{tabular}
   

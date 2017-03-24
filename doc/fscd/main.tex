@@ -9,8 +9,12 @@
   \texttt{pepijn.kokke@ed.ac.uk}}%
 \authorrunning{P. Kokke}%
 \Copyright{Pepijn Kokke}%
-\subjclass{D.3.2. Concurrent, distributed, and parallel languages}%
-\keywords{}%
+\subjclass{
+  F.4.1. [Mathematical Logic]: Lambda calculus and related systems;
+  D.3.1. [Formal Definitions and Theory]: Syntax;
+  D.3.2. [Language Classifications] Concurrent, distributed, and parallel languages
+}%
+\keywords{$\pi$-calculus, linear logic, session types, deadlock free, non-determinism}
 % Author macros::end
 
 % Editor-only macros::begin
@@ -36,30 +40,152 @@
 \maketitle
 
 \begin{abstract}
+  The $\pi$-calculus is a great foundation for concurrent programming languages.
+  With only a handful of constructions, it manages to model communicating
+  processes faithfully---for instance, $\pi$-calculus programs can have races
+  and deadlocks. 
+  CP~\cite{wadler2012} is a session type system for the $\pi$-calculus, which
+  has strong ties to classical linear logic~\cite{girard1987}. Programs typed by
+  CP are guaranteed to be race and deadlock free. 
+  Under the slogan that ``well-typed programs cannot `go wrong'\!\!
+  ''~\cite{milner1978}, it makes sense to exclude deadlocks, as one rarely
+  \emph{wants} a program to deadlock. 
+  Races, on the other hand, may be the desired behaviour of a program---think
+  of online auctions, vendors, or any other scenario where several processes
+  compete for a limited resource. 
+
+  In this paper, we introduce \nodcap\ (Nodcap), an extension of CP which is more
+  permissive, and permits programs with races, without losing its strong ties
+  to classical linear logic or the guarantee of deadlock freeness. 
 \end{abstract}
 
+\section{Overview}
+\begin{itemize}
+%\item Introduction
+%  \begin{itemize} 
+%  \item introduce example (racy vendor interaction)
+%  \item mention that the $\pi$-calculus can model this example
+%  \item mention the downsides of the $\pi$-calculus (i.e. deadlock)
+%  \item mention that CP prevents deadlock
+%  \item mention that CP \emph{cannot} model this example
+%  \end{itemize}
+\item Background
+  \begin{itemize}
+  \item introduce the $\pi$-calculus
+  \item introduce CP
+  \item mention local choice
+  \end{itemize}
+\item Main contribution
+  \begin{itemize}
+  \item introduce typing rules for \nodcap
+  \item introduce evaluation for programs in \nodcap
+  \item sketch a proof for server expansion
+  \item sketch a proof for client interleaving
+  \item sketch a proof for communication
+  \end{itemize}
+\item Extensions and future work
+  \begin{itemize}
+  \item mention relation to local choice (and proper cut elimination)
+  \item mention possibility of recursion and creating servers from streams
+  \item mention possibility of resource quantifiers
+  \end{itemize} 
+\end{itemize}
+
 \section{Introduction}
-talk about what CP is and why it matters
+Imagine the following scenario:
+\begin{quote}
+  John and Mary are working from home one morning when they each get a craving
+  for a slice of cake. Being denizens of the web, they quickly find an nearby
+  p\^atisserie that does home deliveries. Unfortunately for them, they both
+  order their cake at the \emph{same} p\^atisserie, which only has one slice
+  left. After that, all it can deliver is disappointment. 
+\end{quote}
+This scenario is a classic example of a race condition, and it is modeled in the
+$\pi$-calculus by the program below, given that \john, \mary, and \ptis\ are
+processes representing John, Mary and the p\^atisserie, respectively, and
+\cake\ and \nocake\ are two channels over which \ptis\ will send a slice of
+cake, and disappointment, respectively.
+The arrows indicate two possible reductions of the program: one in which John
+gets the cake and Mary is disappointed, and one in which Mary gets cake and John
+is disappointed.  
+\def\exampleprograma{\textcolor{red}{\ensuremath{%
+      \cut{x}(\recv{x}{y}\john \mid \recv{x}{z}\mary \mid
+      \send{x}{\cake}\send{x}{\nocake}\ptis)
+    }}}
+\def\exampleresultaa{\textcolor{red}{\ensuremath{%
+      \cut{x}(\subst{\john}{\cake}{y} \mid \subst{\mary}{\nocake}{z} \mid \ptis)     
+    }}}
+\def\exampleresultab{\textcolor{red}{\ensuremath{%
+      \cut{x}(\subst{\john}{\nocake}{y} \mid \subst{\mary}{\cake}{z} \mid \ptis)     
+    }}}
+\begin{center}
+  \begin{tikzpicture}
+    \node (program) at (0,0) {$\exampleprograma\quad$};
+    \node[above=1cm, right=1cm, at=(program.east)] (resulta) {$\!\!^\star\quad\exampleresultaa$};
+    \node[below=1cm, right=1cm, at=(program.east)] (resultb) {$\!\!^\star\quad\exampleresultab$};
+    \draw[->] (program.east) to [out=045,in=180] (resulta.west);
+    \draw[->] (program.east) to [out=315,in=180] (resultb.west);
+  \end{tikzpicture}
+\end{center}
+Races show up in any client/server system where clients compete for limited
+server resources. It is therefore important that any concurrent programming
+language allows us to write them.
+\\
+While the $\pi$-calculus is up to the task of modeling such programs, it can
+also model some undesirable programs, programs which `go wrong'. An example of
+such a program is the following scenario:
+\begin{quote}
+  John managed to order the last slice of cake from the p\^atisserie. However,
+  Mary \emph{really} wants it, and offers him some money for it. John agrees,
+  but sadly there is no trust between the two. Mary demands to get the cake
+  first, before she gives John the money. John demands to get the money first,
+  before he gives Mary the cake.
+\end{quote}
+This scenario is a classic example of a deadlock, and it is modeled in the
+$\pi$-calculus by the program below, given that \john\ and \mary\ are processes 
+representing John and Mary, respectively, \cake\ is a channel over which
+\john\ will send a slice of cake, and \money\ is a channel over which \mary\ %
+will send money.
+\def\exampleprogramb{\textcolor{red}{\ensuremath{%
+      \cut{x}(\recv{x}{y}\send{x}{\cake}\john \mid \recv{x}{z}\send{x}{\money}\mary)
+    }}}
+\begin{center}
+  \exampleprogramb
+\end{center}
+The program is stuck---John is refusing to send the cake until he receives money
+from Mary, and Mary is refusing to send the money until John sends the cake, so
+nothing will actually happen.
+It `goes wrong', in the sense that a deadlock is unlikely to be the intended
+behaviour of a program. 
 
-\section{Non-Determinism}
-talk about what nodcap is and why it matters
+Session types, a formalism proposed by~\cite{honda1993}, can provide static
+guarantees that concurrent processes respect communication protocols, by
+specifying the expected structure of communications among processes.
+Recently, work by~\cite{caires2010} and~\cite{wadler2012} has yielded tight
+correspondences between session typed $\pi$-calculi and intuitionistic and
+classical linear logic~\cite{girard1987}, respectively.
+These correspondences are tight in the following sense: not only do they
+interpret session types as linear propositions, but they also show a
+correspondence between reduction in the $\pi$-calculus and cut elimination in
+linear logic.
+Furthermore, by the very nature of their correspondence with linear logic,
+programs in these calculi are guaranteed to be free from deadlocks.
+Unfortunately, they are also free from \emph{races}.
 
-\section{Computation}
-give the proof of cut-elimination for nodcap
+In this paper, we introduce \nodcap\ (Nodcap), an extension of the type system
+CP~\cite{wadler2012} which is more permissive, and permits programs with races,
+without losing the tight correspondence with classical linear logic or the
+guarantee of deadlock. 
 
-\section{Relation to Local Choice}
-talk about the work by luis caires on adding local choice to the calculus and
-explain why it doesn't quite solve the problem?
-give the proof that we can embed local choice specifically in this type system
 
-\section{Future Work}
-maybe discuss the addition of some sane quantifiers for these resource indices
+\section{Background}
 
-\input{fig-cp}
-\input{fig-nodcap}
-\input{fig-nodcap-ax}
-\input{fig-nodcap-cut-prin}
-\input{fig-nodcap-cut-perm}
+%\input{fig-cp}
+%\input{fig-nodcap}
+%\input{fig-nodcap-ax}
+%\input{fig-nodcap-expn-prin}
+%\input{fig-nodcap-cut-prin}
+%\input{fig-nodcap-cut-perm}
 
 \bibliography{main}
 
