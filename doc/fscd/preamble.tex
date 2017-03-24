@@ -1,53 +1,72 @@
-%%% TERM CALCULUS
-\newcommand{\link}[2]{#1{\leftrightarrow}#2}
-\newcommand{\wait}[1]{#1().}
-\newcommand{\halt}[1]{#1[].0}
-\newcommand{\send}[2]{#1[#2].}
-\newcommand{\recv}[2]{#1(#2).}
+%% Abbreviations:
+\newcommand{\nodcap}{\ensuremath{\text{CP}_{\text{ND}}}}
+
+%% Term Syntax:
+\newcommand{\link}[2]{\textcolor{red}{\ensuremath{#1{\leftrightarrow}#2}}}
+\newcommand{\wait}[1]{\textcolor{red}{\ensuremath{#1().}}}
+\newcommand{\halt}[1]{\textcolor{red}{\ensuremath{#1[].0}}}
+\newcommand{\recv}[2]{\textcolor{red}{\ensuremath{#1(#2).}}}
+\newcommand{\usend}[2]{\textcolor{red}{\ensuremath{#1\langle #2 \rangle.}}}
+\newcommand{\send}[2]{\textcolor{red}{\ensuremath{#1[#2].}}}
 \newcommand{\case}[3]{%
 \toks0={#2#3}%
 \edef\param{\the\toks0}%
 \ifx\param\empty
-  \ensuremath{\text{case} \; #1 \; \{\}}
+  \textcolor{red}{\ensuremath{\text{case} \; #1 \; \{\}}}
 \else
-  \ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}
+  \textcolor{red}{\ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}}
 \fi}
-\newcommand{\inl}[1]{#1[\text{inl}].}
-\newcommand{\inr}[1]{#1[\text{inr}].}
-\newcommand{\expn}[2]{#1 \uparrow #2.}
-\newcommand{\intl}[2]{#1 \downarrow #2.}
-\newcommand{\cut}[1]{\nu #1.}
+\newcommand{\inl}[1]{\textcolor{red}{\ensuremath{#1[\text{inl}].}}}
+\newcommand{\inr}[1]{\textcolor{red}{\ensuremath{#1[\text{inr}].}}}
+\newcommand{\expn}[2]{\textcolor{red}{\ensuremath{#1 \uparrow #2.}}}
+\newcommand{\intl}[2]{\textcolor{red}{\ensuremath{#1 \downarrow #2.}}}
+\newcommand{\cut}[1]{\textcolor{red}{\ensuremath{\nu #1.}}}
+\newcommand{\subst}[3]{\textcolor{red}{\ensuremath{#1 \{ #2 / #3 \}}}}
 
-% abbrevs
-\newcommand{\nodcap}{\ensuremath{\text{CP}_{\text{ND}}}}
-
-% linear logic
+%% Type Syntax:
 \newcommand{\parr}{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{\&}}}}
 \newcommand{\with}{\ensuremath{\mathbin{\text{\&}}}}
 \newcommand{\plus}{\ensuremath{\oplus}}
 \newcommand{\tens}{\ensuremath{\otimes}}
 \newcommand{\one}{\ensuremath{\mathbf{1}}}
 \newcommand{\nil}{\ensuremath{\mathbf{0}}}
+\newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\newcommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
 
+%% Sequent Syntax:
 \newcommand{\tm}[2][]{%
 \toks0={#1}%
 \edef\param{\the\toks0}%
 \ifx\param\empty
-  \ensuremath{#2}%
+  \ensuremath{\textcolor{blue}{#2}}%
 \else
-  \ensuremath{#1\colon#2}%
+  \ensuremath{\textcolor{red}{#1}\colon\textcolor{blue}{#2}}%
 \fi}
-\newcommand{\seq}[2][]{\ensuremath{#1\vdash#2}}
-\newcommand{\subst}[3]{\ensuremath{#1 \{ #2 / #3 \}}}
-\newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
-\newcommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+\newcommand{\seq}[2][]{\ensuremath{\textcolor{red}{#1}\vdash\textcolor{blue}{#2}}}
 
+%% Proof Tree Syntax:
 \usepackage{bussproofs}
 \def\fCenter{\ensuremath{\;\vdash\;}}
 \newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
 \newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
 \EnableBpAbbreviations
 \newenvironment{prooftree*}{\leavevmode\hbox\bgroup}{\DisplayProof\egroup}
+
+%% Emoji:
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{}
+\newcommand{\emoji}[1]{\ensuremath{\vcenter{\hbox{\includegraphics[width=1em]{twemoji/assets/#1.ai}}}}}
+\newcommand{\mary}{\emoji{1f469}}
+\newcommand{\john}{\emoji{1f466}}
+\newcommand{\cake}{\emoji{1f370}}
+\newcommand{\plato}{\emoji{1f382}}
+\newcommand{\nocake}{\emoji{1f64c}}
+\newcommand{\money}{\emoji{1f4b0}}
+\newcommand{\ptis}{\emoji{1f3e0}}
+\newcommand{\good}{\emoji{2714}}
+\newcommand{\bad}{\emoji{2716}}
+
+%% Tikz Stuff:
+\usepackage{tikz}
 
 %%% Local Variables:
 %%% TeX-master: "main"

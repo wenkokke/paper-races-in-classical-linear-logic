@@ -1,4 +1,5 @@
 \begin{figure*}
+  \centering
   \bgroup
   \def\arraystretch{4}%
   \begin{tabular}{lr}
@@ -8,14 +9,14 @@
         { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[w]{B} }$}
       \SYM{\give[1]{}}
       \UIC{$
-        \seq[{ \give{\send{y}{w}}P }]
+        \seq[{ \send{y}{w}P }]
         { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\give[1]{B}} }$}
       \AXC{$
         \seq[{ R }]
         { \Theta, \tm[x]{A} }$}
       \NOM{Cut}
       \BIC{$
-        \seq[{ \cut{x}(\give{\send{y}{w}}P \mid R) }]
+        \seq[{ \cut{x}(\send{y}{w}P \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[z]{\give[1]{B}} }$}
     \end{prooftree*}
     &
@@ -35,7 +36,7 @@
         { \Gamma, \Delta, \Theta, \tm[w]{B} }$}
       \SYM{\give[1]{}}
       \UIC{$
-        \seq[{ \give{\send{y}{w}}\cut{x}(P \mid R) }]
+        \seq[{ \send{y}{w}\cut{x}(P \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[y]{\give[1]{B}} }$}
     \end{prooftree*}
     }
