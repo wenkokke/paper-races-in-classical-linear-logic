@@ -1,0 +1,109 @@
+\begin{figure*}
+  \centering
+  \begin{tabular}{lr}
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
+      \SYM{\give[1]{}}
+      \UIC{$
+        \seq[{ \give{\send{z}{y}}P }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[z]{\give[1]{B}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\give[1]{B}} }$}
+    \end{prooftree*}
+    & $\Longrightarrow$ \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{B} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x_1 \cdots x_n}{x}P }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{B} }$}
+      \SYM{\give[1]{}}
+      \UIC{$
+        \seq[{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[z]{\give[1]{B}} }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \multicolumn{2}{c}{(case for $\take[1]{}$ as above)}
+    \\\\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\give[p]{B}}, \tm[z]{\give[q]{B}} }$}
+      \NOM{Cont}
+      \UIC{$
+        \seq[{ \subst{P}{y}{z} }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\give[p+q]{B}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_n}\subst{P}{y}{z} }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p+q]{B}} }$}
+    \end{prooftree*}
+    &$\Longrightarrow$\\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\give[p]{B}}, \tm[z]{\give[q]{B}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p]{B}}, \tm[z]{\give[q]{B}} }$}
+      \NOM{Cont}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_n}\subst{P}{y}{z} }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \tm[y]{\give[p+q]{B}} }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Theta, \tm[y]{\take[q]{B}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (P \mid Q) }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_n]{A}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
+    \end{prooftree*}
+    &$\Longrightarrow$\\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[n]{A}}, \Delta, \tm[y]{\take[p]{B}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_n}P }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Theta, \tm[y]{\take[q]{B}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (\expn{x}{x_1 \cdots x_n}P \mid Q) }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_2]{A}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
+    \end{prooftree*}
+    }
+  \end{tabular}
+
+  \caption{Commuting conversions for \textsc{Exp} in \nodcap, Part II}
+  \label{fig:nodcap-expn-perm-2}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

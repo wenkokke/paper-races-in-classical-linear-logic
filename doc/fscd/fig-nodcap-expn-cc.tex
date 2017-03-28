@@ -1,0 +1,68 @@
+\begin{figure*}
+  \centering
+  \(
+    \begin{array}{rclr}
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\wait{y}P }
+      &\Longrightarrow&
+      \textcolor{red}{ \wait{y}\expn{x}{x_1 \cdots x_n}P }
+      \\
+      \textcolor{red}{ \expn{x}{x_1\cdots x_n}\case{y}{}{} }
+      &\Longrightarrow&
+      \textcolor{red}{ \case{y}{}{} }
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\recv{z}{y}P }
+      &\Longrightarrow&
+      \textcolor{red}{ \recv{z}{y}\expn{x}{x_1 \cdots x_n}P }
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
+      &\Longrightarrow&
+      \textcolor{red}{ \send{z}{y}(\expn{x}{x_1 \cdots x_n}P \mid Q) }
+      &\text{if} \; x \in \text{fv}(P)
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
+      &\Longrightarrow&
+      \textcolor{red}{ \send{z}{y}(P \mid \expn{x}{x_1 \cdots x_n}Q) }
+      &\text{if} \; x \in \text{fv}(Q) 
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\case{y}{P}{Q} }
+      &\Longrightarrow&
+      \begin{aligned}
+        \textcolor{red}{ \text{case}\;y\;}
+        \textcolor{red}{ \{\;}& \textcolor{red}{\expn{x}{x_1 \cdots x_n}P}\\
+        \textcolor{red}{  ;\;}& \textcolor{red}{\expn{x}{x_1 \cdots x_n}Q}
+      \end{aligned}
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\inl{y}P }
+      &\Longrightarrow&
+      \textcolor{red}{ \inl{y}\expn{x}{x_1 \cdots x_n}P }
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\inr{y}P }
+      &\Longrightarrow&
+      \textcolor{red}{ \inr{y}\expn{x}{x_1 \cdots x_n}P }
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }
+      &\Longrightarrow&
+      \textcolor{red}{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\take{\recv{z}{y}}P }
+      &\Longrightarrow&
+      \textcolor{red}{ \take{\recv{z}{y}}\expn{x}{x_1 \cdots x_n}P }
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
+      &\Longrightarrow&
+      \textcolor{red}{ (\expn{x}{x_1 \cdots x_n}P \mid Q) }
+      &\text{if} \; x \in \text{fv}(P) 
+      \\
+      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
+      &\Longrightarrow&
+      \textcolor{red}{ (P \mid \expn{x}{x_1 \cdots x_n}Q) }
+      &\text{if} \; x \in \text{fv}(Q) 
+    \end{array}
+  \)
+  \caption{Commuting conversions for \textsc{Exp} in \nodcap}
+  \label{fig:nodcap-expn-cc}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

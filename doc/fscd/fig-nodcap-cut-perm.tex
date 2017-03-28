@@ -1,7 +1,5 @@
 \begin{figure*}
   \centering
-  \bgroup
-  \def\arraystretch{4}%
   \begin{tabular}{lr}
     \begin{prooftree*}
       \AXC{$
@@ -19,9 +17,7 @@
         \seq[{ \cut{x}(\send{y}{w}P \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[z]{\give[1]{B}} }$}
     \end{prooftree*}
-    &
-      $\Longrightarrow$
-    \\
+    & $\Longrightarrow$ \\\\
     \multicolumn{2}{r}{%
     \begin{prooftree*}
       \AXC{$
@@ -40,9 +36,43 @@
         { \Gamma, \Delta, \Theta, \tm[y]{\give[1]{B}} }$}
     \end{prooftree*}
     }
-    \\
-    \multicolumn{2}{c}{(case for $\take[1]{}$ as above)}
-    \\
+    \\\\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[w]{B} }$}
+      \SYM{\take[1]{}}
+      \UIC{$
+        \seq[{ \recv{y}{w}P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\take[1]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(\recv{y}{w}P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[z]{\take[1]{B}} }$}
+    \end{prooftree*}
+    & $\Longrightarrow$ \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[w]{B} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[w]{B} }$}
+      \SYM{\take[1]{}}
+      \UIC{$
+        \seq[{ \recv{y}{w}\cut{x}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\take[1]{B}} }$}
+    \end{prooftree*}
+    }
+    \\\\
     \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
@@ -59,9 +89,7 @@
         \seq[{ \cut{x}(\subst{P}{y}{w} \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[y]{\give[p+q]{B}} }$}
     \end{prooftree*}
-    &
-      $\Longrightarrow$
-    \\
+    & $\Longrightarrow$ \\\\
     \multicolumn{2}{r}{%
     \begin{prooftree*}
       \AXC{$
@@ -80,7 +108,7 @@
         { \Gamma, \Delta, \Theta, \tm[y]{\give[p+q]{B}} }$}
     \end{prooftree*}
     }
-    \\
+    \\\\
     \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
@@ -100,9 +128,7 @@
         \seq[{ \cut{x}((P \mid Q) \mid R) }]
         { \Gamma, \Delta, \Theta, \Xi, \tm[y]{\take[p+q]{B}} }$}
     \end{prooftree*}
-    &
-      $\Longrightarrow$
-    \\
+    & $\Longrightarrow$ \\\\
     \multicolumn{2}{r}{%
     \begin{prooftree*}
       \AXC{$
@@ -125,9 +151,8 @@
     \end{prooftree*}
     }
   \end{tabular}
-  \egroup
 
-  \caption{Permutation cuts for \nodcap}
+  \caption{Commuting conversions for \textsc{Cut} in \nodcap}
   \label{fig:nodcap-cut-perm}
 \end{figure*}
 

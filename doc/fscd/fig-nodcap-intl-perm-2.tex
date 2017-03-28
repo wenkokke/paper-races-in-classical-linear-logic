@@ -1,0 +1,132 @@
+\begin{figure*}
+  \begin{tabular}{lr}
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[w]{B} }$}
+      \SYM{\give[1]{}}
+      \UIC{$
+        \seq[{ \give{\send{y}{w}}P }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[y]{\give[1]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[z_1]{A^\bot}\cdots\tm[z_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{z_1 \cdots z_n}(\give{\send{y}{w}}P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[z]{\give[1]{B}} }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[w]{B} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[z_1]{A^\bot}\cdots\tm[z_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{z_1 \cdots z_n}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[w]{B} }$}
+      \SYM{\give[1]{}}
+      \UIC{$
+        \seq[{ \give{\send{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[1]{B}} }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \multicolumn{2}{c}{(case for $\take[1]{}$ as above)}
+    \\\\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[y]{\give[p]{B}}, \tm[w]{\give[q]{B}} }$}
+      \NOM{Cont}
+      \UIC{$
+        \seq[{ \subst{P}{y}{w} }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[y]{\give[p+q]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[z_1]{A^\bot}\cdots\tm[z_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{z_1 \cdots z_n}(\subst{P}{y}{w} \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[p+q]{B}} }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[y]{\give[p]{B}}, \tm[w]{\give[q]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[z_1]{A^\bot}\cdots\tm[z_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{z_1 \cdots z_n}(P \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[p]{B}}, \tm[w]{\give[q]{B}} }$}
+      \NOM{Cont}
+      \UIC{$
+        \seq[{ \intl{x}{z_1 \cdots z_n}(\subst{P}{y}{z} \mid R) }]
+        { \Gamma, \Delta, \Theta, \tm[y]{\give[p+q]{B}} }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Theta, \tm[y]{\take[q]{B}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (P \mid Q) }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \Theta, \tm[y]{\take[p+q]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Xi, \tm[z_1]{A^\bot}\cdots\tm[z_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }]
+        { \Gamma, \Delta, \Theta, \Xi, \tm[y]{\take[p+q]{B}} }$}
+    \end{prooftree*}
+    & 
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[n]{A}}, \Delta, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Xi, \tm[z_1]{A^\bot}\cdots\tm[z_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{z_1 \cdots z_n}(P \mid R) }]
+        { \Gamma, \Delta, \Xi, \tm[y]{\take[p]{B}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Theta, \tm[y]{\take[q]{B}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) }]
+        { \Gamma, \Delta, \Theta, \Xi, \tm[y]{\take[p+q]{B}} }$}
+    \end{prooftree*}
+    }
+  \end{tabular}
+
+  \caption{Commuting conversions for \textsc{Int} in \nodcap, Part II}
+  \label{fig:nodcap-intl-perm-2}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

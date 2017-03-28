@@ -1,35 +1,32 @@
 \begin{figure*}
   \centering
-  \bgroup
-  \def\arraystretch{4}
   \begin{tabular}{lr}
     \begin{prooftree*}
       \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
-      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A}} }$}
+      \AXC{$\seq[{ R }]{ \Delta, \tm[x]{\take[n]{A}} }$}
       \NOM{Cut}
-      \BIC{$\seq[{ \cut{x}(P \mid Q) }]{ \Gamma, \Delta }$}
+      \BIC{$\seq[{ \cut{x}(P \mid R) }]{ \Gamma, \Delta }$}
     \end{prooftree*}
     &
       $\Longrightarrow$
-    \\
+    \\\\
     \multicolumn{2}{r}{%
     \begin{prooftree*}
-      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{\take[n]{A}} }$} 
       \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
       \NOM{Exp}
       \UIC{$\seq
         [{ \expn{x}{x_1 \cdots x_n}P }]
         { \Gamma, \tm[x_1]{A^\bot}\cdots\tm[x_n]{A^\bot} }$}
+      \AXC{$\seq[{ R }]{ \Delta, \tm[x]{\take[n]{A}} }$} 
       \NOM{Int}
       \BIC{$\seq
-        [{ \intl{x}{y_1 \cdots y_n}(Q \mid (\expn{x}{x_1 \cdots x_n}P) }]
+        [{ \intl{x}{y_1 \cdots y_n}(\expn{x}{x_1 \cdots x_n}P \mid R) }]
         { \Gamma, \Delta }$}
     \end{prooftree*}
     }
   \end{tabular}
-  \egroup
   
-  \caption{Principal cuts for \nodcap}
+  \caption{\textsc{Cut} elimination for \nodcap}
   \label{fig:nodcap-cut-prin}
 \end{figure*}
 
