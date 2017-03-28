@@ -1,0 +1,68 @@
+\begin{figure*}
+  \centering
+  \(
+    \begin{array}{rclr}
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\wait{y}P \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ \wait{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \\
+      \textcolor{red}{ \intl{x}{z_1\cdots z_n}(\case{y}{}{} \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ \case{y}{}{} }
+      \\
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\recv{y}{w}P \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ \recv{y}{w}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \\
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
+      &\Longrightarrow&        
+      \textcolor{red}{ \send{y}{w}(\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) }
+      &\text{if} \; x \in \text{fv}(P)
+      \\
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
+      &\Longrightarrow&        
+      \textcolor{red}{ \send{y}{w}(P \mid \intl{x}{z_1 \cdots z_n}(Q \mid R)) }
+      &\text{if} \; x \in \text{fv}(Q)
+      \\
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\case{y}{P}{Q} \mid R) }
+      &\Longrightarrow&
+      \begin{aligned}
+        \textcolor{red}{ \text{case}\;y\; }
+        \textcolor{red}{ \{\;}& \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(P \mid R) } \\
+        \textcolor{red}{  ;\;}& \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(Q \mid R) \}}
+      \end{aligned}
+      \\
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\inl{y}P \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ \inl{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
+      \\
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\inr{y}P \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ \inr{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
+      \\
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\give{\send{y}{w}}P \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ \give{\send{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \\ 
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\take{\recv{y}{w}}P \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ \take{\recv{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \\ 
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ (\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) } 
+      &\text{if} \; x \in \text{fv}(P)
+      \\ 
+      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
+      &\Longrightarrow&
+      \textcolor{red}{ (P \mid \intl{x}{z_1 \cdots z_n}(P \mid R)) } 
+      &\text{if} \; x \in \text{fv}(Q)
+    \end{array}
+  \) 
+  \caption{Commuting conversions for \textsc{Int} in \nodcap}
+  \label{fig:nodcap-intl-cc}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

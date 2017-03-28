@@ -2,28 +2,30 @@
 \newcommand{\nodcap}{\ensuremath{\text{CP}_{\text{ND}}}}
 
 %% Term Syntax:
-\newcommand{\link}[2]{\textcolor{red}{\ensuremath{#1{\leftrightarrow}#2}}}
-\newcommand{\wait}[1]{\textcolor{red}{\ensuremath{#1().}}}
-\newcommand{\halt}[1]{\textcolor{red}{\ensuremath{#1[].0}}}
-\newcommand{\recv}[2]{\textcolor{red}{\ensuremath{#1(#2).}}}
-\newcommand{\usend}[2]{\textcolor{red}{\ensuremath{#1\langle #2 \rangle.}}}
-\newcommand{\send}[2]{\textcolor{red}{\ensuremath{#1[#2].}}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\link}[2]{{\ensuremath{#1{\leftrightarrow}#2}}}
+\newcommand{\wait}[1]{{\ensuremath{#1().}}}
+\newcommand{\halt}[1]{{\ensuremath{#1[].0}}}
+\newcommand{\recv}[2]{{\ensuremath{#1(#2).}}}
+\newcommand{\usend}[2]{{\ensuremath{#1\langle #2 \rangle.}}}
+\newcommand{\send}[2]{{\ensuremath{#1[#2].}}}
 \newcommand{\case}[3]{%
 \toks0={#2#3}%
 \edef\param{\the\toks0}%
 \ifx\param\empty
-  \textcolor{red}{\ensuremath{\text{case} \; #1 \; \{\}}}
+  {\ensuremath{\text{case} \; #1 \; \{\}}}
 \else
-  \textcolor{red}{\ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}}
+  {\ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}}
 \fi}
-\newcommand{\inl}[1]{\textcolor{red}{\ensuremath{#1[\text{inl}].}}}
-\newcommand{\inr}[1]{\textcolor{red}{\ensuremath{#1[\text{inr}].}}}
-\newcommand{\expn}[2]{\textcolor{red}{\ensuremath{#1 \uparrow #2.}}}
-\newcommand{\intl}[2]{\textcolor{red}{\ensuremath{#1 \downarrow #2.}}}
-\newcommand{\cut}[1]{\textcolor{red}{\ensuremath{\nu #1.}}}
-\newcommand{\subst}[3]{\textcolor{red}{\ensuremath{#1 \{ #2 / #3 \}}}}
+\newcommand{\inl}[1]{{\ensuremath{#1[\text{inl}].}}}
+\newcommand{\inr}[1]{{\ensuremath{#1[\text{inr}].}}}
+\newcommand{\expn}[2]{{\ensuremath{#1 \uparrow #2.}}}
+\newcommand{\intl}[2]{{\ensuremath{#1 \downarrow #2.}}}
+\newcommand{\cut}[1]{{\ensuremath{\nu #1.}}}
+\newcommand{\subst}[3]{{\ensuremath{#1 \{ #2 / #3 \}}}}
 
 %% Type Syntax:
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
 \newcommand{\parr}{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{\&}}}}
 \newcommand{\with}{\ensuremath{\mathbin{\text{\&}}}}
 \newcommand{\plus}{\ensuremath{\oplus}}
@@ -38,11 +40,11 @@
 \toks0={#1}%
 \edef\param{\the\toks0}%
 \ifx\param\empty
-  \ensuremath{\textcolor{blue}{#2}}%
+  \ensuremath{\blue{#2}}%
 \else
-  \ensuremath{\textcolor{red}{#1}\colon\textcolor{blue}{#2}}%
+  \ensuremath{\red{#1}\colon\textcolor{blue}{#2}}%
 \fi}
-\newcommand{\seq}[2][]{\ensuremath{\textcolor{red}{#1}\vdash\textcolor{blue}{#2}}}
+\newcommand{\seq}[2][]{\ensuremath{\red{#1}\vdash\blue{#2}}}
 
 %% Proof Tree Syntax:
 \usepackage{bussproofs}
@@ -51,6 +53,13 @@
 \newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
 \EnableBpAbbreviations
 \newenvironment{prooftree*}{\leavevmode\hbox\bgroup}{\DisplayProof\egroup}
+\newenvironment{scprooftree}[1][0.9]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+\newenvironment{scprooftree*}[1][0.9]%
+  {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
+  {\scalebox{\scalefactor}{\DisplayProof} \egroup}
+
 
 %% Emoji:
 \DeclareGraphicsRule{.ai}{pdf}{.ai}{}

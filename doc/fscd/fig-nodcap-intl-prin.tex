@@ -1,7 +1,7 @@
 \begin{figure*}
   \centering
-  \begin{tabular}{ccc}
-    \begin{proofbox}[1]
+  \begin{tabular}{lr}
+    \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{A} }$}
@@ -16,9 +16,12 @@
       \BIC{$
         \seq[{ \intl{z}{y_1}(P \mid Q) }]
         { \Gamma, \Delta }$}
-    \end{proofbox}
-    &$\Longrightarrow$&
-    \begin{proofbox}[1]
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{A} }$}
@@ -29,10 +32,10 @@
       \BIC{$
         \seq[{ \cut{x}(P \mid \subst{Q}{x}{y_1}) }]
         { \Gamma, \Delta }$}
-    \end{proofbox}
+    \end{prooftree*}
+    }
     \\\\
-    \multicolumn{3}{l}{%
-    \begin{proofbox}[1]
+    \begin{prooftree*}
       \AXC{$
         \seq[{ P }]
         { \Gamma, \tm[x]{\take[m]{A}} }$}
@@ -50,12 +53,12 @@
       \BIC{$
         \seq[{ \intl{x}{y_1 \cdots y_{m+n}}((P \mid Q) \mid R) }]
         { \Gamma, \Delta, \Theta }$}
-    \end{proofbox}
-    $\Longrightarrow$
-    }
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
     \\\\
-    \multicolumn{3}{r}{%
-    \begin{proofbox}[1]
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
       \AXC{$
         \seq[{ Q }]
         { \Delta, \tm[x]{\take[n]{A}} }$}
@@ -74,11 +77,11 @@
       \BIC{$
         \seq[{ \intl{x}{y_{m+1} \cdots y_{m+n}}\intl{x}{y_1 \cdots y_m}P }]
         { \Gamma, \Delta, \Theta }$}
-    \end{proofbox}
+    \end{prooftree*}
     }
   \end{tabular}
   
-  \caption{Principal interleavings for \nodcap}
+  \caption{\textsc{Int} elimination for \nodcap}
   \label{fig:nodcap-intl-prin}
 \end{figure*}
 

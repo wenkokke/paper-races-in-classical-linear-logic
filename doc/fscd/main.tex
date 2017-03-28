@@ -20,7 +20,7 @@
 % Editor-only macros::begin
 \EventEditors{John Q. Open and Joan R. Acces}
 \EventNoEds{2}
-\EventLongTitle{42nd Conference on Very Important Topics (CVIT 2016)}
+\EventLongTitle{42nd Conference on Very Important (Topics (CVIT 2016)}
 \EventShortTitle{CVIT 2016}
 \EventAcronym{CVIT}
 \EventYear{2016}
@@ -97,7 +97,7 @@ Imagine the following scenario:
   John and Mary are working from home one morning when they each get a craving
   for a slice of cake. Being denizens of the web, they quickly find an nearby
   p\^atisserie that does home deliveries. Unfortunately for them, they both
-  order their cake at the \emph{same} p\^atisserie, which only has one slice
+  order their cake at the \emph{same} p\^atisserie, which has only one slice
   left. After that, all it can deliver is disappointment. 
 \end{quote}
 This scenario is a classic example of a race condition, and it is modeled in the
@@ -108,32 +108,35 @@ cake, and disappointment, respectively.
 The arrows indicate two possible reductions of the program: one in which John
 gets the cake and Mary is disappointed, and one in which Mary gets cake and John
 is disappointed.  
-\def\exampleprograma{\textcolor{red}{\ensuremath{%
-      \cut{x}(\recv{x}{y}\john \mid \recv{x}{z}\mary \mid
-      \send{x}{\cake}\send{x}{\nocake}\ptis)
-    }}}
-\def\exampleresultaa{\textcolor{red}{\ensuremath{%
-      \cut{x}(\subst{\john}{\cake}{y} \mid \subst{\mary}{\nocake}{z} \mid \ptis)     
-    }}}
-\def\exampleresultab{\textcolor{red}{\ensuremath{%
-      \cut{x}(\subst{\john}{\nocake}{y} \mid \subst{\mary}{\cake}{z} \mid \ptis)     
-    }}}
-\begin{center}
+\[
+  \def\exampleprograma{\red{\ensuremath{%
+        \cut{x}(\recv{x}{y}\john \mid \recv{x}{z}\mary \mid
+        \send{x}{\cake}\send{x}{\nocake}\ptis)
+      }}}
+  \def\exampleresultaa{\red{\ensuremath{%
+        \cut{x}(\subst{\john}{\cake}{y} \mid \subst{\mary}{\nocake}{z} \mid \ptis)     
+      }}}
+  \def\exampleresultab{\red{\ensuremath{%
+        \cut{x}(\subst{\john}{\nocake}{y} \mid \subst{\mary}{\cake}{z} \mid \ptis)     
+      }}}
   \begin{tikzpicture}
     \node (program) at (0,0) {$\exampleprograma\quad$};
-    \node[above=1cm, right=1cm, at=(program.east)] (resulta) {$\!\!^\star\quad\exampleresultaa$};
-    \node[below=1cm, right=1cm, at=(program.east)] (resultb) {$\!\!^\star\quad\exampleresultab$};
+    \node[above=1cm, right=1cm, at=(program.east)] (resulta)
+    {$\!\!^\star\quad\exampleresultaa$};
+    \node[below=1cm, right=1cm, at=(program.east)] (resultb)
+    {$\!\!^\star\quad\exampleresultab$};
     \draw[->] (program.east) to [out=045,in=180] (resulta.west);
     \draw[->] (program.east) to [out=315,in=180] (resultb.west);
   \end{tikzpicture}
-\end{center}
+\]
 Races show up in any client/server system where clients compete for limited
 server resources. It is therefore important that any concurrent programming
 language allows us to write them.
 \\
-While the $\pi$-calculus is up to the task of modeling such programs, it can
-also model some undesirable programs, programs which `go wrong'. An example of
-such a program is the following scenario:
+It should be obvious from the above example that the $\pi$-calculus is up to the
+task of modeling such programs. However, it can also model some undesirable
+programs, programs which `go wrong'. An example of such a program is the
+following scenario:  
 \begin{quote}
   John managed to order the last slice of cake from the p\^atisserie. However,
   Mary \emph{really} wants it, and offers him some money for it. John agrees,
@@ -146,12 +149,12 @@ $\pi$-calculus by the program below, given that \john\ and \mary\ are processes
 representing John and Mary, respectively, \cake\ is a channel over which
 \john\ will send a slice of cake, and \money\ is a channel over which \mary\ %
 will send money.
-\def\exampleprogramb{\textcolor{red}{\ensuremath{%
-      \cut{x}(\recv{x}{y}\send{x}{\cake}\john \mid \recv{x}{z}\send{x}{\money}\mary)
-    }}}
-\begin{center}
+\[
+  \def\exampleprogramb{\red{\ensuremath{%
+        \cut{x}(\recv{x}{y}\send{x}{\cake}\john \mid \recv{x}{z}\send{x}{\money}\mary)
+      }}}
   \exampleprogramb
-\end{center}
+\]
 The program is stuck---John is refusing to send the cake until he receives money
 from Mary, and Mary is refusing to send the money until John sends the cake, so
 nothing will actually happen.
@@ -176,17 +179,146 @@ In this paper, we introduce \nodcap\ (Nodcap), an extension of the type system
 CP~\cite{wadler2012} which is more permissive, and permits programs with races,
 without losing the tight correspondence with classical linear logic or the
 guarantee of deadlock. 
+The paper is structured as follows. In the next section, we introduce the
+relevant variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}. 
+Then, we introduce the type system \nodcap.
+Following this, we and extend the proof of cut elimination for CP to cover
+\nodcap.
+Last, we discuss the types of concurrency that \nodcap\ allows us to capture.
 
+The type system and cut elimination procedure presented in the remainder of this
+paper have been formalised using the Agda proof assistent~\cite{norell2009}, and
+the code is available on GitHub.\footnote{
+  \red{Insert GitHub URL here.}
+}
 
 \section{Background}
+In this section, we will discuss a rudimentary subset of the session-typed
+process calculus CP~\cite{wadler2012}, which we will refer to as RCP.
+Under the correspondence with linear logic, RCP corresponds to multiplicative
+additive linear logic (MALL).
+The process calculus used by RCP is a variant of the
+$\pi$-calculus~\cite{milner1992}. Processes in RCP are defined by the following
+grammar:
+\[
+  \begin{aligned}
+    \red{P},\:&\red{Q},\red{R} ::=\\
+    & \red{\link{x}{y}}           &&\text{link}
+    &&\red{\cut{x}(P \mid Q)}     &&\text{parallel composition}\\
+    & \red{\send{x}{y}(P \mid Q)} &&\text{output}
+    &&\red{\recv{x}{y}P}          &&\text{input}\\
+    & \red{\inl{x}P}              &&\text{left selection}
+    &&\red{\inr{x}P}              &&\text{right selection}\\
+    & \red{\case{x}{P}{Q}}        &&\text{choice}
+    &&\red{\case{x}{}{}}          &&\text{empty choice}\\
+    & \red{\send{x}{y}0}          &&\text{empty output}
+    &&\red{\recv{x}{y}P}          &&\text{empty input}\\
+  \end{aligned}
+\]
+The construct $\link{x}{y}$ links two channels, forwarding messages received on
+$x$ to $y$ and vice versa.
+%
+The construct $\cut{x}{(P \mid Q)}$ creates a new channel $x$, and composes two
+processes, which communicate on $x$, in parallel.
+Therefore, in $\cut{x}{(P \mid Q)}$ the name $x$ is bound in both $P$ and $Q$. 
+%
+Round brackets are used for input, square brackets for output.
+We use bound output~\cite{sangiorgi1996}---this means that unlike in the
+$\pi$-calculus, both input and output bind a new name.
+In $\recv{x}{y}P$ the new name $y$ is bound in $P$.
+In $\send{x}{y}{(P \mid Q)}$, the new name $y$ is only bound in $P$, not in $Q$.
 
-%\input{fig-cp}
-%\input{fig-nodcap}
+Processes in RCP are typed using session types which correspond to the
+multiplicative and additive connectives from linear logic. These are defined
+using the following grammar:
+\[
+  \begin{aligned}
+    \blue{A},\:&\blue{B},\blue{C} ::=\\
+    & \tm{A \tens B} &&\text{`tensor', independent sessions A and B}
+    &&\tm{\one}      &&\text{unit for \tens}\\
+    & \tm{A \parr B} &&\text{`par', possibly dependent sessions A and B}
+    &&\tm{\bot}      &&\text{unit for \parr}\\
+    & \tm{A \plus B} &&\text{`plus', select session A or B}
+    &&\tm{\nil}      &&\text{unit for \plus}\\
+    & \tm{A \with B} &&\text{`with', offer session A or B}
+    &&\tm{\top}      &&\text{unit for \with}
+  \end{aligned}
+\]
+The multiplicatives ($\tens$, $\parr$) deal with dependence and independence.
+A channel of type $A \tens B$ represents a pair of channels which communicate
+with two \emph{indepentent} processes---that is to say, two processes who share
+no channels.
+A channel of type $A \parr B$ represents a pair of channels which are used
+within a single process. This means that their interactions can depend on one
+another---i.e.\ the interaction of type $B$ could depend on the result of the
+interaction of type $A$, or vice versa.
+The multiplicative units ($\one$, $\bot$) follow the same pattern.
+A channel of type $\one$ communicates with a process which has no other
+channels, and therefore can do nothing.
+A channel of type $\bot$ communicates with a process which is not further
+restricted.
+
+The additives ($\plus$, $\with$) deal with choice---making choices and offering
+them.
+A process communicating over a channel of type $A \plus B$ can select either an
+interaction of type $A$ or one of type $B$. 
+A process communicating over a channel of type $A \with B$ has to be prepared to
+offer an interaction either of type $A$ or of type $B$. 
+The additive units ($\nil$, $\top$) follow the same pattern, except with nullary
+instead of binary choices. That is to say, along a channel of type $\nil$, one
+has to select one of \emph{zero} options---which is, of course, impossible.
+Therefore, when communicating over a channel of type $\top$, one has to be
+prepared to offer any of \emph{zero} different interactions---which is, of
+course, trivial.
+
+Duality plays a crucial role in linear logic and session types. It ensures that
+a process offering a choice on one end of a channel is matched with a process
+which accepts a choice on the other. It is also crucial to deadlock freedom, as
+it ensures that a process which uses communication on $x$ to decide what to send
+on $y$ is communicating with two independent processes on $x$ and $y$,
+preventing circular dependencies. Each type $A$ has a dual, defined as follows:
+\[
+  \begin{array}{rclcrcl}
+    \tm{( A \tens B )^\bot} &=& \tm{A^\bot \parr B^\bot}&&
+    \tm{\one^\bot}          &=& \tm{\bot}\\
+    \tm{( A \parr B )^\bot} &=& \tm{A^\bot \parr B^\bot}&&
+    \tm{\bot^\bot}          &=& \tm{\one}\\
+    \tm{( A \plus B )^\bot} &=& \tm{A^\bot \with B^\bot}&&
+    \tm{\nil^\bot}          &=& \tm{\top}\\
+    \tm{( A \with B )^\bot} &=& \tm{A^\bot \plus B^\bot}&&
+    \tm{\top^\bot}          &=& \tm{\nil}
+  \end{array}
+\]
+Environments associate names with types. They are defined as follows:
+\[
+  \blue{\Gamma},\blue{\Delta},\blue{\Theta} ::=
+  \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n}
+\]
+Note that each name in an environment should be unique. This means that $x_i
+\neq x_j$ wherever $i \neq j$, and that environments $\Gamma$ and $\Delta$ can
+only be combined if $\text{fv}(\Gamma) \cap \text{fv}(\Delta) = \emptyset$.
+
+Judgements indicate that a process $P$ communicates along each channels $x_i$
+following the communication protocol specified by $A_i$. They are defined as
+follows:
+\[
+  \seq[{ P }]{ \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n} }
+\]
+The rules for assigning session types to processes in RCP are shown in
+Figure~\ref{fig:cp}.
+
+\input{fig-cp}
+
+% \input{fig-nodcap}
 %\input{fig-nodcap-ax}
 %\input{fig-nodcap-expn-prin}
+%\input{fig-nodcap-expn-cc}
+%\input{fig-nodcap-intl-prin}
+%\input{fig-nodcap-intl-cc}
 %\input{fig-nodcap-cut-prin}
 %\input{fig-nodcap-cut-perm}
 
+\clearpage
 \bibliography{main}
 
 \end{document}
