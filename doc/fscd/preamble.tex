@@ -63,16 +63,16 @@
 
 %% Emoji:
 \DeclareGraphicsRule{.ai}{pdf}{.ai}{}
-\newcommand{\emoji}[1]{\ensuremath{\vcenter{\hbox{\includegraphics[width=1em]{twemoji/assets/#1.ai}}}}}
-\newcommand{\mary}{\emoji{1f469}}
-\newcommand{\john}{\emoji{1f466}}
-\newcommand{\cake}{\emoji{1f370}}
-\newcommand{\plato}{\emoji{1f382}}
-\newcommand{\nocake}{\emoji{1f64c}}
-\newcommand{\money}{\emoji{1f4b0}}
-\newcommand{\ptis}{\emoji{1f3e0}}
-\newcommand{\good}{\emoji{2714}}
-\newcommand{\bad}{\emoji{2716}}
+\newcommand{\emoji}[2][1em]{\ensuremath{\vcenter{\hbox{\includegraphics[width=#1]{twemoji/assets/#2.ai}}}}}
+\newcommand{\mary}[1][1em]{\emoji[#1]{1f469}}
+\newcommand{\john}[1][1em]{\emoji[#1]{1f466}}
+\newcommand{\cake}[1][1em]{\emoji[#1]{1f370}}
+\newcommand{\plato}[1][1em]{\emoji[#1]{1f382}}
+\newcommand{\nocake}[1][1em]{\emoji[#1]{1f64c}}
+\newcommand{\money}[1][1em]{\emoji[#1]{1f4b0}}
+\newcommand{\ptis}[1][1em]{\emoji[#1]{1f3e0}}
+\newcommand{\good}[1][1em]{\emoji[#1]{2714}}
+\newcommand{\bad}[1][1em]{\emoji[#1]{2716}}
 
 %% Tikz Stuff:
 \usepackage{tikz}
