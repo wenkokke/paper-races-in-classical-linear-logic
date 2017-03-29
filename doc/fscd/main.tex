@@ -108,17 +108,17 @@ cake, and disappointment, respectively.
 The arrows indicate two possible reductions of the program: one in which John
 gets the cake and Mary is disappointed, and one in which Mary gets cake and John
 is disappointed.  
+\def\exampleprograma{\red{\ensuremath{%
+      \cut{x}(\recv{x}{y}\john \mid \recv{x}{z}\mary \mid
+      \send{x}{\cake}\send{x}{\nocake}\ptis)
+    }}}
+\def\exampleresultaa{\red{\ensuremath{%
+      \cut{x}(\subst{\john}{\cake}{y} \mid \subst{\mary}{\nocake}{z} \mid \ptis)     
+    }}}
+\def\exampleresultab{\red{\ensuremath{%
+      \cut{x}(\subst{\john}{\nocake}{y} \mid \subst{\mary}{\cake}{z} \mid \ptis)     
+    }}}
 \[
-  \def\exampleprograma{\red{\ensuremath{%
-        \cut{x}(\recv{x}{y}\john \mid \recv{x}{z}\mary \mid
-        \send{x}{\cake}\send{x}{\nocake}\ptis)
-      }}}
-  \def\exampleresultaa{\red{\ensuremath{%
-        \cut{x}(\subst{\john}{\cake}{y} \mid \subst{\mary}{\nocake}{z} \mid \ptis)     
-      }}}
-  \def\exampleresultab{\red{\ensuremath{%
-        \cut{x}(\subst{\john}{\nocake}{y} \mid \subst{\mary}{\cake}{z} \mid \ptis)     
-      }}}
   \begin{tikzpicture}
     \node (program) at (0,0) {$\exampleprograma\quad$};
     \node[above=1cm, right=1cm, at=(program.east)] (resulta)
@@ -149,10 +149,10 @@ $\pi$-calculus by the program below, given that \john\ and \mary\ are processes
 representing John and Mary, respectively, \cake\ is a channel over which
 \john\ will send a slice of cake, and \money\ is a channel over which \mary\ %
 will send money.
+\def\exampleprogramb{\red{\ensuremath{%
+      \cut{x}(\recv{x}{y}\send{x}{\cake}\john \mid \recv{x}{z}\send{x}{\money}\mary)
+    }}}
 \[
-  \def\exampleprogramb{\red{\ensuremath{%
-        \cut{x}(\recv{x}{y}\send{x}{\cake}\john \mid \recv{x}{z}\send{x}{\money}\mary)
-      }}}
   \exampleprogramb
 \]
 The program is stuck---John is refusing to send the cake until he receives money
@@ -309,6 +309,33 @@ Figure~\ref{fig:cp}.
 
 \input{fig-cp}
 
+\noindent
+Let's briefly go back to our example of a deadlock:
+\[\exampleprogramb\]
+As CP is deadlock free, it should be obvious that there is no valid type
+assignment for this program.
+There are, however, two close variants which are typable.
+These correspond to the programs in which John is given the power to decide
+which of the goods is sent first, and that in which Mary is given that power.
+The first of these is modeled in CP by the program below, given that $\john$ is
+a process which will receive money and send out cake, in any order, $\mary$ is a
+process which will receive cake, $\money$ is a process which will send money
+\emph{and} the type of money, and $\plato$ is the type of $\cake$.
+\begin{prooftree}
+  \AXC{$\seq[{\john}]{\Gamma, \tm[y]{\money^\bot}, \tm[x]{\plato}}$}
+  \SYM{\parr}
+  \UIC{$\seq[{\recv{x}{y}\john}]{\Gamma, \tm[x]{\money^\bot \parr \plato}}$}
+  \AXC{$\seq[{\money}]{\Delta, \tm[z]{\money}}$}
+  \AXC{$\seq[{\mary}]{\Theta, \tm[x]{\plato^\bot}}$}
+  \SYM{\tens}
+  \BIC{$\seq[{\send{x}{z}(\money \mid \mary)}]{\Delta, \tm[x]{\money \tens \plato^\bot}}$}
+  \NOM{Cut}
+  \BIC{$\seq[{\cut{x}(\recv{x}{y}\john \mid \send{x}{z}(\money \mid \mary))}]{\Gamma, \Delta, \Theta}$}
+\end{prooftree}
+Note that the typing rule for $\tens$ forces Mary, who in our example sends
+money to John and receives cake in return, to be represented by two
+\emph{independent} processes $\money$ and $\mary$, one of which sends money, and
+the other receives cake.
 
 \section{Main contribution}
 
