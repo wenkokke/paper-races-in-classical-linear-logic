@@ -69,12 +69,12 @@
 %  \item mention that CP prevents deadlock
 %  \item mention that CP \emph{cannot} model this example
 %  \end{itemize}
-\item Background
-  \begin{itemize}
-  \item introduce the $\pi$-calculus
-  \item introduce CP
-  \item mention local choice
-  \end{itemize}
+%\item Background
+%  \begin{itemize}
+%  \item introduce the $\pi$-calculus
+%  \item introduce CP
+%  \item mention local choice
+%  \end{itemize}
 \item Main contribution
   \begin{itemize}
   \item introduce typing rules for \nodcap
@@ -211,8 +211,8 @@ grammar:
     &&\red{\inr{x}P}              &&\text{right selection}\\
     & \red{\case{x}{P}{Q}}        &&\text{choice}
     &&\red{\case{x}{}{}}          &&\text{empty choice}\\
-    & \red{\send{x}{y}0}          &&\text{empty output}
-    &&\red{\recv{x}{y}P}          &&\text{empty input}\\
+    & \red{\send{x}{}0}           &&\text{empty output}
+    &&\red{\recv{x}{}P}           &&\text{empty input}\\
   \end{aligned}
 \]
 The construct $\link{x}{y}$ links two channels, forwarding messages received on
@@ -309,7 +309,10 @@ Figure~\ref{fig:cp}.
 
 \input{fig-cp}
 
-% \input{fig-nodcap}
+
+\section{Main contribution}
+
+%\input{fig-nodcap}
 %\input{fig-nodcap-ax}
 %\input{fig-nodcap-expn-prin}
 %\input{fig-nodcap-expn-cc}
