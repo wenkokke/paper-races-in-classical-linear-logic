@@ -14,7 +14,7 @@
   D.3.1. [Formal Definitions and Theory]: Syntax;
   D.3.2. [Language Classifications] Concurrent, distributed, and parallel languages
 }%
-\keywords{$\pi$-calculus, linear logic, session types, deadlock free, non-determinism}
+\keywords{$\pi$-calculus, linear logic, session types, deadlock freedom, non-determinism}
 % Author macros::end
 
 % Editor-only macros::begin
@@ -195,7 +195,7 @@ the code is available on GitHub.\footnote{
 In this section, we will discuss a rudimentary subset of the session-typed
 process calculus CP~\cite{wadler2012}, which we will refer to as RCP.
 Under the correspondence with linear logic, RCP corresponds to multiplicative
-additive linear logic (MALL).
+additive linear logic, often referred to as MALL.
 The process calculus used by RCP is a variant of the
 $\pi$-calculus~\cite{milner1992}. Processes in RCP are defined by the following
 grammar:
@@ -311,12 +311,12 @@ Figure~\ref{fig:cp}.
 \noindent
 Let's briefly go back to our example of a deadlock:
 \[\exampleprogramb\]
-As CP is deadlock free, it should be obvious that there is no valid type
+As CP and RCP are deadlock free, it should be obvious that there is no valid type
 assignment for this program.
 There are, however, two close variants which are typable.
 These correspond to the programs in which John is given the power to decide
 which of the goods is sent first, and that in which Mary is given that power.
-The first of these is modeled in CP by the program below, given that $\john$ is
+The first of these is modeled in RCP by the program below, given that $\john$ is
 a process which will receive money and send out cake, in any order, $\mary$ is a
 process which will receive cake, $\money$ is a process which will send money
 \emph{and} the type of money, and $\plato$ is the type of $\cake$.
@@ -337,7 +337,7 @@ money to John and receives cake in return, to be represented by two
 the other receives cake.
 
 It should be noted that there is a third variant of the deadlocked process which
-is harmless but \emph{not} well-typed in CP.
+is harmless but \emph{not} well-typed in RCP.
 This is the variant in which \emph{both} John and Mary are powerless to decide
 which of the goods is sent first. This would be equivalent to assigning the
 types $\money^\bot \tens \plato$ and $\money \tens \plato^\bot$ to John and
@@ -347,11 +347,19 @@ extended with \textsc{Mix}, or equivalently in a version of CP extended with
 some atomic process $P_{\tens}{}_{\parr}$ of the type $A \tens B \limp A \parr B$
 (where $A \limp B$ is defined as $A^\bot \parr B$).
 
+Under the correspondence with linear logic, communication in RCP is identified
+with the elimination of the \textsc{Cut} rule. 
+The eliminations of principal cuts can be found in Figure~\ref{fig:cp-cut-prin}.
+The commucatitive conversions can be found in Figure~\ref{fig:cp-cut-cc}.
+
+\input{fig-cp-cut-prin}
+\input{fig-cp-cut-cc}
+
+
 
 \section{Main contribution}
-
-In the previous section, we have seen CP, and briefly discussed how it prevents
-deadlocks. Let's now go back to our \emph{other} example, and see how CP
+In the previous section, we have seen RCP, and briefly discussed how it prevents
+deadlocks. Let's now go back to our \emph{other} example, and see how RCP
 prevents races:
 \[\examplereductiona\]
 Races occur when more than two processes attempt to communicate simultaneously
@@ -365,7 +373,7 @@ communicate over a channel, and only if they use the channel dually:
   \BIC{$\seq[{\cut{x}(P \mid Q)}]{\Gamma,\Delta}$}
 \end{prooftree}
 The race in our example is completely benign. Therefore, we would like to extend
-CP to also assign a type to this race. This essentially boils down to the
+RCP to also assign a type to this race. This essentially boils down to the
 following question---what typing constructs do we need to complete the following
 proof:\footnote{%
   It should be noted that $\cake$ and $\nocake$ are both considered to be of the
@@ -389,13 +397,140 @@ to try and provide a cake twice.
   \noLine\UIC{$\vdots$}\noLine
   \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
   \noLine\UIC{$\vdots$}\noLine
-  \BIC{$\seq[{ (\recv{x}{y}\john \mid \recv{x}{z}\mary) }]{ \Gamma, \Delta, \tm[x]{???} }$}
+  \BIC{$\seq[{ (\recv{x}{y}\john \mid \recv{x}{z}\mary) }]{ \Gamma, \Delta, \tm[x]{???^\bot} }$}
   \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
   \noLine\UIC{$\vdots$}\noLine
   \UIC{$\seq[{ \send{x}{\cake}\send{x}{\nocake}\ptis }]{\Theta, \tm[x]{???} }$}
   \NOM{Cut}
   \BIC{$\seq[{ \exampleprograma }]{ \Gamma, \Delta, \Theta }$}
 \end{prooftree}
+Furthermore, the actions of John and Mary are completely independent, whereas
+for the p\^atisserie its actions are order dependent---it will ship a slice of
+cake first, and only then ship disappointment. 
+This makes it seem like we could fill in the $???$ with the type
+$\plato^\bot \parr \plato^\bot$. However, this would have two problems:
+\def\exampleprogramc{\red{\ensuremath{%
+      \cut{x}(\send{x}{y}(\john \mid \mary) \mid \recv{x}{z}\ptis)
+    }}}%
+\begin{enumerate}
+\item
+  We would implement our ``race'' with the program below, instead of the program
+  we described in $\pi$-calculus:
+  \vspace*{0.5\baselineskip}
+  \begin{prooftree}
+    \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
+    \AXC{$\seq[{ \mary }]{ \Delta, \tm[x]{\plato^\bot} }$}
+    \SYM{\tens}
+    \BIC{$\seq[{ \send{x}{y}(\john \mid \mary) }]{ \Gamma, \Delta,
+        \tm[x]{\plato^\bot \tens \plato^\bot} }$}
+    \AXC{$\seq[{ \ptis }]{ \Theta, \tm[x]{\plato}, \tm[z]{\plato} }$}
+    \SYM{\parr}
+    \UIC{$\seq[{ \recv{z}{x}\ptis }]{ \Theta, \tm[x]{\plato \parr \plato} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \exampleprogramc }]{ \Gamma, \Delta, \Theta }$}
+  \end{prooftree}
+  \vspace*{0.5\baselineskip}
+\item
+  Consequently, we would be giving the choice of who receives the cake to the
+  p\^atisserie. This no longer accurately models our example, where the choice
+  of who receives the cake is non-deterministic, and depends on factors outside
+  of the p\^atisserie's control---i.e.\ on who happens to place their order first. 
+\end{enumerate}
+Thus, we add a new dual pair of connectives to RCP---$\give[n]{A}$ (give) and
+$\take[n]{A}$ (take). These make the same dependence/independence distinction
+that par and tensor make, but have a non-deterministic reduction behaviour.
+They are labeled with an index $n$, because we would like to have the ability to
+group more than two server or client interactions together, while ensuring that
+there are sufficient server resources for every client, and sufficent clients
+for each server. 
+
+In the following two sections, we will look at the two sides of the \textsc{Cut}
+in our incomplete proof, describe the rules we add for `give' and `take', and
+show how they allow us to complete our proof.
+The complete set of rules added in \nodcap\ can be found in
+Figure~\ref{fig:nodcap}. 
+
+
+\subsection*{Servers and contraction}
+Our intepretation of a server is any process which offers up a sequence of
+interactions which are dependent on one another. Examples are our p\^atisserie,
+who gives out cake until it runs out, a ticket server which hands out numbered
+tickets in order, etc.
+We introduce two new rules to construct servers. The first, $\give[1]{}$, marks
+a channel as a server interaction. It does this by sending the channel $y$
+across a channel $x$:\footnote{%
+  Ultimately, it does not matter whether this rule is implemented with a send or
+  a receive action. All that matters is that $\give[1]{}$ and $\take[1]{}$
+  introduce dual operations---a send and a receive.
+}
+\begin{prooftree}
+  \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+  \SYM{\give[1]{}}
+  \UIC{$\seq[{ \send{x}{y}P }]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+\end{prooftree}
+The second rule, \textsc{Contract}, enables the contraction of server
+interactions. This enables us to construct a server which has multiple
+interactions of the same type across the same channel $x$:
+\begin{prooftree}
+  \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
+  \NOM{Contract}
+  \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
+\end{prooftree}
+Using these rules, we can derive the right-hand side of our proof by marking
+each of the p\^atisserie's interactions as server interactions, and then
+contracting them:
+\begin{prooftree}
+  \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
+  \SYM{\give[1]{}}
+  \UIC{$\seq[{ \send{x'}{\nocake}\ptis }]{
+      \Theta, \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
+  \SYM{\give[1]{}}
+  \UIC{$\seq[{ \send{x}{\cake}\send{x'}{\nocake}\ptis }]{
+      \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
+  \NOM{Contract}
+  \UIC{$\seq[{ \send{x}{\cake}\send{x}{\nocake}\ptis }]{
+      \Theta, \tm[x]{\give[2]{\plato}} }$}
+\end{prooftree}
+
+
+\subsection*{Clients and pooling}
+The dual of a server is not a client, but a pool of clients---a number of
+independent processes which each wish to have an interaction with the
+server. Examples are our processes John and Mary, customers to ticket servers,
+etc. We introduce two new rules---one to construct clients and one to
+\emph{pool} them together. The first, $\take[1]{}$, marks an interaction as a
+client interaction. It does this by receiving the channel $y$, across which the
+actual interaction will take place, over some shared channel $x$: 
+\begin{prooftree}
+  \AXC{$\seq[{ P }]{ \Gamma , \tm[y]{A} }$}
+  \SYM{\take[1]{}}
+  \UIC{$\seq[{ \recv{x}{y}P }]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+\end{prooftree}
+The second rule, \textsc{Pool}, enables us to pool together clients. This is
+implemented using a $\pi$-calculus parallel composition, which puts together two
+client pools, in which each client attempts to interact across $x$:
+\begin{prooftree}
+  \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}
+  \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\take[n]{A}} }$}
+  \NOM{Pool}
+  \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
+\end{prooftree}
+Using these rules, we can derive the left-hand side of our proof by marking John
+and Mary as clients looking for cake, and pooling them together:
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
+  \SYM{\take[1]{}}
+  \UIC{$\seq[{ \recv{x}{y}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
+  \SYM{\take[1]{}}
+  \UIC{$\seq[{ \recv{x}{z}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
+  \SYM{}
+  \BIC{$\seq[{ (\recv{x}{y}\john \mid \recv{x}{z}\mary) }]{
+      \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
+\end{prooftree}
+Thus, we complete the derivation of our example.
+
+\subsection*{Non-deterministic communication and cut elimination}
 
 \input{fig-nodcap}
 \input{fig-nodcap-cut-prin}
