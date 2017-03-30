@@ -1,4 +1,4 @@
-\begin{figure*}
+\begin{figure*}[b]
   \centering
   \(
     \text{Type} \; A,B ::= \dots \mid \give[n]{A} \mid \take[n]{A}
@@ -8,7 +8,7 @@
     \begin{prooftree*}
       \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
       \SYM{\give[1]{}}
-      \UIC{$\seq[{x[y].P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+      \UIC{$\seq[{\give{\send{x}{y}}P}]{ \Gamma , \tm[x]{\give[1]{A}} }$}
     \end{prooftree*}
     \begin{prooftree*}
       \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
@@ -21,7 +21,7 @@
     \begin{prooftree*}
       \AXC{$\seq[P]{ \Gamma , \tm[y]{A} }$}
       \SYM{\take[1]{}}
-      \UIC{$\seq[{x(y).P}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+      \UIC{$\seq[{\take{\recv{x}{y}}}]{ \Gamma , \tm[x]{\take[1]{A}} }$}
     \end{prooftree*}
     \begin{prooftree*}
       \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}

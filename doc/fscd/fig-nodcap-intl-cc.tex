@@ -1,61 +1,61 @@
 \begin{figure*}
   \centering
   \(
-    \begin{array}{rclr}
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\wait{y}P \mid R) }
+    \begin{array}{lclr}
+      \red{ \intl{x}{z_1 \cdots z_n}(\wait{y}P \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ \wait{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \red{ \wait{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }
       \\
-      \textcolor{red}{ \intl{x}{z_1\cdots z_n}(\case{y}{}{} \mid R) }
+      \red{ \intl{x}{z_1\cdots z_n}(\case{y}{}{} \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ \case{y}{}{} }
+      \red{ \case{y}{}{} }
       \\
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\recv{y}{w}P \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\recv{y}{w}P \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ \recv{y}{w}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \red{ \recv{y}{w}\intl{x}{z_1 \cdots z_n}(P \mid R) }
       \\
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
       &\Longrightarrow&        
-      \textcolor{red}{ \send{y}{w}(\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) }
+      \red{ \send{y}{w}(\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) }
       &\text{if} \; x \in \text{fv}(P)
       \\
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
       &\Longrightarrow&        
-      \textcolor{red}{ \send{y}{w}(P \mid \intl{x}{z_1 \cdots z_n}(Q \mid R)) }
+      \red{ \send{y}{w}(P \mid \intl{x}{z_1 \cdots z_n}(Q \mid R)) }
       &\text{if} \; x \in \text{fv}(Q)
       \\
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\case{y}{P}{Q} \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\case{y}{P}{Q} \mid R) }
       &\Longrightarrow&
-      \begin{aligned}
-        \textcolor{red}{ \text{case}\;y\; }
-        \textcolor{red}{ \{\;}& \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(P \mid R) } \\
-        \textcolor{red}{  ;\;}& \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(Q \mid R) \}}
+      \!\begin{aligned}
+        \red{ \text{case}\;y.}
+        \red{ \{\;}& \red{ \intl{x}{z_1 \cdots z_n}(P \mid R) } \\
+        \red{  ;\;}& \red{ \intl{x}{z_1 \cdots z_n}(Q \mid R) \}}
       \end{aligned}
       \\
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\inl{y}P \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\inl{y}P \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ \inl{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
+      \red{ \inl{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
       \\
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\inr{y}P \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\inr{y}P \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ \inr{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
+      \red{ \inr{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
       \\
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\give{\send{y}{w}}P \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\give{\send{y}{w}}P \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ \give{\send{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \red{ \give{\send{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
       \\ 
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}(\take{\recv{y}{w}}P \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}(\take{\recv{y}{w}}P \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ \take{\recv{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+      \red{ \take{\recv{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
       \\ 
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ (\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) } 
+      \red{ (\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) } 
       &\text{if} \; x \in \text{fv}(P)
       \\ 
-      \textcolor{red}{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
+      \red{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
       &\Longrightarrow&
-      \textcolor{red}{ (P \mid \intl{x}{z_1 \cdots z_n}(P \mid R)) } 
+      \red{ (P \mid \intl{x}{z_1 \cdots z_n}(P \mid R)) } 
       &\text{if} \; x \in \text{fv}(Q)
     \end{array}
   \) 

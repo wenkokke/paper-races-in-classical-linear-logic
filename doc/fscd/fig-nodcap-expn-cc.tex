@@ -1,61 +1,61 @@
 \begin{figure*}
   \centering
   \(
-    \begin{array}{rclr}
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\wait{y}P }
+    \begin{array}{lclr}
+      \red{ \expn{x}{x_1 \cdots x_n}\wait{y}P }
       &\Longrightarrow&
-      \textcolor{red}{ \wait{y}\expn{x}{x_1 \cdots x_n}P }
+      \red{ \wait{y}\expn{x}{x_1 \cdots x_n}P }
       \\
-      \textcolor{red}{ \expn{x}{x_1\cdots x_n}\case{y}{}{} }
+      \red{ \expn{x}{x_1\cdots x_n}\case{y}{}{} }
       &\Longrightarrow&
-      \textcolor{red}{ \case{y}{}{} }
+      \red{ \case{y}{}{} }
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\recv{z}{y}P }
+      \red{ \expn{x}{x_1 \cdots x_n}\recv{z}{y}P }
       &\Longrightarrow&
-      \textcolor{red}{ \recv{z}{y}\expn{x}{x_1 \cdots x_n}P }
+      \red{ \recv{z}{y}\expn{x}{x_1 \cdots x_n}P }
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
+      \red{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
       &\Longrightarrow&
-      \textcolor{red}{ \send{z}{y}(\expn{x}{x_1 \cdots x_n}P \mid Q) }
+      \red{ \send{z}{y}(\expn{x}{x_1 \cdots x_n}P \mid Q) }
       &\text{if} \; x \in \text{fv}(P)
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
+      \red{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
       &\Longrightarrow&
-      \textcolor{red}{ \send{z}{y}(P \mid \expn{x}{x_1 \cdots x_n}Q) }
+      \red{ \send{z}{y}(P \mid \expn{x}{x_1 \cdots x_n}Q) }
       &\text{if} \; x \in \text{fv}(Q) 
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\case{y}{P}{Q} }
+      \red{ \expn{x}{x_1 \cdots x_n}\case{y}{P}{Q} }
       &\Longrightarrow&
-      \begin{aligned}
-        \textcolor{red}{ \text{case}\;y\;}
-        \textcolor{red}{ \{\;}& \textcolor{red}{\expn{x}{x_1 \cdots x_n}P}\\
-        \textcolor{red}{  ;\;}& \textcolor{red}{\expn{x}{x_1 \cdots x_n}Q}
+      \!\begin{aligned}
+        \red{ \text{case}\;y.}
+        \red{ \{\;}& \red{\expn{x}{x_1 \cdots x_n}P}\\
+        \red{  ;\;}& \red{\expn{x}{x_1 \cdots x_n}Q\}}
       \end{aligned}
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\inl{y}P }
+      \red{ \expn{x}{x_1 \cdots x_n}\inl{y}P }
       &\Longrightarrow&
-      \textcolor{red}{ \inl{y}\expn{x}{x_1 \cdots x_n}P }
+      \red{ \inl{y}\expn{x}{x_1 \cdots x_n}P }
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\inr{y}P }
+      \red{ \expn{x}{x_1 \cdots x_n}\inr{y}P }
       &\Longrightarrow&
-      \textcolor{red}{ \inr{y}\expn{x}{x_1 \cdots x_n}P }
+      \red{ \inr{y}\expn{x}{x_1 \cdots x_n}P }
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }
+      \red{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }
       &\Longrightarrow&
-      \textcolor{red}{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }
+      \red{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}\take{\recv{z}{y}}P }
+      \red{ \expn{x}{x_1 \cdots x_n}\take{\recv{z}{y}}P }
       &\Longrightarrow&
-      \textcolor{red}{ \take{\recv{z}{y}}\expn{x}{x_1 \cdots x_n}P }
+      \red{ \take{\recv{z}{y}}\expn{x}{x_1 \cdots x_n}P }
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
+      \red{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
       &\Longrightarrow&
-      \textcolor{red}{ (\expn{x}{x_1 \cdots x_n}P \mid Q) }
+      \red{ (\expn{x}{x_1 \cdots x_n}P \mid Q) }
       &\text{if} \; x \in \text{fv}(P) 
       \\
-      \textcolor{red}{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
+      \red{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
       &\Longrightarrow&
-      \textcolor{red}{ (P \mid \expn{x}{x_1 \cdots x_n}Q) }
+      \red{ (P \mid \expn{x}{x_1 \cdots x_n}Q) }
       &\text{if} \; x \in \text{fv}(Q) 
     \end{array}
   \)
