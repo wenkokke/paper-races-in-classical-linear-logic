@@ -348,13 +348,51 @@ some atomic process $P_{\tens}{}_{\parr}$ of the type $A \tens B \limp A \parr B
 (where $A \limp B$ is defined as $A^\bot \parr B$).
 
 Under the correspondence with linear logic, communication in RCP is identified
-with the elimination of the \textsc{Cut} rule. 
-The eliminations of principal cuts can be found in Figure~\ref{fig:cp-cut-prin}.
-The commucatitive conversions can be found in Figure~\ref{fig:cp-cut-cc}.
+with the elimination of the \textsc{Cut} rule. We can show that any application
+of the \textsc{Cut} rule can be eliminated.
+\begin{quote}
+  \textit{Proof sketch.}
+  Given a program with one or more cuts, we pick any such application $\cut{x}(P
+  \mid Q)$ such that $P$ and $Q$ are free from cuts. 
+  There are three cases:
+  \begin{enumerate}
+  \item
+    If either $P$ or $Q$ is a link $\link{x}{y}$ we can eliminate the cut
+    immediately, e.g.\ %
+    \begin{center}
+      \begin{prooftree*}
+        \AXC{}
+        \NOM{Ax}
+        \UIC{$\seq[{ \link{y}{x} }]{ \tm[y]{A^\bot}, \tm[x]{A} }$}
+        \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cut{x}(\link{y}{x} \mid P) }]{ \Gamma, \tm[y]{A^\bot} }$}
+      \end{prooftree*}
+      $\Longrightarrow$
+      \begin{prooftree*}
+        \AXC{$\seq[{ \subst{P}{y}{x} }]{ \Gamma, \tm[y]{A^\bot} }$}
+      \end{prooftree*}
+    \end{center}
+  \item
+    If the last rules applied in $P$ and $Q$ both introduced the top-level
+    connective in the type of $x$, then we apply any of the principal cut
+    reductions, seen in Figure~\ref{fig:cp-cut-prin}. These replace a cut with
+    one or more cuts on channels with a \emph{stricly smaller} type.
+  \item
+    Otherwise, we apply one of the commutative conversions for \textsc{Cut},
+    seen in Figure~\ref{fig:cp-cut-cc}.\footnote{
+      In the interest of space, we are presenting the commutative conversions on
+      terms alone. For the full versions, which act on proofs, see the extended
+      version of this paper \red{Insert link here}
+    }
+    These move the application of \textsc{Cut} further into the term. 
+  \end{enumerate}
+  We iteratively apply this procedure until there are no more applications of
+  \textsc{Cut} left in the program.
+\end{quote}
 
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
-
 
 
 \section{Main contribution}
@@ -416,7 +454,6 @@ $\plato^\bot \parr \plato^\bot$. However, this would have two problems:
 \item
   We would implement our ``race'' with the program below, instead of the program
   we described in $\pi$-calculus:
-  \vspace*{0.5\baselineskip}
   \begin{prooftree}
     \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
     \AXC{$\seq[{ \mary }]{ \Delta, \tm[x]{\plato^\bot} }$}
@@ -429,7 +466,6 @@ $\plato^\bot \parr \plato^\bot$. However, this would have two problems:
     \NOM{Cut}
     \BIC{$\seq[{ \exampleprogramc }]{ \Gamma, \Delta, \Theta }$}
   \end{prooftree}
-  \vspace*{0.5\baselineskip}
 \item
   Consequently, we would be giving the choice of who receives the cake to the
   p\^atisserie. This no longer accurately models our example, where the choice
