@@ -1,0 +1,54 @@
+\begin{figure*}
+  \centering
+  \(\!
+  \begin{array}{lclr}
+    \red{ \cut{x}(\wait{y}P \mid Q) }
+    &\Longrightarrow&
+    \red{ \wait{y}\cut{x}(P \mid Q) }
+    \\
+    \red{ \cut{x}\case{y}{}{} }
+    &\Longrightarrow&
+    \red{ \case{y}{}{} }
+    \\
+    \red{ \cut{x}(\recv{y}{w}P \mid Q) }
+    &\Longrightarrow&
+    \red{ \recv{y}{w}\cut{x}(P \mid Q) }
+    \\
+    \red{ \cut{x}(\send{y}{w}(P \mid Q) \mid R) }
+    &\Longrightarrow&
+    \red{ \send{y}{w}(\cut{x}(P \mid R) \mid Q) }
+    &\text{if} \; x \in P
+    \\
+    \red{ \cut{x}(\send{y}{w}(P \mid Q) \mid R) }
+    &\Longrightarrow&
+    \red{ \send{y}{w}(P \mid \cut{x}(Q \mid R)) }
+    &\text{if} \; x \in Q
+    \\
+    \red{ \cut{x}(\case{y}{P}{Q} \mid R) }
+    &\Longrightarrow&
+    \!\begin{aligned}
+      \red{ \text{case}\;y.}
+      &\red{\{\cut{x}(P \mid R)}\\
+      &\red{ ;\cut{x}(Q \mid R)\}}
+    \end{aligned}
+    \\
+    \red{ \cut{x}(\inl{y}P \mid R) }
+    &\Longrightarrow&
+    \red{ \inl{y}\cut{x}(P \mid R) }
+    \\
+    \red{ \cut{x}(\send{y}{w}P \mid R) }
+    &\Longrightarrow&
+    \red{ \send{y}{w}\cut{x}(P \mid R) }
+    \\
+    \red{ \cut{x}(\recv{y}{w}P \mid Q) }
+    &\Longrightarrow&
+    \red{ \recv{y}{w}\cut{x}(P \mid Q) }
+  \end{array}
+  \)
+  \caption{Commutative conversions for \textsc{Cut} in RCP}
+  \label{fig:cp-cut-cc}
+\end{figure*}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
