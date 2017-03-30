@@ -13,9 +13,9 @@
 \toks0={#2#3}%
 \edef\param{\the\toks0}%
 \ifx\param\empty
-  {\ensuremath{\text{case} \; #1 \; \{\}}}
+  {\ensuremath{\text{case} \; #1.\{\}}}
 \else
-  {\ensuremath{\text{case} \; #1 \; \{ #2 ; #3 \}}}
+  {\ensuremath{\text{case} \; #1.\{ #2 ; #3 \}}}
 \fi}
 \newcommand{\inl}[1]{{\ensuremath{#1[\text{inl}].}}}
 \newcommand{\inr}[1]{{\ensuremath{#1[\text{inr}].}}}
@@ -34,6 +34,7 @@
 \newcommand{\nil}{\ensuremath{\mathbf{0}}}
 \newcommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
 \newcommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+\newcommand{\limp}{\ensuremath{\multimap}}
 
 %% Sequent Syntax:
 \newcommand{\tm}[2][]{%
