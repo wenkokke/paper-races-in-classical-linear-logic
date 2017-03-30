@@ -2,22 +2,8 @@
   \begin{tabular}{lr}
     \multicolumn{2}{l}{% 
     \begin{prooftree*}
-      \AXC{}
-      \NOM{Ax}
-      \UIC{$\seq[{ \link{y}{x} }]{ \tm[y]{A^\bot}, \tm[x]{A} }$}
-      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A^\bot} }$}
-      \NOM{Cut}
-      \BIC{$\seq[{ \cut{x}(\link{y}{x} \mid P) }]{ \Gamma, \tm[y]{A^\bot} }$}
-    \end{prooftree*}
-    $\Longrightarrow$
-    \begin{prooftree*}
-      \AXC{$\seq[{ \subst{P}{y}{x} }]{ \Gamma, \tm[y]{A^\bot} }$}
-    \end{prooftree*}
-    }
-    \\\\
-    \multicolumn{2}{l}{% 
-    \begin{prooftree*}
       \AXC{$\seq[{ P }]{ \Gamma }$}
+      \SYM{\bot}
       \UIC{$\seq[{ \wait{x}P }]{ \Gamma, \tm[x]{\bot} }$}
       \AXC{}
       \SYM{\one}

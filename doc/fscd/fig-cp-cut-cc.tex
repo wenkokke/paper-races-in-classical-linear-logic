@@ -2,17 +2,17 @@
   \centering
   \(\!
   \begin{array}{lclr}
-    \red{ \cut{x}(\wait{y}P \mid Q) }
+    \red{ \cut{x}(\wait{y}P \mid R) }
     &\Longrightarrow&
-    \red{ \wait{y}\cut{x}(P \mid Q) }
+    \red{ \wait{y}\cut{x}(P \mid R) }
     \\
-    \red{ \cut{x}\case{y}{}{} }
+    \red{ \cut{x}(\case{y}{}{} \mid R) }
     &\Longrightarrow&
     \red{ \case{y}{}{} }
     \\
-    \red{ \cut{x}(\recv{y}{w}P \mid Q) }
+    \red{ \cut{x}(\recv{y}{w}P \mid R) }
     &\Longrightarrow&
-    \red{ \recv{y}{w}\cut{x}(P \mid Q) }
+    \red{ \recv{y}{w}\cut{x}(P \mid R) }
     \\
     \red{ \cut{x}(\send{y}{w}(P \mid Q) \mid R) }
     &\Longrightarrow&
@@ -36,13 +36,9 @@
     &\Longrightarrow&
     \red{ \inl{y}\cut{x}(P \mid R) }
     \\
-    \red{ \cut{x}(\send{y}{w}P \mid R) }
+    \red{ \cut{x}(\inr{y}P \mid R) }
     &\Longrightarrow&
-    \red{ \send{y}{w}\cut{x}(P \mid R) }
-    \\
-    \red{ \cut{x}(\recv{y}{w}P \mid Q) }
-    &\Longrightarrow&
-    \red{ \recv{y}{w}\cut{x}(P \mid Q) }
+    \red{ \inr{y}\cut{x}(P \mid R) }
   \end{array}
   \)
   \caption{Commutative conversions for \textsc{Cut} in RCP}
