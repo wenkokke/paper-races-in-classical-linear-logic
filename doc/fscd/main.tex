@@ -214,8 +214,8 @@ grammar:
     &&\red{\recv{x}{}P}           &&\text{empty input}\\
   \end{aligned}
 \]
-The construct $\link{x}{y}$ links two channels, forwarding messages received on
-$x$ to $y$ and vice versa.
+The construct $\link{x}{y}$ links two channels~\cite{sangiorgi1996,boreale1998},
+forwarding messages received on $x$ to $y$ and vice versa.
 %
 The construct $\cut{x}{(P \mid Q)}$ creates a new channel $x$, and composes two
 processes, which communicate on $x$, in parallel.
