@@ -305,7 +305,7 @@ follows:
 \]
 The rules for assigning session types to processes in RCP are shown in
 Figure~\ref{fig:cp}.
-
+%
 \input{fig-cp}
 
 \noindent
@@ -397,7 +397,7 @@ To recover the version described in~\cite{wadler2012}, restrict the selection
 of cuts to reduce to those under a prefix of cuts only, and add two commutative
 conversions which commute two cuts. This changes definition of normal form
 ``free from cuts'' to ``free from cuts at the top-level''.
-
+%
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
 
@@ -509,14 +509,14 @@ across a channel $x$:\footnote{%
 \begin{prooftree}
   \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
   \SYM{\give[1]{}}
-  \UIC{$\seq[{ \send{x}{y}P }]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+  \UIC{$\seq[{ \give{\send{x}{y}}P }]{ \Gamma , \tm[x]{\give[1]{A}} }$}
 \end{prooftree}
-The second rule, \textsc{Contract}, enables the contraction of server
-interactions. This enables us to construct a server which has multiple
-interactions of the same type across the same channel $x$:
+The second rule, \textsc{Cont}, enables the contraction of server interactions.
+This enables us to construct a server which has multiple interactions of the
+same type across the same channel $x$: 
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
-  \NOM{Contract}
+  \NOM{Cont}
   \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
 \end{prooftree}
 Using these rules, we can derive the right-hand side of our proof by marking
@@ -525,13 +525,13 @@ contracting them:
 \begin{prooftree}
   \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
   \SYM{\give[1]{}}
-  \UIC{$\seq[{ \send{x'}{\nocake}\ptis }]{
+  \UIC{$\seq[{ \give{\send{x'}{\nocake}}\ptis }]{
       \Theta, \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
   \SYM{\give[1]{}}
-  \UIC{$\seq[{ \send{x}{\cake}\send{x'}{\nocake}\ptis }]{
+  \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x'}{\nocake}}\ptis }]{
       \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
   \NOM{Contract}
-  \UIC{$\seq[{ \send{x}{\cake}\send{x}{\nocake}\ptis }]{
+  \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
       \Theta, \tm[x]{\give[2]{\plato}} }$}
 \end{prooftree}
 
@@ -547,7 +547,7 @@ actual interaction will take place, over some shared channel $x$:
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma , \tm[y]{A} }$}
   \SYM{\take[1]{}}
-  \UIC{$\seq[{ \recv{x}{y}P }]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+  \UIC{$\seq[{ \take{\recv{x}{y}}P }]{ \Gamma , \tm[x]{\take[1]{A}} }$}
 \end{prooftree}
 The second rule, \textsc{Pool}, enables us to pool together clients. This is
 implemented using a $\pi$-calculus parallel composition, which puts together two
@@ -563,15 +563,17 @@ and Mary as clients looking for cake, and pooling them together:
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
   \SYM{\take[1]{}}
-  \UIC{$\seq[{ \recv{x}{y}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
+  \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
   \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
   \SYM{\take[1]{}}
-  \UIC{$\seq[{ \recv{x}{z}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
+  \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
   \SYM{}
-  \BIC{$\seq[{ (\recv{x}{y}\john \mid \recv{x}{z}\mary) }]{
+  \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
       \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
 \end{prooftree}
 Thus, we complete the derivation of our example.
+%
+\input{fig-nodcap}
 
 
 \subsection*{Non-deterministic communication and cut elimination}
@@ -586,14 +588,53 @@ We need to
   give \emph{one} new principal cut reduction, to show that we can reduce a cut
   on a channel of type $\give[n]{A}$/$\take[n]{A}$ to a number of smaller cuts.
 \end{enumerate}
-
-\input{fig-nodcap}
-\input{fig-nodcap-cut-prin}
+The commutative conversions are shown in Figure~\ref{fig:nodcap-cut-perm}.
+%
 \input{fig-nodcap-cut-perm}
-\input{fig-nodcap-expn-prin}
-\input{fig-nodcap-expn-cc}
-\input{fig-nodcap-intl-prin}
-\input{fig-nodcap-intl-cc}
+%
+All that remains is to give a reduction rule for a cut between a server and a
+client pool:  
+\begin{prooftree}
+  \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
+  \AXC{$\seq[{ R }]{ \Delta, \tm[x]{\take[n]{A}} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{ \cut{x}(P \mid R) }]{ \Gamma, \Delta }$}
+\end{prooftree}
+In order to do this, we introduce two new admissible rules---server expansion,
+and client interleaving:
+\begin{center}
+  \begin{scprooftree*}[0.90]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
+    \NOM{Exp}
+    \UIC{$\seq[{ \expn{x}{x_1 \cdots x_n}P }]{ \Gamma, \tm[x_1]{A} \cdots \tm[x_n]{A} }$} 
+  \end{scprooftree*}%
+  \begin{scprooftree*}[0.90]
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x_1]{A^\bot} \cdots \tm[x_n]{A^\bot} }$} 
+    \AXC{$\seq[{ Q }]{ \Delta, \tm[y]{\take[n]{A}} }$}
+    \NOM{Int}
+    \BIC{$\seq[{ \intl{y}{x_1 \cdots x_n}(P \mid Q) }]{ \Gamma, \Delta }$}
+  \end{scprooftree*}
+\end{center}
+We can compose these rules to eliminate the above cut. However, this has simply
+moved the problem. How do we eliminate applications of \textsc{Exp} and
+\textsc{Int}? This involves two more proofs with the exact same structure as
+that of cut elimination.
+
+The principal eliminations and commutative conversions for \textsc{Exp} are
+shown in Figure~\ref{fig:nodcap-expn}. When we put these together, we see that
+the operation $\expn{x}{x_1 \dots x_n}P$ strips all the applications of
+$\give[1]{}$ and \textsc{Cont} from a program, and renames the channels which
+were marked as server interactions using the names $x_1 \dots x_n$.
+% 
+\input{fig-nodcap-expn}
+
+The principal eliminations and commutative conversions for \textsc{Int} are
+shown in Figure~\ref{fig:nodcap-intl}. When we put these together, we see that
+the operation $\intl{x}{y_1 \dots y_n}(P \mid Q)$ joins each interaction $y_i$
+with some dual interaction from the client pool. This means that each
+interleaving reduces to $n$ cuts, where $n$ is the number of clients. 
+% 
+\input{fig-nodcap-intl}
 
 \clearpage
 \bibliography{main}

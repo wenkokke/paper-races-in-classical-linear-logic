@@ -1,0 +1,149 @@
+\begin{figure*}
+  \centering
+  \paragraph*{Principal eliminations}
+  \begin{tabular}{lr}
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A} }$}
+      \SYM{\take[1]{}}
+      \UIC{$
+        \seq[{ \take{\recv{z}{x}}P }]
+        { \Gamma, \tm[z]{\take[1]{A}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[y_1]{A^\bot}}$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{z}{y_1}(P \mid Q) }]
+        { \Gamma, \Delta }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{A} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[y_1]{A^\bot}}$}
+      \NOM{Cut}
+      \BIC{$
+        \seq[{ \cut{x}(P \mid \subst{Q}{x}{y_1}) }]
+        { \Gamma, \Delta }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[m]{A}} }$}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[x]{\take[n]{A}} }$}
+      \NOM{Pool}
+      \BIC{$
+        \seq[{ (P \mid Q) }]
+        { \Gamma, \Delta, \tm[x]{\take[m+n]{A}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[y_1]{A^\bot}\cdots\tm[y_n]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{y_1 \cdots y_{m+n}}((P \mid Q) \mid R) }]
+        { \Gamma, \Delta, \Theta }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ Q }]
+        { \Delta, \tm[x]{\take[n]{A}} }$}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\take[m]{A}} }$}
+      \AXC{$
+        \seq[{ R }]
+        { \Theta, \tm[y_1]{A^\bot}\cdots\tm[y_m]{A^\bot},
+          \tm[y_{m+1}]{A^\bot}\cdots\tm[y_{m+n}]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{y_1 \cdots y_m}P }]
+        { \Gamma, \Theta, \tm[y_{m+1}]{A^\bot}\cdots\tm[y_{m+n}]{A^\bot} }$}
+      \NOM{Int}
+      \BIC{$
+        \seq[{ \intl{x}{y_{m+1} \cdots y_{m+n}}\intl{x}{y_1 \cdots y_m}P }]
+        { \Gamma, \Delta, \Theta }$}
+    \end{prooftree*}
+    }
+  \end{tabular}
+  \paragraph*{Commutative conversions}
+  \(
+  \begin{array}{lclr}
+    \red{ \intl{x}{z_1 \cdots z_n}(\wait{y}P \mid R) }
+    &\Longrightarrow&
+    \red{ \wait{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+    \\
+    \red{ \intl{x}{z_1\cdots z_n}(\case{y}{}{} \mid R) }
+    &\Longrightarrow&
+    \red{ \case{y}{}{} }
+    \\
+    \red{ \intl{x}{z_1 \cdots z_n}(\recv{y}{w}P \mid R) }
+    &\Longrightarrow&
+    \red{ \recv{y}{w}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+    \\
+    \red{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
+    &\Longrightarrow&        
+    \red{ \send{y}{w}(\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) }
+    &\text{if} \; x \in \text{fv}(P)
+    \\
+    \red{ \intl{x}{z_1 \cdots z_n}(\send{y}{w}(P \mid Q) \mid R) }
+    &\Longrightarrow&        
+    \red{ \send{y}{w}(P \mid \intl{x}{z_1 \cdots z_n}(Q \mid R)) }
+    &\text{if} \; x \in \text{fv}(Q)
+    \\
+    \red{ \intl{x}{z_1 \cdots z_n}(\case{y}{P}{Q} \mid R) }
+    &\Longrightarrow&
+    \!\begin{aligned}
+      \red{ \text{case}\;y.}
+      \red{ \{\;}& \red{ \intl{x}{z_1 \cdots z_n}(P \mid R) } \\
+      \red{  ;\;}& \red{ \intl{x}{z_1 \cdots z_n}(Q \mid R) \}}
+    \end{aligned}
+    \\
+    \red{ \intl{x}{z_1 \cdots z_n}(\inl{y}P \mid R) }
+    &\Longrightarrow&
+    \red{ \inl{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
+    \\
+    \red{ \intl{x}{z_1 \cdots z_n}(\inr{y}P \mid R) }
+    &\Longrightarrow&
+    \red{ \inr{y}\intl{x}{z_1 \cdots z_n}(P \mid R) }      
+    \\
+    \red{ \intl{x}{z_1 \cdots z_n}(\give{\send{y}{w}}P \mid R) }
+    &\Longrightarrow&
+    \red{ \give{\send{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+    \\ 
+    \red{ \intl{x}{z_1 \cdots z_n}(\take{\recv{y}{w}}P \mid R) }
+    &\Longrightarrow&
+    \red{ \take{\recv{y}{w}}\intl{x}{z_1 \cdots z_n}(P \mid R) }
+    \\ 
+    \red{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
+    &\Longrightarrow&
+    \red{ (\intl{x}{z_1 \cdots z_n}(P \mid R) \mid Q) } 
+    &\text{if} \; x \in \text{fv}(P)
+    \\ 
+    \red{ \intl{x}{z_1 \cdots z_n}((P \mid Q) \mid R) }
+    &\Longrightarrow&
+    \red{ (P \mid \intl{x}{z_1 \cdots z_n}(P \mid R)) } 
+    &\text{if} \; x \in \text{fv}(Q)
+  \end{array}
+  \)   
+  \caption{\textsc{Int} elimination for \nodcap}
+  \label{fig:nodcap-intl}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

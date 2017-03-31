@@ -7,14 +7,14 @@
         { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[w]{B} }$}
       \SYM{\give[1]{}}
       \UIC{$
-        \seq[{ \send{y}{w}P }]
+        \seq[{ \give{\send{y}{w}}P }]
         { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\give[1]{B}} }$}
       \AXC{$
         \seq[{ R }]
         { \Theta, \tm[x]{A} }$}
       \NOM{Cut}
       \BIC{$
-        \seq[{ \cut{x}(\send{y}{w}P \mid R) }]
+        \seq[{ \cut{x}(\give{\send{y}{w}}P \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[z]{\give[1]{B}} }$}
     \end{prooftree*}
     & $\Longrightarrow$ \\\\
@@ -32,7 +32,7 @@
         { \Gamma, \Delta, \Theta, \tm[w]{B} }$}
       \SYM{\give[1]{}}
       \UIC{$
-        \seq[{ \send{y}{w}\cut{x}(P \mid R) }]
+        \seq[{ \give{\send{y}{w}}\cut{x}(P \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[y]{\give[1]{B}} }$}
     \end{prooftree*}
     }
@@ -43,14 +43,14 @@
         { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[w]{B} }$}
       \SYM{\take[1]{}}
       \UIC{$
-        \seq[{ \recv{y}{w}P }]
+        \seq[{ \take{\recv{y}{w}}P }]
         { \Gamma, \tm[x]{A^\bot}, \Delta, \tm[y]{\take[1]{B}} }$}
       \AXC{$
         \seq[{ R }]
         { \Theta, \tm[x]{A} }$}
       \NOM{Cut}
       \BIC{$
-        \seq[{ \cut{x}(\recv{y}{w}P \mid R) }]
+        \seq[{ \cut{x}(\take{\recv{y}{w}}P \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[z]{\take[1]{B}} }$}
     \end{prooftree*}
     & $\Longrightarrow$ \\\\
@@ -68,7 +68,7 @@
         { \Gamma, \Delta, \Theta, \tm[w]{B} }$}
       \SYM{\take[1]{}}
       \UIC{$
-        \seq[{ \recv{y}{w}\cut{x}(P \mid R) }]
+        \seq[{ \take{\recv{y}{w}}\cut{x}(P \mid R) }]
         { \Gamma, \Delta, \Theta, \tm[y]{\take[1]{B}} }$}
     \end{prooftree*}
     }
@@ -155,7 +155,6 @@
   \caption{Commuting conversions for \textsc{Cut} in \nodcap}
   \label{fig:nodcap-cut-perm}
 \end{figure*}
-
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:

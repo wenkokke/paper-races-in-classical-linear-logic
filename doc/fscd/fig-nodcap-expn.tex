@@ -1,0 +1,127 @@
+\begin{figure*}
+  \centering
+  \paragraph*{Principal eliminations}
+  \begin{tabular}{lr}
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[y]{A} }$}
+      \SYM{\give[1]{}}
+      \UIC{$
+        \seq[{ \give{\send{x}{y}}P }]
+        { \Gamma, \tm[x]{\give[1]{A}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1}\give{\send{x}{y}}P }]
+        { \Gamma, \tm[x_1]{A} }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ \subst{P}{x_1}{y} }]
+        { \Gamma, \tm[x_1]{A} }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[m]{A}}, \tm[y]{\give[n]{A}} }$}
+      \NOM{Cont}
+      \UIC{$
+        \seq[{ \subst{P}{x}{y} }]
+        { \Gamma, \tm[x]{\give[m+n]{A}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_{m+n}}\subst{P}{x}{y} }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$
+        \seq[{ P }]
+        { \Gamma, \tm[x]{\give[m]{A}}, \tm[y]{\give[n]{A}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{x}{x_1 \cdots x_m}P }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_m], \tm[y]{\give[n]{A}} }$}
+      \NOM{Exp}
+      \UIC{$
+        \seq[{ \expn{y}{x_{m+1} \cdots x_{m+n}}\expn{x}{x_1 \cdots x_m}P }]
+        { \Gamma, \tm[x_1]{A}\cdots\tm[x_{m+n}]{A} }$}
+    \end{prooftree*}
+    }
+  \end{tabular}
+  
+  \paragraph*{Commutative conversions}
+  \(\!
+  \begin{array}{lclr}
+    \red{ \expn{x}{x_1 \cdots x_n}\wait{y}P }
+    &\Longrightarrow&
+    \red{ \wait{y}\expn{x}{x_1 \cdots x_n}P }
+    \\
+    \red{ \expn{x}{x_1\cdots x_n}\case{y}{}{} }
+    &\Longrightarrow&
+    \red{ \case{y}{}{} }
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\recv{z}{y}P }
+    &\Longrightarrow&
+    \red{ \recv{z}{y}\expn{x}{x_1 \cdots x_n}P }
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
+    &\Longrightarrow&
+    \red{ \send{z}{y}(\expn{x}{x_1 \cdots x_n}P \mid Q) }
+    &\text{if} \; x \in \text{fv}(P)
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\send{z}{y}(P \mid Q) }
+    &\Longrightarrow&
+    \red{ \send{z}{y}(P \mid \expn{x}{x_1 \cdots x_n}Q) }
+    &\text{if} \; x \in \text{fv}(Q) 
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\case{y}{P}{Q} }
+    &\Longrightarrow&
+    \!\begin{aligned}
+      \red{ \text{case}\;y.}
+      \red{ \{\;}& \red{\expn{x}{x_1 \cdots x_n}P}\\
+      \red{  ;\;}& \red{\expn{x}{x_1 \cdots x_n}Q\}}
+    \end{aligned}
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\inl{y}P }
+    &\Longrightarrow&
+    \red{ \inl{y}\expn{x}{x_1 \cdots x_n}P }
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\inr{y}P }
+    &\Longrightarrow&
+    \red{ \inr{y}\expn{x}{x_1 \cdots x_n}P }
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\give{\send{z}{y}}P }
+    &\Longrightarrow&
+    \red{ \give{\send{z}{y}}\expn{x}{x_1 \cdots x_n}P }
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}\take{\recv{z}{y}}P }
+    &\Longrightarrow&
+    \red{ \take{\recv{z}{y}}\expn{x}{x_1 \cdots x_n}P }
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
+    &\Longrightarrow&
+    \red{ (\expn{x}{x_1 \cdots x_n}P \mid Q) }
+    &\text{if} \; x \in \text{fv}(P) 
+    \\
+    \red{ \expn{x}{x_1 \cdots x_n}(P \mid Q) }
+    &\Longrightarrow&
+    \red{ (P \mid \expn{x}{x_1 \cdots x_n}Q) }
+    &\text{if} \; x \in \text{fv}(Q) 
+  \end{array}
+  \)
+  \caption{\textsc{Exp} elimination for \nodcap}
+  \label{fig:nodcap-expn}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
