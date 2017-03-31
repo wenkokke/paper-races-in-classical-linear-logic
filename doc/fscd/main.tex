@@ -77,7 +77,7 @@
 %  \end{itemize}
 \item Main contribution
   \begin{itemize}
-  \item introduce typing rules for \nodcap
+% \item introduce typing rules for \nodcap
   \item introduce evaluation for programs in \nodcap
   \item sketch a proof for server expansion
   \item sketch a proof for client interleaving
@@ -353,7 +353,7 @@ of the \textsc{Cut} rule can be eliminated.
 \begin{quote}
   \textit{Proof sketch.}
   Given a program with one or more cuts, we pick any such application $\cut{x}(P
-  \mid Q)$ such that $P$ and $Q$ are free from cuts. 
+  \mid Q)$ such that $P$ and $Q$ are free from cuts.
   There are three cases:
   \begin{enumerate}
   \item
@@ -382,14 +382,21 @@ of the \textsc{Cut} rule can be eliminated.
     Otherwise, we apply one of the commutative conversions for \textsc{Cut},
     seen in Figure~\ref{fig:cp-cut-cc}.\footnote{
       In the interest of space, we are presenting the commutative conversions on
-      terms alone. For the full versions, which act on proofs, see the extended
-      version of this paper \red{Insert link here}
+      terms alone. For the full versions, which act on proofs, see the
+      appendices (insert reference here).
     }
-    These move the application of \textsc{Cut} further into the term. 
+    These move the application of \textsc{Cut} further into the term.
   \end{enumerate}
   We iteratively apply this procedure until there are no more applications of
   \textsc{Cut} left in the program.
 \end{quote}
+The proof for cut elimination above is entirely satisfactory from a logical
+perspective, but deviates slightly from the proof given by~\cite{wadler2012},
+in that it reduces cuts under an arbitrary prefix.
+To recover the version described in~\cite{wadler2012}, restrict the selection
+of cuts to reduce to those under a prefix of cuts only, and add two commutative
+conversions which commute two cuts. This changes definition of normal form
+``free from cuts'' to ``free from cuts at the top-level''.
 
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
@@ -429,7 +436,7 @@ Ideally, we would use a regular \textsc{Cut} to introduce the channel $x$ in
 this proof. We can do this if we group John and Mary on one side of the
 \textsc{Cut}, and put the p\^atisserie on the other side. This seems
 reasonable---John and Mary both try to get a cake, and the p\^atisserie offers
-to try and provide a cake twice. 
+to try and provide a cake twice.
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
   \noLine\UIC{$\vdots$}\noLine
@@ -444,7 +451,7 @@ to try and provide a cake twice.
 \end{prooftree}
 Furthermore, the actions of John and Mary are completely independent, whereas
 for the p\^atisserie its actions are order dependent---it will ship a slice of
-cake first, and only then ship disappointment. 
+cake first, and only then ship disappointment.
 This makes it seem like we could fill in the $???$ with the type
 $\plato^\bot \parr \plato^\bot$. However, this would have two problems:
 \def\exampleprogramc{\red{\ensuremath{%
@@ -470,7 +477,7 @@ $\plato^\bot \parr \plato^\bot$. However, this would have two problems:
   Consequently, we would be giving the choice of who receives the cake to the
   p\^atisserie. This no longer accurately models our example, where the choice
   of who receives the cake is non-deterministic, and depends on factors outside
-  of the p\^atisserie's control---i.e.\ on who happens to place their order first. 
+  of the p\^atisserie's control---i.e.\ on who happens to place their order first.
 \end{enumerate}
 Thus, we add a new dual pair of connectives to RCP---$\give[n]{A}$ (give) and
 $\take[n]{A}$ (take). These make the same dependence/independence distinction
@@ -478,13 +485,13 @@ that par and tensor make, but have a non-deterministic reduction behaviour.
 They are labeled with an index $n$, because we would like to have the ability to
 group more than two server or client interactions together, while ensuring that
 there are sufficient server resources for every client, and sufficent clients
-for each server. 
+for each server.
 
 In the following two sections, we will look at the two sides of the \textsc{Cut}
 in our incomplete proof, describe the rules we add for `give' and `take', and
 show how they allow us to complete our proof.
 The complete set of rules added in \nodcap\ can be found in
-Figure~\ref{fig:nodcap}. 
+Figure~\ref{fig:nodcap}.
 
 
 \subsection*{Servers and contraction}
@@ -536,7 +543,7 @@ server. Examples are our processes John and Mary, customers to ticket servers,
 etc. We introduce two new rules---one to construct clients and one to
 \emph{pool} them together. The first, $\take[1]{}$, marks an interaction as a
 client interaction. It does this by receiving the channel $y$, across which the
-actual interaction will take place, over some shared channel $x$: 
+actual interaction will take place, over some shared channel $x$:
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma , \tm[y]{A} }$}
   \SYM{\take[1]{}}
@@ -566,7 +573,19 @@ and Mary as clients looking for cake, and pooling them together:
 \end{prooftree}
 Thus, we complete the derivation of our example.
 
+
 \subsection*{Non-deterministic communication and cut elimination}
+All that remains is to show that the proof of cut elimination for RCP can be
+extended to cover \nodcap. In order to show this, we need to do two things.
+We need to
+\begin{enumerate}
+\item
+  give \emph{four} new commutative conversion, in order to show that
+  \textsc{Cut} commutes with the four new proof rules we have introduced; and
+\item
+  give \emph{one} new principal cut reduction, to show that we can reduce a cut
+  on a channel of type $\give[n]{A}$/$\take[n]{A}$ to a number of smaller cuts.
+\end{enumerate}
 
 \input{fig-nodcap}
 \input{fig-nodcap-cut-prin}
