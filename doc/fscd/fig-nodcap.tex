@@ -1,4 +1,4 @@
-\begin{figure*}[h]
+\begin{figure*}
   \centering
   \(
     \text{Type} \; A,B ::= \dots \mid \give[n]{A} \mid \take[n]{A}
@@ -12,7 +12,7 @@
     \end{prooftree*}
     \begin{prooftree*}
       \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
-      \NOM{Contract}
+      \NOM{Cont}
       \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
     \end{prooftree*}
   \end{center}
@@ -34,7 +34,6 @@
   \caption{The type system \nodcap}
   \label{fig:nodcap}
 \end{figure*}
-
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
