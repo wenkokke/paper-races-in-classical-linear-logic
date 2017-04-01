@@ -2,7 +2,7 @@
 \usepackage{microtype}%
 \bibliographystyle{plainurl}%
 % Author macros::begin
-\title{Give or Take: Non-Determinism, Linearity, and Session Types}%
+\title{Give or Take: Races in Classical Linear Logic}%
 \titlerunning{Give or Take}%
 \author[1]{Pepijn Kokke}%
 \affil[1]{LFCS, University of Edinburgh, Edinburgh, United Kingdom\\
@@ -54,44 +54,13 @@
   of online auctions, vendors, or any other scenario where several processes
   compete for a limited resource.
 
-  In this paper, we introduce \nodcap\ (Nodcap), an extension of CP which is more
-  permissive, and permits programs with races, without losing its strong ties
-  to classical linear logic or the guarantee of deadlock freeness.
+  In this paper, we introduce \nodcap\ (Nodcap), an extension of CP inspired by
+  bounded linear logic~\cite{girard1992}, which allows non-determinism, and as
+  such permits programs with races, without losing its strong ties to classical
+  linear logic or the guarantee of deadlock freeness. 
 \end{abstract}
 
-\section{Overview}
-\begin{itemize}
-%\item Introduction
-%  \begin{itemize}
-%  \item introduce example (racy vendor interaction)
-%  \item mention that the $\pi$-calculus can model this example
-%  \item mention the downsides of the $\pi$-calculus (i.e. deadlock)
-%  \item mention that CP prevents deadlock
-%  \item mention that CP \emph{cannot} model this example
-%  \end{itemize}
-%\item Background
-%  \begin{itemize}
-%  \item introduce the $\pi$-calculus
-%  \item introduce CP
-%  \item mention local choice
-%  \end{itemize}
-\item Main contribution
-  \begin{itemize}
-% \item introduce typing rules for \nodcap
-  \item introduce evaluation for programs in \nodcap
-  \item sketch a proof for server expansion
-  \item sketch a proof for client interleaving
-  \item sketch a proof for communication
-  \end{itemize}
-\item Extensions and future work
-  \begin{itemize}
-  \item mention relation to local choice (and proper cut elimination)
-  \item mention possibility of recursion and creating servers from streams
-  \item mention possibility of resource quantifiers
-  \end{itemize}
-\end{itemize}
-
-\section{Introduction}
+\section{Introduction}\label{sec:introduction}
 Imagine the following scenario:
 \begin{quote}
   John and Mary are working from home one morning when they each get a craving
@@ -160,10 +129,10 @@ nothing will actually happen.
 It `goes wrong', in the sense that a deadlock is unlikely to be the intended
 behaviour of a program.
 
-Session types, a formalism proposed by~\cite{honda1993}, can provide static
-guarantees that concurrent processes respect communication protocols, by
-specifying the expected structure of communications among processes.
-Recently, work by~\cite{caires2010} and~\cite{wadler2012} has yielded tight
+Session types~\cite{honda1993} can provide static guarantees that concurrent
+processes respect communication protocols, by specifying the expected structure
+of communications among processes. Recently, work on
+$\pi\text{DILL}~$\cite{caires2010} and CP~\cite{wadler2012} has yielded tight
 correspondences between session typed $\pi$-calculi and intuitionistic and
 classical linear logic~\cite{girard1987}, respectively.
 These correspondences are tight in the following sense: not only do they
@@ -175,9 +144,10 @@ programs in these calculi are guaranteed to be free from deadlocks.
 Unfortunately, they are also free from \emph{races}.
 
 In this paper, we introduce \nodcap\ (Nodcap), an extension of the type system
-CP~\cite{wadler2012} which is more permissive, and permits programs with races,
-without losing the tight correspondence with classical linear logic or the
-guarantee of deadlock.
+CP~\cite{wadler2012}, inspired by bounded linear logic~\cite{girard1992}, which
+allows non-determinism, and as such permits programs with races, without losing
+the tight correspondence with classical linear logic or the guarantee of
+deadlock. 
 The paper is structured as follows. In the next section, we introduce the
 relevant variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
 Then, we introduce the type system \nodcap.
@@ -197,8 +167,8 @@ process calculus CP~\cite{wadler2012}, which we will refer to as RCP.
 Under the correspondence with linear logic, RCP corresponds to multiplicative
 additive linear logic, often referred to as MALL.
 The process calculus used by RCP is a variant of the
-$\pi$-calculus~\cite{milner1992}. Processes in RCP are defined by the following
-grammar:
+$\pi$-calculus~\cite{milner1992a,milner1992b}. Processes in RCP are defined by
+the following grammar:
 \[
   \begin{aligned}
     \red{P},\:&\red{Q},\red{R} ::=\\
@@ -342,7 +312,7 @@ This is the variant in which \emph{both} John and Mary are powerless to decide
 which of the goods is sent first. This would be equivalent to assigning the
 types $\money^\bot \tens \plato$ and $\money \tens \plato^\bot$ to John and
 Mary, respectively.
-As shown by~\cite{atkey2016}, such a program becomes typable in a version of CP
+As shown in~\cite{atkey2016}, such a program becomes typable in a version of CP
 extended with \textsc{Mix}, or equivalently in a version of CP extended with
 some atomic process $P_{\tens}{}_{\parr}$ of the type $A \tens B \limp A \parr B$
 (where $A \limp B$ is defined as $A^\bot \parr B$).
@@ -380,7 +350,7 @@ of the \textsc{Cut} rule can be eliminated.
     one or more cuts on channels with a \emph{stricly smaller} type.
   \item
     Otherwise, we apply one of the commutative conversions for \textsc{Cut},
-    seen in Figure~\ref{fig:cp-cut-cc}.\footnote{
+    seen in Figure~\ref{fig:cp-cut-cc}.\footnote{%
       In the interest of space, we are presenting the commutative conversions on
       terms alone. For the full versions, which act on proofs, see the
       appendices (insert reference here).
@@ -497,8 +467,8 @@ Figure~\ref{fig:nodcap}.
 \subsection*{Servers and contraction}
 Our intepretation of a server is any process which offers up a sequence of
 interactions which are dependent on one another. Examples are our p\^atisserie,
-who gives out cake until it runs out, a ticket server which hands out numbered
-tickets in order, etc.
+which gives out cake until it runs out, a ticket server which hands out numbered
+tickets in order, etc. 
 We introduce two new rules to construct servers. The first, $\give[1]{}$, marks
 a channel as a server interaction. It does this by sending the channel $y$
 across a channel $x$:\footnote{%
@@ -530,7 +500,7 @@ contracting them:
   \SYM{\give[1]{}}
   \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x'}{\nocake}}\ptis }]{
       \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
-  \NOM{Contract}
+  \NOM{Cont}
   \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
       \Theta, \tm[x]{\give[2]{\plato}} }$}
 \end{prooftree}
@@ -609,8 +579,8 @@ and client interleaving:
     \UIC{$\seq[{ \expn{x}{x_1 \cdots x_n}P }]{ \Gamma, \tm[x_1]{A} \cdots \tm[x_n]{A} }$} 
   \end{scprooftree*}%
   \begin{scprooftree*}[0.90]
-    \AXC{$\seq[{ P }]{ \Gamma, \tm[x_1]{A^\bot} \cdots \tm[x_n]{A^\bot} }$} 
-    \AXC{$\seq[{ Q }]{ \Delta, \tm[y]{\take[n]{A}} }$}
+    \AXC{$\seq[{ P }]{ \Delta, \tm[y]{\take[n]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Gamma, \tm[x_1]{A^\bot} \cdots \tm[x_n]{A^\bot} }$} 
     \NOM{Int}
     \BIC{$\seq[{ \intl{y}{x_1 \cdots x_n}(P \mid Q) }]{ \Gamma, \Delta }$}
   \end{scprooftree*}
@@ -636,19 +606,272 @@ interleaving reduces to $n$ cuts, where $n$ is the number of clients.
 % 
 \input{fig-nodcap-intl}
 
+So, where does the \emph{non-determinism} come in? We have, perhaps, chosen to
+write down the rewrite rules for interleaving elimination in a somewhat
+misleading manner, for in the rewrite rule for \textsc{Int} and \textsc{Pool}
+(Figure~\ref{fig:nodcap-intl}) we interleave the first $m$ clients with the
+first $m$ server interactions, and the remaining $n$ clients with the remaining
+$n$ server interactions. However, all these interactions are of the \emph{same}
+type. Therefore, there is a choice inherent in this rule---for it does not
+matter which client we connect to which server interaction.
+The way we interpret this rewrite rule is that it abitrarily partitions the
+client pool into two pools of size $m$ and $n$, and the reason we have written
+it down as we have is simply due to a limitation of syntax.
+
+Let us go back to our example. We can now assign a type to this program, and
+consider its reduction behaviour as a result of cut elimination. See
+Figure~\ref{fig:cut-ex}.
+
+\begin{figure*}
+  \centering
+  \begin{scprooftree}[0.8]
+    \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
+    \SYM{\take[1]{}}
+    \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
+    \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
+    \SYM{\take[1]{}}
+    \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
+        \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
+    \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
+    \SYM{\give[1]{}}
+    \UIC{$\seq[{ \give{\send{x'}{\nocake}}\ptis }]{
+        \Theta, \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
+    \SYM{\give[1]{}}
+    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x'}{\nocake}}\ptis }]{
+        \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
+        \Theta, \tm[x]{\give[2]{\plato}} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \cut{x}(
+        \take{\recv{x}{y}}\john \mid
+        \take{\recv{x}{z}}\mary \mid
+        \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis) }]{
+        \Gamma, \Delta, \Theta }$}
+  \end{scprooftree}
+  \(\Downarrow\)
+  \begin{scprooftree}[0.8]
+    \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
+    \SYM{\take[1]{}}
+    \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
+    \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
+    \SYM{\take[1]{}}
+    \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
+        \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
+    \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
+    \SYM{\give[1]{}}
+    \UIC{$\seq[{ \give{\send{x'}{\nocake}}\ptis }]{
+        \Theta, \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
+    \SYM{\give[1]{}}
+    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x'}{\nocake}}\ptis }]{
+        \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
+        \Theta, \tm[x]{\give[2]{\plato}} }$}
+    \NOM{Exp}
+    \UIC{$\seq[{ \expn{x}{x_1,x_2}\give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
+        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
+    \NOM{Int}
+    \BIC{$\seq[{ \intl{x}{x_1,x_2}(
+        \expn{x}{x_1,x_2}\give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis \mid
+        \take{\recv{x}{y}}\john \mid
+        \take{\recv{x}{z}}\mary) }]{
+        \Gamma, \Delta, \Theta }$}
+  \end{scprooftree}
+  \(\Downarrow_{\star}\)
+  \begin{scprooftree}[0.8]
+    \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
+    \SYM{\take[1]{}}
+    \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
+    \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
+    \SYM{\take[1]{}}
+    \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
+        \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
+    \AXC{$\seq[{ \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} }]{
+        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
+    \NOM{Int}
+    \BIC{$\seq[{ \intl{x}{x_1,x_2}(
+        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} \mid
+        \take{\recv{x}{y}}\john \mid
+        \take{\recv{x}{z}}\mary) }]{
+        \Gamma, \Delta, \Theta }$}
+  \end{scprooftree}
+  \(\Downarrow_{\star}\) 
+  \begin{scprooftree}[0.8]
+    \AXC{$\seq[{ \subst{\mary}{x_2}{z} }]{ \Delta, \tm[x_2]{\plato^\bot} }$}
+    \AXC{$\seq[{ \subst{\john}{x_1}{y} }]{ \Gamma, \tm[x_1]{\plato^\bot} }$}
+    \AXC{$\seq[{ \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} }]{
+        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \cut{x_1}(
+        \subst{\john}{x_1}{y} \mid
+        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake}) }]{
+      \Gamma, \Theta, \tm[x_2]{\plato} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{
+        \cut{x_2}(
+        \subst{\mary}{x_2}{z} \mid
+        \cut{x_1}(
+        \subst{\john}{x_1}{y} \mid
+        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake})
+        )) }]{ \Gamma, \Delta, \Theta }$}
+  \end{scprooftree}
+  or
+  \begin{scprooftree}[0.8]
+    \AXC{$\seq[{ \subst{\mary}{x_1}{z} }]{ \Delta, \tm[x_2]{\plato^\bot} }$}
+    \AXC{$\seq[{ \subst{\john}{x_2}{y} }]{ \Gamma, \tm[x_1]{\plato^\bot} }$}
+    \AXC{$\seq[{ \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} }]{
+        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \cut{x_2}(
+        \subst{\john}{x_2}{y} \mid
+        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake}) }]{
+      \Gamma, \Theta, \tm[x_1]{\plato} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{
+        \cut{x_1}(
+        \subst{\mary}{x_1}{z} \mid
+        \cut{x_2}(
+        \subst{\john}{x_2}{y} \mid
+        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake})
+        )) }]{ \Gamma, \Delta, \Theta }$}
+  \end{scprooftree}
+  \caption{\textsc{Cut} reduction for an example of a race in \nodcap}
+  \label{fig:cut-ex}
+\end{figure*}
+
+\section{Related and Future Work}
+
+\subsection*{Relation with bounded linear logic}
+We mentioned in Section~\ref{sec:introduction} that \nodcap\ was inspired by
+bounded linear logic~\cite[BLL]{girard1992}. BLL is a typed lambda calculus
+based on intuitionistic linear logic which guarantees that its programs are
+polynomial-time functions. 
+It too uses resource-indexed exponentials. However, instead of interpreting
+these as client and server interactions, BLL interprets them as accesses to a
+memory cell, as is a common interpretation in linear logic~\cite{girard1987}.
+There are some superficial differences between BLL and \nodcap, e.g.\ the former
+is intuitionistic while the latter is classical, but the main difference between
+the two lies in storage versus pooling. In BLL, $\take[n]{A}$ denotes a memory
+cell which can be accessed $n$ times, whereas in \nodcap, $\take[n]{A}$
+represents a pool of $n$ different values, computed independently by $n$
+different processes.
+
+\subsection*{Relation with non-deterministic choice}
+Recent work by~\cite{caires2014,caires2017,atkey2016} has seen the extension of
+$\pi\text{DILL}$ and CP with non-deterministic
+choice~\cite{milner1992a,milner1992b}. Though there are differences between the
+various referenced articles, in the context of $\pi\text{DILL}$ and CP this
+operator can essentially be summarised with the following typing rule and
+reduction semantics: 
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[{P}]{\Gamma}$}
+    \AXC{$\seq[{Q}]{\Gamma}$}
+    \BIC{$\seq[{P+Q}]{\Gamma}$}
+  \end{prooftree*}
+  \hspace*{2cm}
+  \(\!
+  \begin{aligned}
+    \red{P+Q} \Longrightarrow \red{P}\\
+    \red{P+Q} \Longrightarrow \red{Q}
+  \end{aligned}
+  \)
+\end{center}
+This operator is derivable in \nodcap. We can derive the non-deterministic
+choice $P+Q$ for a single channel by combining the following two terms with
+\textsc{Cut}: 
+\begin{prooftree}
+  \AXC{$\seq[{P}]{\Gamma, \tm[y]{A}}$}
+  \SYM{\with}
+  \UIC{$\seq[{\case{y}{\halt{y}}{P}}]{
+      \Gamma, \tm[y]{\one \with A}}$}
+  \SYM{\take[1]{}}
+  \UIC{$\seq[{\take{\recv{x}{y}}\case{y}{\halt{y}}{P}}]{
+      \Gamma, \tm[x]{\take[1]{(\one \with A)}}}$}
+  \AXC{$\seq[{Q}]{
+      \Delta, \tm[z]{A}}$}
+  \SYM{\with}
+  \UIC{$\seq[{\case{z}{\halt{z}}{Q}}]{
+      \Delta, \tm[z]{\one \with A}}$}
+  \SYM{\take[1]{}}
+  \UIC{$\seq[{\take{\recv{x}{z}}\case{z}{\halt{z}}{Q}}]{
+      \Delta, \tm[x]{\take[1]{(\one \with A)}}}$}
+  \NOM{Pool}
+  \BIC{$\seq[{(
+      \take{\recv{x}{y}}\case{y}{\halt{y}}{P} \mid
+      \take{\recv{x}{z}}\case{z}{\halt{z}}{Q}
+      )}]{\Gamma, \Delta, \tm[x]{\take[2]{\one \with A}}}$}
+\end{prooftree}
+\begin{prooftree}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq[{
+      \link{z}{w}
+    }]{\tm[z]{A^\bot}, \tm[w]{A}}$}
+  \SYM{\plus_1}
+  \UIC{$\seq[{
+      \inr{z}\link{z}{w}
+    }]{\tm[z]{\bot \plus A^\bot}, \tm[w]{A}}$}
+  \SYM{\bot}
+  \UIC{$\seq[{
+      \wait{y}\inr{z}\link{z}{w}
+    }]{\tm[y]{\bot}, \tm[z]{\bot \plus A^\bot}, \tm[w]{A}}$}
+  \SYM{\plus_1}
+  \UIC{$\seq[{
+      \inl{y}\wait{y}\inr{z}\link{z}{w}
+    }]{\tm[y]{\bot \plus A^\bot}, \tm[z]{\bot \plus A^\bot}, \tm[w]{A}}$}
+  \SYM{\give[1]{(2)}}
+  \UIC{$\seq[{
+      \give{\send{x}{y}}\give{\send{x'}{z}}\inl{y}\wait{y}\inr{z}\link{z}{w}
+    }]{\tm[x]{\give[1]{(\bot \plus A^\bot)}}, \tm[x']{\give[1]{(\bot \plus A^\bot)}}, \tm[w]{A}}$}
+  \NOM{Cont}
+  \UIC{$\seq[{
+      \give{\send{x}{y}}\give{\send{x}{z}}\inl{y}\wait{y}\inr{z}\link{z}{w}
+    }]{\tm[x]{\give[2]{(\bot \plus A^\bot)}, \tm[w]{A}}}$}
+\end{prooftree}
+And we can derive full non-deterministic choice using the invertability of
+$\parr$. 
+
+\subsection*{Relation with recursion}
+We would like to be able to construct servers by recursion. This is not possible
+in \nodcap\ as presented here. 
+A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
+structural recursion, based on work on fixed points in linear
+logic~\cite{baelde2007}. 
+If we added these primitives to \nodcap, we would be able to construct servers
+from streams of type $\nu X.A \parr (\one \plus X)$.
+
+\subsection*{\red{TODO?} Resource variables and quantification}
+\begin{itemize}
+\item
+  Mention the idea of resource variables and quantification.
+\item
+  Mention the idea of embedding CP into this framework, using the encoding:
+  \[
+    \take{A} := \forall{n}\take[n]{A}
+    \quad\text{and}\quad
+    \give{A} := \exists{n}{\give[n]{A}}
+  \]
+\item
+  Mention the ideal types for servers and clients:
+  \[
+    \text{Server}(A) := \forall{n}\give[n]{A}
+    \quad\text{and}\quad
+    \text{Clients}(A) := \exists{n}{\take[n]{A}}. 
+  \]
+\end{itemize}
+
 \clearpage
 \bibliography{main}
 
-%\clearpage
-%\appendix
-%\input{fig-nodcap-ax}
-%\input{fig-nodcap-expn-perm}
-%\input{fig-nodcap-expn-perm-2}
-%\input{fig-nodcap-intl-perm}
-%\input{fig-nodcap-intl-perm-2}
-
 \end{document}
-
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
