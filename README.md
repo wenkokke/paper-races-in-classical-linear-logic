@@ -1,4 +1,4 @@
-# Nodcap---Races in Classical Linear Logic
+# Nodcap: Races in Classical Linear Logic
 
 This repository holds the code for Nodcap. Nodcap is a type system for the
 π-calculus which was inspired by bounded linear logic, and an extension of the
