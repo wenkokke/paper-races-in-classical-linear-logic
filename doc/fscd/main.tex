@@ -173,8 +173,8 @@ the following grammar:
     \red{P},\:&\red{Q},\red{R} ::=\\
     &       \red{\link{x}{y}}           &&\text{link}
     &\qquad&\red{\cut{x}(P \mid Q)}     &&\text{parallel composition}\\
-    &       \red{\send{x}{y}(P \mid Q)} &&\text{output}
-    &\qquad&\red{\recv{x}{y}P}          &&\text{input}\\
+    &       \red{\send{x}{y}(P \mid Q)} &&\text{``output''}
+    &\qquad&\red{\recv{x}{y}P}          &&\text{``input''}\\
     &       \red{\inl{x}P}              &&\text{left selection}
     &\qquad&\red{\inr{x}P}              &&\text{right selection}\\
     &       \red{\case{x}{P}{Q}}        &&\text{choice}
@@ -190,7 +190,8 @@ The construct $\cut{x}{(P \mid Q)}$ creates a new channel $x$, and composes two
 processes, which communicate on $x$, in parallel.
 Therefore, in $\cut{x}{(P \mid Q)}$ the name $x$ is bound in both $P$ and $Q$.
 %
-Round brackets are used for input, square brackets for output.
+In $\recv{x}{y}P$ and $\send{x}{y}P$, round brackets are used for input, square
+brackets for output. 
 We use bound output~\cite{sangiorgi1996}---this means that unlike in the
 $\pi$-calculus, both input and output bind a new name.
 In $\recv{x}{y}P$ the new name $y$ is bound in $P$.
@@ -221,8 +222,8 @@ within a single process. This means that their interactions can depend on one
 another---i.e.\ the interaction of type $B$ could depend on the result of the
 interaction of type $A$, or vice versa.
 The multiplicative units ($\one$, $\bot$) follow the same pattern.
-A channel of type $\one$ communicates with a process which has no other
-channels, and therefore can do nothing.
+A process with a channel of type $\one$ has no other channels, and therefore can
+do nothing. 
 A channel of type $\bot$ communicates with a process which is not further
 restricted.
 
@@ -371,7 +372,7 @@ cuts'' to ``free from cuts at the top-level''.
 \input{fig-cp-cut-cc}
 
 
-\section{Main contribution}
+\section{Races in CP}
 In the previous section, we have seen RCP, and briefly discussed how it prevents
 deadlocks. Let's now go back to our \emph{other} example, and see how RCP
 prevents races:
@@ -386,8 +387,8 @@ communicate over a channel, and only if they use the channel dually:
   \NOM{Cut}
   \BIC{$\seq[{\cut{x}(P \mid Q)}]{\Gamma,\Delta}$}
 \end{prooftree}
-The race in our example is completely benign. Therefore, we would like to extend
-RCP to also assign a type to this race. This essentially boils down to the
+The racy behaviour in our example is intentional. Therefore, we would like to
+extend RCP to also assign a type to this race. This essentially boils down to the
 following question---what typing constructs do we need to complete the following
 proof:\footnote{%
   It should be noted that $\cake$ and $\nocake$ are both considered to be of the
@@ -445,12 +446,14 @@ who receives the cake is non-deterministic, and depends on factors outside of
 the p\^atisserie's control---i.e.\ on who happens to place their order first.   
 
 Thus, we add a new dual pair of connectives to RCP---$\give[n]{A}$ (give) and
-$\take[n]{A}$ (take). These make the same dependence/independence distinction
-that par and tensor make, but have a non-deterministic reduction behaviour.
-They are labeled with an index $n$, because we would like to have the ability to
-group more than two server or client interactions together, while ensuring that
-there are sufficient server resources for every client, and sufficent clients
-for each server.
+$\take[n]{A}$ (take). $\give[n]{A}$ denotes a channel with $n$ dependent
+interactions of type $A$, and $\take[n]{A}$ denotes a channel with $n$
+independent interactions of type $A$---the same dependence/independence
+distinction that par and tensor make, but with a non-deterministic reduction
+behaviour.
+They are labeled with a positive natural number $n$, which ensures that there
+are sufficient server resources for every client, and sufficent clients for each
+server.  
 
 In the following two subsections, we will look at the two sides of the
 \textsc{Cut} in our incomplete proof, describe the rules we add for `give' and
@@ -466,24 +469,26 @@ which gives out cake until it runs out, a ticket server which hands out numbered
 tickets in order, etc. 
 We introduce two new rules to construct servers. The first, $\give[1]{}$, marks
 a channel as a server interaction. It does this by sending the channel $y$
-across a channel $x$:\footnote{%
+across a channel $x$.\footnote{%
   Ultimately, it does not matter whether this rule is implemented with a send or
   a receive action. All that matters is that $\give[1]{}$ and $\take[1]{}$
   introduce dual operations---a send and a receive.
 }
-\begin{prooftree}
-  \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
-  \SYM{\give[1]{}}
-  \UIC{$\seq[{ \give{\send{x}{y}}P }]{ \Gamma , \tm[x]{\give[1]{A}} }$}
-\end{prooftree}
 The second rule, \textsc{Cont}, enables the contraction of server interactions.
 This enables us to construct a server which has multiple interactions of the
-same type across the same channel $x$: 
-\begin{prooftree}
-  \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
-  \NOM{Cont}
-  \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
-\end{prooftree}
+same type across the same channel $x$. 
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\give[1]{}}
+    \UIC{$\seq[{ \give{\send{x}{y}}P }]{ \Gamma , \tm[x]{\give[1]{A}} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\give[m]{A}} , \tm[y]{\give[n]{A}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[{ \subst{P}{x}{y} }]{ \Gamma , \tm[x]{\give[m+n]{A}} }$}
+  \end{prooftree*}
+\end{center}
 Using these rules, we can derive the right-hand side of our proof by marking
 each of the p\^atisserie's interactions as server interactions, and then
 contracting them:
@@ -508,21 +513,23 @@ server. Examples are our processes John and Mary, customers to ticket servers,
 etc. We introduce two new rules---one to construct clients and one to
 \emph{pool} them together. The first, $\take[1]{}$, marks an interaction as a
 client interaction. It does this by receiving the channel $y$, across which the
-actual interaction will take place, over some shared channel $x$:
-\begin{prooftree}
-  \AXC{$\seq[{ P }]{ \Gamma , \tm[y]{A} }$}
-  \SYM{\take[1]{}}
-  \UIC{$\seq[{ \take{\recv{x}{y}}P }]{ \Gamma , \tm[x]{\take[1]{A}} }$}
-\end{prooftree}
+actual interaction will take place, over some shared channel $x$.
 The second rule, \textsc{Pool}, enables us to pool together clients. This is
 implemented using a $\pi$-calculus parallel composition, which puts together two
-client pools, in which each client attempts to interact across $x$:
-\begin{prooftree}
-  \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}
-  \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\take[n]{A}} }$}
-  \NOM{Pool}
-  \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
-\end{prooftree}
+client pools, in which each client attempts to interact across $x$.
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\take[1]{}}
+    \UIC{$\seq[{ \take{\recv{x}{y}}P }]{ \Gamma , \tm[x]{\take[1]{A}} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\take[m]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ (P \mid Q) }]{ \Gamma , \Delta , \tm[x]{\take[m+n]{A}} }$}
+  \end{prooftree*}
+\end{center}
 Using these rules, we can derive the left-hand side of our proof by marking John
 and Mary as clients looking for cake, and pooling them together:
 \begin{prooftree}
@@ -580,10 +587,14 @@ and client interleaving:
     \BIC{$\seq[{ \intl{y}{x_1 \cdots x_n}(P \mid Q) }]{ \Gamma, \Delta }$}
   \end{scprooftree*}
 \end{center}
-We can compose these rules to eliminate the above cut. However, this has simply
-moved the problem. How do we eliminate applications of \textsc{Exp} and
-\textsc{Int}? This involves two more proofs with the exact same structure as
-that of cut elimination.
+We can compose these rules to eliminate the above cut (see
+Figure~\ref{fig:nodcap-cut-prin}). 
+%
+\input{fig-nodcap-cut-prin}
+%
+However, this has simply moved the problem. How do we eliminate applications of
+\textsc{Exp} and \textsc{Int}? This involves two more proofs with the exact same
+structure as that of cut elimination. 
 
 The principal eliminations and commutative conversions for \textsc{Exp} are
 shown in Figure~\ref{fig:nodcap-expn}. When we put these together, we see that
@@ -601,17 +612,11 @@ interleaving reduces to $n$ cuts, where $n$ is the number of clients.
 % 
 \input{fig-nodcap-intl}
 
-So, where does the \emph{non-determinism} come in? We have, perhaps, chosen to
-write down the rewrite rules for interleaving elimination in a somewhat
-misleading manner, for in the rewrite rule for \textsc{Int} and \textsc{Pool}
-(Figure~\ref{fig:nodcap-intl}) we interleave the first $m$ clients with the
-first $m$ server interactions, and the remaining $n$ clients with the remaining
-$n$ server interactions. However, all these interactions are of the \emph{same}
-type. Therefore, there is a choice inherent in this rule---for it does not
-matter which client we connect to which server interaction.
-The way we interpret this rewrite rule is that it abitrarily partitions the
-client pool into two pools of size $m$ and $n$, and the reason we have written
-it down as we have is simply due to a limitation of syntax.
+So, where does the non-determinism come in? All the interactions in our cut are
+of the same \emph{same} type. When eliminating the cut, there is an inherent
+choice---for it does not matter which client we connect to which server
+interaction. Therefore, we apply a permutation $\pi$ to the names in our cut
+reduction (see Figure~\ref{fig:nodcap-cut-prin}).
 
 Let us go back to our example. We can now assign a type to this program, and
 consider its reduction behaviour as a result of cut elimination. See
@@ -671,7 +676,7 @@ Figure~\ref{fig:cut-ex}.
     \UIC{$\seq[{ \expn{x}{x_1,x_2}\give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
         \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
     \NOM{Int}
-    \BIC{$\seq[{ \intl{x}{x_1,x_2}(
+    \BIC{$\seq[{ \intl{x}{\pi(x_1),\pi(x_2)}(
         \expn{x}{x_1,x_2}\give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis \mid
         \take{\recv{x}{y}}\john \mid
         \take{\recv{x}{z}}\mary) }]{
@@ -691,7 +696,7 @@ Figure~\ref{fig:cut-ex}.
     \AXC{$\seq[{ \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} }]{
         \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
     \NOM{Int}
-    \BIC{$\seq[{ \intl{x}{x_1,x_2}(
+    \BIC{$\seq[{ \intl{x}{\pi(x_1),\pi(x_2)}(
         \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} \mid
         \take{\recv{x}{y}}\john \mid
         \take{\recv{x}{z}}\mary) }]{
