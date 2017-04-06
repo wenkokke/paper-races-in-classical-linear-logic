@@ -247,15 +247,15 @@ it ensures that a process which uses communication on $x$ to decide what to send
 on $y$ is communicating with two independent processes on $x$ and $y$,
 preventing circular dependencies. Each type $A$ has a dual, defined as follows:
 \[
-  \begin{array}{rclcrcl}
-    \tm{( A \tens B )^\bot} &=& \tm{A^\bot \parr B^\bot}&&
-    \tm{\one^\bot}          &=& \tm{\bot}\\
-    \tm{( A \parr B )^\bot} &=& \tm{A^\bot \parr B^\bot}&&
-    \tm{\bot^\bot}          &=& \tm{\one}\\
-    \tm{( A \plus B )^\bot} &=& \tm{A^\bot \with B^\bot}&&
-    \tm{\nil^\bot}          &=& \tm{\top}\\
-    \tm{( A \with B )^\bot} &=& \tm{A^\bot \plus B^\bot}&&
-    \tm{\top^\bot}          &=& \tm{\nil}
+  \begin{array}{ccccccc}
+    \tm{( A \tens B )^\bot} = \tm{A^\bot \parr B^\bot}&&
+    \tm{\one^\bot}          = \tm{\bot}&&
+    \tm{( A \parr B )^\bot} = \tm{A^\bot \parr B^\bot}&&
+    \tm{\bot^\bot}          = \tm{\one}\\
+    \tm{( A \plus B )^\bot} = \tm{A^\bot \with B^\bot}&&
+    \tm{\nil^\bot}          = \tm{\top}&&
+    \tm{( A \with B )^\bot} = \tm{A^\bot \plus B^\bot}&&
+    \tm{\top^\bot}          = \tm{\nil}
   \end{array}
 \]
 Environments associate channels with types. They are defined as follows:
