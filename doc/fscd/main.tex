@@ -1,16 +1,17 @@
 \documentclass[a4paper,UKenglish]{lipics-v2016}
 \usepackage{microtype}%
 \bibliographystyle{plainurl}%
+\usepackage{xspace}%
 % Author macros::begin
 \title{Give or Take: Races in Classical Linear Logic}%
 \titlerunning{Give or Take}%
-\author{Pepijn Kokke}%
-\author{J. Garrett Morris}%
-\author{Philip Wadler}%
-\affil{LFCS, University of Edinburgh, Edinburgh, United Kingdom\\
-  \texttt{\{pepijn.kokke, garrett.morris, wadler\}@ed.ac.uk}}%
+\author[1]{Pepijn Kokke}%
+\author[1]{J. Garrett Morris}%
+\author[1]{Philip Wadler}%
+\affil[1]{LFCS, University of Edinburgh, Edinburgh, United Kingdom\\
+  \texttt{\{pepijn.kokke, garrett.morris, philip.wadler\}@ed.ac.uk}}%
 \authorrunning{P. Kokke, J. G. Morris and P. Wadler}%
-\Copyright{Pepijn Kokke}%
+\Copyright{Pepijn Kokke, J. Garrett Morris, and Philip Wadler}%
 \subjclass{
   F.4.1. [Mathematical Logic]: Lambda calculus and related systems;
   D.3.1. [Formal Definitions and Theory]: Syntax;
@@ -41,24 +42,37 @@
 
 \maketitle
 
-\begin{abstract}
-  The $\pi$-calculus is a great foundation for concurrent programming languages.
-  With only a handful of constructions, it manages to model communicating
-  processes faithfully---for instance, $\pi$-calculus programs can have races
-  and deadlocks.
-  CP is a session type system for the $\pi$-calculus, which has strong ties to
-  classical linear logic. Programs typed by CP are guaranteed to be race and
-  deadlock free.
-  Under the slogan that ``well-typed programs cannot `go wrong'\!~'', it makes
-  sense to exclude deadlocks, as one rarely \emph{wants} a program to deadlock. 
-  Races, on the other hand, may be the intended behaviour of a program---think
-  of online auctions, vendors, or any other scenario where several processes
-  compete for a limited resource.
+% \begin{abstract}
+%   The $\pi$-calculus is a great foundation for concurrent programming languages.
+%   With only a handful of constructions, it manages to model communicating
+%   processes faithfully---for instance, $\pi$-calculus programs can have races
+%   and deadlocks.
+%   CP is a session type system for the $\pi$-calculus, which has strong ties to
+%   classical linear logic. Programs typed by CP are guaranteed to be race and
+%   deadlock free.
+%   Under the slogan that ``well-typed programs cannot `go wrong'\!~'', it makes
+%   sense to exclude deadlocks, as one rarely \emph{wants} a program to deadlock.
+%   Races, on the other hand, may be the intended behaviour of a program---think
+%   of online auctions, vendors, or any other scenario where several processes
+%   compete for a limited resource.
 
-  In this paper, we introduce \nodcap\ (nodcap), an extension of CP inspired by
-  bounded linear logic, which allows non-determinism, and as
-  such permits programs with races, without losing its strong ties to classical
-  linear logic or the guarantee not to deadlock. 
+%   In this paper, we introduce \nodcap\ (nodcap), an extension of CP inspired by
+%   bounded linear logic, which allows non-determinism, and as
+%   such permits programs with races, without losing its strong ties to classical
+%   linear logic or the guarantee not to deadlock.
+% \end{abstract}
+
+\begin{abstract}
+  Logically-founded process calculi, such as CP, provide a basis for
+  deadlock-free concurrent programming, but at the cost of excluding
+  non-determinism and races.  We introduce \ceepeeunderscoreendee, which extends
+  CP with a novel account of non-determinism.  Our approach draws on bounded
+  linear logic to provide a strongly-typed account of standard process calculus
+  expressions of non-determinism.  We show that our extension is expressive
+  enough to capture many uses of non-determinism in untyped calculi, such as
+  non-deterministic choice, while preserving CP's metatheoretic properties,
+  including deadlock freedom.  We have formalized our calculus and its
+  properties, using Agda.
 \end{abstract}
 
 \section{Introduction}\label{sec:introduction}
@@ -144,11 +158,11 @@ Furthermore, by the very nature of their correspondence with linear logic,
 programs in these calculi are guaranteed to be free from deadlocks.
 Unfortunately, they are also free from \emph{races}.
 
-In this paper, we introduce \nodcap\ (nodcap), an extension of the type system
+In this paper, we introduce \nodcap (nodcap), an extension of the type system
 CP~\cite{wadler2012} and inspired by bounded linear logic~\cite{girard1992},
 which allows non-determinism, and as such permits programs with races, without
 losing the tight correspondence with classical linear logic or the guarantee not
-to deadlock. 
+to deadlock.
 The paper is structured as follows. In the next section, we introduce the
 relevant variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
 Then, we introduce the type system \nodcap.
@@ -158,7 +172,7 @@ Last, we discuss the types of concurrency that \nodcap\ allows us to capture.
 
 The type system and cut elimination procedure presented in the remainder of this
 paper have been formalised using Agda~\cite{norell2009}, and the code is
-available on GitHub.\footnote{% 
+available on GitHub.\footnote{%
   \url{https://github.com/pepijnkokke/nodcap}
 }
 
@@ -193,7 +207,7 @@ processes, which communicate on $x$, in parallel.
 Therefore, in $\cut{x}{(P \mid Q)}$ the name $x$ is bound in both $P$ and $Q$.
 %
 In $\recv{x}{y}P$ and $\send{x}{y}P$, round brackets are used for input, square
-brackets for output. 
+brackets for output.
 We use bound output~\cite{sangiorgi1996}---this means that unlike in the
 $\pi$-calculus, both input and output bind a new name.
 In $\recv{x}{y}P$ the new name $y$ is bound in $P$.
@@ -225,7 +239,7 @@ another---i.e.\ the interaction of type $B$ could depend on the result of the
 interaction of type $A$, or vice versa.
 The multiplicative units ($\one$, $\bot$) follow the same pattern.
 A process with a channel of type $\one$ has no other channels, and therefore can
-do nothing. 
+do nothing.
 A channel of type $\bot$ communicates with a process which is not further
 restricted.
 
@@ -268,7 +282,7 @@ Environments associate channels with types. They are defined as follows:
 Note that each name in an environment should be unique. This means that $x_i
 \neq x_j$ wherever $i \neq j$, and that environments $\Gamma$ and $\Delta$ can
 only be combined as $\Gamma, \Delta$ if $\text{fv}(\Gamma) \cap
-\text{fv}(\Delta) = \varnothing$. 
+\text{fv}(\Delta) = \varnothing$.
 
 Judgements indicate that a process $P$ communicates along each channels $x_i$
 following the communication protocol specified by $A_i$. They are defined as
@@ -315,7 +329,7 @@ the other receives cake.\footnote{%
   and Mary are powerless to decide which of the goods is sent first. This would
   be equivalent to assigning the types $\money^\bot \tens \plato$ and $\money
   \tens \plato^\bot$ to John and Mary, respectively. Such a program becomes
-  typable in a version of CP extended with \textsc{Mix}~\cite{atkey2016}. 
+  typable in a version of CP extended with \textsc{Mix}~\cite{atkey2016}.
 }
 
 Under the correspondence with linear logic, communication in RCP is identified
@@ -355,7 +369,7 @@ of the \textsc{Cut} rule can be eliminated.
       In the interest of space, we are presenting the commutative conversions on
       terms alone.
       % For the full versions, which act on proofs, see the appendices (insert
-      % reference here). 
+      % reference here).
     }
     These move the application of \textsc{Cut} further into the term.
   \end{enumerate}
@@ -368,7 +382,7 @@ CP~\cite{wadler2012}, in that it reduces cuts under an arbitrary prefix.
 To recover the version described for CP, restrict the selection of cuts to
 reduce to those under a prefix of cuts only, and add two commutative conversions
 which commute two cuts. This changes definition of normal form ``free from
-cuts'' to ``free from cuts at the top-level''. 
+cuts'' to ``free from cuts at the top-level''.
 %
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
@@ -445,7 +459,7 @@ We would implement our ``race'' with the program below:
 However, we would be giving the choice of who receives the cake to the
 p\^atisserie. This no longer accurately models our example, where the choice of
 who receives the cake is non-deterministic, and depends on factors outside of
-the p\^atisserie's control---i.e.\ on who happens to place their order first.   
+the p\^atisserie's control---i.e.\ on who happens to place their order first.
 
 Thus, we add a new dual pair of connectives to RCP---$\give[n]{A}$ (give) and
 $\take[n]{A}$ (take). $\give[n]{A}$ denotes a channel with $n$ dependent
@@ -455,11 +469,11 @@ distinction that par and tensor make, but with a non-deterministic reduction
 behaviour.
 They are labeled with a positive natural number $n$, which ensures that there
 are sufficient server resources for every client, and sufficent clients for each
-server.  
+server.
 
 In the following two subsections, we will look at the two sides of the
 \textsc{Cut} in our incomplete proof, describe the rules we add for `give' and
-`take', and show how they allow us to complete our proof. 
+`take', and show how they allow us to complete our proof.
 The complete set of rules added in \nodcap\ can be found in
 Figure~\ref{fig:nodcap}.
 
@@ -468,7 +482,7 @@ Figure~\ref{fig:nodcap}.
 Our intepretation of a server is any process which offers up a sequence of
 identically typed interactions which are dependent on one another. Examples are
 our p\^atisserie, which gives out cake until it runs out, a ticket server which
-hands out numbered tickets in order, etc. 
+hands out numbered tickets in order, etc.
 We introduce two new rules to construct servers. The first, $\give[1]{}$, marks
 a channel as a server interaction. It does this by sending the channel $y$
 across a channel $x$.\footnote{%
@@ -478,7 +492,7 @@ across a channel $x$.\footnote{%
 }
 The second rule, \textsc{Cont}, enables the contraction of server interactions.
 This enables us to construct a server which has multiple interactions of the
-same type across the same channel $x$. 
+same type across the same channel $x$.
 \begin{center}
   \begin{prooftree*}
     \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
@@ -567,7 +581,7 @@ The commutative conversions are shown in Figure~\ref{fig:nodcap-cut-perm}.
 \input{fig-nodcap-cut-perm}
 %
 All that remains is to give a reduction rule for a cut between a server and a
-client pool:  
+client pool:
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
   \AXC{$\seq[{ R }]{ \Delta, \tm[x]{\take[n]{A}} }$}
@@ -580,38 +594,38 @@ and client interleaving:
   \begin{scprooftree*}[0.90]
     \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A}} }$}
     \NOM{Exp}
-    \UIC{$\seq[{ \expn{x}{x_1 \cdots x_n}P }]{ \Gamma, \tm[x_1]{A} \cdots \tm[x_n]{A} }$} 
+    \UIC{$\seq[{ \expn{x}{x_1 \cdots x_n}P }]{ \Gamma, \tm[x_1]{A} \cdots \tm[x_n]{A} }$}
   \end{scprooftree*}%
   \begin{scprooftree*}[0.90]
     \AXC{$\seq[{ P }]{ \Delta, \tm[y]{\take[n]{A}} }$}
-    \AXC{$\seq[{ Q }]{ \Gamma, \tm[x_1]{A^\bot} \cdots \tm[x_n]{A^\bot} }$} 
+    \AXC{$\seq[{ Q }]{ \Gamma, \tm[x_1]{A^\bot} \cdots \tm[x_n]{A^\bot} }$}
     \NOM{Int}
     \BIC{$\seq[{ \intl{y}{x_1 \cdots x_n}(P \mid Q) }]{ \Gamma, \Delta }$}
   \end{scprooftree*}
 \end{center}
 We can compose these rules to eliminate the above cut (see
-Figure~\ref{fig:nodcap-cut-prin}). 
+Figure~\ref{fig:nodcap-cut-prin}).
 %
 \input{fig-nodcap-cut-prin}
 %
 However, this has simply moved the problem. How do we eliminate applications of
 \textsc{Exp} and \textsc{Int}? This involves two more proofs with the exact same
-structure as that of cut elimination. 
+structure as that of cut elimination.
 
 The principal eliminations and commutative conversions for \textsc{Exp} are
 shown in Figure~\ref{fig:nodcap-expn}. When we put these together, we see that
 the operation $\expn{x}{x_1 \dots x_n}P$ strips all the applications of
 $\give[1]{}$ and \textsc{Cont} from a program, and renames the channels which
 were marked as server interactions using the names $x_1 \dots x_n$.
-% 
+%
 \input{fig-nodcap-expn}
 
 The principal eliminations and commutative conversions for \textsc{Int} are
 shown in Figure~\ref{fig:nodcap-intl}. When we put these together, we see that
 the operation $\intl{x}{y_1 \dots y_n}(P \mid Q)$ joins each interaction $y_i$
 with some dual interaction from the client pool. This means that each
-interleaving reduces to $n$ cuts, where $n$ is the number of clients. 
-% 
+interleaving reduces to $n$ cuts, where $n$ is the number of clients.
+%
 \input{fig-nodcap-intl}
 
 So, where does the non-determinism come in? All the interactions in our cut are
@@ -704,7 +718,7 @@ Figure~\ref{fig:cut-ex}.
         \take{\recv{x}{z}}\mary) }]{
         \Gamma, \Delta, \Theta }$}
   \end{scprooftree}
-  \(\Downarrow_{\star}\) 
+  \(\Downarrow_{\star}\)
   \begin{scprooftree}[0.8]
     \AXC{$\seq[{ \subst{\mary}{x_2}{z} }]{ \Delta, \tm[x_2]{\plato^\bot} }$}
     \AXC{$\seq[{ \subst{\john}{x_1}{y} }]{ \Gamma, \tm[x_1]{\plato^\bot} }$}
@@ -754,7 +768,7 @@ Figure~\ref{fig:cut-ex}.
 We mentioned in Section~\ref{sec:introduction} that \nodcap\ was inspired by
 bounded linear logic~\cite[BLL]{girard1992}. BLL is a typed lambda calculus
 based on intuitionistic linear logic which guarantees that its programs are
-polynomial-time functions. 
+polynomial-time functions.
 It too uses resource-indexed exponentials. However, instead of interpreting
 these as client and server interactions, BLL interprets them as accesses to a
 memory cell, as is a common interpretation in linear logic~\cite{girard1987}.
@@ -771,7 +785,7 @@ $\pi\text{DILL}$ and CP with non-deterministic
 choice~\cite{milner1992b}. Though there are differences between the
 various referenced articles, in the context of $\pi\text{DILL}$ and CP this
 operator can essentially be summarised with the following typing rule and
-reduction semantics: 
+reduction semantics:
 \begin{center}
   \begin{prooftree*}
     \AXC{$\seq[{P}]{\Gamma}$}
@@ -788,7 +802,7 @@ reduction semantics:
 \end{center}
 This operator is derivable in \nodcap. We can derive the non-deterministic
 choice $P+Q$ for a single channel by combining the following two terms with
-\textsc{Cut}: 
+\textsc{Cut}:
 \begin{prooftree}
   \AXC{$\seq[{P}]{\Gamma, \tm[y]{A}}$}
   \SYM{\with}
@@ -839,13 +853,13 @@ choice $P+Q$ for a single channel by combining the following two terms with
     }]{\tm[x]{\give[2]{(\bot \plus A^\bot)}, \tm[w]{A}}}$}
 \end{prooftree}
 And we can derive full non-deterministic choice using the invertability of
-$\parr$. 
+$\parr$.
 
 \subsection*{Relation with recursion}
 We would like to be able to construct servers by recursion. This is not possible
-in \nodcap\ as presented here. 
+in \nodcap\ as presented here.
 A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
-structural recursion. 
+structural recursion.
 If we added these primitives to \nodcap, we would be able to construct servers
 from streams of type $\nu X.A \parr (\one \plus X)$.
 
@@ -865,7 +879,7 @@ from streams of type $\nu X.A \parr (\one \plus X)$.
   \[
     \text{Server}(A) := \forall{n}\give[n]{A}
     \quad\text{and}\quad
-    \text{Clients}(A) := \exists{n}{\take[n]{A}}. 
+    \text{Clients}(A) := \exists{n}{\take[n]{A}}.
   \]
 \end{itemize}
 
@@ -875,4 +889,5 @@ from streams of type $\nu X.A \parr (\one \plus X)$.
 \end{document}
 %%% Local Variables:
 %%% TeX-master: "main"
+%%% fill-column: 80
 %%% End:
