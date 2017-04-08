@@ -1,4 +1,4 @@
-\begin{figure*}
+\begin{figure*}[h]
   \centering
   \(
     \text{Type} \; \tm{A} , \tm{B} ::=
@@ -29,7 +29,7 @@
       \BIC{$\seq[{ x[y].(P \mid Q) }]{ \Gamma , \Delta , \tm[x]{A \tens B} }$}
     \end{prooftree*}
     \begin{prooftree*}
-      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm{x}{B} }$}
+      \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B} }$}
       \SYM{\parr}
       \UIC{$\seq[ x(y).P ]{ \Gamma , \tm[x]{A \parr B} }$}
     \end{prooftree*}
