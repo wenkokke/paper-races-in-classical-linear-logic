@@ -2,9 +2,11 @@ open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺ using (ℕ⁺; suc; _+_)
 open import Data.List as L using (List; []; _∷_; _++_)
 open import Data.List.Any as LA using (Any; here; there)
+open import Data.Product using (_,_)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
+open import Logic.Context
 open import nodcap.Base
 
 module nodcap.Typing where
@@ -102,6 +104,16 @@ data ⊢_ : Context → Set where
        Γ ∼[ bag ] Δ → ⊢ Γ →
        --------------------
        ⊢ Δ
+
+cutIn : {Γ Δ : Context} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
+
+  ⊢ Γ → ⊢ Δ →
+  ----------------
+  ⊢ Γ - i ++ Δ - j
+
+cutIn {Γ} {Δ} {A} i j P Q with ∈→++ i | ∈→++ j
+... | (Γ₁ , Γ₂ , P.refl , p) | (Δ₁ , Δ₂ , P.refl , q) rewrite p | q
+    = cut (exch (fwd [] Γ₁) P) (exch (fwd [] Δ₁) Q)
 
 -- -}
 -- -}

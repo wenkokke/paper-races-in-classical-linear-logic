@@ -196,21 +196,20 @@ del-[] : {x y : A} (i : y ∈ x ∷ []) → (x ∷ []) - i ≡ []
 del-[] (here px) = P.refl
 del-[] (there ())
 
-private
-  -- Given a proof of membership x ∈ xs, we can be sure that
-  -- there are two lists xs₁ and xs₂ s.t.
-  --
-  --   (1) xs = xs₁ ++ x ∷ xs₂; and
-  --   (2) xs - i = xs₁ ++ xs₂.
-  --
-  -- That is to say, that we can break the list xs into a prefix,
-  -- the element x, and a suffix, and that if we delete that occurrence
-  -- of x, we are left with the prefix and the suffix.
-  lem : {xs : List A} {x : A} (i : x ∈ xs) →
-        ∃₂ λ xs₁ xs₂ → xs ≡ xs₁ ++ x ∷ xs₂ × xs - i ≡ xs₁ ++ xs₂
-  lem {x ∷ xs} (here P.refl) = ([] , xs , P.refl , P.refl)
-  lem {x ∷ xs} (there i) with lem {xs} i
-  ... | (xs₁ , xs₂ , p₁ , p₂) = (x ∷ xs₁ , xs₂ , P.cong (x ∷_) p₁ , P.cong (x ∷_) p₂)
+-- Given a proof of membership x ∈ xs, we can be sure that
+-- there are two lists xs₁ and xs₂ s.t.
+--
+--   (1) xs = xs₁ ++ x ∷ xs₂; and
+--   (2) xs - i = xs₁ ++ xs₂.
+--
+-- That is to say, that we can break the list xs into a prefix,
+-- the element x, and a suffix, and that if we delete that occurrence
+-- of x, we are left with the prefix and the suffix.
+∈→++ : {xs : List A} {x : A} (i : x ∈ xs) →
+      ∃₂ λ xs₁ xs₂ → xs ≡ xs₁ ++ x ∷ xs₂ × xs - i ≡ xs₁ ++ xs₂
+∈→++ {x ∷ xs} (here P.refl) = ([] , xs , P.refl , P.refl)
+∈→++ {x ∷ xs} (there i) with ∈→++ {xs} i
+... | (xs₁ , xs₂ , p₁ , p₂) = (x ∷ xs₁ , xs₂ , P.cong (x ∷_) p₁ , P.cong (x ∷_) p₂)
 
 
 -- Given two lists which are bag-equal, we can prove that if we delete
@@ -219,9 +218,9 @@ del-to : {xs ys : List A} {x : A} →
          (eq : xs ∼[ bag ] ys) (i : x ∈ xs) →
          xs - i ∼[ bag ] ys - (to eq ⟨$⟩ i)
 del-to {xs} {ys} {x} eq i
-  with lem {xs} i
+  with ∈→++ {xs} i
 ... | (xs₁ , xs₂ , p₁ , p₂) rewrite p₁ | p₂
-  with lem {ys} (to eq ⟨$⟩ i)
+  with ∈→++ {ys} (to eq ⟨$⟩ i)
 ... | (ys₁ , ys₂ , q₁ , q₂) rewrite q₁ | q₂
     = B.drop-cons (fwd [] ys₁ ∘ eq ∘ sym (fwd [] xs₁))
 
@@ -230,9 +229,9 @@ del-from : {xs ys : List A} {x : A} →
            (eq : ys ∼[ bag ] xs) (i : x ∈ xs) →
            ys - (from eq ⟨$⟩ i) ∼[ bag ] xs - i
 del-from {xs} {ys} {x} eq i
-  with lem {xs} i
+  with ∈→++ {xs} i
 ... | (xs₁ , xs₂ , p₁ , p₂) rewrite p₁ | p₂
-  with lem {ys} (from eq ⟨$⟩ i)
+  with ∈→++ {ys} (from eq ⟨$⟩ i)
 ... | (ys₁ , ys₂ , q₁ , q₂) rewrite q₁ | q₂
     = B.drop-cons (fwd [] xs₁ ∘ eq ∘ sym (fwd [] ys₁))
 

@@ -7,6 +7,7 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
 
 open import nodcap.Base
+open import nodcap.Typing as FF using (⊢_)
 
 
 module nodcap.NF.Typing where
@@ -93,6 +94,21 @@ data ⊢ⁿᶠ_ : Context → Set where
        Γ ∼[ bag ] Δ → ⊢ⁿᶠ Γ →
        --------------------
        ⊢ⁿᶠ Δ
+
+fromNF : {Γ : Context} → ⊢ⁿᶠ Γ → ⊢ Γ
+fromNF (send x y) = FF.send (fromNF x) (fromNF y)
+fromNF (recv x)   = FF.recv (fromNF x)
+fromNF (sel₁ x)   = FF.sel₁ (fromNF x)
+fromNF (sel₂ x)   = FF.sel₂ (fromNF x)
+fromNF (case x y) = FF.case (fromNF x) (fromNF y)
+fromNF  halt      = FF.halt
+fromNF (wait x)   = FF.wait (fromNF x)
+fromNF  loop      = FF.loop
+fromNF (mk?₁ x)   = FF.mk?₁ (fromNF x)
+fromNF (mk!₁ x)   = FF.mk!₁ (fromNF x)
+fromNF (cont x)   = FF.cont (fromNF x)
+fromNF (pool x y) = FF.pool (fromNF x) (fromNF y)
+fromNF (exch x y) = FF.exch x (fromNF y)
 
 -- -}
 -- -}
