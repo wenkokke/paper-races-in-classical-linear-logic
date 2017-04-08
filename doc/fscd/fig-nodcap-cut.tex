@@ -1,5 +1,33 @@
 \begin{figure*}[h]
   \centering
+  \paragraph*{Principal elimination}
+  \begin{tabular}{lr}
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
+      \AXC{$\seq[{ R }]{ \Delta, \tm[x]{\take[n]{A}} }$}
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{x}(P \mid R) }]{ \Gamma, \Delta }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{\give[n]{A^\bot}}}$}
+      \NOM{Exp}
+      \UIC{$\seq
+        [{ \expn{x}{x_1 \cdots x_n}P }]
+        { \Gamma, \tm[x_1]{A^\bot}\cdots\tm[x_n]{A^\bot} }$}
+      \AXC{$\seq[{ R }]{ \Delta, \tm[x]{\take[n]{A}} }$} 
+      \NOM{Int}
+      \BIC{$\seq
+        [{ \intl{x}{\pi(x_1) \cdots \pi(x_n)}(\expn{x}{x_1 \cdots x_n}P \mid R) }]
+        { \Gamma, \Delta }$}
+    \end{prooftree*}
+    }
+  \end{tabular}
+
+  \paragraph*{Commutative conversions}
   \begin{tabular}{lr}
     \begin{prooftree*}
       \AXC{$
@@ -152,8 +180,8 @@
     }
   \end{tabular}
 
-  \caption{Commuting conversions for \textsc{Cut} in \nodcap}
-  \label{fig:nodcap-cut-perm}
+  \caption{\textsc{Cut} elimination for \nodcap}
+  \label{fig:nodcap-cut}
 \end{figure*}
 %%% Local Variables:
 %%% TeX-master: "main"
