@@ -607,9 +607,9 @@ We need to
   give \emph{one} new principal cut reduction, to show that we can reduce a cut
   on a channel of type $\give[n]{A}$/$\take[n]{A}$ to a number of smaller cuts.
 \end{enumerate}
-The commutative conversions are shown in Figure~\ref{fig:nodcap-cut-perm}.
+The commutative conversions are shown in Figure~\ref{fig:nodcap-cut}.
 %
-\input{fig-nodcap-cut-perm}
+\input{fig-nodcap-cut}
 %
 All that remains is to give a reduction rule for a cut between a server and a
 client pool:
@@ -635,9 +635,7 @@ and client interleaving:
   \end{scprooftree*}
 \end{center}
 We can compose these rules to eliminate the above cut (see
-Figure~\ref{fig:nodcap-cut-prin}).
-%
-\input{fig-nodcap-cut-prin}
+Figure~\ref{fig:nodcap-cut}).
 %
 However, this has simply moved the problem. How do we eliminate applications of
 \textsc{Exp} and \textsc{Int}? This involves two more proofs with the exact same
@@ -668,149 +666,10 @@ reduction (see Figure~\ref{fig:nodcap-cut-prin}).
 Let us go back to our example. We can now assign a type to this program, and
 consider its reduction behaviour as a result of cut elimination. See
 Figure~\ref{fig:cut-ex}.
+%
+\input{fig-cut-ex}
 
-\begin{figure*}
-  \centering
-  \begin{scprooftree}[0.8]
-    \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
-    \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
-    \NOM{Pool}
-    \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
-        \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
-    \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
-    \SYM{\give[1]{}}
-    \UIC{$\seq[{ \give{\send{x'}{\nocake}}\ptis }]{
-        \Theta, \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
-    \SYM{\give[1]{}}
-    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x'}{\nocake}}\ptis }]{
-        \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
-    \NOM{Cont}
-    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
-        \Theta, \tm[x]{\give[2]{\plato}} }$}
-    \NOM{Cut}
-    \BIC{$\seq[{ \cut{x}(
-        \take{\recv{x}{y}}\john \mid
-        \take{\recv{x}{z}}\mary \mid
-        \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis) }]{
-        \Gamma, \Delta, \Theta }$}
-  \end{scprooftree}
-  \(\Downarrow\)
-  \begin{scprooftree}[0.8]
-    \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
-    \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
-    \NOM{Pool}
-    \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
-        \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
-    \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
-    \SYM{\give[1]{}}
-    \UIC{$\seq[{ \give{\send{x'}{\nocake}}\ptis }]{
-        \Theta, \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
-    \SYM{\give[1]{}}
-    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x'}{\nocake}}\ptis }]{
-        \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
-    \NOM{Cont}
-    \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
-        \Theta, \tm[x]{\give[2]{\plato}} }$}
-    \NOM{Exp}
-    \UIC{$\seq[{ \expn{x}{x_1,x_2}\give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
-        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
-    \NOM{Int}
-    \BIC{$\seq[{ \intl{x}{\pi(x_1),\pi(x_2)}(
-        \expn{x}{x_1,x_2}\give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis \mid
-        \take{\recv{x}{y}}\john \mid
-        \take{\recv{x}{z}}\mary) }]{
-        \Gamma, \Delta, \Theta }$}
-  \end{scprooftree}
-  \(\Downarrow_{\star}\)
-  \begin{scprooftree}[0.8]
-    \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
-    \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
-    \SYM{\take[1]{}}
-    \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
-    \NOM{Pool}
-    \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
-        \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
-    \AXC{$\seq[{ \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} }]{
-        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
-    \NOM{Int}
-    \BIC{$\seq[{ \intl{x}{\pi(x_1),\pi(x_2)}(
-        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} \mid
-        \take{\recv{x}{y}}\john \mid
-        \take{\recv{x}{z}}\mary) }]{
-        \Gamma, \Delta, \Theta }$}
-  \end{scprooftree}
-  \(\Downarrow_{\star}\)
-  \begin{scprooftree}[0.8]
-    \AXC{$\seq[{ \subst{\mary}{x_2}{z} }]{ \Delta, \tm[x_2]{\plato^\bot} }$}
-    \AXC{$\seq[{ \subst{\john}{x_1}{y} }]{ \Gamma, \tm[x_1]{\plato^\bot} }$}
-    \AXC{$\seq[{ \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} }]{
-        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
-    \NOM{Cut}
-    \BIC{$\seq[{ \cut{x_1}(
-        \subst{\john}{x_1}{y} \mid
-        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake}) }]{
-      \Gamma, \Theta, \tm[x_2]{\plato} }$}
-    \NOM{Cut}
-    \BIC{$\seq[{
-        \cut{x_2}(
-        \subst{\mary}{x_2}{z} \mid
-        \cut{x_1}(
-        \subst{\john}{x_1}{y} \mid
-        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake})
-        )) }]{ \Gamma, \Delta, \Theta }$}
-  \end{scprooftree}
-  or
-  \begin{scprooftree}[0.8]
-    \AXC{$\seq[{ \subst{\mary}{x_1}{z} }]{ \Delta, \tm[x_2]{\plato^\bot} }$}
-    \AXC{$\seq[{ \subst{\john}{x_2}{y} }]{ \Gamma, \tm[x_1]{\plato^\bot} }$}
-    \AXC{$\seq[{ \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake} }]{
-        \Theta, \tm[x_1]{\plato}, \tm[x_2]{\plato} }$}
-    \NOM{Cut}
-    \BIC{$\seq[{ \cut{x_2}(
-        \subst{\john}{x_2}{y} \mid
-        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake}) }]{
-      \Gamma, \Theta, \tm[x_1]{\plato} }$}
-    \NOM{Cut}
-    \BIC{$\seq[{
-        \cut{x_1}(
-        \subst{\mary}{x_1}{z} \mid
-        \cut{x_2}(
-        \subst{\john}{x_2}{y} \mid
-        \subst{\subst{\ptis}{x_1}{\cake}}{x_2}{\nocake})
-        )) }]{ \Gamma, \Delta, \Theta }$}
-  \end{scprooftree}
-  \caption{\textsc{Cut} reduction for an example of a race in \nodcap}
-  \label{fig:cut-ex}
-\end{figure*}
-
-\section{Related and Future Work}
-
-\subsection*{Relation with bounded linear logic}
-We mentioned in Section~\ref{sec:introduction} that \nodcap was inspired by
-bounded linear logic~\cite[BLL]{girard1992}. BLL is a typed lambda calculus
-based on intuitionistic linear logic which guarantees that its programs are
-polynomial-time functions.
-It too uses resource-indexed exponentials. However, instead of interpreting
-these as client and server interactions, BLL interprets them as accesses to a
-memory cell, as is a common interpretation in linear logic~\cite{girard1987}.
-There are some superficial differences between BLL and \nodcap, e.g.\ the former
-is intuitionistic while the latter is classical, but the main difference between
-the two lies in storage versus pooling. In BLL, $\take[n]{A}$ denotes a memory
-cell which can be accessed $n$ times, whereas in \nodcap, $\take[n]{A}$
-represents a pool of $n$ different values, computed independently by $n$
-different processes.
-
-\subsection*{Relation with non-deterministic choice}
+\subsection*{\nodcap and non-deterministic choice}
 Recent work by~\cite{caires2014,caires2017,atkey2016} has seen the extension of
 $\pi\text{DILL}$ and CP with non-deterministic
 choice~\cite{milner1992b}. Though there are differences between the
@@ -885,6 +744,24 @@ choice $P+Q$ for a single channel by combining the following two terms with
 \end{prooftree}
 And we can derive full non-deterministic choice using the invertability of
 $\parr$.
+
+
+\section{Related and Future Work}
+
+\subsection*{Relation with bounded linear logic}
+We mentioned in Section~\ref{sec:introduction} that \nodcap was inspired by
+bounded linear logic~\cite[BLL]{girard1992}. BLL is a typed lambda calculus
+based on intuitionistic linear logic which guarantees that its programs are
+polynomial-time functions.
+It too uses resource-indexed exponentials. However, instead of interpreting
+these as client and server interactions, BLL interprets them as accesses to a
+memory cell, as is a common interpretation in linear logic~\cite{girard1987}.
+There are some superficial differences between BLL and \nodcap, e.g.\ the former
+is intuitionistic while the latter is classical, but the main difference between
+the two lies in storage versus pooling. In BLL, $\take[n]{A}$ denotes a memory
+cell which can be accessed $n$ times, whereas in \nodcap, $\take[n]{A}$
+represents a pool of $n$ different values, computed independently by $n$
+different processes.
 
 \subsection*{Relation with recursion}
 We would like to be able to construct servers by recursion. This is not possible
