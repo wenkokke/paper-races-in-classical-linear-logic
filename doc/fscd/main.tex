@@ -207,6 +207,25 @@ using the following grammar:
     &\qquad&\tm{\top}      &&\text{unit for \with}
   \end{aligned}
 \]
+We will discuss the interpretations of the connectives below, together with the
+typing rules which introduce then.
+
+Environments associate channels with types. They are defined as follows:
+\[
+  \blue{\Gamma},\blue{\Delta},\blue{\Theta} ::=
+  \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n}
+\]
+Note that each name in an environment should be unique. This means that $x_i
+\neq x_j$ wherever $i \neq j$, and that environments $\Gamma$ and $\Delta$ can
+only be combined as $\Gamma, \Delta$ if $\text{fv}(\Gamma) \cap
+\text{fv}(\Delta) = \varnothing$.
+
+Judgements indicate that a process $P$ communicates along each channels $x_i$
+following the communication protocol specified by $A_i$. They are defined as
+follows:
+\[
+  \seq[{ P }]{ \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n} }
+\]
 The multiplicatives ($\tens$, $\parr$) deal with dependence and independence.
 A channel of type $A \tens B$ represents a pair of channels which communicate
 with two \emph{independent} processes---that is to say, two processes who share
@@ -298,24 +317,7 @@ preventing circular dependencies. Each type $A$ has a dual, defined as follows:
     \tm{\top^\bot}          = \tm{\nil}
   \end{array}
 \]
-Environments associate channels with types. They are defined as follows:
-\[
-  \blue{\Gamma},\blue{\Delta},\blue{\Theta} ::=
-  \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n}
-\]
-Note that each name in an environment should be unique. This means that $x_i
-\neq x_j$ wherever $i \neq j$, and that environments $\Gamma$ and $\Delta$ can
-only be combined as $\Gamma, \Delta$ if $\text{fv}(\Gamma) \cap
-\text{fv}(\Delta) = \varnothing$.
-
-Judgements indicate that a process $P$ communicates along each channels $x_i$
-following the communication protocol specified by $A_i$. They are defined as
-follows:
-\[
-  \seq[{ P }]{ \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n} }
-\]
-The rules for assigning session types to processes in RCP are shown in
-Figure~\ref{fig:cp}.
+All typing rules for RCP are shown in Figure~\ref{fig:cp}.
 %
 \input{fig-cp}
 
@@ -413,7 +415,6 @@ A version of cut reduction which is similarily consistent with $\pi$-calculus
 semantics can be obtained from the below proof by changing only selecting cuts
 which are nested under applications of \textsc{Cut}, \textsc{Cont} and
 \textsc{Pool}.
-
 %
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
