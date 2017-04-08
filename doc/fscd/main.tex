@@ -1,7 +1,5 @@
 \documentclass[a4paper,UKenglish]{lipics-v2016}
-\usepackage{microtype}%
 \bibliographystyle{plainurl}%
-\usepackage{xspace}%
 % Author macros::begin
 \title{Give or Take: Races in Classical Linear Logic}%
 \titlerunning{Give or Take}%
@@ -42,32 +40,12 @@
 
 \maketitle
 
-% \begin{abstract}
-%   The $\pi$-calculus is a great foundation for concurrent programming languages.
-%   With only a handful of constructions, it manages to model communicating
-%   processes faithfully---for instance, $\pi$-calculus programs can have races
-%   and deadlocks.
-%   CP is a session type system for the $\pi$-calculus, which has strong ties to
-%   classical linear logic. Programs typed by CP are guaranteed to be race and
-%   deadlock free.
-%   Under the slogan that ``well-typed programs cannot `go wrong'\!~'', it makes
-%   sense to exclude deadlocks, as one rarely \emph{wants} a program to deadlock.
-%   Races, on the other hand, may be the intended behaviour of a program---think
-%   of online auctions, vendors, or any other scenario where several processes
-%   compete for a limited resource.
-
-%   In this paper, we introduce \nodcap\ (nodcap), an extension of CP inspired by
-%   bounded linear logic, which allows non-determinism, and as
-%   such permits programs with races, without losing its strong ties to classical
-%   linear logic or the guarantee not to deadlock.
-% \end{abstract}
-
 \begin{abstract}
   Logically-founded process calculi, such as CP, provide a basis for
   deadlock-free concurrent programming, but at the cost of excluding
-  non-determinism and races.  We introduce \ceepeeunderscoreendee, which extends
-  CP with a novel account of non-determinism.  Our approach draws on bounded
-  linear logic to provide a strongly-typed account of standard process calculus
+  non-determinism and races.  We introduce \nodcap (nodcap), which extends CP
+  with a novel account of non-determinism.  Our approach draws on bounded linear
+  logic to provide a strongly-typed account of standard process calculus
   expressions of non-determinism.  We show that our extension is expressive
   enough to capture many uses of non-determinism in untyped calculi, such as
   non-deterministic choice, while preserving CP's metatheoretic properties,
@@ -168,7 +146,7 @@ relevant variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
 Then, we introduce the type system \nodcap.
 Following this, we and extend the proof of cut elimination for CP to cover
 \nodcap.
-Last, we discuss the types of concurrency that \nodcap\ allows us to capture.
+Last, we discuss the types of concurrency that \nodcap allows us to capture.
 
 The type system and cut elimination procedure presented in the remainder of this
 paper have been formalised using Agda~\cite{norell2009}, and the code is
@@ -474,7 +452,7 @@ server.
 In the following two subsections, we will look at the two sides of the
 \textsc{Cut} in our incomplete proof, describe the rules we add for `give' and
 `take', and show how they allow us to complete our proof.
-The complete set of rules added in \nodcap\ can be found in
+The complete set of rules added in \nodcap can be found in
 Figure~\ref{fig:nodcap}.
 
 
@@ -765,7 +743,7 @@ Figure~\ref{fig:cut-ex}.
 \section{Related and Future Work}
 
 \subsection*{Relation with bounded linear logic}
-We mentioned in Section~\ref{sec:introduction} that \nodcap\ was inspired by
+We mentioned in Section~\ref{sec:introduction} that \nodcap was inspired by
 bounded linear logic~\cite[BLL]{girard1992}. BLL is a typed lambda calculus
 based on intuitionistic linear logic which guarantees that its programs are
 polynomial-time functions.
@@ -857,7 +835,7 @@ $\parr$.
 
 \subsection*{Relation with recursion}
 We would like to be able to construct servers by recursion. This is not possible
-in \nodcap\ as presented here.
+in \nodcap as presented here.
 A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
 structural recursion.
 If we added these primitives to \nodcap, we would be able to construct servers
