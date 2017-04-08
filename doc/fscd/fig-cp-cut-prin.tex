@@ -1,0 +1,79 @@
+\begin{figure*}[h]
+  \begin{tabular}{lr}
+    \multicolumn{2}{l}{% 
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma }$}
+      \SYM{\bot}
+      \UIC{$\seq[{ \wait{x}P }]{ \Gamma, \tm[x]{\bot} }$}
+      \AXC{}
+      \SYM{\one}
+      \UIC{$\seq[{ \halt{x} }]{ \tm[x]{\one} }$}
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{x}(\halt{x} \mid \wait{x}P) }]{ \Gamma }$}
+    \end{prooftree*}
+    $\Longrightarrow$
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A^\bot}, \tm[y]{B^\bot} }$}
+      \SYM{\parr}
+      \UIC{$\seq[{ \recv{y}{x}P }]{ \Gamma, \tm[y]{A^\bot \parr B^\bot} }$}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{A} }$}
+      \AXC{$\seq[{ R }]{ \Theta, \tm[y]{B} }$}
+      \SYM{\tens}
+      \BIC{$\seq[{ \send{y}{x}(Q \mid R) }]{ \Delta, \Theta, \tm[y]{A \tens B} }$}
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{y}(\recv{y}{x}P \mid \send{y}{x}(Q \mid R)) }]{ \Gamma, \Delta, \Theta }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A^\bot}, \tm[y]{B^\bot} }$}
+      \AXC{$\seq[{ Q }]{ \Delta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{x}(P \mid Q) }]{ \Gamma, \Delta, \tm[y]{B^\bot} }$}
+      \AXC{$\seq[{ R }]{ \Theta, \tm[y]{B} }$}      
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{y}(\cut{x}(P \mid Q) \mid R)}]{ \Gamma, \Delta, \Theta }$}
+    \end{prooftree*}
+    }
+    \\\\
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A^\bot} }$}
+      \AXC{$\seq[{ Q }]{ \Gamma, \tm[x]{B^\bot} }$}
+      \SYM{\with}
+      \BIC{$\seq[{ \case{x}{P}{Q} }]{ \Gamma, \tm[x]{A^\bot \with B^\bot} }$}
+      \AXC{$\seq[{ R }]{ \Delta, \tm[x]{A} }$}
+      \SYM{\plus_1}
+      \UIC{$\seq[{ \inl{x}R }]{ \Delta, \tm[x]{A \plus B} }$}
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{x}(\case{x}{P}{Q} \mid \inl{x}R) }]{ \Gamma, \Delta }$}
+    \end{prooftree*}
+    &
+      $\Longrightarrow$
+    \\\\
+    \multicolumn{2}{r}{%
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A^\bot} }$}
+      \AXC{$\seq[{ R }]{ \Delta, \tm[x]{A} }$}
+      \NOM{Cut}
+      \BIC{$\seq[{ \cut{x}(P \mid R) }]{ \Gamma, \Delta }$} 
+    \end{prooftree*}
+    }
+    \\\\
+    \multicolumn{2}{c}{%
+    (rule for $\with$ and $\plus_2$ as above)
+    }
+  \end{tabular}
+  
+  \caption{\textsc{Cut} elimination for RCP}
+  \label{fig:cp-cut-prin}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
