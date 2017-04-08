@@ -215,25 +215,71 @@ A channel of type $A \parr B$ represents a pair of channels which are used
 within a single process. This means that their interactions can depend on one
 another---i.e.\ the interaction of type $B$ could depend on the result of the
 interaction of type $A$, or vice versa.
+While the rules for $\tens$ and $\parr$ introduce input and output operations,
+these are inessential---the essential distiction lies in the two independent
+processes in $\tens$ as opposed to the single process in $\parr$. 
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+    \SYM{\tens}
+    \BIC{$\seq[{ \send{x}{y}(P \mid Q) }]{ \Gamma , \Delta , \tm[x]{A \tens B} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B} }$}
+    \SYM{\parr}
+    \UIC{$\seq[ \recv{x}{y}P ]{ \Gamma , \tm[x]{A \parr B} }$}
+  \end{prooftree*}
+\end{center}
 The multiplicative units ($\one$, $\bot$) follow the same pattern.
 A process with a channel of type $\one$ has no other channels, and therefore can
 do nothing.
-A channel of type $\bot$ communicates with a process which is not further
-restricted.
-
+A process with a channel of type $\bot$ is not further restricted.
+\begin{center}
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{\one}
+    \UIC{$\seq[{ x[].0 }]{ \tm[x]{\one} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[P]{ \Gamma }$}
+    \SYM{\bot}
+    \UIC{$\seq[{x().P}]{ \Gamma , \tm[x]{\bot} }$}
+  \end{prooftree*} 
+\end{center}
 The additives ($\plus$, $\with$) deal with choice---making choices and offering
 them.
 A process communicating over a channel of type $A \plus B$ can select either an
 interaction of type $A$ or one of type $B$.
 A process communicating over a channel of type $A \with B$ has to be prepared to
 offer an interaction either of type $A$ or of type $B$.
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+    \SYM{\plus_1}
+    \UIC{$\seq[{ \inl{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+    \SYM{\with}
+    \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
+  \end{prooftree*}
+\end{center}
 The additive units ($\nil$, $\top$) follow the same pattern, except with nullary
-instead of binary choices. That is to say, along a channel of type $\nil$, one
-has to select one of \emph{zero} options---which is, of course, impossible.
-Therefore, when communicating over a channel of type $\top$, one has to be
-prepared to offer any of \emph{zero} different interactions---which is, of
-course, trivial.
-
+instead of binary choices. That is to say, along a channel of type $\nil$, a
+process has to select one of \emph{zero} options---this is, of course,
+impossible. As such, there is no rule for $\nil$.
+When communicating over a channel of type $\top$, a process has to be prepared
+to offer any of \emph{zero} different interactions---which is, of course,
+trivial.
+\begin{center}
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{\top}
+    \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
+  \end{prooftree*} 
+\end{center}
 Duality plays a crucial role in linear logic and session types. It ensures that
 a process offering a choice on one end of a channel is matched with a process
 which accepts a choice on the other. It is also crucial to deadlock freedom, as
