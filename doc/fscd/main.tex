@@ -311,12 +311,14 @@ the other receives cake.\footnote{%
 }
 
 Under the correspondence with linear logic, communication in RCP is identified
-with the elimination of the \textsc{Cut} rule. We can show that any application
-of the \textsc{Cut} rule can be eliminated.
+with the elimination of the \textsc{Cut} rule. We can show that any term can be
+systematically rewritten into a normal form in which all cuts are eliminated. We
+present a proof of this here for reference, as we will extend it to cover
+\nodcap in later sections:
 \begin{quote}
   \textit{Proof sketch.}
-  Given a program with one or more cuts, we pick any such application $\cut{x}(P
-  \mid Q)$ such that $P$ and $Q$ are free from cuts.
+  Given a program with one or more cuts, we select any such application $\cut{x}(P
+  \mid Q)$ such that $P$ and $Q$ are in normal form.
   There are three cases:
   \begin{enumerate}
   \item
@@ -354,13 +356,18 @@ of the \textsc{Cut} rule can be eliminated.
   We iteratively apply this procedure until there are no more applications of
   \textsc{Cut} left in the program.
 \end{quote}
-The proof for cut elimination above is entirely satisfactory from a logical
-perspective, but deviates slightly from the proof given for
-CP~\cite{wadler2012}, in that it reduces cuts under an arbitrary prefix.
-To recover the version described for CP, restrict the selection of cuts to
-reduce to those under a prefix of cuts only, and add two commutative conversions
-which commute two cuts. This changes definition of normal form ``free from
-cuts'' to ``free from cuts at the top-level''.
+The proof above deviates from the proof given for CP~\cite{wadler2012}, which only
+reduces top-level cuts in order to be consistent with the operational semantics
+of the $\pi$-calculus.
+%
+We present the full version here in order to demonstrate that \nodcap enjoys
+full cut elimination as well as the restricted version. 
+%
+A version of cut reduction which is similarily consistent with $\pi$-calculus
+semantics can be obtained from the below proof by changing only selecting cuts
+which are nested under applications of \textsc{Cut}, \textsc{Cont} and
+\textsc{Pool}.
+
 %
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
