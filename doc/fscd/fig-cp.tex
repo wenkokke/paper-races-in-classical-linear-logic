@@ -1,11 +1,14 @@
 \begin{figure*}[h]
   \centering
-  \(
-    \text{Type} \; \tm{A} , \tm{B} ::=
-    \tm{\bot} \mid \tm{\one} \mid \tm{\top} \mid \tm{\nil} \mid
-    \tm{A \parr B} \mid \tm{A \tens B} \mid
-    \tm{A \with B} \mid \tm{A \plus B}
-  \)
+
+  % JGM: the syntax is already given in the text
+
+  % \(
+  %   \text{Type} \; \tm{A} , \tm{B} ::=
+  %   \tm{\bot} \mid \tm{\one} \mid \tm{\top} \mid \tm{\nil} \mid
+  %   \tm{A \parr B} \mid \tm{A \tens B} \mid
+  %   \tm{A \with B} \mid \tm{A \plus B}
+  % \)
 
   \begin{center}
     \begin{prooftree*}
@@ -47,14 +50,14 @@
       \UIC{$\seq[{ \inr{x}{P} }]{ \Gamma , \tm[x]{A \plus B} }$}
     \end{prooftree*}
   \end{center}
-  
+
   \begin{prooftree}
     \AXC{$\seq[ P ]{ \Gamma , \tm[x]{A} }$}
     \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
     \SYM{\with}
     \BIC{$\seq[ \case{x}{P}{Q} ]{ \Gamma , \Delta , \tm[x]{A \with B} }$}
   \end{prooftree}
-  
+
   \begin{center}
     \begin{prooftree*}
       \AXC{}

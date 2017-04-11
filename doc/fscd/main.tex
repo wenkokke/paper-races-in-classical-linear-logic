@@ -241,12 +241,9 @@ Note that each name in an environment should be unique. This means that $x_i
 only be combined as $\Gamma, \Delta$ if $\text{fv}(\Gamma) \cap
 \text{fv}(\Delta) = \varnothing$.
 
-Judgements indicate that a process $P$ communicates along each channels $x_i$
-following the communication protocol specified by $A_i$. They are defined as
-follows:
-\[
-  \seq[{ P }]{ \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n} }
-\]
+Judgements $\seq[{ P }]{ \tm[x_1]{A_1},\tm[x_2]{A_2},\dots,\tm[x_n]{A_n} }$
+denote that process $P$ communicates along channels $x_i$ following the
+communication protocol specified by $A_i$.
 The multiplicatives ($\tens$, $\parr$) deal with dependence and independence.
 A channel of type $A \tens B$ represents a pair of channels which communicate
 with two \emph{independent} processes---that is to say, two processes who share
@@ -257,7 +254,7 @@ another---i.e.\ the interaction of type $B$ could depend on the result of the
 interaction of type $A$, or vice versa.
 While the rules for $\tens$ and $\parr$ introduce input and output operations,
 these are inessential---the essential distiction lies in the two independent
-processes in $\tens$ as opposed to the single process in $\parr$. 
+processes in $\tens$ as opposed to the single process in $\parr$.
 \begin{center}
   \begin{prooftree*}
     \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
@@ -285,7 +282,7 @@ A process with a channel of type $\bot$ is not further restricted.
     \AXC{$\seq[P]{ \Gamma }$}
     \SYM{\bot}
     \UIC{$\seq[{x().P}]{ \Gamma , \tm[x]{\bot} }$}
-  \end{prooftree*} 
+  \end{prooftree*}
 \end{center}
 The additives ($\plus$, $\with$) deal with choice---making choices and offering
 them.
@@ -318,7 +315,7 @@ trivial.
     \AXC{}
     \SYM{\top}
     \UIC{$\seq[ \case{x}{}{} ]{ \tm[x]{\top} }$}
-  \end{prooftree*} 
+  \end{prooftree*}
 \end{center}
 Duality plays a crucial role in linear logic and session types. It ensures that
 a process offering a choice on one end of a channel is matched with a process
@@ -338,12 +335,29 @@ preventing circular dependencies. Each type $A$ has a dual, defined as follows:
     \tm{\top^\bot}          = \tm{\nil}
   \end{array}
 \]
-All typing rules for RCP are shown in Figure~\ref{fig:cp}.
-%
-\input{fig-cp}
+Duality appears in the typing rules for two CP forms.  Forwarding $\link x y$
+connects two channels with dual endpoints, while composition $\cut x (P \mid Q)$
+requires that $P$ and $Q$ use $x$ with dual expectations.
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\vphantom{yA^\bot}$}
+    \NOM{Ax}
+    \UIC{$\seq[{ \link{x}{y} }]{ \tm[x]{A}, \tm[y]{A^\bot} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma, \tm[x]{A} }$}
+    \AXC{$\seq[{ Q }]{ \Delta, \tm[y]{A^\bot} }$}
+    \NOM{Cut}
+    \BIC{$\seq[{ \cut{x}(P \mid Q) }]{ \Gamma, \Delta }$}
+  \end{prooftree*}
+\end{center}
+
+% All typing rules for RCP are shown in Figure~\ref{fig:cp}.
+% %
+% \input{fig-cp}
 
 \noindent
-Let's briefly go back to our example of a deadlock:
+We return to our example of a deadlock:
 \[\exampleprogramb\]
 As CP and RCP are deadlock free, it should be obvious that there is no valid type
 assignment for this program.
@@ -425,17 +439,27 @@ present a proof of this here for reference, as we will extend it to cover
   We iteratively apply this procedure until there are no more applications of
   \textsc{Cut} left in the program.
 \end{quote}
-The proof above deviates from the proof given for CP~\cite{wadler2012}, which only
-reduces top-level cuts in order to be consistent with the operational semantics
-of the $\pi$-calculus.
+The proof above deviates from the proof given for CP~\cite{wadler2012}, which
+only reduces top-level cuts in order to be consistent with most operational
+accounts of the $\pi$-calculus.
 %
 We present the full version here in order to demonstrate that \nodcap enjoys
-full cut elimination as well as the restricted version. 
+full cut elimination as well as the restricted version.
 %
-A version of cut reduction which is similarily consistent with $\pi$-calculus
-semantics can be obtained from the below proof by changing only selecting cuts
-which are nested under applications of \textsc{Cut}, \textsc{Cont} and
-\textsc{Pool}.
+We recover a version consistent with operational accounts of $\pi$-calculus by
+only selecting cuts nested under other applications of \textsc{Cut} and
+introducing structural congruences reflecting the associativity and
+commutativity of cut:
+\begin{align*}
+  \red{\cut x (P \mid Q)} &\equiv \red{\cut x (Q \mid P)} \\
+  \red{\cut x (P \mid \cut y (Q \mid R))} &\equiv \red{\cut y (Q \mid \cut x (P \mid R))} && \text{if $x \not\in \text{fv}(Q)$} \\
+  \red{\cut x (P \mid R)} &\equiv \red{\cut x (Q \mid R)} &&\text{if $P \equiv Q$}
+\end{align*}
+%
+% A version of cut reduction which is similarily consistent with $\pi$-calculus
+% semantics can be obtained from the below proof by changing only selecting cuts
+% which are nested under applications of \textsc{Cut}, \textsc{Cont} and
+% \textsc{Pool}.
 %
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
@@ -512,9 +536,10 @@ We would implement our ``race'' with the program below:
   \BIC{$\seq[{ \exampleprogramc }]{ \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 However, we would be giving the choice of who receives the cake to the
-p\^atisserie. This no longer accurately models our example, where the choice of
-who receives the cake is non-deterministic, and depends on factors outside of
-the p\^atisserie's control---i.e.\ on who happens to place their order first.
+p\^atisserie. This no longer accurately models original our example, where the
+choice of who receives the cake is non-deterministic, and depends on factors
+outside of the p\^atisserie's control---i.e.\ on who happens to place their
+order first.
 
 Thus, we add a new dual pair of connectives to RCP---$\give[n]{A}$ (give) and
 $\take[n]{A}$ (take). $\give[n]{A}$ denotes a channel with $n$ dependent
@@ -528,10 +553,16 @@ server.
 
 In the following two subsections, we will look at the two sides of the
 \textsc{Cut} in our incomplete proof, describe the rules we add for `give' and
-`take', and show how they allow us to complete our proof.
-The complete set of rules added in \nodcap can be found in
-Figure~\ref{fig:nodcap}.
+`take', and show how they allow us to complete our proof.  Then, we show that
+our proof of cut elimination of CP extends to \nodcap, and discuss the forms of
+concurrency expressible with \nodcap.
 
+% GM: Also in the text
+
+% The complete set of rules added in \nodcap can be found in
+% Figure~\ref{fig:nodcap}.
+% %
+% \input{fig-nodcap}
 
 \subsection*{Servers and contraction}
 Our intepretation of a server is any process which offers up a sequence of
@@ -542,8 +573,8 @@ We introduce two new rules to construct servers. The first, $\give[1]{}$, marks
 a channel as a server interaction. It does this by sending the channel $y$
 across a channel $x$.\footnote{%
   Ultimately, it does not matter whether this rule is implemented with a send or
-  a receive action. All that matters is that $\give[1]{}$ and $\take[1]{}$
-  introduce dual operations---a send and a receive.
+  a receive action. All that matters is that the operations introduced by
+  $\give[1]{}$ and $\take[1]{}$ are dual.
 }
 The second rule, \textsc{Cont}, enables the contraction of server interactions.
 This enables us to construct a server which has multiple interactions of the
@@ -615,9 +646,6 @@ and Mary as clients looking for cake, and pooling them together:
       \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
 \end{prooftree}
 Thus, we complete the derivation of our example.
-%
-\input{fig-nodcap}
-
 
 \subsection*{Non-deterministic communication and cut elimination}
 All that remains is to show that the proof of cut elimination for RCP can be
@@ -685,7 +713,7 @@ So, where does the non-determinism come in? All the interactions in our cut are
 of the same \emph{same} type. When eliminating the cut, there is an inherent
 choice---for it does not matter which client we connect to which server
 interaction. Therefore, we apply a permutation $\pi$ to the names in our cut
-reduction (see Figure~\ref{fig:nodcap-cut-prin}).
+reduction (see Figure~\ref{fig:nodcap-cut}).
 
 Let us go back to our example. We can now assign a type to this program, and
 consider its reduction behaviour as a result of cut elimination. See
@@ -693,8 +721,15 @@ Figure~\ref{fig:cut-ex}.
 %
 \input{fig-cut-ex}
 
+As for RCP, we can also describe a version of cut reduction that does not reduce
+under prefixes, matching many operational accounts of $\pi$-calculus.  To do so,
+we would introduce structure congruences for \textsc{Cut} as before, and
+restrict the algorithm to only select cuts nested under applications of
+\textsc{Cont}, \textsc{Pool}, or other applications of \textsc{Cut}.
+
+
 \subsection*{\nodcap and non-deterministic choice}
-Recent work by~\cite{caires2014,caires2017,atkey2016} has seen the extension of
+Recent work~\cite{caires2014,caires2017,atkey2016} has seen the extension of
 $\pi\text{DILL}$ and CP with non-deterministic
 choice~\cite{milner1992b}. Though there are differences between the
 various referenced articles, in the context of $\pi\text{DILL}$ and CP this
@@ -745,7 +780,7 @@ choice $P+Q$ for a single channel by combining the following two terms with
   \UIC{$\seq[{
       \link{z}{w}
     }]{\tm[z]{A^\bot}, \tm[w]{A}}$}
-  \SYM{\plus_1}
+  \SYM{\plus_2}
   \UIC{$\seq[{
       \inr{z}\link{z}{w}
     }]{\tm[z]{\bot \plus A^\bot}, \tm[w]{A}}$}
@@ -773,9 +808,9 @@ $\parr$.
 \section{Related and Future Work}
 \label{sec:conclusion}
 
-\subsection*{Relation with bounded linear logic}
+\subsection*{Relation to bounded linear logic}
 We mentioned in Section~\ref{sec:introduction} that \nodcap was inspired by
-bounded linear logic~\cite[BLL]{girard1992}. BLL is a typed lambda calculus
+bounded linear logic~(BLL)~\cite{girard1992}. BLL is a typed lambda calculus
 based on intuitionistic linear logic which guarantees that its programs are
 polynomial-time functions.
 It too uses resource-indexed exponentials. However, instead of interpreting
@@ -788,18 +823,30 @@ cell which can be accessed $n$ times, whereas in \nodcap, $\take[n]{A}$
 represents a pool of $n$ different values, computed independently by $n$
 different processes.
 
-\subsection*{Relation with recursion}
-We would like to be able to construct servers by recursion. This is not possible
-in \nodcap as presented here.
-A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
-structural recursion.
-If we added these primitives to \nodcap, we would be able to construct servers
-from streams of type $\nu X.A \parr (\one \plus X)$.
+\subsection*{Recursion, resource variables, and quantification}
 
-\subsection*{\red{TODO?} Resource variables and quantification}
+So far, we have only considered channels of type $\give[n]{A}$ or $\take[n]{A}$
+for concrete $n$; that is, channels shared among a fixed number of participants.
+
+
+\todo{
 \begin{itemize}
 \item
+  We would like to be able to construct servers by recursion. This is not possible
+  in \nodcap as presented here.
+  A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
+  structural recursion.
+  If we added these primitives to \nodcap, we would be able to construct servers
+  from streams of type $\nu X.A \parr (\one \plus X)$.
+\item
   Mention the idea of resource variables and quantification.
+\end{itemize}
+}
+
+\subsection*{Relation to exponentials in CP}
+
+\todo{
+\begin{itemize}
 \item
   Mention the idea of embedding CP into this framework, using the encoding:
   \[
@@ -815,6 +862,7 @@ from streams of type $\nu X.A \parr (\one \plus X)$.
     \text{Clients}(A) := \exists{n}{\take[n]{A}}.
   \]
 \end{itemize}
+}
 
 \clearpage
 \bibliography{main}
