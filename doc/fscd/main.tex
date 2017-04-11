@@ -122,7 +122,7 @@ nothing will actually happen.
 It `goes wrong', in the sense that a deadlock is unlikely to be the intended
 behaviour of a program.
 
-Session types~\cite{honda1993} can provide static guarantees that concurrent
+Session types~\cite{honda1993} provide static guarantees that concurrent
 processes respect communication protocols, by specifying the expected structure
 of communications among processes. Recently, work on
 $\pi\text{DILL}~$\cite{caires2010} and CP~\cite{wadler2012} has yielded tight
@@ -136,18 +136,37 @@ Furthermore, by the very nature of their correspondence with linear logic,
 programs in these calculi are guaranteed to be free from deadlocks.
 Unfortunately, they are also free from \emph{races}.
 
-In this paper, we introduce \nodcap (nodcap), an extension of the type system
-CP~\cite{wadler2012} and inspired by bounded linear logic~\cite{girard1992},
-which allows non-determinism, and as such permits programs with races, without
-losing the tight correspondence with classical linear logic or the guarantee not
-to deadlock.
-The paper is structured as follows. In the next section, we introduce the
-relevant variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
-Then, we introduce the type system \nodcap.
-Following this, we and extend the proof of cut elimination for CP to cover
-\nodcap.
-Last, we discuss the types of concurrency that \nodcap allows us to capture.
+% In this paper, we introduce \nodcap (nodcap), an extension of the type system
+% CP~\cite{wadler2012} and inspired by bounded linear logic~\cite{girard1992},
+% which allows non-determinism, and as such permits programs with races, without
+% losing the tight correspondence with classical linear logic or the guarantee not
+% to deadlock.
 
+This paper presents \nodcap (nodcap), an extension of CP~\cite{wadler2012} with
+a novel account of non-determinism and races.  Inspired by bounded linear
+logic~\cite{girard1992}, we introduce a form of shared channels, in which the
+type of a shared channel tracks how many times it is reused.  As in the untyped
+$\pi$-calculus, sharing introduces the potential of non-determinism.  We show
+that our approach is sufficient to capture practical examples of races, such as
+the p\^atisserie, as well as other formal characterizations of non-determinism,
+such as non-deterministic choice.  However, \nodcap does not abandon the
+metatheoretical advantages of CP: we show that it preserves cut elimination, and
+so \nodcap processes are still guaranteed to be deadlock-free.
+
+% The paper is structured as follows. In the next section, we introduce the
+% relevant variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
+% Then, we introduce the type system \nodcap.
+% Following this, we and extend the proof of cut elimination for CP to cover
+% \nodcap.
+% Last, we discuss the types of concurrency that \nodcap allows us to capture.
+
+The paper proceeds as follows.  Section~\ref{sec:background} introduces our
+variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
+Section~\ref{sec:races} introduces \nodcap, our extension to CP, shows that cut
+elimination for CP extends to \nodcap, guaranteeing deadlock freedom, and
+discusses the types of concurrency captured by \nodcap.
+Section~\ref{sec:conclusion} concludes with discussions of related and future work.
+%
 The type system and cut elimination procedure presented in the remainder of this
 paper have been formalised using Agda~\cite{norell2009}, and the code is
 available on GitHub.\footnote{%
@@ -155,6 +174,8 @@ available on GitHub.\footnote{%
 }
 
 \section{Background}
+\label{sec:background}
+
 In this section, we will discuss a rudimentary subset of the session-typed
 process calculus CP~\cite{wadler2012}, which we will refer to as RCP.
 Under the correspondence with linear logic, RCP corresponds to multiplicative
@@ -421,6 +442,8 @@ which are nested under applications of \textsc{Cut}, \textsc{Cont} and
 
 
 \section{Races in CP}
+\label{sec:races}
+
 In the previous section, we have seen RCP, and briefly discussed how it prevents
 deadlocks. Let's now go back to our \emph{other} example, and see how RCP
 prevents races:
@@ -748,6 +771,7 @@ $\parr$.
 
 
 \section{Related and Future Work}
+\label{sec:conclusion}
 
 \subsection*{Relation with bounded linear logic}
 We mentioned in Section~\ref{sec:introduction} that \nodcap was inspired by
