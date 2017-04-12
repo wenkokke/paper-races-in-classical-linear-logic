@@ -823,46 +823,67 @@ cell which can be accessed $n$ times, whereas in \nodcap, $\take[n]{A}$
 represents a pool of $n$ different values, computed independently by $n$
 different processes.
 
-\subsection*{Recursion, resource variables, and quantification}
+\subsection*{Recursion and resource variables}
 
-So far, we have only considered channels of type $\give[n]{A}$ or $\take[n]{A}$
-for concrete $n$; that is, channels shared among a fixed number of participants.
+Our formalism so far has only captured servers that provide for a fixed number
+of clients.  It would be more realistic if we could define serves that provided
+for arbitrary numbers of clients.  This poses two problems: how would we define
+such arbitrarily-interacting stateful processes, and how would we extend the
+typing discipline of \nodcap to account for them without losing static
+guarantees.
 
+One approach to defining server processes would be to combine \nodcap with
+structural recursion, such as the $\mu\text{CP}$ extension proposed by Lindley
+and Morris~\cite{lindley2016}.  Their approach can express processes which
+produce streams of $A$ channels; such a process would expose a channel with the
+corecursive type $\nu X. A \parr (1 \plus X)$.  Given such a process, it is
+possible to produce a channel of type $A \parr A \parr \cdots \parr A$ for any
+number of $A$s, allowing us to satisfy the type $\give[n]{A}$ for an arbitrary
+$n$.
 
-\todo{
-\begin{itemize}
-\item
-  We would like to be able to construct servers by recursion. This is not possible
-  in \nodcap as presented here.
-  A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
-  structural recursion.
-  If we added these primitives to \nodcap, we would be able to construct servers
-  from streams of type $\nu X.A \parr (\one \plus X)$.
-\item
-  Mention the idea of resource variables and quantification.
-\end{itemize}
-}
+We would also need to extend the typing discipline to capture arbitrary use of
+shared channels.  One approach would be to introduce resource variables and
+quantification.  Following this approach, in addition to having types $\give[n]
+A$ and $\take[n] A$ for concrete $n$, we would also have types $\give[x] A$ and
+$\take[x] A$ for resource variables $x$.  These variables would be introduced by
+quantifiers $\forall x A$ and $\exists x A$.  Defining a term structure
+corresponding to $\forall x A$, and its relationship with structured recursion,
+presents an interesting area of further work.
+
+% \todo{
+% \begin{itemize}
+% \item
+%   We would like to be able to construct servers by recursion. This is not possible
+%   in \nodcap as presented here.
+%   A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
+%   structural recursion.
+%   If we added these primitives to \nodcap, we would be able to construct servers
+%   from streams of type $\nu X.A \parr (\one \plus X)$.
+% \item
+%   Mention the idea of resource variables and quantification.
+% \end{itemize}
+% }
 
 \subsection*{Relation to exponentials in CP}
 
-\todo{
-\begin{itemize}
-\item
-  Mention the idea of embedding CP into this framework, using the encoding:
-  \[
-    \take{A} := \forall{n}\take[n]{A}
-    \quad\text{and}\quad
-    \give{A} := \exists{n}{\give[n]{A}}
-  \]
-\item
-  Mention the ideal types for servers and clients:
-  \[
-    \text{Server}(A) := \forall{n}\give[n]{A}
-    \quad\text{and}\quad
-    \text{Clients}(A) := \exists{n}{\take[n]{A}}.
-  \]
-\end{itemize}
-}
+Our account of CP has not included the exponentials $\give A$ and $\take A$.
+The type $\take A$ denotes arbitrarily many independent instances of $A$, while
+the type $\give A$ denotes a concrete (if unspecified) number of
+potentially-dependent instances of $A$.  Existing interpretations of linear
+logic as session types have taken $\take A$ to denote $A$-servers, while
+$\give A$ denotes $A$-clients.  However, the analogy is imperfect: while we
+expect servers to provide arbitrarily many instances of their behavior, we also
+expect those instances to be potentially dependent.
+
+With quantification over resource variables, we can give precise accounts in
+\nodcap of both CP's exponentials and idealised servers and clients.  CP
+exponentials could be embedded into this framework using the definitions
+$\take{A} := \forall{n}\take[n]{A}$ and $\give{A} := \exists{n}{\give[n]{A}}$.
+We would also have types that precisely matched our intuitions for server and
+client behavior: an $A$ server is of type $\forall n \give[n] A$, being
+unbounded but dependent, while a collection of $A$ clients is of type
+$\exists n \take[n] A$, being of definite size but with each client being
+independent of the others.
 
 \clearpage
 \bibliography{main}
