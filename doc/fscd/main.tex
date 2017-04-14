@@ -41,7 +41,7 @@
 \maketitle
 
 \begin{abstract}
-  Logically-founded process calculi, such as CP, provide a basis for
+  Process calculi based in logic, such as CP, provide a foundation for
   deadlock-free concurrent programming, but at the cost of excluding
   non-determinism and races.  We introduce \nodcap (nodcap), which extends CP
   with a novel account of non-determinism.  Our approach draws on bounded linear
@@ -136,13 +136,7 @@ Furthermore, by the very nature of their correspondence with linear logic,
 programs in these calculi are guaranteed to be free from deadlocks.
 Unfortunately, they are also deterministic---i.e., unable to model races.
 
-% In this paper, we introduce \nodcap (nodcap), an extension of the type system
-% CP~\cite{wadler2012} and inspired by bounded linear logic~\cite{girard1992},
-% which allows non-determinism, and as such permits programs with races, without
-% losing the tight correspondence with classical linear logic or the guarantee not
-% to deadlock.
-
-We presents \nodcap (nodcap), an extension of CP~\cite{wadler2012} with
+We present \nodcap (nodcap), an extension of CP~\cite{wadler2012} with
 a novel account of non-determinism and races.  Inspired by bounded linear
 logic~\cite{girard1992}, we introduce a form of shared channels, in which the
 type of a shared channel tracks how many times it is reused.  As in the untyped
@@ -152,13 +146,6 @@ the p\^atisserie, as well as other formal characterizations of non-determinism,
 such as non-deterministic choice.  However, \nodcap does not abandon the
 metatheoretical benefits of CP: we show that it enjoys cut elimination, and
 so \nodcap processes are still guaranteed to be deadlock-free.
-
-% The paper is structured as follows. In the next section, we introduce the
-% relevant variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
-% Then, we introduce the type system \nodcap.
-% Following this, we and extend the proof of cut elimination for CP to cover
-% \nodcap.
-% Last, we discuss the types of concurrency that \nodcap allows us to capture.
 
 The paper proceeds as follows.  Section~\ref{sec:background} introduces our
 variant of the $\pi$-calculus and its type system CP~\cite{wadler2012}.
@@ -178,8 +165,8 @@ available on GitHub.\footnote{%
 
 In this section, we will discuss a rudimentary subset of the session-typed
 process calculus CP~\cite{wadler2012}, which we will refer to as RCP.
-Under the correspondence with linear logic, RCP corresponds to the
-multiplicative-additive linear logic.
+Under the correspondence with linear logic, RCP corresponds to
+multiplicative-additive linear logic. 
 The process calculus used by RCP is a variant of the
 $\pi$-calculus~\cite{milner1992b}, defined by
 the following grammar:
@@ -271,7 +258,7 @@ processes in $\tens$ as opposed to the single process in $\parr$.
 \end{center}
 The multiplicative units ($\one$, $\bot$) follow the same pattern.
 A process with a channel of type $\one$ has no independent processes, and so
-must stop.
+must halt. 
 A process with a channel of type $\bot$ is not further restricted.
 \begin{center}
   \begin{prooftree*}
@@ -352,10 +339,6 @@ requires that $P$ and $Q$ use $x$ with dual expectations.
   \end{prooftree*}
 \end{center}
 
-% All typing rules for RCP are shown in Figure~\ref{fig:cp}.
-% %
-% \input{fig-cp}
-
 \noindent
 We return to our example of a deadlock:
 \[\exampleprogramb\]
@@ -431,8 +414,6 @@ present a proof of this here for reference, as we will extend it to cover
     seen in Figure~\ref{fig:cp-cut-cc}.\footnote{%
       In the interest of space, we are presenting the commutative conversions on
       terms alone.
-      % For the full versions, which act on proofs, see the appendices (insert
-      % reference here).
     }
     These move the application of \textsc{Cut} further into the term.
   \end{enumerate}
@@ -455,12 +436,6 @@ commutativity of \textsc{Cut}:
   \red{\cut x (P \mid R)} &\equiv \red{\cut x (Q \mid R)} &&\text{if $P \equiv Q$}
 \end{align*}
 and by only selecting cuts nested under other applications of \textsc{Cut}.
-
-%
-% A version of cut reduction which is similarily consistent with $\pi$-calculus
-% semantics can be obtained from the below proof by changing only selecting cuts
-% which are nested under applications of \textsc{Cut}, \textsc{Cont} and
-% \textsc{Pool}.
 %
 \input{fig-cp-cut-prin}
 \input{fig-cp-cut-cc}
@@ -468,10 +443,6 @@ and by only selecting cuts nested under other applications of \textsc{Cut}.
 
 \section{Races in CP}
 \label{sec:races}
-
-% In the previous section, we have seen RCP, and briefly discussed how it prevents
-% deadlocks. Let's now go back to our \emph{other} example, and see how RCP
-% prevents races:
 
 We return to our initial example to see how RCP excludes races:
 \[\examplereductiona\]
@@ -555,27 +526,11 @@ non-deterministic.  The indexing by positive natural numbers $n$ assures that
 there are sufficient server resources for each client, and that server resources
 are used completely.
 
-%                       $\give[n]{A}$ denotes a channel with $n$ dependent
-% interactions of type $A$, and $\take[n]{A}$ denotes a channel with $n$
-% independent interactions of type $A$---the same dependence/independence
-% distinction that par and tensor make, but with a non-deterministic reduction
-% behaviour.
-% They are labeled with a positive natural number $n$, which ensures that there
-% are sufficient server resources for every client, and sufficent clients for each
-% server.
-
 In the following two subsections, we will look at the two sides of the
 \textsc{Cut} in our incomplete proof, describe the rules we add for `give' and
 `take', and show how they allow us to complete our proof.  Then, we show that
 our proof of cut elimination of CP extends to \nodcap, and discuss the forms of
 concurrency expressible with \nodcap.
-
-% GM: Also in the text
-
-% The complete set of rules added in \nodcap can be found in
-% Figure~\ref{fig:nodcap}.
-% %
-% \input{fig-nodcap}
 
 \subsection*{Servers and contraction}
 Our intepretation of a server is any process which offers up a sequence of
@@ -745,8 +700,6 @@ restrict the algorithm to only select cuts nested under applications of
 Recent work~\cite{caires2014,caires2017,atkey2016} has seen the extension of
 $\pi\text{DILL}$ and CP with non-deterministic
 choice~\cite{milner1992b}.
-% Though there are differences between the
-% various referenced articles, in the context of $\pi\text{DILL}$ and CP
 This operator can essentially be summarised by the following typing rule and
 reduction semantics:
 \begin{center}
@@ -864,19 +817,6 @@ quantifiers $\forall x A$ and $\exists x A$.  Defining terms
 corresponding to $\forall x A$, and its relationship with structured recursion,
 presents an interesting area of further work.
 
-% \todo{
-% \begin{itemize}
-% \item
-%   We would like to be able to construct servers by recursion. This is not possible
-%   in \nodcap as presented here.
-%   A recent extension of CP, $\mu\text{CP}$~\cite{lindley2016}, adds primitives for
-%   structural recursion.
-%   If we added these primitives to \nodcap, we would be able to construct servers
-%   from streams of type $\nu X.A \parr (\one \plus X)$.
-% \item
-%   Mention the idea of resource variables and quantification.
-% \end{itemize}
-% }
 
 \subsection*{Relation to exponentials in CP}
 
