@@ -677,15 +677,15 @@ interleaving reduces to $n$ cuts, where $n$ is the number of clients.
 %
 \input{fig-nodcap-intl}
 
-So, where does the non-determinism come in? All the interactions in our cut are
-of the same \emph{same} type. When eliminating the cut, there is an inherent
-choice---for it does not matter which client we connect to which server
+So, how does the non-determinism arise? All the interactions in our cut are
+of the same type. When eliminating the cut, there is an intrinsic
+choice: it does not matter which client we connect to which server
 interaction. Therefore, we apply a permutation $\pi$ to the names in our cut
 reduction (see Figure~\ref{fig:nodcap-cut}).
 
 Let us go back to our example. We can now assign a type to this program, and
-consider its reduction behaviour as a result of cut elimination. See
-Figure~\ref{fig:cut-ex}.
+consider its reduction behaviour as a result of cut elimination.
+Figure~\ref{fig:cut-ex} shows both possible reductions of this term.
 %
 \input{fig-cut-ex}
 
