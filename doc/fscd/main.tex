@@ -166,7 +166,7 @@ available on GitHub.\footnote{%
 In this section, we will discuss a rudimentary subset of the session-typed
 process calculus CP~\cite{wadler2012}, which we will refer to as RCP.
 Under the correspondence with linear logic, RCP corresponds to
-multiplicative-additive linear logic. 
+multiplicative-additive linear logic.
 The process calculus used by RCP is a variant of the
 $\pi$-calculus~\cite{milner1992b}, defined by
 the following grammar:
@@ -241,7 +241,7 @@ within a single process. This means that their interactions can depend on one
 another---i.e.\ the interaction of type $B$ could depend on the result of the
 interaction of type $A$, or vice versa.
 While the rules for $\tens$ and $\parr$ introduce input and output operations,
-these are inessential---the essential distiction lies in the two independent
+these are inessential---the essential distinction lies in the two independent
 processes in $\tens$ as opposed to the single process in $\parr$.
 \begin{center}
   \begin{prooftree*}
@@ -258,7 +258,7 @@ processes in $\tens$ as opposed to the single process in $\parr$.
 \end{center}
 The multiplicative units ($\one$, $\bot$) follow the same pattern.
 A process with a channel of type $\one$ has no independent processes, and so
-must halt. 
+must halt.
 A process with a channel of type $\bot$ is not further restricted.
 \begin{center}
   \begin{prooftree*}
@@ -408,7 +408,7 @@ present a proof of this here for reference, as we will extend it to cover
     If the last rules applied in $P$ and $Q$ both introduced the top-level
     connective in the type of $x$, then we apply any of the principal cut
     reductions, seen in Figure~\ref{fig:cp-cut-prin}. These replace a cut with
-    one or more cuts on channels with a \emph{stricly smaller} type.
+    one or more cuts on channels with a \emph{strictly smaller} type.
   \item
     Otherwise, we apply one of the commutative conversions for \textsc{Cut},
     seen in Figure~\ref{fig:cp-cut-cc}.\footnote{%
@@ -533,7 +533,7 @@ our proof of cut elimination of CP extends to \nodcap, and discuss the forms of
 concurrency expressible with \nodcap.
 
 \subsection*{Servers and contraction}
-Our intepretation of a server is any process which offers up a sequence of
+Our interpretation of a server is any process which offers up a sequence of
 identically typed interactions which are dependent on one another. Examples include
 our p\^atisserie, which gives out cake until it runs out or a ticket server which
 hands out numbered tickets in order.
@@ -796,7 +796,7 @@ Our formalism so far has only captured servers that provide for a fixed number
 of clients.  More realistically, we would want to define servers that provide
 for arbitrary numbers of clients.  This poses two problems: how would we define
 arbitrarily-interacting stateful processes, and how would we extend the
-typing discipline of \nodcap to account for them without losing itstic
+typing discipline of \nodcap to account for them without losing its static
 guarantees.
 
 One approach to defining server processes would be to combine \nodcap with
