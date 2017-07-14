@@ -1,0 +1,73 @@
+\usepackage{cmap}
+\usepackage{alphabeta}
+\usepackage[greek,english]{babel}
+\usepackage{bussproofs}
+\usepackage{textgreek}
+\usepackage{authblk}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+% bussproofs
+\EnableBpAbbreviations
+\newenvironment{prooftree*}{\leavevmode\hbox\bgroup}{\DisplayProof\egroup}
+\newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
+\newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
+\newcommand{\tm}[2][]{%
+\toks0={#1}%
+\edef\param{\the\toks0}%
+\ifx\param\empty
+  \ensuremath{#2}%
+\else
+  \ensuremath{#1\colon#2}%
+\fi}
+\newcommand{\seq}[2][]{\ensuremath{#1\vdash#2}}
+
+% helpers
+\newcommand*{\email}[1]{\normalsize\href{mailto:#1}{\texttt{#1}}\par}
+\newcommand*{\todo}[1]{\itshape #1}
+
+% pi calculus syntax
+\newcommand*{\piSnd}[3]{\overline{#1}\langle #2 \rangle.#3}
+\newcommand*{\piRcv}[3]{#1(#2).#3}
+\newcommand*{\piPar}[2]{#1 \mid #2}
+\newcommand*{\piNew}[2]{(\nu #1)#2}
+\newcommand*{\piRpl}[1]{!#1}
+\newcommand*{\piEnd}[0]{0}
+\newcommand*{\piSub}[3]{#3\{#1/#2\}}
+
+% linear logic syntax
+\newcommand*{\llParr}{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{\&}}}}
+\newcommand*{\llWith}{\ensuremath{\mathbin{\text{\&}}}}
+\newcommand*{\llPlus}{\ensuremath{\oplus}}
+\newcommand*{\llTens}{\ensuremath{\otimes}}
+\newcommand*{\llOne}{\ensuremath{\mathbf{1}}}
+\newcommand*{\llZero}{\ensuremath{\mathbf{0}}}
+\newcommand*{\llTop}{\ensuremath{\top}}
+\newcommand*{\llBot}{\ensuremath{\bot}}
+\newcommand*{\llGive}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\newcommand*{\llTake}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+
+% system names
+\newcommand*{\cpnd}[0]{\ensuremath{\text{CP}_{\text{ND}}}}
+\newcommand*{\pidill}[0]{\ensuremath{\pi\text{DILL}}}
+
+% emoji
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{}
+\newcommand{\emoji}[2][1em]{%
+\ensuremath{\vcenter{\hbox{%
+\includegraphics[width=#1]{twemoji/assets/#2.ai}}}}}
+\newcommand{\mary}[1][1em]{\emoji[#1]{1f469}}
+\newcommand{\john}[1][1em]{\emoji[#1]{1f466}}
+\newcommand{\sliceofcake}[1][1em]{\emoji[#1]{1f370}}
+\newcommand{\cake}[1][1em]{\emoji[#1]{1f382}}
+\newcommand{\nope}[1][1em]{\emoji[#1]{1f64c}}
+\newcommand{\store}[1][1em]{\emoji[#1]{1f3ea}}
+\newcommand{\bill}[1][1em]{\emoji[#1]{1f4b5}}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% fill-column: 80
+%%% End:
+
+

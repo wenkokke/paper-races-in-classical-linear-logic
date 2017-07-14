@@ -10,7 +10,6 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_)
 open import nodcap.Base
 open import nodcap.Typing as FF using (⊢_)
 open import nodcap.NF.Typing as NF using (⊢ⁿᶠ_)
-open import nodcap.WHNF.Typing as WHNF using (⊢ʷʰⁿᶠ_)
 import nodcap.NF.Axiom as NFA
 import nodcap.NF.Cut as NFD
 import nodcap.NF.CutND as NFND
@@ -20,39 +19,39 @@ module nodcap.Norm where
 private
   open module LM {ℓ} = RawMonadPlus (L.monadPlus {ℓ})
 
-norm : {Γ : Context} → ⊢ Γ → ⊢ⁿᶠ Γ
-norm  FF.ax        = NFA.ax
-norm (FF.cut  x y) = NFD.cut (norm x) (norm y)
-norm (FF.send x y) = NF.send (norm x) (norm y)
-norm (FF.recv x)   = NF.recv (norm x)
-norm (FF.sel₁ x)   = NF.sel₁ (norm x)
-norm (FF.sel₂ x)   = NF.sel₂ (norm x)
-norm (FF.case x y) = NF.case (norm x) (norm y)
-norm  FF.halt      = NF.halt
-norm (FF.wait x)   = NF.wait (norm x)
-norm  FF.loop      = NF.loop
-norm (FF.mk?₁ x)   = NF.mk?₁ (norm x)
-norm (FF.mk!₁ x)   = NF.mk!₁ (norm x)
-norm (FF.cont x)   = NF.cont (norm x)
-norm (FF.pool x y) = NF.pool (norm x) (norm y)
-norm (FF.exch b x) = NF.exch b (norm x)
+nf : {Γ : Context} → ⊢ Γ → ⊢ⁿᶠ Γ
+nf  FF.ax        = NFA.ax
+nf (FF.cut  x y) = NFD.cut (nf x) (nf y)
+nf (FF.send x y) = NF.send (nf x) (nf y)
+nf (FF.recv x)   = NF.recv (nf x)
+nf (FF.sel₁ x)   = NF.sel₁ (nf x)
+nf (FF.sel₂ x)   = NF.sel₂ (nf x)
+nf (FF.case x y) = NF.case (nf x) (nf y)
+nf  FF.halt      = NF.halt
+nf (FF.wait x)   = NF.wait (nf x)
+nf  FF.loop      = NF.loop
+nf (FF.mk?₁ x)   = NF.mk?₁ (nf x)
+nf (FF.mk!₁ x)   = NF.mk!₁ (nf x)
+nf (FF.cont x)   = NF.cont (nf x)
+nf (FF.pool x y) = NF.pool (nf x) (nf y)
+nf (FF.exch b x) = NF.exch b (nf x)
 
-normND : {Γ : Context} → ⊢ Γ → List (⊢ⁿᶠ Γ)
-normND  FF.ax        = return NFA.ax
-normND (FF.cut  x y) = normND x >>= λ x → normND y >>= λ y → NFND.cutND x y
-normND (FF.send x y) = normND x >>= λ x → normND y >>= λ y → return $ NF.send x y
-normND (FF.recv x)   = normND x >>= λ x → return $ NF.recv x
-normND (FF.sel₁ x)   = normND x >>= λ x → return $ NF.sel₁ x
-normND (FF.sel₂ x)   = normND x >>= λ x → return $ NF.sel₂ x
-normND (FF.case x y) = normND x >>= λ x → normND y >>= λ y → return $ NF.case x y
-normND  FF.halt      = return NF.halt
-normND (FF.wait x)   = normND x >>= λ x → return (NF.wait x)
-normND  FF.loop      = return NF.loop
-normND (FF.mk?₁ x)   = normND x >>= λ x → return $ NF.mk?₁ x
-normND (FF.mk!₁ x)   = normND x >>= λ x → return $ NF.mk!₁ x
-normND (FF.cont x)   = normND x >>= λ x → return $ NF.cont x
-normND (FF.pool x y) = normND x >>= λ x → normND y >>= λ y → return $ NF.pool x y
-normND (FF.exch b x) = normND x >>= λ x → return $ NF.exch b x
+nfND : {Γ : Context} → ⊢ Γ → List (⊢ⁿᶠ Γ)
+nfND  FF.ax        = return NFA.ax
+nfND (FF.cut  x y) = nfND x >>= λ x → nfND y >>= λ y → NFND.cutND x y
+nfND (FF.send x y) = nfND x >>= λ x → nfND y >>= λ y → return $ NF.send x y
+nfND (FF.recv x)   = nfND x >>= λ x → return $ NF.recv x
+nfND (FF.sel₁ x)   = nfND x >>= λ x → return $ NF.sel₁ x
+nfND (FF.sel₂ x)   = nfND x >>= λ x → return $ NF.sel₂ x
+nfND (FF.case x y) = nfND x >>= λ x → nfND y >>= λ y → return $ NF.case x y
+nfND  FF.halt      = return NF.halt
+nfND (FF.wait x)   = nfND x >>= λ x → return (NF.wait x)
+nfND  FF.loop      = return NF.loop
+nfND (FF.mk?₁ x)   = nfND x >>= λ x → return $ NF.mk?₁ x
+nfND (FF.mk!₁ x)   = nfND x >>= λ x → return $ NF.mk!₁ x
+nfND (FF.cont x)   = nfND x >>= λ x → return $ NF.cont x
+nfND (FF.pool x y) = nfND x >>= λ x → nfND y >>= λ y → return $ NF.pool x y
+nfND (FF.exch b x) = nfND x >>= λ x → return $ NF.exch b x
 
 -- -}
 -- -}

@@ -78,14 +78,14 @@ data ⊢_ : Context → Set where
   mk?₁ : {Γ : Context} {A : Type} →
 
        ⊢ A ∷ Γ →
-       ---------------------
-       ⊢ ?[ suc zero ] A ∷ Γ
+       --------------
+       ⊢ ?[ 1 ] A ∷ Γ
 
   mk!₁ : {Γ : Context} {A : Type} →
 
        ⊢ A ∷ Γ →
-       ---------------------
-       ⊢ ![ suc zero ] A ∷ Γ
+       --------------
+       ⊢ ![ 1 ] A ∷ Γ
 
   cont : {Γ : Context} {A : Type} {m n : ℕ⁺} →
 

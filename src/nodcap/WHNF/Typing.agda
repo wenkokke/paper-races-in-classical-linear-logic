@@ -1,113 +1,124 @@
+open import Data.Bool using (Bool; true; false)
 open import Data.List as L using (List; []; _∷_; _++_)
 open import Data.List.Any.BagAndSetEquality as B
 open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺
+open import Data.Product using (∃-syntax; _,_)
+open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
+open import Logic.Context
 open import nodcap.Base
-open import nodcap.Typing as FF using (⊢_)
 
 module nodcap.WHNF.Typing where
 
-infix 1 ⊢ʷʰⁿᶠ_
+infix 1 ⊢[whnf?_]_ ⊢ʷʰⁿᶠ_ ⊢_
 
-data ⊢ʷʰⁿᶠ_ : Context → Set where
+mutual
+  ⊢ʷʰⁿᶠ_ : (Γ : Context) → Set
+  ⊢ʷʰⁿᶠ Γ = ⊢[whnf? true ] Γ
 
-  ax   : {A : Type} →
+  ⊢_ : (Γ : Context) → Set
+  ⊢ Γ = ∃[ b ] (⊢[whnf? b ] Γ)
 
-       ------------------
-       ⊢ʷʰⁿᶠ A ∷ A ^ ∷ []
+  data ⊢[whnf?_]_ : Bool → Context → Set where
 
-  send : {Γ Δ : Context} {A B : Type} →
+    ax   : {A : Type} →
 
-       ⊢ A ∷ Γ → ⊢ B ∷ Δ →
-       --------------------
-       ⊢ʷʰⁿᶠ A ⊗ B ∷ Γ ++ Δ
+         ------------------
+         ⊢ʷʰⁿᶠ A ∷ A ^ ∷ []
 
-  recv : {Γ : Context} {A B : Type} →
+    cut  : {Γ Δ : Context} {A : Type} {b₁ b₂ : Bool} →
 
-       ⊢ A ∷ B ∷ Γ →
-       ----------------
-       ⊢ʷʰⁿᶠ A ⅋ B ∷ Γ
+         ⊢[whnf? b₁ ] A ∷ Γ → ⊢[whnf? b₂ ] A ^ ∷ Δ →
+         -------------------------------------------
+         ⊢[whnf? false ] Γ ++ Δ
 
-  sel₁ : {Γ : Context} {A B : Type} →
+    send : {Γ Δ : Context} {A B : Type} {b₁ b₂ : Bool} →
 
-       ⊢ A ∷ Γ →
-       ---------------
-       ⊢ʷʰⁿᶠ A ⊕ B ∷ Γ
+         ⊢[whnf? b₁ ] A ∷ Γ → ⊢[whnf? b₂ ] B ∷ Δ →
+         -----------------------------------------
+         ⊢ʷʰⁿᶠ A ⊗ B ∷ Γ ++ Δ
 
-  sel₂ : {Γ : Context} {A B : Type} →
+    recv : {Γ : Context} {A B : Type} {b : Bool} →
 
-       ⊢ B ∷ Γ →
-       ---------------
-       ⊢ʷʰⁿᶠ A ⊕ B ∷ Γ
+         ⊢[whnf? b ] A ∷ B ∷ Γ →
+         -----------------------
+         ⊢ʷʰⁿᶠ A ⅋ B ∷ Γ
 
-  case : {Γ : Context} {A B : Type} →
+    sel₁ : {Γ : Context} {A B : Type} {b : Bool} →
 
-       ⊢ A ∷ Γ → ⊢ B ∷ Γ →
-       -------------------
-       ⊢ʷʰⁿᶠ A & B ∷ Γ
+         ⊢[whnf? b ] A ∷ Γ →
+         -------------------
+         ⊢ʷʰⁿᶠ A ⊕ B ∷ Γ
 
-  halt :
+    sel₂ : {Γ : Context} {A B : Type} {b : Bool} →
 
-       ------------
-       ⊢ʷʰⁿᶠ 𝟏 ∷ []
+         ⊢[whnf? b ] B ∷ Γ →
+         -------------------
+         ⊢ʷʰⁿᶠ A ⊕ B ∷ Γ
 
-  wait : {Γ : Context} →
+    case : {Γ : Context} {A B : Type} {b₁ b₂ : Bool} →
 
-       ⊢ Γ →
-       -----------
-       ⊢ʷʰⁿᶠ ⊥ ∷ Γ
+         ⊢[whnf? b₁ ] A ∷ Γ → ⊢[whnf? b₂ ] B ∷ Γ →
+         -----------------------------------------
+         ⊢ʷʰⁿᶠ A & B ∷ Γ
 
-  loop : {Γ : Context} →
+    halt :
 
-       -----------
-       ⊢ʷʰⁿᶠ ⊤ ∷ Γ
+         ------------
+         ⊢ʷʰⁿᶠ 𝟏 ∷ []
 
-  mk?₁ : {Γ : Context} {A : Type} →
+    wait : {Γ : Context} {b : Bool} →
 
-       ⊢ A ∷ Γ →
-       -------------------------
-       ⊢ʷʰⁿᶠ ?[ suc zero ] A ∷ Γ
+         ⊢[whnf? b ] Γ →
+         ---------------
+         ⊢ʷʰⁿᶠ ⊥ ∷ Γ
 
-  mk!₁ : {Γ : Context} {A : Type} →
+    loop : {Γ : Context} →
 
-       ⊢ A ∷ Γ →
-       -------------------------
-       ⊢ʷʰⁿᶠ ![ suc zero ] A ∷ Γ
+         -----------
+         ⊢ʷʰⁿᶠ ⊤ ∷ Γ
 
-  cont : {Γ : Context} {A : Type} {m n : ℕ⁺} →
+    mk?₁ : {Γ : Context} {A : Type} {b : Bool} →
 
-       ⊢ʷʰⁿᶠ ?[ m ] A ∷ ?[ n ] A ∷ Γ →
-       -------------------------------
-       ⊢ʷʰⁿᶠ ?[ m + n ] A ∷ Γ
+         ⊢[whnf? b ] A ∷ Γ →
+         -------------------
+         ⊢ʷʰⁿᶠ ?[ 1 ] A ∷ Γ
 
-  pool : {Γ Δ : Context} {A : Type} {m n : ℕ⁺} →
+    mk!₁ : {Γ : Context} {A : Type} {b : Bool} →
 
-       ⊢ʷʰⁿᶠ ![ m ] A ∷ Γ → ⊢ʷʰⁿᶠ ![ n ] A ∷ Δ →
-       -----------------------------------------
-       ⊢ʷʰⁿᶠ ![ m + n ] A ∷ Γ ++ Δ
+         ⊢[whnf? b ] A ∷ Γ →
+         -------------------
+         ⊢ʷʰⁿᶠ ![ 1 ] A ∷ Γ
 
-  exch : {Γ Δ : Context} →
+    cont : {Γ : Context} {A : Type} {m n : ℕ⁺} {b : Bool} →
 
-       Γ ∼[ bag ] Δ → ⊢ʷʰⁿᶠ Γ →
-       ------------------------
-       ⊢ʷʰⁿᶠ Δ
+         ⊢[whnf? b ] ?[ m ] A ∷ ?[ n ] A ∷ Γ →
+         -------------------------------------
+         ⊢[whnf? b ] ?[ m + n ] A ∷ Γ
 
-fromWHNF : ∀ {Γ} → ⊢ʷʰⁿᶠ Γ → ⊢ Γ
-fromWHNF  ax        = FF.ax
-fromWHNF (send P Q) = FF.send P Q
-fromWHNF (recv P)   = FF.recv P
-fromWHNF (sel₁ P)   = FF.sel₁ P
-fromWHNF (sel₂ P)   = FF.sel₂ P
-fromWHNF (case P Q) = FF.case P Q
-fromWHNF  halt      = FF.halt
-fromWHNF (wait P)   = FF.wait P
-fromWHNF  loop      = FF.loop
-fromWHNF (mk?₁ P)   = FF.mk?₁ P
-fromWHNF (mk!₁ P)   = FF.mk!₁ P
-fromWHNF (cont P)   = FF.cont (fromWHNF P)
-fromWHNF (pool P Q) = FF.pool (fromWHNF P) (fromWHNF Q)
-fromWHNF (exch π P) = FF.exch π (fromWHNF P)
+    pool : {Γ Δ : Context} {A : Type} {m n : ℕ⁺} {b : Bool} →
+
+         ⊢[whnf? b ] ![ m ] A ∷ Γ → ⊢[whnf? b ] ![ n ] A ∷ Δ →
+         -----------------------------------------------------
+         ⊢[whnf? b ] ![ m + n ] A ∷ Γ ++ Δ
+
+    exch : {Γ Δ : Context} {b : Bool} →
+
+         Γ ∼[ bag ] Δ → ⊢[whnf? b ] Γ →
+         ------------------------------
+         ⊢[whnf? b ] Δ
+
+cutIn : {Γ Δ : Context} {A : Type} {b₁ b₂ : Bool} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
+
+        ⊢[whnf? b₁ ] Γ → ⊢[whnf? b₂ ] Δ →
+        ---------------------------------
+        ⊢[whnf? false ] Γ - i ++ Δ - j
+
+cutIn {Γ} {Δ} {A} i j P Q with ∈→++ i | ∈→++ j
+... | (Γ₁ , Γ₂ , P.refl , p) | (Δ₁ , Δ₂ , P.refl , q) rewrite p | q
+  = cut (exch (fwd [] Γ₁) P) (exch (fwd [] Δ₁) Q)
+
 
 -- -}
 -- -}
