@@ -1,0 +1,3 @@
+[submodule "doc/twemoji"]
+	path = doc/twemoji
+	url = git@github.com:twitter/twemoji.git

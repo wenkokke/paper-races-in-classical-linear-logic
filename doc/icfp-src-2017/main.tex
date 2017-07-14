@@ -1,0 +1,239 @@
+\documentclass[a4paper,UKenglish]{article}
+\usepackage[margin=1.5cm, includefoot, footskip=30pt]{geometry}
+\input{preamble}
+\title{Races in Classical Linear Logic}
+\author{%
+  Wen Kokke\\
+  Supervised by Philip Wadler and Garrett J.\ Morris\\
+  Graduate student (8450698)}
+\affil{%
+  LFCS, University of Edinburgh\protect\\
+  Informatics Forum, 10 Crichton St, Edinburgh EH8 9AB, UK\protect\\
+  \email{wen.kokke@ed.ac.uk}
+  }
+\date{}
+%
+\begin{document}
+\maketitle
+
+\section*{Problem and motivation}
+Consider the following scenario:
+\begin{quote}
+  John and Mary are working from home one morning when they get a craving for a
+  slice of cake. Being denizens of the web, they quickly find the nearest store
+  which does home deliveries.
+  Unfortunately for them, they both order their cake at the \emph{same} store,
+  which has only one slice left. After that, all it can deliver is
+  disappointment.
+\end{quote}
+This is an example of a race condition. We can model the scenario in the
+\textpi-calculus, assuming \john, \mary\ and \store\ are three processes
+modeling John, Mary and the store, and \sliceofcake\ and \nope\ are two channels
+giving access to a slice of cake and disappointment, respectively.
+As expected, this process has two possible outcomes: either John gets the cake,
+and Mary gets disappointment, or vice versa.
+\[
+  (\piPar{%
+    \piSnd{x}{\sliceofcake}{\piSnd{x}{\nope}{\store}}
+  }{%
+    \piPar{\piRcv{x}{y}{\john}}{\piRcv{x}{z}{\mary}}
+  })
+  \quad
+  \Longrightarrow
+  \quad
+  (\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})
+  \quad
+  \text{or}
+  \quad
+  (\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})
+\]
+While John or Mary may not like all of the outcomes, it is the store which is
+responsible for implementing the online delivery service, and the store is happy
+with either outcome. Thus, the above is program we would like to be able to
+write.
+\\[1ex]
+\noindent
+Now consider another scenario, which takes place \emph{after} John has already
+bought the cake:
+\begin{quote}
+  Mary is \emph{really} disappointed when she finds out the cake has sold out.
+  John, always looking to make some money, offers to sell the slice to her for a
+  profit. Mary agrees to engage in a little bit of back-alley cake resale, but
+  sadly there is no trust between the two.
+  John demands payment first.
+  Mary would rather get her slice of cake before she gives John the money.
+\end{quote}
+This is an example of a deadlock. We can also model this scenario in the
+\textpi-calculus, assuming that \bill\ is a channel giving access to some
+adequate amount of money.
+\[
+  (\piPar{%
+    \piRcv{x}{z}{\piSnd{y}{\sliceofcake}{\john}}
+  }{%
+    \piRcv{y}{w}{\piSnd{x}{\bill}{\mary}}
+  })
+\]
+The above process does not reduce. As both John and Mary would prefer the
+exchange to be made, this program is desired by \emph{neither}. Thus, the above
+is a program we would \emph{somehow} like to exclude.
+\\[1ex]\noindent
+Session types can provide a static guarantee that concurrent programs, such as
+those above, respect communication protocols.
+Session-typed calculi with logical foundations, such as
+\pidill~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a
+result of the close correspondence with logic.
+The same correspondence, however, also rules out non-determinism and race conditions.
+
+There is some work on reintroducing non-determinism~\cite{caires2014, atkey2016,
+  caires2017}. 
+This work all relies on some variant of non-deterministic local choice, an
+operator which joins two processes of the same type and non-deterministically
+chooses to run \emph{one} of them:
+\begin{center}
+  \begin{minipage}{0.5\linewidth}
+    \begin{prooftree}
+      \AXC{$\seq[ P ]{ \Gamma }$}
+      \AXC{$\seq[ Q ]{ \Gamma }$}
+      \SYM{$+$}
+      \BIC{$\seq[ P + Q ]{ \Gamma }$}
+    \end{prooftree}  
+  \end{minipage}%
+  \begin{minipage}{0.5\linewidth}
+    \[\!
+      \begin{aligned}
+        P + Q &\Longrightarrow P\\
+        P + Q &\Longrightarrow Q
+      \end{aligned}
+    \]
+  \end{minipage}
+\end{center}
+While this allows us to describe any non-deterministic program we wish, we have
+to do so by enumerating the possible outcomes. For example, we have to write our
+first example as the program in which either John or Mary gets the cake:
+\[
+  (\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})
+  +
+  (\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})
+\]
+In general, rewriting processes with races in this style results in an
+exponential blowup the size of the program.
+In this abstract, we propose a novel method of assigning types to racy processes
+with channels shared between more than two processes, based on bounded linear
+logic~\cite{girard1992} with exact instead of affine bounds. 
+
+\section*{Background and related work}
+The \textpi-calculus is a process calculus which models concurrent computation,
+which we informally describe below:
+\[\!
+  \begin{aligned}
+    \text{Term} \; P, Q, R
+    ::=   &\;\piSnd{x}{y}{P} &&\text{send a value $y$ over $x$, then run $P$}
+     &\mid&\;(\piPar{P}{Q})  &&\text{run $P$ and $Q$ in parallel}
+    \\\mid&\;\piRcv{x}{y}{P} &&\text{receive a value $y$ over $x$, then run $P$}
+     &\mid&\;\piNew{x}{P}    &&\text{create a new channel $x$, then run $P$}
+    \\\mid&\;\piEnd          &&\text{halt}
+  \end{aligned}
+\]
+CP~\cite{wadler2012} is a session-typed process calculus which takes the rules
+of classical linear logic as prescribing the typing rules of a process
+calculus.\footnote{%
+  As more readers may be familiar with the \textpi-calculus, we will present CP
+  as a type system for \textpi-calculus terms, instead of using the notation
+  used by Wadler~\cite{wadler2012}.
+}
+For instance, the rule for \llTens\ types two parallel, independent processes --
+meaning they do not share any communication channels -- and the rule for
+\llParr\ types a single process which may communicate with two processes in any
+order it pleases: 
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tm[x]{B} }$}
+    \SYM{\llTens}
+    \BIC{$\seq[{
+        \piNew{y}{( \piSnd{x}{y}{( \piPar{P}{Q} ) )}}
+      }]{ \Gamma , \Delta , \tm[x]{A \llTens B} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tm[y]{A} , \tm[x]{B} }$}
+    \SYM{\llParr}
+    \UIC{$\seq[ \piRcv{x}{y}{P} ]{ \Gamma , \tm[x]{A \llParr B} }$}
+  \end{prooftree*}
+\end{center}
+The rules for \llWith\ and \llPlus\ type a process offering and making a choice,
+respectively. The axiom and cut rules can both be eliminated, and doing so
+corresponds to reduction in the \textpi-calculus, with the axiom elimination
+corresponding to forwarding~\cite{boreale1998,wadler2012} and cut elimination
+corresponding to communication~\cite{wadler2012}.
+
+\section*{Approach and uniqueness}
+We extend CP with two new types, inspired by bounded linear
+logic~\cite{girard1992}, written \llTake[n]{A} and \llGive[n]{A}. The typing
+rules for \llTake[n]{A} construct a pool of a known size, filled with parallel,
+independent client-like processes. Logically, \llTake[n]{A} is akin to an
+$n$-length vector of the form $A \llTens\dots\llTens A$:
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\llTake[1]{}}
+    \UIC{$\seq[{ \piRcv{x}{y}{P} }]{ \Gamma , \tm[x]{\llTake[1]{A}} }$}
+  \end{prooftree*}%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\llTake[m]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta , \tm[x]{\llTake[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ (\piPar{P}{Q}) }]{ \Gamma , \Delta , \tm[x]{\llTake[m+n]{A}} }$}
+  \end{prooftree*}
+\end{center}
+The typing rules for \llGive[n]{A} construct a single, server-like process,
+which communicates with $n$ processes in any order it pleases. Logically,
+\llGive[n]{A} is akin to an $n$-length vector of the form $A \llParr\dots\llParr A$: 
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[{P}]{ \Gamma , \tm[y]{A} }$}
+    \SYM{\llGive[1]{}}
+    \UIC{$\seq[{
+        \piNew{x}{( \piSnd{x}{y}{P} )}
+      }]{ \Gamma , \tm[x]{\llGive[1]{A}} }$}
+  \end{prooftree*}%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tm[x]{\llGive[m]{A}} , \tm[y]{\llGive[n]{A}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[{ \piSub{x}{y}{P} }]{ \Gamma , \tm[x]{\llGive[m+n]{A}} }$}
+  \end{prooftree*}
+\end{center}
+The novel insight is that because all elements of these vectors have the same
+type, we can let any client communicate with any of the server interactions, and
+we can let this choice be made non-deterministically while running the process
+-- or, similarly, while eliminating the cuts.
+On the term level, this means we can now assign types to some processes in which
+channels are used by more than two processes concurrently.
+
+\section*{Results and contributions}
+The system \cpnd -- CP extended with \llTake[n]{A} and \llGive[n]{A} -- offers
+the same guarantees of deadlock-freedom as CP. 
+The new system, however, has some limited form of non-determinism.
+
+When compared with CP extended with non-deterministic local choice ($+$), we
+find that translations exists in both ways, implying the systems are equally
+expressive -- as long as we are allowed to perform whole-program
+transformations.
+However, as mentioned before, translating from \cpnd\ into CP with `$+$' results
+in an exponential blowup in the size of the program.
+Furthermore, \cpnd\ allows us to capture our example program with as-is.
+This implies that while \cpnd\ and CP with `$+$' are equally expressive in the
+strict sense, \cpnd\ is locally more expressive, and thus allows us to capture
+programs more naturally and more succinctly.
+ 
+The type system of \cpnd, together with all the aforementioned properties,
+has been mechanized using the proof assistant Agda~\cite{norell2009}.
+As a consequence of that, there is a verified interpreter for the language.
+
+\clearpage
+\bibliographystyle{plain}
+\bibliography{main}
+\end{document}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% fill-column: 80
+%%% End:
