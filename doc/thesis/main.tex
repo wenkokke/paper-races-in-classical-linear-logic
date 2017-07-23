@@ -1,32 +1,61 @@
-\documentclass[12pt,a4paper,twocolumn]{article}
+\documentclass[12pt,a4paper,UKenglish]{article}
+\input{preamble}
+\title{Races in Classical Linear Logic}
+\author{%
+  Wen Kokke\\
+  Supervised by Philip Wadler and J.\ Garrett Morris}
+\affil{%
+  LFCS, University of Edinburgh\protect\\
+  Informatics Forum, 10 Crichton St, Edinburgh EH8 9AB, UK\protect\\
+  \email{wen.kokke@ed.ac.uk}
+  }
+\date{}
+\addbibresource{main.bib}
 \begin{document}
+\maketitle
+\clearpage
 
 %% Introduction
+\section{Introduction}\label{sec:introduction}
 %% - Motivating examples
-%%
+%% - Overview
+
 %% Background
+\section{Background}\label{sec:background}
 %% - Work on πDILL and CP
 %% - CP:
 %%   * Terms and types
+\input{fig-cp-terms}
 %%   * Typing judgement
+\input{fig-cp-typing-judgement}
 %%   * Cut elimination
-%%
-%% Main contribution
+
+%%   Main contribution
+\section{Reductions for Classical Processes}
 %% - CP:
 %%   * Reduction rules
+\input{fig-cp-term-reduction}
 %%   * Equivalence with cut elimination
+
+\section{Non-determinism and termination}
 %% - Nodcap:
 %%   * Terms and types
+\input{fig-nc-terms}
 %%   * Typing judgement
 %%   * Cut elimination
 %%   * Equivalence with non-deterministic local choice
 %%   * Reduction rules
+\input{fig-nc-term-reduction}
 %%   * Equivalence with cut elimination
 
-%% Bibliography
-\bibliography{main}
-\bibliographystyle{apalike}
+\section{Discussion}
+%% Discussion
+%% - Interaction with recursion
+%% - Interaction with affine and relevant sessions
 
+%% Bibliography
+\cite{wadler2012}
+\printbibliography
 \end{document}
 
 %%% Local Variables:

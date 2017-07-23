@@ -1,0 +1,91 @@
+\begin{figure}
+  \subsection*{Structural congruence}
+  \(
+  \begin{array}{llll}
+    & \tm{\cpCut{x}{P}{Q}}
+    & \equiv \;
+    & \tm{\cpCut{x}{Q}{P}}
+    \\
+    & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
+    & \equiv \;
+    & \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}}
+  \end{array}
+  \)
+  \\[1ex]
+  (plus reflexivity, symmetry, and transitivity)
+  
+  \subsection*{Reduction rules}
+  \(
+  \begin{array}{llll}
+    & \tm{\cpCut{x}{\cpLink{w}{x}}{P}}
+    & \Longrightarrow \;
+    & \tm{\cpSub{w}{x}{P}} 
+    \\
+    & \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
+    \\
+    & \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
+    & \Longrightarrow \;
+    & \tm{P}
+    \\
+    & \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{x}{P}{Q}}
+    \\
+    & \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{x}{P}{R}}
+    \\
+    \\
+    & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpSend{y}{z}{\cpCut{x}{P}{R}}{Q}} \qquad \text{if} \; x \in P
+    \\
+    & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpSend{y}{z}{P}{\cpCut{x}{Q}{R}}} \qquad \text{if} \; x \in Q
+    \\
+    & \tm{\cpCut{x}{\cpRecv{y}{z}{P}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpRecv{y}{z}{\cpCut{x}{P}{R}}}
+    \\
+    & \tm{\cpCut{x}{\cpWait{y}{P}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpWait{y}{\cpCut{x}{P}{R}}}
+    \\
+    & \tm{\cpCut{x}{\cpInl{y}{P}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpInl{y}{\cpCut{x}{P}{R}}}
+    \\
+    &\tm{\cpCut{x}{\cpInr{y}{P}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpInr{y}{\cpCut{x}{P}{R}}}
+    \\
+    & \tm{\cpCut{x}{\cpCase{y}{P}{Q}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpCase{y}{\cpCut{x}{P}{R}}{\cpCut{x}{Q}{R}}}
+    \\
+    & \tm{\cpCut{x}{\cpAbsurd{y}}{R}}
+    & \Longrightarrow \;
+    & \tm{\cpAbsurd{y}}
+  \end{array}
+  \)
+  
+  \begin{prooftree}
+    \AXC{\reducesto{P}{P^\prime}}
+    \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
+  \end{prooftree}
+
+  \begin{prooftree}
+    \AXC{$\tm{P}\equiv\tm{Q}$}
+    \AXC{\reducesto{Q}{Q^\prime}}
+    \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
+    \TIC{\reducesto{P}{P^\prime}}
+  \end{prooftree}
+
+  \caption{Reduction rules for \cp}\label{fig:cp-term-reduction}
+\end{figure}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

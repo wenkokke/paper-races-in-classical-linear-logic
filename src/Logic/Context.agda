@@ -5,7 +5,7 @@ open import Data.Pos                                   using (ℕ⁺; suc; repli
 open import Data.List as L                             using (List; []; _∷_; [_]; _++_; map; concatMap; replicate)
 open import Data.List.Any                              using (here; there)
 open import Data.List.Any.BagAndSetEquality as B       using ()
-open        Data.List.Any.Membership-≡                 using (_∈_; _∼[_]_; bag)
+open import Data.List.Any.Membership.Propositional     using (_∈_; _∼[_]_; bag)
 open import Data.Product                               using (Σ-syntax; ∃₂; _×_; proj₁; proj₂; _,_)
 open import Data.Sum                                   using (_⊎_; inj₁; inj₂)
 open import Function                                   using (_$_; flip)

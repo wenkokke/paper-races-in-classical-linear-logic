@@ -1,0 +1,40 @@
+% \usepackage[fleqn]{amsmath}
+% \usepackage{textgreek}
+% \usepackage{xspace}
+% \xspaceaddexceptions{]\}}
+
+%%% The π-calculus term syntax:
+\newcommand{\piCalc}[0]{\textpi-calculus\xspace}
+\newcommand{\piSend}[3]{\ensuremath{\overline{#1}\langle #2 \rangle.#3}}
+\newcommand{\piRecv}[3]{\ensuremath{#1(#2).#3}}
+\newcommand{\piPar}[2]{\ensuremath{#1 \mid #2}}
+\newcommand{\piNew}[2]{\ensuremath{(\nu #1)#2}}
+\newcommand{\piRepl}[1]{\ensuremath{!#1}}
+\newcommand{\piHalt}[0]{\ensuremath{0}}
+\newcommand{\piSub}[3]{\ensuremath{#3\{#1/#2\}}}
+
+%%% The CP term syntax:
+\newcommand{\cp}{CP\xspace}
+\newcommand{\cpLink}[2]{\ensuremath{#1{\leftrightarrow}#2}}
+\newcommand{\cpCut}[3]{\ensuremath{\nu #1.(\piPar{#2}{#3})}}
+\newcommand{\cpSend}[4]{\ensuremath{#1[#2].(\piPar{#3}{#4})}}
+\newcommand{\cpRecv}[3]{\ensuremath{\piRecv{#1}{#2}{#3}}}
+\newcommand{\cpWait}[2]{\ensuremath{#1().#2}}
+\newcommand{\cpHalt}[1]{\ensuremath{#1[].0}}
+\newcommand{\cpInl}[2]{\ensuremath{#1[\text{inl}].#2}}
+\newcommand{\cpInr}[2]{\ensuremath{#1[\text{inr}].#2}}
+\newcommand{\cpCase}[3]{\ensuremath{\text{case}\;#1\;\{#2;#3\}}}
+\newcommand{\cpAbsurd}[1]{\ensuremath{\text{case}\;#1\;\{\}}}
+\newcommand{\cpSub}[3]{\ensuremath{\piSub{#1}{#2}{#3}}}
+
+%%% The nodcap term syntax:
+\newcommand{\nc}{\ensuremath{\text{CP}_{\text{ND}}}\xspace}
+\newcommand{\ncExpn}[3]{\ensuremath{#1\uparrow #2.#3}}
+\newcommand{\ncIntl}[3]{\ensuremath{#1\downarrow #2.#3}}
+\newcommand{\ncSrv}[3]{\ensuremath{{\star}{#1}(#2).#3}}
+\newcommand{\ncCnt}[3]{\ensuremath{{\star}{#1}[#2].#3}}
+\newcommand{\ncPool}[2]{\ensuremath{(\piPar{#1}{#2})}}
+\newcommand{\ncCont}[3]{\ensuremath{\cpSub{#1}{#2}{#3}}}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

@@ -1,0 +1,20 @@
+\documentclass{article}
+\input{preamble}
+\newcommand{\red}[1]{#1}
+\begin{document}
+\[
+  \begin{aligned}
+    \text{Term} \; \red{P},\:&\red{Q},\red{R} ::=\\
+    &       \red{\link{x}{y}}           &&\text{link}
+    &\qquad&\red{\cut{x}(P \mid Q)}     &&\text{parallel composition}\\
+    &       \red{\send{x}{y}P}          &&\text{bound output}
+    &\qquad&\red{\recv{x}{y}P}          &&\text{input}\\
+    &       \red{\inl{x}P}              &&\text{left selection}
+    &\qquad&\red{\inr{x}P}              &&\text{right selection}\\
+    &       \red{\case{x}{P}{Q}}        &&\text{choice}
+    &\qquad&\red{\case{x}{}{}}          &&\text{empty choice}\\
+    &       \red{\send{x}{}0}           &&\text{empty output}
+    &\qquad&\red{\recv{x}{}P}           &&\text{empty input}
+  \end{aligned}
+\]
+\end{document}
