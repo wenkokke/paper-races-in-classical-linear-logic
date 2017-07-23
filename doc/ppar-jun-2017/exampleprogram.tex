@@ -1,0 +1,28 @@
+\documentclass{article}
+\input{preamble}
+\begin{document}
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tm[y]{\plato^\bot} }$}
+  \SYM{\take[1]{}}
+  \UIC{$\seq[{ \take{\recv{x}{y}}\john }]{ \Gamma, \tm[x]{\take[1]{\plato^\bot}} }$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tm[z]{\plato^\bot} }$}
+  \SYM{\take[1]{}}
+  \UIC{$\seq[{ \take{\recv{x}{z}}\mary }]{ \Delta, \tm[x]{\take[1]{\plato^\bot}} }$}
+  \SYM{}
+  \BIC{$\seq[{ (\take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{
+      \Gamma, \Delta, \tm[x]{\take[2]{\plato^\bot}} }$}
+
+  \AXC{$\seq[{ \ptis }]{ \Theta, \tm[\cake]{\plato}, \tm[\nocake]{\plato} }$}
+  \SYM{\give[1]{}}
+  \UIC{$\seq[{ \give{\send{x'}{\nocake}}\ptis }]{
+      \Theta, \tm[\cake]{\plato}, \tm[x']{\give[1]{\plato}} }$}
+  \SYM{\give[1]{}}
+  \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x'}{\nocake}}\ptis }]{
+      \Theta, \tm[x]{\give[1]{\plato}}, \tm[x']{\give[1]{\plato}} }$}
+  \NOM{Cont}
+  \UIC{$\seq[{ \give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis }]{
+      \Theta, \tm[x]{\give[2]{\plato}} }$}
+
+  \BIC{$\seq[{ (\give{\send{x}{\cake}}\give{\send{x}{\nocake}}\ptis \mid \take{\recv{x}{y}}\john \mid \take{\recv{x}{z}}\mary) }]{ \Gamma, \Delta, \Theta }$}
+\end{prooftree}
+\end{document}

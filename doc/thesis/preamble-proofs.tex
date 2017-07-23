@@ -1,0 +1,21 @@
+%% Proof Tree Syntax:
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+
+\newcommand{\tm}[1]{\textcolor{red}{#1}}
+\newcommand{\ty}[1]{\textcolor{blue}{#1}}
+\newcommand{\seq}[2][]{\ensuremath{\tm{#1}\vdash\ty{#2}}}
+\newcommand{\reducesto}[2]{\ensuremath{\tm{#1}\Longrightarrow\tm{#2}}}
+\newcommand{\tmty}[2]{\ensuremath{\tm{#1}\colon\!\ty{#2}}}
+\newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
+\newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
+\newenvironment{prooftree*}{\leavevmode\hbox\bgroup}{\DisplayProof\egroup}
+\newenvironment{scprooftree}[1][0.9]%
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
+\newenvironment{scprooftree*}[1][0.9]%
+  {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
