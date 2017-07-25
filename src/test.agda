@@ -12,229 +12,9 @@ open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_; refl
 open import Logic.Context
 
 
-instance
-  Number-ℕ : Number ℕ
-  Number-ℕ = record
-    { Constraint = const Unit.⊤
-    ; fromNat    = λ{n → n}
-    }
-
-Name : Set
-Name = String
-
-infixr 5 _,_
-infixr 8 _∣_
-infix 9 _↔_
-infixr 10 _[_]_ _[]_ _[L]_ _[R]_
-infixr 10 _⟨_⟩_ _⟨⟩_
 
 
-data End : Set where
-  zero : End
 
-instance
-  EndNumber : Number End
-  EndNumber = record
-    { Constraint = λ{n → n ≡ 0}
-    ; fromNat    = λ{n → zero}
-    }
-
-mutual
-  data Parr : Set where
-    _∣_ : (P Q : Term) → Parr
-
-  data Case : Set where
-    _,_ : (P Q : Term) → Case
-
-  data Term : Set where
-    _↔_    : (x y : Name) → Term
-    ν      : (x : Name) (PQ : Parr) → Term
-    _[_]_  : (x y : Name) (PQ : Parr) → Term
-    _⟨_⟩_  : (x y : Name) (P : Term) → Term
-    _[]_   : (x : Name) (P : End) → Term
-    _⟨⟩_   : (x : Name) (P : Term) → Term
-    _[L]_  : (x : Name) (P : Term) → Term
-    _[R]_  : (x : Name) (P : Term) → Term
-    case   : (x : Name) (PQ : Case) → Term
-    crash  : (x : Name) → Term
-    ⋆_[_]_ : (x y : Name) (P : Term) → Term
-    ⋆_⟨_⟩_ : (x y : Name) (P : Term) → Term
-    _∣_     : (P Q : Term) → Term
-
-
-infixr 5 _∈_
-
-data _∈_ (w : Name) : (P : Term) → Set where
-  ∈-↔₁     : ∀{y} → w ∈ w ↔ y
-  ∈-↔₂     : ∀{x} → w ∈ x ↔ w
-  ∈-ν₁     : ∀{x P Q} → w ≢ x → w ∈ P → w ∈ ν x (P ∣ Q)
-  ∈-ν₂     : ∀{x P Q} → w ≢ x → w ∈ Q → w ∈ ν x (P ∣ Q)
-  ∈-[·]₀   : ∀{y P Q} → w ∈ w [ y ] (P ∣ Q)
-  ∈-[·]₁   : ∀{x y P Q} → w ≢ y → w ∈ P → w ∈ x [ y ] (P ∣ Q)
-  ∈-[·]₂   : ∀{x y P Q} → w ∈ Q → w ∈ x [ y ] (P ∣ Q)
-  ∈-[]     : w ∈ w [] 0
-  ∈-⟨·⟩₀   : ∀{y P} → w ∈ w ⟨ y ⟩ P
-  ∈-⟨·⟩₁   : ∀{x y P} → w ≢ y → w ∈ P → w ∈ x ⟨ y ⟩ P
-  ∈-⟨⟩₀    : ∀{y P} → w ∈ w ⟨ y ⟩ P
-  ∈-⟨⟩₁    : ∀{x y P} → w ≢ y → w ∈ P → w ∈ x ⟨ y ⟩ P
-  ∈-[L]₀   : ∀{P} → w ∈ w [L] P
-  ∈-[L]₁   : ∀{x P} → w ∈ P → w ∈ x [L] P
-  ∈-[R]₀   : ∀{P} → w ∈ w [R] P
-  ∈-[R]₁   : ∀{x P} → w ∈ P → w ∈ x [R] P
-  ∈-case₀  : ∀{P Q} → w ∈ case w (P , Q)
-  ∈-case₁  : ∀{x P Q} → w ∈ P → w ∈ case x (P , Q)
-  ∈-case₂  : ∀{x P Q} → w ∈ Q → w ∈ case x (P , Q)
-  ∈-crash₀ : w ∈ crash w
-  ∈-⋆[·]₀  : ∀{y P} → w ∈ ⋆ w ⟨ y ⟩ P
-  ∈-⋆[·]₁  : ∀{x y P} → w ≢ y → w ∈ P → w ∈ ⋆ x ⟨ y ⟩ P
-  ∈-⋆⟨·⟩₀  : ∀{y P} → w ∈ ⋆ w ⟨ y ⟩ P
-  ∈-⋆⟨·⟩₁  : ∀{x y P} → w ≢ y → w ∈ P → w ∈ ⋆ x ⟨ y ⟩ P
-  ∈-|₀     : ∀{P Q} → w ∈ P → w ∈ (P ∣ Q)
-  ∈-|₁     : ∀{P Q} → w ∈ Q → w ∈ (P ∣ Q)
-
-_∉_ : (w : Name) (P : Term) → Set
-w ∉ P = ¬ (w ∈ P)
-
-infix 5 _≈_
-
-data _≈_ : (P Q : Term) → Set where
-
-  refl    : Reflexive _≈_
-  trans   : Transitive _≈_
-
-  ↔-cong  : ∀{x y x′ y′} →
-
-    x ≡ x′ → y ≡ y′ →
-    -----------------
-    x ↔ y ≈ x′ ↔ y′
-
-  ν-cong : ∀{x x′ P Q P′ Q′} →
-
-    x ≡ x′ → P ≈ P′ → Q ≈ Q′ →
-    --------------------------
-    ν x (P ∣ Q) ≈ ν x′ (P′ ∣ Q′)
-
-  ν-swap  : ∀{x P Q} →
-
-    ------------------------
-    ν x (P ∣ Q) ≈ ν x (Q ∣ P)
-
-  ν-assoc₁ : ∀{x y P Q R} →
-
-    y ∉ P  →  x ∉ R  →
-    -------------------------------------------
-    ν x (P ∣ ν y (Q ∣ R)) ≈ ν y (ν x (P ∣ Q) ∣ R)
-
-  ν-assoc₂ : ∀{x y P Q R} →
-
-    y ∉ P  →  x ∉ R  →
-    -------------------------------------------
-    ν y (ν x (P ∣ Q) ∣ R) ≈ ν x (P ∣ ν y (Q ∣ R))
-
-  [·]-cong : ∀{x y x′ y′ P Q P′ Q′} →
-
-    x ≡ x′ → y ≡ y′ → P ≈ P′ → Q ≈ Q′ →
-    ------------------------------------
-    x [ y ] (P ∣ Q) ≈ x′ [ y′ ] (P′ ∣ Q′)
-
-  ⟨·⟩-cong : ∀{x y x′ y′ P P′} →
-
-    x ≡ x′ → y ≡ y′ → P ≈ P′ →
-    --------------------------
-    x ⟨ y ⟩ P ≈ x′ ⟨ y′ ⟩ P′
-
-  []-cong : ∀{x x′} →
-
-    x ≡ x′ →
-    -----------------
-    x [] 0 ≈ x′ [] 0
-
-  ⟨⟩-cong : ∀{x x′ P P′} →
-
-    x ≡ x′ → P ≈ P′ →
-    -----------------
-    x ⟨⟩ P ≈ x′ ⟨⟩ P′
-
-  [L]-cong : ∀{x x′ P P′} →
-
-    x ≡ x′ → P ≈ P′ →
-    -------------------
-    x [L] P ≈ x′ [L] P′
-
-  [R]-cong : ∀{x x′ P P′} →
-
-    x ≡ x′ → P ≈ P′ →
-    -------------------
-    x [R] P ≈ x′ [R] P′
-
-  case-cong : ∀{x x′ P Q P′ Q′} →
-
-    x ≡ x′ → P ≈ P′ → Q ≈ Q′ →
-    ----------------------------------
-    case x (P , Q) ≈ case x′ (P′ , Q′)
-
-  crash-cong : ∀{x x′} →
-
-    x ≡ x′ →
-    ------------------
-    crash x ≈ crash x′
-
-  ⋆[]-cong : ∀{x x′ y y′ P P′} →
-
-    x ≡ x′ → y ≡ y′ → P ≈ P′ →
-    ----------------------------
-    ⋆ x [ y ] P ≈ ⋆ x′ [ y′ ] P′
-
-  ⋆⟨⟩-cong : ∀{x x′ y y′ P P′} →
-
-    x ≡ x′ → y ≡ y′ → P ≈ P′ →
-    ----------------------------
-    ⋆ x ⟨ y ⟩ P ≈ ⋆ x′ ⟨ y′ ⟩ P′
-
-  |-cong : ∀{P Q P′ Q′} →
-
-    P ≈ P′ → Q ≈ Q′ →
-    ------------------
-    (P ∣ Q) ≈ (P′ ∣ Q′)
-
-  |-swap  : ∀{P Q} →
-
-    ----------------
-    (P ∣ Q) ≈ (Q ∣ P)
-
-  |-assoc₁ : ∀{P Q R} →
-
-    --------------------------
-    (P ∣ (Q ∣ R)) ≈ ((P ∣ Q) ∣ R)
-
-  |-assoc₂ : ∀{P Q R} →
-
-    --------------------------
-    ((P ∣ Q) ∣ R) ≈ (P ∣ (Q ∣ R))
-
-
-sym : Symmetric _≈_
-sym  refl                  = refl
-sym (trans p₁ p₂)          = trans (sym p₂) (sym p₁)
-sym (↔-cong c₁ c₂)         = ↔-cong (P.sym c₁) (P.sym c₂)
-sym (ν-cong c p₁ p₂)       = ν-cong (P.sym c) (sym p₁) (sym p₂)
-sym  ν-swap                = ν-swap
-sym (ν-assoc₁ c₁ c₂)       = ν-assoc₂ c₁ c₂
-sym (ν-assoc₂ c₁ c₂)       = ν-assoc₁ c₁ c₂
-sym ([·]-cong c₁ c₂ p₁ p₂) = [·]-cong (P.sym c₁) (P.sym c₂) (sym p₁) (sym p₂)
-sym (⟨·⟩-cong c₁ c₂ p)     = ⟨·⟩-cong (P.sym c₁) (P.sym c₂) (sym p)
-sym ([]-cong c₁)           = []-cong (P.sym c₁)
-sym (⟨⟩-cong c₁ p)         = ⟨⟩-cong (P.sym c₁) (sym p)
-sym ([L]-cong c₁ p)        = [L]-cong (P.sym c₁) (sym p)
-sym ([R]-cong c₁ p)        = [R]-cong (P.sym c₁) (sym p)
-sym (case-cong c₁ p₁ p₂)   = case-cong (P.sym c₁) (sym p₁) (sym p₂)
-sym (crash-cong c₁)        = crash-cong (P.sym c₁)
-sym (⋆[]-cong c₁ c₂ p)     = ⋆[]-cong (P.sym c₁) (P.sym c₂) (sym p)
-sym (⋆⟨⟩-cong c₁ c₂ p)     = ⋆⟨⟩-cong (P.sym c₁) (P.sym c₂) (sym p)
-sym (|-cong p₁ p₂)         = |-cong (sym p₁) (sym p₂)
-sym  |-swap                = |-swap
-sym  |-assoc₁              = |-assoc₂
-sym  |-assoc₂              = |-assoc₁
 
 
 
@@ -245,50 +25,42 @@ _for_ : (w z x : Name) → Name
 ...| yes x≡z = w
 ...| no  x≢z = x
 
-
-infixl 30 _[_/_]
-
-_[_/_] : (P : Term) (w z : Name) → Term
-(x ↔ y) [ w / z ]
-             = (w for z) x ↔ (w for z) y
-(ν x (P ∣ Q)) [ w / z ]
-  with x ≟ z
-...| yes x≡z = ν x (P           ∣ Q [ w / z ])
+[/]-step : (w z : Name) (P : Term) → Term
+[/]-step w z (τ P) = τ (P [ w / z ])
+[/]-step w z (x ↔ y) = (w for z) x ↔ (w for z) y
+[/]-step w z (ν x (P ∣ Q)) with x ≟ z
+...| yes x≡z = ν x (P ∣ Q)
 ...| no  x≢z = ν x (P [ w / z ] ∣ Q [ w / z ])
-(x [ y ] (P ∣ Q)) [ w / z ]
-  with y ≟ z
-...| yes y≡z = (w for z) x [ y ] (P           ∣ Q [ w / z ])
+[/]-step w z (x [ y ] (P ∣ Q)) with y ≟ z
+...| yes y≡z = (w for z) x [ y ] (P ∣ Q [ w / z ])
 ...| no  y≢z = (w for z) x [ y ] (P [ w / z ] ∣ Q [ w / z ])
-(x ⟨ y ⟩ P) [ w / z ]
-  with y ≟ z
+[/]-step w z (x ⟨ y ⟩ P) with y ≟ z
 ...| yes y≡z = (w for z) x ⟨ y ⟩ P
 ...| no  y≢z = (w for z) x ⟨ y ⟩ P [ w / z ]
-(x [] _) [ w / z ]
-             = (w for z) x [] 0
-(x ⟨⟩ P) [ w / z ]
-             = (w for z) x ⟨⟩ P [ w / z ]
-(x [L] P) [ w / z ]
-             = (w for z) x [L] P [ w / z ]
-(x [R] P) [ w / z ]
-             = (w for z) x [R] P [ w / z ]
-(case x (P , Q)) [ w / z ]
-             = case ((w for z) x) (P [ w / z ] , Q [ w / z ])
-(crash x) [ w / z ]
-             = crash ((w for z) x)
-(⋆ x [ y ] P) [ w / z ]
-  with y ≟ z
+[/]-step w z (x [] _) = (w for z) x [] 0 
+[/]-step w z (x ⟨⟩ P) = (w for z) x ⟨⟩ P [ w / z ]
+[/]-step w z (x [L] P) = (w for z) x [L] P [ w / z ]
+[/]-step w z (x [R] P) = (w for z) x [R] P [ w / z ]
+[/]-step w z (case x (P , Q)) = case ((w for z) x) (P [ w / z ] , Q [ w / z ])
+[/]-step w z (crash x) = crash ((w for z) x)
+[/]-step w z (⋆ x [ y ] P) with y ≟ z
 ...| yes y≡z = ⋆ (w for z) x [ y ] P
 ...| no  y≢z = ⋆ (w for z) x [ y ] P [ w / z ]
-(⋆ x ⟨ y ⟩ P) [ w / z ]
-  with y ≟ z
+[/]-step w z (⋆ x ⟨ y ⟩ P) with y ≟ z
 ...| yes y≡z = ⋆ (w for z) x ⟨ y ⟩ P
 ...| no  y≢z = ⋆ (w for z) x ⟨ y ⟩ P [ w / z ]
-(P ∣ Q) [ w / z ] = (P [ w / z ] ∣ Q [ w / z ])
+[/]-step w z (P ∣ Q) = (P [ w / z ] ∣ Q [ w / z ])
+[/]-step w z (P [ w′ / z′ ]) = {!!}
 
 
 infix 5 _⟹_
 
 data _⟹_ : (P P′ : Term) → Set where
+
+  τ : ∀{P} →
+
+    τ P ⟹ P
+
   ↔₁ : ∀{w x P} →
 
     ν x (w ↔ x ∣ P) ⟹ P [ w / x ]
@@ -505,7 +277,7 @@ data _⊢_ : Term → List NameType → Set where
 
     P ⊢ Γ →
     -------------
-    P ⊢ x ⦂ ⊥ , Γ
+    x ⟨⟩ P ⊢ x ⦂ ⊥ , Γ
 
   ⊢-⊤ : ∀{Γ x} →
 
@@ -542,7 +314,7 @@ data _⊢_ : Term → List NameType → Set where
     ----------------------
     P ⊢ Δ
 
-{-
+
 ⊢-resp-≈ : ∀{Γ P Q} →
 
   P ≈ Q → P ⊢ Γ →
@@ -551,25 +323,29 @@ data _⊢_ : Term → List NameType → Set where
 
 ⊢-resp-≈  refl P⊢Γ = P⊢Γ
 ⊢-resp-≈ (trans P≈Q Q≈R) P⊢Γ = ⊢-resp-≈ Q≈R (⊢-resp-≈ P≈Q P⊢Γ)
+⊢-resp-≈ P≈P′ (exch π P⊢Γ) = exch π (⊢-resp-≈ P≈P′ P⊢Γ)
 ⊢-resp-≈ (↔-cong cx cy) P⊢Γ rewrite cx | cy = P⊢Γ
-⊢-resp-≈ (ν-cong cx P≈P′ Q≈Q′) P⊢Γ rewrite cx = {!!}
-⊢-resp-≈  ν-swap P⊢Γ = {!!}
-⊢-resp-≈ (ν-assoc₁ cx cy) P⊢Γ = {!!}
-⊢-resp-≈ (ν-assoc₂ cx cy) P⊢Γ = {!!}
-⊢-resp-≈ ([·]-cong cx cy P≈Q P≈Q₁) P⊢Γ = {!!}
-⊢-resp-≈ (⟨·⟩-cong cx cy P≈Q) P⊢Γ = {!!}
-⊢-resp-≈ ([]-cong cx) P⊢Γ = {!!}
-⊢-resp-≈ (⟨⟩-cong cx P≈Q) P⊢Γ = {!!}
-⊢-resp-≈ ([L]-cong cx P≈Q) P⊢Γ = {!!}
-⊢-resp-≈ ([R]-cong cx P≈Q) P⊢Γ = {!!}
-⊢-resp-≈ (case-cong cx P≈Q P≈Q₁) P⊢Γ = {!!}
-⊢-resp-≈ (crash-cong cx) P⊢Γ = {!!}
-⊢-resp-≈ (⋆[]-cong cx cy P≈Q) P⊢Γ = {!!}
-⊢-resp-≈ (⋆⟨⟩-cong cx cy P≈Q) P⊢Γ = {!!}
-⊢-resp-≈ (|-cong P≈P′ Q≈Q′) P⊢Γ = {!!}
-⊢-resp-≈  |-swap P⊢Γ = {!!}
-⊢-resp-≈  |-assoc₁ P⊢Γ = {!!}
-⊢-resp-≈  |-assoc₂ P⊢Γ = {!!}
+⊢-resp-≈ (ν-cong cx P≈P′ Q≈Q′) (cut P⊢Γ Q⊢Δ) rewrite cx = cut (⊢-resp-≈ P≈P′ P⊢Γ) (⊢-resp-≈ Q≈Q′ Q⊢Δ)
+⊢-resp-≈  ν-swap (cut P⊢Γ Q⊢Δ) = {!!}
+⊢-resp-≈ (ν-assoc₁ cx cy) (cut P⊢Γ R⊢Θ) = {!!}
+⊢-resp-≈ (ν-assoc₂ cx cy) (cut P⊢Γ R⊢Θ) = {!!}
+⊢-resp-≈ ([·]-cong cx cy P≈P′ Q≈Q′) (⊢-⊗ P⊢Γ Q⊢Δ) rewrite cx | cy = ⊢-⊗ (⊢-resp-≈ P≈P′ P⊢Γ) (⊢-resp-≈ Q≈Q′ Q⊢Δ)
+⊢-resp-≈ (⟨·⟩-cong cx cy P≈P′) (⊢-⅋ P⊢Γ) rewrite cx | cy = ⊢-⅋ (⊢-resp-≈ P≈P′ P⊢Γ)
+⊢-resp-≈ ([]-cong cx) ⊢-𝟏 rewrite cx = ⊢-𝟏
+⊢-resp-≈ (⟨⟩-cong cx P≈P′) (⊢-⊥ P⊢Γ) rewrite cx = ⊢-⊥ (⊢-resp-≈ P≈P′ P⊢Γ)
+⊢-resp-≈ ([L]-cong cx P≈P′) (⊢-⊕₁ P⊢Γ) rewrite cx = ⊢-⊕₁ (⊢-resp-≈ P≈P′ P⊢Γ)
+⊢-resp-≈ ([R]-cong cx P≈P′) (⊢-⊕₂ P⊢Γ) rewrite cx = ⊢-⊕₂ (⊢-resp-≈ P≈P′ P⊢Γ)
+⊢-resp-≈ (case-cong cx P≈P′ Q≈Q′) (⊢-& P⊢Γ Q⊢Δ) rewrite cx = ⊢-& (⊢-resp-≈ P≈P′ P⊢Γ) (⊢-resp-≈ Q≈Q′ Q⊢Δ)
+⊢-resp-≈ (crash-cong cx) ⊢-⊤ rewrite cx = ⊢-⊤
+⊢-resp-≈ (⋆[]-cong cx cy P≈P′) (⊢-!₁ P⊢Γ) rewrite cx | cy = ⊢-!₁ (⊢-resp-≈ P≈P′ P⊢Γ)
+⊢-resp-≈ (⋆⟨⟩-cong cx cy P≈P′) (⊢-?₁ P⊢Γ) rewrite cx | cy = ⊢-?₁ (⊢-resp-≈ P≈P′ P⊢Γ)
+⊢-resp-≈ (|-cong P≈P′ Q≈Q′) (⊢-| P⊢Γ Q⊢Δ) = ⊢-| (⊢-resp-≈ P≈P′ P⊢Γ) (⊢-resp-≈ Q≈Q′ Q⊢Δ)
+⊢-resp-≈  |-swap (⊢-| P⊢Γ Q⊢Δ) = {!⊢-| Q⊢Δ P⊢Γ!}
+⊢-resp-≈  |-assoc₁ (⊢-| P⊢Γ (⊢-| Q⊢Δ R⊢Θ)) = {!!}
+⊢-resp-≈  |-assoc₁ (⊢-| P⊢Γ (exch π QR⊢ΔΘ)) = {!!}
+⊢-resp-≈  |-assoc₂ (⊢-| (⊢-| P⊢Γ Q⊢Δ) R⊢Θ) = {!!}
+⊢-resp-≈  |-assoc₂ (⊢-| (exch π PQ⊢ΓΔ) R⊢Θ) = {!!}
+⊢-resp-≈ ([/]-cong cx cy P≈P′) (cont P⊢Γ) rewrite cx | cy = cont (⊢-resp-≈ P≈P′ P⊢Γ)
 
 
 -- -}
