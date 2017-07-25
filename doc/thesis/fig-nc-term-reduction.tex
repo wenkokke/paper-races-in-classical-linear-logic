@@ -2,10 +2,12 @@
   \subsection*{Structural congruence}
   \(
   \begin{array}{llll}
+    \ncEquivPoolSwap
     & \tm{\ncPool{P}{Q}}
     & \equiv \;
     & \tm{\ncPool{Q}{P}}
     \\
+    \ncEquivPoolAss1
     & \tm{\ncPool{P}{\ncPool{Q}{R}}}
     & \equiv \;
     & \tm{\ncPool{\ncPool{P}{Q}}{R}}
@@ -15,23 +17,28 @@
   \subsection*{Reduction rules}
   \(
   \begin{array}{llll}
+    \ncRedBetaStar1
     & \tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}
     & \Longrightarrow \;
     & \tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}
     \\
+    \ncRedBetaStar{n+1}
     & \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}
     & \Longrightarrow \;
     & \tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
     \\
     \\
+    \ncRedKappaTake
     & \tm{\cpCut{x}{\ncCnt{y}{z}{P}}{R}}
     & \Longrightarrow \;
     & \tm{\ncCnt{y}{z}{\cpCut{x}{P}{R}}}
     \\
+    \ncRedKappaGive
     & \tm{\cpCut{x}{\ncSrv{y}{z}{P}}{R}}
     & \Longrightarrow \;
     & \tm{\ncSrv{y}{z}{\cpCut{x}{P}{R}}}
     \\
+    \ncRedKappaPool
     & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
     & \Longrightarrow \;
     & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}} \qquad \text{if} \; x \not\in P
@@ -40,6 +47,7 @@
 
   \begin{prooftree}
     \AXC{\reducesto{P}{P'}}
+    \SYM{\ncRedGammaPool}
     \UIC{\reducesto{\ncPool{P}{Q}}{\ncPool{P'}{Q}}}
   \end{prooftree}
 

@@ -1,0 +1,33 @@
+\begin{figure*}[h]
+  \centering
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+      \SYM{\take[1]{}}
+      \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{ \Gamma , \tmty{x}{\take[1]{A}} }$}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+      \SYM{\give[1]{}}
+      \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[1]{A}} }$}
+    \end{prooftree*}
+  \end{center}
+
+  \begin{prooftree}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\give[m]{A}} , \tmty{y}{\give[n]{A}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[m+n]{A}} }$}
+  \end{prooftree}
+  \begin{prooftree}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\take[m]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta , \tmty{x}{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma , \Delta , \tmty{x}{\take[m+n]{A}} }$}
+  \end{prooftree}
+  
+  \caption{Typing judgement for \nc extending that of Figure~\ref{fig:cp-typing-rules}}
+  \label{fig:nc-typing-rules}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

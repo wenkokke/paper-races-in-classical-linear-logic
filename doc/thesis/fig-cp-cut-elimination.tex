@@ -1,0 +1,129 @@
+\begin{figure*}[h]
+  {
+    \begin{tabular}{ll}
+      \cpRedAxCut1
+      &
+        \begin{prooftree*}
+          \AXC{}
+          \NOM{Ax}
+          \UIC{$\seq[{ \cpLink{w}{x} }]{ \tmty{w}{A}, \tmty{x}{A^\bot} }$}
+          \AXC{$\seq[{ R }]{ \tmty{x}{A}, \Gamma }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{\cpLink{w}{x}}{R} }]{ \tmty{w}{A}, \Gamma }$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ \cpSub{w}{x}{R} }]{ \tmty{w}{A}, \Gamma }$}
+        \end{prooftree*}
+      \\[30pt]
+
+      \cpRedAxCut2
+      &
+      (as above)
+      \\[30pt]
+      
+      \cpRedBetaTensParr
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A^\bot}, \tmty{y}{B^\bot} }$}
+          \SYM{\parr}
+          \UIC{$\seq[{ \cpRecv{y}{x}P }]{ \Gamma, \tmty{y}{A^\bot \parr B^\bot} }$}
+          \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{y}{B} }$}
+          \SYM{\tens}
+          \BIC{$\seq[{ \cpSend{y}{x}(Q \mid R) }]{ \Delta, \Theta, \tmty{y}{A \tens B} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{y}{\cpRecv{y}{x}{P}}{\cpSend{y}{x}{Q}{R}} }]{ \Gamma, \Delta, \Theta }$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A^\bot}, \tmty{y}{B^\bot} }$}
+          \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta, \tmty{y}{B^\bot} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{y}{B} }$}      
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{y}{\cpCut{x}{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta }$}
+        \end{prooftree*}
+      \\[40pt]
+      
+      \cpRedBetaOneBot
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma }$}
+          \SYM{\bot}
+          \UIC{$\seq[{ \cpWait{x}{P} }]{ \Gamma, \tmty{x}{\bot} }$}
+          \AXC{}
+          \SYM{\one}
+          \UIC{$\seq[{ \cpHalt{x} }]{ \tmty{x}{\one} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}} }]{ \Gamma }$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma }$}
+        \end{prooftree*}
+      \\[40pt]
+      
+      \cpRedBetaPlusWith1
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A^\bot} }$}
+          \AXC{$\seq[{ Q }]{ \Gamma, \tmty{x}{B^\bot} }$}
+          \SYM{\with}
+          \BIC{$\seq[{ \cpCase{x}{P}{Q} }]{ \Gamma, \tmty{x}{A^\bot \with B^\bot} }$}
+          \AXC{$\seq[{ R }]{ \Delta, \tmty{x}{A} }$}
+          \SYM{\plus_1}
+          \UIC{$\seq[{ \cpInl{x}{R}}]{ \Delta, \tmty{x}{A \plus B} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{\cpCase{x}{P}{Q}}{\cpInl{x}{R}} }]{ \Gamma, \Delta }$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A^\bot} }$}
+          \AXC{$\seq[{ R }]{ \Delta, \tmty{x}{A} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{P}{R} }]{ \Gamma, \Delta }$} 
+        \end{prooftree*}
+      \\[40pt]
+      
+      \cpRedBetaPlusWith2
+      &
+        (as above)
+%       \begin{prooftree*}
+%         \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A^\bot} }$}
+%         \AXC{$\seq[{ Q }]{ \Gamma, \tmty{x}{B^\bot} }$}
+%         \SYM{\with}
+%         \BIC{$\seq[{ \cpCase{x}{P}{Q} }]{ \Gamma, \tmty{x}{A^\bot \with B^\bot} }$}
+%         \AXC{$\seq[{ R }]{ \Delta, \tmty{x}{B} }$}
+%         \SYM{\plus_2}
+%         \UIC{$\seq[{ \cpInr{x}{R}}]{ \Delta, \tmty{x}{A \plus B} }$}
+%         \NOM{Cut}
+%         \BIC{$\seq[{ \cpCut{x}{\cpCase{x}{P}{Q}}{\cpInr{x}{R}} }]{ \Gamma, \Delta }$}
+%       \end{prooftree*}
+%     \\[30pt]
+%     $\Longrightarrow$
+%     &
+%       \begin{prooftree*}
+%         \AXC{$\seq[{ Q }]{ \Gamma, \tmty{x}{B^\bot} }$}
+%         \AXC{$\seq[{ R }]{ \Delta, \tmty{x}{B} }$}
+%         \NOM{Cut}
+%         \BIC{$\seq[{ \cpCut{x}{Q}{R} }]{ \Gamma, \Delta }$} 
+%       \end{prooftree*}
+    \end{tabular}
+  }
+    
+  \caption{Type preservation for the AxCut and \beta-reduction rules of \cp}
+  \label{fig:cp-cut-elimination}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
