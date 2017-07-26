@@ -1,3 +1,22 @@
+%% Theorem/Proof Style:
+\usepackage{amsthm}
+\usepackage{thmtools}
+\usepackage{nameref,hyperref,cleveref}
+\declaretheoremstyle[headfont=\normalfont]{normalhead}
+\declaretheorem[name=Theorem,
+  refname={theorem,theorems},
+  Refname={Theorem,Theorems},
+  numberwithin=section,]{theorem}
+\declaretheorem[name=Lemma,
+  refname={lemma,lemmas},
+  Refname={Lemma,Lemmas},
+  sibling=theorem,]{lemma}
+\declaretheorem[name=Definition,
+  refname={definition,definitions},
+  Refname={Definition,Definitions},
+  style=normalhead,
+  sibling=theorem,]{definition}
+  
 %% Proof Tree Syntax:
 \usepackage{bussproofs}
 \EnableBpAbbreviations

@@ -1,0 +1,20 @@
+\begin{definition}[Terms]\label{def:cp-terms}
+  \[\!
+    \begin{aligned}
+      \tm{P}, \tm{Q}, \tm{R}
+           :=& \; \tm{\cpLink{x}{y}}       &&\text{link}
+      \\ \mid& \; \tm{\cpCut{x}{P}{Q}}     &&\text{parallel composition}
+      \\ \mid& \; \tm{\cpSend{x}{y}{P}{Q}} &&\text{``output''}
+      \\ \mid& \; \tm{\cpRecv{x}{y}{P}}    &&\text{``input''}
+      \\ \mid& \; \tm{\cpHalt{x}}          &&\text{halt}
+      \\ \mid& \; \tm{\cpWait{x}{P}}       &&\text{wait}
+      \\ \mid& \; \tm{\cpInl{x}{P}}        &&\text{select left choice}
+      \\ \mid& \; \tm{\cpInr{x}{P}}        &&\text{select right choice}
+      \\ \mid& \; \tm{\cpCase{x}{P}{Q}}    &&\text{offer binary choice}
+      \\ \mid& \; \tm{\cpAbsurd{x}}        &&\text{offer nullary choice}
+    \end{aligned}
+  \]  
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

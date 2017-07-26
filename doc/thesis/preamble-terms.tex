@@ -1,8 +1,3 @@
-% \usepackage[fleqn]{amsmath}
-% \usepackage{textgreek}
-% \usepackage{xspace}
-% \xspaceaddexceptions{]\}}
-
 %%% The π-calculus term syntax:
 \newcommand{\piCalc}[0]{\textpi-calculus\xspace}
 \newcommand{\piSend}[3]{\ensuremath{\overline{#1}\langle #2 \rangle.#3}}
@@ -29,7 +24,8 @@
 
 %%% The CP reduction rules:
 \newcommand{\cpEquivCutComm}{\ensuremath{(\nu\text{-comm})}\xspace}
-\newcommand{\cpEquivCutAss}[1]{\ensuremath{(\nu\text{-assoc}_{#1})}\xspace}
+\newcommand{\cpEquivCutAssNoParen}[1]{\ensuremath{\nu\text{-assoc}_{#1}}\xspace}
+\newcommand{\cpEquivCutAss}[1]{\ensuremath{(\cpEquivCutAssNoParen{#1})}\xspace}
 \newcommand{\cpRedAxCut}[1]{\ensuremath{(\text{AxCut}_{#1})}\xspace}
 \newcommand{\cpRedBetaTensParr}{\ensuremath{(\beta{\tens}{\parr})}\xspace}
 \newcommand{\cpRedBetaOneBot}{\ensuremath{(\beta{\one}{\bot})}\xspace}
@@ -53,8 +49,9 @@
 \newcommand{\ncCont}[3]{\ensuremath{\cpSub{#1}{#2}{#3}}}
 
 %%% The nodcap reduction rules:
-\newcommand{\ncEquivPoolSwap}{\ensuremath{(|\text{-swap})}\xspace}
-\newcommand{\ncEquivPoolAss}[1]{\ensuremath{(|\text{-assoc}_#1)}\xspace}
+\newcommand{\ncEquivPoolComm}{\ensuremath{(|\text{-comm})}\xspace}
+\newcommand{\ncEquivPoolAssNoParen}[1]{\ensuremath{|\text{-assoc}_#1}\xspace}
+\newcommand{\ncEquivPoolAss}[1]{\ensuremath{(\ncEquivPoolAssNoParen{#1})}\xspace}
 \newcommand{\ncEquivCutCong}{\ensuremath{(\nu\text{-cong})}\xspace}
 \newcommand{\ncRedBetaStar}[1]{\ensuremath{(\beta{\star}_{#1})}\xspace}
 \newcommand{\ncRedKappaTake}{\ensuremath{(\kappa{\take[1]{}})}\xspace}
