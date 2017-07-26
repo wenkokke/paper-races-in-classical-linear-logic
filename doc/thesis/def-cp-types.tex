@@ -1,0 +1,18 @@
+\begin{definition}[Types]\label{def:cp-types}
+  \[\!
+    \begin{aligned}
+      \ty{A}, \ty{B}, \ty{C}
+           :=& \; \ty{A \tens B} &&\text{pair of independent processes}
+      \\ \mid& \; \ty{A \parr B} &&\text{pair of interdependent processes}
+      \\ \mid& \; \ty{\one}      &&\text{unit for} \; {\tens}
+      \\ \mid& \; \ty{\bot}      &&\text{unit for} \; {\parr}
+      \\ \mid& \; \ty{A \plus B} &&\text{internal choice}
+      \\ \mid& \; \ty{A \with B} &&\text{external choice}
+      \\ \mid& \; \ty{\nil}      &&\text{unit for} \; {\plus}
+      \\ \mid& \; \ty{\top}      &&\text{unit for} \; {\with}
+    \end{aligned}
+  \]  
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

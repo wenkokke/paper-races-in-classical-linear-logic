@@ -1,56 +1,4 @@
 \begin{figure*}[h]
-  \centering
-  \begin{tabular}{ll}
-    \cpEquivCutComm
-    &
-      \begin{prooftree*}
-        \AXC{$\seq[{ P }]{ \tmty{x}{A}, \Gamma }$}
-        \AXC{$\seq[{ Q }]{ \tmty{x}{A^\bot}, \Delta }$}
-        \NOM{Cut}
-        \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta }$}
-      \end{prooftree*}
-    \\[30pt]
-    $\equiv$
-    &
-      \begin{prooftree*}
-        \AXC{$\seq[{ Q }]{ \tmty{x}{A^\bot}, \Delta }$}
-        \AXC{$\seq[{ P }]{ \tmty{x}{A}, \Gamma }$}
-        \NOM{\cref{thm:negation-involutive}}
-        \UIC{$\seq[{ P }]{ \tmty{x}{A^{\bot\bot}}, \Gamma }$}
-        \NOM{Cut}
-        \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta }$}
-      \end{prooftree*}
-    \\[40pt]
-    \cpEquivCutAss1
-    &
-      \begin{prooftree*}
-        \AXC{$\seq[{ P }]{ \tmty{x}{A}, \Gamma }$}
-        \AXC{$\seq[{ Q }]{ \tmty{x}{A^\bot}, \tmty{y}{B}, \Delta }$}
-        \AXC{$\seq[{ R }]{ \tmty{y}{B^\bot}, \Theta }$}
-        \NOM{Cut}
-        \BIC{$\seq[{ \cpCut{y}{Q}{R} }]{ \tmty{x}{A^\bot}, \Delta, \Theta }$}
-        \NOM{Cut}
-        \BIC{$\seq[{ \cpCut{x}{P}{\cpCut{y}{Q}{R}} }]{ \Gamma, \Delta, \Theta }$}
-      \end{prooftree*}
-    \\[30pt]
-    $\equiv$
-    &
-      \begin{prooftree*}
-        \AXC{$\seq[{ P }]{ \tmty{x}{A}, \Gamma }$}
-        \AXC{$\seq[{ Q }]{ \tmty{x}{A^\bot}, \tmty{y}{B}, \Delta }$}
-        \NOM{Cut}
-        \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \tmty{y}{B}, \Gamma, \Delta }$}
-        \AXC{$\seq[{ R }]{ \tmty{y}{B^\bot}, \Theta }$}
-        \NOM{Cut}
-        \BIC{$\seq[{ \cpCut{y}{\cpCut{x}{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta }$}
-      \end{prooftree*}
-    \\[40pt]
-  \end{tabular}
-  \caption{Type preservation for the structural congruence of CP}
-  \label{fig:cp-preservation-equiv}
-\end{figure*}
-
-\begin{figure*}[h]
   \begin{tabular}{ll}
     \cpRedAxCut1
     &
@@ -152,7 +100,7 @@
   \end{tabular}
   
   \caption{Type preservation for the AxCut and \beta-reduction rules of \cp}
-  \label{fig:cp-preservation}
+  \label{fig:cp-preservation-1}
 \end{figure*}
 %%% Local Variables:
 %%% TeX-master: "main"

@@ -11,6 +11,7 @@
     & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
     & \equiv \;
     & \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}}
+      \quad \text{if} \; x \not\in R \; \text{and} \; y \not\in P
 \end{array}
   \)
   \\[1ex]
@@ -54,12 +55,12 @@
     \cpRedKappaTens1
     & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
     & \Longrightarrow \;
-    & \tm{\cpSend{y}{z}{\cpCut{x}{P}{R}}{Q}} \qquad \text{if} \; x \in P
+    & \tm{\cpSend{y}{z}{\cpCut{x}{P}{R}}{Q}} \quad \text{if} \; x \not\in Q
     \\
     \cpRedKappaTens2
     & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
     & \Longrightarrow \;
-    & \tm{\cpSend{y}{z}{P}{\cpCut{x}{Q}{R}}} \qquad \text{if} \; x \in Q
+    & \tm{\cpSend{y}{z}{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; x \not\in P
     \\
     \cpRedKappaParr
     & \tm{\cpCut{x}{\cpRecv{y}{z}{P}}{R}}
