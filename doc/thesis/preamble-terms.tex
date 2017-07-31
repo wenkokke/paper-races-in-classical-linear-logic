@@ -26,7 +26,7 @@
 \newcommand{\cpEquivCutComm}{\ensuremath{(\nu\text{-comm})}\xspace}
 \newcommand{\cpEquivCutAssNoParen}[1]{\ensuremath{\nu\text{-assoc}_{#1}}\xspace}
 \newcommand{\cpEquivCutAss}[1]{\ensuremath{(\cpEquivCutAssNoParen{#1})}\xspace}
-\newcommand{\cpRedAxCut}[1]{\ensuremath{(\text{AxCut}_{#1})}\xspace}
+\newcommand{\cpRedAxCut}[1]{\ensuremath{(\cpLink{}{}_{#1})}\xspace}
 \newcommand{\cpRedBetaTensParr}{\ensuremath{(\beta{\tens}{\parr})}\xspace}
 \newcommand{\cpRedBetaOneBot}{\ensuremath{(\beta{\one}{\bot})}\xspace}
 \newcommand{\cpRedBetaPlusWith}[1]{\ensuremath{(\beta{\plus}{\with}_{#1})}\xspace}
@@ -41,6 +41,7 @@
 
 %%% The nodcap term syntax:
 \newcommand{\nc}{\ensuremath{\text{CP}_{\text{ND}}}\xspace}
+\newcommand{\ncHalt}{\ensuremath{0}}
 \newcommand{\ncExpn}[3]{\ensuremath{#1\uparrow #2.#3}}
 \newcommand{\ncIntl}[3]{\ensuremath{#1\downarrow #2.#3}}
 \newcommand{\ncSrv}[3]{\ensuremath{{\star}{#1}(#2).#3}}
@@ -49,11 +50,13 @@
 \newcommand{\ncCont}[3]{\ensuremath{\cpSub{#1}{#2}{#3}}}
 
 %%% The nodcap reduction rules:
+\newcommand{\ncEquivPoolId}{\ensuremath{(|\text{-ident})}\xspace}
 \newcommand{\ncEquivPoolComm}{\ensuremath{(|\text{-comm})}\xspace}
 \newcommand{\ncEquivPoolAssNoParen}[1]{\ensuremath{|\text{-assoc}_#1}\xspace}
 \newcommand{\ncEquivPoolAss}[1]{\ensuremath{(\ncEquivPoolAssNoParen{#1})}\xspace}
 \newcommand{\ncEquivCutCong}{\ensuremath{(\nu\text{-cong})}\xspace}
 \newcommand{\ncRedBetaStar}[1]{\ensuremath{(\beta{\star}_{#1})}\xspace}
+\newcommand{\ncRedBetaTakeGive}[1]{\ensuremath{(\beta\take{}\give{})}\xspace}
 \newcommand{\ncRedKappaTake}{\ensuremath{(\kappa{\take[1]{}})}\xspace}
 \newcommand{\ncRedKappaGive}{\ensuremath{(\kappa{\give[1]{}})}\xspace}
 \newcommand{\ncRedKappaPool}{\ensuremath{(\kappa{|})}\xspace}

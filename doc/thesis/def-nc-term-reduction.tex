@@ -1,0 +1,40 @@
+\begin{definition}[Term reduction]\label{def:nc-reduction}
+  We extend \cref{def:cp-reduction} with the following reductions:
+  \[
+    \begin{array}{llll}
+      \ncRedBetaStar{1}
+      & \tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}
+      \\
+      \ncRedBetaStar{n+1}
+      & \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
+      \\
+      \\
+      \ncRedKappaTake
+      & \tm{\cpCut{x}{\ncCnt{y}{z}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\ncCnt{y}{z}{\cpCut{x}{P}{R}}}
+      \\
+      \ncRedKappaGive
+      & \tm{\cpCut{x}{\ncSrv{y}{z}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\ncSrv{y}{z}{\cpCut{x}{P}{R}}}
+      \\
+      \ncRedKappaPool
+      & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
+      & \Longrightarrow \;
+      & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; x \not\in P
+    \end{array}
+  \]
+  \begin{prooftree}
+    \AXC{\reducesto{P}{P'}}
+    \SYM{\ncRedGammaPool}
+    \UIC{\reducesto{\ncPool{P}{Q}}{\ncPool{P'}{Q}}}
+  \end{prooftree}
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

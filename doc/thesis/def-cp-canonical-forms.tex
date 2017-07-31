@@ -1,0 +1,48 @@
+\begin{definition}[Canonical forms]\label{def:cp-canonical-forms}
+  We define the following forms to be canonical:
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpLink{x}{y}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpSend{x}{y}{P}{Q}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpRecv{x}{y}{P}}}
+    \end{prooftree*}
+  \end{center}
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpHalt{x}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpWait{x}{P}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpAbsurd{x}}}
+    \end{prooftree*}
+  \end{center}
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpInl{x}{P}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpInr{x}{P}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{}
+      \UIC{\canonical{\cpCase{x}{P}{Q}}}
+    \end{prooftree*}
+  \end{center}
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

@@ -2,7 +2,13 @@
   If \reducesto{P}{Q} and $\seq[{ P }]{ \Gamma }$, then $\seq[{ Q }]{ \Gamma }$.
 \end{theorem}
 \begin{proof}
-  By induction on the structure of the reduction. See \cref{fig:cp-preservation}.
+  By induction on the structure of the reduction. See
+  \cref{fig:cp-preservation-1} for the AxCut and \textbeta-reduction rules, and
+  \cref{fig:cp-preservation-2a,fig:cp-preservation-2b} for the commutative
+  conversions. 
+  The case for \cpRedGammaCut is trivial by the induction hypothesis, and the
+  case for \cpRedGammaEquiv is trivial by the induction hypothesis and
+  \cref{thm:cp-preservation-equiv}.
 \end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"

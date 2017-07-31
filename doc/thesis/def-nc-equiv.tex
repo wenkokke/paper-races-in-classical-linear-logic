@@ -1,0 +1,24 @@
+\begin{definition}[Structural congruence]\label{def:nc-equiv}
+  We extend \cref{def:cp-equiv} with the following equivalences:
+  \[
+    \begin{array}{llll}
+%     \ncEquivPoolId
+%     & \tm{\ncPool{P}{\ncHalt}}
+%     & \equiv \;
+%     & \tm{P}
+%     \\
+      \ncEquivPoolComm
+      & \tm{\ncPool{P}{Q}}
+      & \equiv \;
+      & \tm{\ncPool{Q}{P}}
+      \\
+      \ncEquivPoolAss1
+      & \tm{\ncPool{P}{\ncPool{Q}{R}}}
+      & \equiv \;
+      & \tm{\ncPool{\ncPool{P}{Q}}{R}}
+    \end{array}
+  \]
+\end{definition} 
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

@@ -1,4 +1,4 @@
-\begin{figure*}
+\begin{figure*}[ht]
   \centering
   \begin{tabular}{ll}
     \cpRedKappaTens1
@@ -28,11 +28,135 @@
     \cpRedKappaTens2
     &
       (as above)
+    \\[20pt]
+    \cpRedKappaParr
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{z}{B}, \tmty{y}{C} }$}
+        \SYM{\parr}
+        \UIC{$\seq[{ \cpRecv{y}{z}{P} }]{ \Gamma, \tmty{x}{A}, \tmty{y}{B \parr C} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut} 
+        \BIC{$\seq[{ \cpCut{x}{\cpRecv{y}{z}{P}}{R} }]{ \Gamma, \Theta, \tmty{y}{B \parr C} }$}
+      \end{prooftree*}
     \\[30pt]
+    $\Longrightarrow$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{z}{B}, \tmty{y}{C} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{P}{R} }]{ \Gamma, \Theta, \tmty{z}{B}, \tmty{y}{C} }$}
+        \SYM{\parr}
+        \UIC{$\seq[{ \cpRecv{y}{z}{\cpCut{x}{P}{R}} }]{ \Gamma, \Theta, \tmty{y}{B \parr C} }$}
+      \end{prooftree*}
+    \\[40pt]
+    \cpRedKappaBot
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A} }$}
+        \SYM{\bot}
+        \UIC{$\seq[{ \cpWait{y}{P} }]{ \Gamma, \tmty{x}{A}, \tmty{y}{\bot} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut} 
+        \BIC{$\seq[{ \cpCut{x}{\cpWait{y}{P}}{R} }]{ \Gamma, \Theta, \tmty{y}{\bot} }$}
+      \end{prooftree*}
+    \\[30pt]
+    $\Longrightarrow$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut} 
+        \BIC{$\seq[{ \cpCut{x}{P}{R} }]{ \Gamma, \Theta }$}
+        \SYM{\bot}
+        \UIC{$\seq[{ \cpWait{y}{\cpCut{x}{P}{R}} }]{ \Gamma, \Theta, \tmty{y}{\bot} }$}
+      \end{prooftree*}
   \end{tabular}
 
   \caption{Type preservation for the commutative conversions of \cp}
-  \label{fig:cp-preservation-2}
+  \label{fig:cp-preservation-2a}
+\end{figure*}
+
+\begin{figure*}[ht]
+  \makebox[\textwidth][c]{
+    \begin{tabular}{ll}
+      \cpRedKappaPlus1
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{y}{B} }$}
+          \SYM{\plus_1}
+          \UIC{$\seq[{ \cpInl{y}{P} }]{ \Gamma, \tmty{x}{A}, \tmty{y}{B \plus C} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{\cpInl{y}{P}}{R} }]{ \Gamma, \Theta, \tmty{y}{B \plus C} }$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{y}{B} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{P}{R} }]{ \Gamma, \Theta, \tmty{y}{B} }$}
+          \SYM{\plus_1}
+          \UIC{$\seq[{ \cpInl{y}{\cpCut{x}{P}{R}} }]{ \Gamma, \Theta, \tmty{y}{B \plus C} }$}
+        \end{prooftree*}
+      \\[30pt] 
+      \cpRedKappaPlus2
+      &
+        (as above)
+      \\[20pt]
+      \cpRedKappaWith
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{y}{B} }$}
+          \AXC{$\seq[{ Q }]{ \Gamma, \tmty{x}{A}, \tmty{y}{C} }$}
+          \SYM{\with}
+          \BIC{$\seq[{ \cpCase{y}{P}{Q} }]{ \Gamma, \tmty{x}{A}, \tmty{y}{B \with C} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{\cpCase{y}{P}{Q}}{R} }]{ \Gamma, \Theta, \tmty{y}{B \with C} }$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{y}{B} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{P}{R} }]{ \Gamma, \Theta, \tmty{y}{B} }$}
+          \AXC{$\seq[{ Q }]{ \Gamma, \tmty{x}{A}, \tmty{y}{C} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{Q}{R} }]{ \Gamma, \Theta, \tmty{y}{C} }$}
+          \SYM{\with}
+          \BIC{$\seq[{ \cpCase{y}{\cpCut{x}{P}{R}}{\cpCut{x}{Q}{R}} }]{ \Gamma, \Theta, \tmty{y}{B \with C} }$}
+        \end{prooftree*}
+      \\[40pt] 
+      \cpRedKappaTop
+      &
+        \begin{prooftree*}
+          \AXC{}
+          \SYM{\top}
+          \UIC{$\seq[{ \cpAbsurd{y} }]{ \Gamma, \tmty{x}{A}, \tmty{y}{\top} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+          \NOM{Cut}
+          \BIC{$\seq[{ \cpCut{x}{\cpAbsurd{y}}{R} }]{ \Gamma, \Theta, \tmty{y}{\top} }$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{}
+          \SYM{\top}
+          \UIC{$\seq[{ \cpAbsurd{y} }]{ \Gamma, \Theta, \tmty{y}{\top} }$}
+        \end{prooftree*}
+    \end{tabular}
+  }
+  
+  \caption{Type preservation for the commutative conversions of \cp (cont'd)}
+  \label{fig:cp-preservation-2b}
 \end{figure*}
 %%% Local Variables:
 %%% TeX-master: "main"

@@ -1,0 +1,95 @@
+\begin{definition}[Term reduction]\label{def:cp-reduction}
+  \[
+    \begin{array}{llll}
+      \cpRedAxCut1
+      & \tm{\cpCut{x}{\cpLink{w}{x}}{P}}
+      & \Longrightarrow \;
+      & \tm{\cpSub{w}{x}{P}} 
+      \\
+      \cpRedAxCut2
+      & \tm{\cpCut{x}{\cpLink{x}{w}}{P}}
+      & \Longrightarrow \;
+      & \tm{\cpSub{w}{x}{P}} 
+      \\
+      \\
+      \cpRedBetaTensParr
+      & \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
+      \\
+      \cpRedBetaOneBot
+      & \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
+      & \Longrightarrow \;
+      & \tm{P}
+      \\
+      \cpRedBetaPlusWith1
+      & \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{x}{P}{Q}}
+      \\
+      \cpRedBetaPlusWith2
+      & \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{x}{P}{R}}
+      \\
+      \\
+      \cpRedKappaTens1
+      & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpSend{y}{z}{\cpCut{x}{P}{R}}{Q}} \quad \text{if} \; x \not\in Q
+      \\
+      \cpRedKappaTens2
+      & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpSend{y}{z}{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; x \not\in P
+      \\
+      \cpRedKappaParr
+      & \tm{\cpCut{x}{\cpRecv{y}{z}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpRecv{y}{z}{\cpCut{x}{P}{R}}}
+      \\
+      \cpRedKappaBot
+      & \tm{\cpCut{x}{\cpWait{y}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpWait{y}{\cpCut{x}{P}{R}}}
+      \\
+      \cpRedKappaPlus1
+      & \tm{\cpCut{x}{\cpInl{y}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpInl{y}{\cpCut{x}{P}{R}}}
+      \\
+      \cpRedKappaPlus2
+      &\tm{\cpCut{x}{\cpInr{y}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpInr{y}{\cpCut{x}{P}{R}}}
+      \\
+      \cpRedKappaWith
+      & \tm{\cpCut{x}{\cpCase{y}{P}{Q}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpCase{y}{\cpCut{x}{P}{R}}{\cpCut{x}{Q}{R}}}
+      \\
+      \cpRedKappaTop
+      & \tm{\cpCut{x}{\cpAbsurd{y}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpAbsurd{y}}
+    \end{array}
+  \]
+
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{\reducesto{P}{P^\prime}}
+      \SYM{\cpRedGammaCut}
+      \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{$\tm{P}\equiv\tm{Q}$}
+      \AXC{\reducesto{Q}{Q^\prime}}
+      \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
+      \SYM{\cpRedGammaEquiv}
+      \TIC{\reducesto{P}{P^\prime}}
+    \end{prooftree*}
+  \end{center}
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

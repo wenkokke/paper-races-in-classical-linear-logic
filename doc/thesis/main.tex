@@ -13,6 +13,7 @@
 \addbibresource{main.bib}
 \begin{document}
 \maketitle
+\thispagestyle{empty}
 \clearpage
 
 %% Introduction
@@ -30,32 +31,45 @@
 \input{def-cp-negation}
 \input{thm-cp-negation-involutive}
 %%   * Reduction rules
-\input{fig-cp-term-reduction}
+\input{def-cp-equiv}
+\input{def-cp-term-reduction}
 \input{thm-cp-cut-assoc2}
 \input{thm-cp-symmetry}
 %%   * Typing judgement
 \input{fig-cp-typing-judgement}
 %%   * Cut elimination
+\input{def-cp-canonical-forms}
+\input{def-cp-action}
+\input{thm-cp-progress}
 \input{thm-cp-preservation-equiv}
 \input{fig-cp-preservation-equiv}
 \input{thm-cp-preservation}
 \input{fig-cp-preservation-1}
 \input{fig-cp-preservation-2}
-%%   * Equivalence with cut elimination
 
-\section{Main contribution}\label{sec:main}
+\section{Non-deterministic Classical Processes}\label{sec:main}
 %% Main contribution
 %% - Nodcap:
 %%   * Terms and types
 \input{def-nc-terms}
 \input{def-nc-types}
+\input{def-nc-negation}
+\input{thm-nc-negation-involutive}
 %%   * Reduction rules
-\input{fig-nc-term-reduction}
+\input{def-nc-equiv}
+\input{def-nc-term-reduction}
 \input{thm-nc-pool-assoc2}
+\input{thm-nc-symmetry}
 %%   * Typing judgement
 \input{fig-nc-typing-judgement}
 %%   * Cut elimination
-%%   * Equivalence with cut elimination
+\input{def-nc-canonical-forms}
+\input{thm-nc-progress}
+\input{thm-nc-preservation-equiv}
+\input{fig-nc-preservation-equiv}
+\input{thm-nc-preservation}
+\input{fig-nc-preservation}
+%%   * Equivalence between cut eliminations
 %%   * Equivalence with non-deterministic local choice
 
 \section{Discussion}\label{sec:discussion}

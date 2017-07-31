@@ -1,0 +1,77 @@
+\begin{figure*}[ht]
+  \centering
+  \begin{tabular}{ll}
+    \ncEquivPoolComm
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[m]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma, \Delta, \take[m+n]{A} }$}
+      \end{prooftree*}
+    \\[30pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[n]{A}} }$}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[m]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{Q}{P} }]{ \Gamma, \Delta, \tmty{x}{\take[m+n]{A}} }$}
+      \end{prooftree*}
+    \\[40pt]
+    \ncEquivPoolAss1
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[l]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[m]{A}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{\take[n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{Q}{R} }]{ \Delta, \Theta, \tmty{x}{\take[m+n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{\ncPool{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[l+m+n]{A}} }$}
+      \end{prooftree*}
+    \\[30pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[l]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[m]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma, \Delta, \tmty{x}{\take[l+m]{A}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{\take[n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{\ncPool{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[l+m+n]{A}} }$}
+      \end{prooftree*}
+    \\[20pt]
+    or
+    \\[30pt]
+    \ncEquivPoolAss1
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[k]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[l]{A}}, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{\take[n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{Q}{R} }]{ \Delta, \Theta, \tmty{x}{\take[l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{\ncPool{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*}
+    \\[30pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[k]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[l]{A}}, \tmty{y}{\take[m]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{Q}{R} }]{ \Gamma, \Delta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{\take[o]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{\ncPool{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*}
+  \end{tabular}
+  \caption{Type preservation for the structural congruence of \nc}
+  \label{fig:nc-preservation-equiv}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

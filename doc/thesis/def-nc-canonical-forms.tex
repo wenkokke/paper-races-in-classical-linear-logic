@@ -1,0 +1,21 @@
+\begin{definition}[Canonical forms]\label{def:nc-canonical-forms}
+  We extend \cref{def:cp-canonical-forms} with the following canonical forms:
+  \begin{center}
+    \begin{prooftree*}
+      \AXC{\vphantom{\canonical{P}\canonical{Q}}}
+      \UIC{\canonical{\ncCnt{x}{y}{P}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{\vphantom{\canonical{P}\canonical{Q}}}
+      \UIC{\canonical{\ncSrv{x}{y}{P}}}
+    \end{prooftree*}
+    \begin{prooftree*}
+      \AXC{\canonical{P}}
+      \AXC{\canonical{Q}}
+      \BIC{\canonical{\ncPool{P}{Q}}}
+    \end{prooftree*}
+  \end{center}
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
