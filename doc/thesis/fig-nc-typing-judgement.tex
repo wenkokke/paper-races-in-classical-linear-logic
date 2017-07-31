@@ -1,4 +1,4 @@
-\begin{figure*}[h]
+\begin{figure*}[ht]
   \centering
   \begin{center}
     \begin{prooftree*}
@@ -24,6 +24,19 @@
     \NOM{Pool}
     \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma , \Delta , \tmty{x}{\take[m+n]{A}} }$}
   \end{prooftree}
+
+% \begin{center}
+%   \begin{prooftree*}
+%     \AXC{\vphantom{$\seq[{ P }]{ \Gamma  }$}}
+%     \SYM{\take[0]{}}
+%     \UIC{$\seq[{ \ncHalt }]{ \tmty{x}{\take[0]{A}} }$}
+%   \end{prooftree*}
+%   \begin{prooftree*}
+%     \AXC{$\seq[{ P }]{ \Gamma  }$}
+%     \SYM{\give[0]{}}
+%     \UIC{$\seq[{ P }]{ \Gamma , \tmty{x}{\give[0]{A}} }$}
+%   \end{prooftree*}
+% \end{center}
   
   \caption{Typing judgement for \nc extending that of Figure~\ref{fig:cp-typing-judgement}}
   \label{fig:nc-typing-judgement}

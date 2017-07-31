@@ -1,0 +1,9 @@
+\begin{definition}[Action]\label{def:cp-action}
+  A process $\tm{P}$ \emph{acts on} a channel $\tm{x}$ if it is of the form
+  $\tm{\cpSend{x}{y}{P'}{Q'}}$, $\tm{\cpRecv{x}{y}{P'}}$, $\tm{\cpHalt{x}}$,
+  $\tm{\cpWait{x}{P'}}$, $\tm{\cpInl{x}{P'}}$, $\tm{\cpInr{x}{P'}}$,
+  $\tm{\cpCase{x}{P'}{Q'}}$ or $\tm{\cpAbsurd{x}}$. 
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

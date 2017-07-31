@@ -21,9 +21,10 @@
 \usepackage{bussproofs}
 \EnableBpAbbreviations
 
-\newcommand{\tm}[1]{\textcolor{red}{#1}}
-\newcommand{\ty}[1]{\textcolor{blue}{#1}}
+\newcommand{\tm}[1]{\textcolor{red}{\ensuremath{#1}}}
+\newcommand{\ty}[1]{\textcolor{blue}{\ensuremath{#1}}}
 \newcommand{\seq}[2][]{\ensuremath{\tm{#1}\vdash\ty{#2}}}
+\newcommand{\canonical}[1]{\ensuremath{\text{canonical} \; \tm{#1}}}
 \newcommand{\reducesto}[2]{\ensuremath{\tm{#1}\Longrightarrow\tm{#2}}}
 \newcommand{\tmty}[2]{\ensuremath{\tm{#1}\colon\!\ty{#2}}}
 \newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}

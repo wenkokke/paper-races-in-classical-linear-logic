@@ -1,0 +1,17 @@
+\begin{theorem}[Preservation]\label{thm:nc-preservation}
+  If \reducesto{P}{Q} and $\seq[{ P }]{ \Gamma }$, then $\seq[{ Q }]{ \Gamma }$.
+\end{theorem}
+\begin{proof}
+  By induction on the structure of the reduction. See
+  \cref{fig:cp-preservation-1} for the AxCut and \textbeta-reduction rules from
+  \cp, and \cref{fig:cp-preservation-2a,fig:cp-preservation-2b} for the
+  commutative conversions from \cp.
+  See \cref{fig:nc-preservation} for the \textbeta-reduction rules and
+  commutative conversions from \nc.
+  The cases for \cpRedGammaCut and \ncRedGammaPool are trivial by call to the
+  induction hypothesis, and the case for \cpRedGammaEquiv is trivial by call to
+  the induction hypothesis and \cref{thm:cp-preservation-equiv}.
+\end{proof}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
