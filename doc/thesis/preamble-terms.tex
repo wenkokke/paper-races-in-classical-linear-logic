@@ -1,3 +1,7 @@
+%%% Free Variables
+\newcommand{\freeIn}[2]{\tm{#1}\in\tm{#2}}
+\newcommand{\notFreeIn}[2]{\tm{#1}\not\in\tm{#2}}
+
 %%% The π-calculus term syntax:
 \newcommand{\piCalc}[0]{\textpi-calculus\xspace}
 \newcommand{\piSend}[3]{\ensuremath{\overline{#1}\langle #2 \rangle.#3}}
@@ -21,6 +25,7 @@
 \newcommand{\cpCase}[3]{\ensuremath{\text{case}\;#1\;\{#2;#3\}}}
 \newcommand{\cpAbsurd}[1]{\ensuremath{\text{case}\;#1\;\{\}}}
 \newcommand{\cpSub}[3]{\ensuremath{\piSub{#1}{#2}{#3}}}
+\newcommand{\cpPlug}[2]{\ensuremath{{#1}[{#2}]}}
 
 %%% The CP reduction rules:
 \newcommand{\cpEquivCutComm}{\ensuremath{(\nu\text{-comm})}\xspace}
@@ -59,8 +64,8 @@
 \newcommand{\ncRedBetaTakeGive}[1]{\ensuremath{(\beta\take{}\give{})}\xspace}
 \newcommand{\ncRedKappaTake}{\ensuremath{(\kappa{\take[1]{}})}\xspace}
 \newcommand{\ncRedKappaGive}{\ensuremath{(\kappa{\give[1]{}})}\xspace}
-\newcommand{\ncRedKappaPool}{\ensuremath{(\kappa{|})}\xspace}
-\newcommand{\ncRedGammaPool}{\ensuremath{(\gamma{|})}\xspace}
+\newcommand{\ncRedKappaPool}{\ensuremath{({|}\text{-extrusion})}\xspace}
+\newcommand{\ncRedGammaPool}{\ensuremath{(\gamma{|}\xspace}}
 
 %%% Local Variables:
 %%% TeX-master: "main"

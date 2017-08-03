@@ -1,0 +1,12 @@
+\begin{definition}[Plugging]\label{def:nc-evaluation-contexts-plugging}
+  We extend \cref{def:cp-evaluation-contexts-plugging} with the following cases:
+  \[\!
+    \begin{array}{lcl}
+      \tm{\cpPlug{\ncPool{G}{P}}{R}} &:=& \; \tm{\ncPool{\cpPlug{G}{R}}{P}} \\
+      \tm{\cpPlug{\ncPool{P}{G}}{R}} &:=& \; \tm{\ncPool{P}{\cpPlug{G}{R}}}
+    \end{array}
+  \]
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

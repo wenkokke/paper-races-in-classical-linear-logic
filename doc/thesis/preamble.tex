@@ -4,11 +4,11 @@
 \usepackage{geometry}
 \usepackage[dvipsnames,table]{xcolor}
 \usepackage[fleqn,leqno]{amsmath}
+\usepackage{amssymb}
 \usepackage{textgreek}
 \usepackage{xspace}
 \xspaceaddexceptions{]\}}
 \usepackage{rotating}
-\usepackage{authblk}
 \usepackage{caption}
 \usepackage{enumitem}
 \usepackage{graphicx}
@@ -30,6 +30,8 @@
   ]{biblatex}
 
 \newcommand*{\email}[1]{\normalsize\href{mailto:#1}{\texttt{#1}}\par}
+
+\newcommand*{\wen}[1]{\mdframed\textcolor{MidnightBlue}{\bf Wen: #1}\endmdframed}
 
 \input{preamble-emoji}
 \input{preamble-types}

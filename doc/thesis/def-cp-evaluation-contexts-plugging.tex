@@ -1,0 +1,13 @@
+\begin{definition}[Plugging]\label{def:cp-evaluation-contexts-plugging}
+  We define plugging for evaluation contexts as:
+  \[\!
+    \begin{array}{lcl}
+      \tm{\cpPlug{\Box}{R}}            &:=& \; \tm{R} \\
+      \tm{\cpPlug{\cpCut{x}{G}{P}}{R}} &:=& \; \tm{\cpCut{x}{\cpPlug{G}{R}}{P}} \\
+      \tm{\cpPlug{\cpCut{x}{P}{G}}{R}} &:=& \; \tm{\cpCut{x}{P}{\cpPlug{G}{R}}}
+    \end{array}
+  \]
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

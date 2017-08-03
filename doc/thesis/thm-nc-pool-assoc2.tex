@@ -7,11 +7,11 @@
 \end{lemma}
 \begin{proof}
   \begin{align*}
-    \tm{\ncPool{\ncPool{P}{Q}}{R}} &\equiv \qquad \text{by \ncEquivPoolComm and congruence} \\
+    \tm{\ncPool{\ncPool{P}{Q}}{R}} &\equiv \qquad \text{by \ncEquivPoolComm} \\
     \tm{\ncPool{\ncPool{Q}{P}}{R}} &\equiv \qquad \text{by \ncEquivPoolComm} \\
     \tm{\ncPool{R}{\ncPool{Q}{P}}} &\equiv \qquad \text{by \ncEquivPoolAss1} \\
     \tm{\ncPool{\ncPool{R}{Q}}{P}} &\equiv \qquad \text{by \ncEquivPoolComm} \\
-    \tm{\ncPool{P}{\ncPool{R}{Q}}} &\equiv \qquad \text{by \ncEquivPoolComm and congruence} \\
+    \tm{\ncPool{P}{\ncPool{R}{Q}}} &\equiv \qquad \text{by \ncEquivPoolComm} \\
     \tm{\ncPool{P}{\ncPool{Q}{R}}}
   \end{align*}
 \end{proof}

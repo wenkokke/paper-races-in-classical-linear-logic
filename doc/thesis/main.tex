@@ -1,78 +1,85 @@
-\documentclass[12pt,a4paper,UKenglish]{article}
+\documentclass[12pt,a4paper,UKenglish,mscres,logo,twoside,plainprepages,notimes,lfcs]{infthesis}
+\shieldtype{3}
 \input{preamble}
 \title{Races in Classical Linear Logic}
 \author{%
   Wen Kokke\\
   Supervised by Philip Wadler and J.\ Garrett Morris}
-\affil{%
-  LFCS, University of Edinburgh\protect\\
-  Informatics Forum, 10 Crichton St, Edinburgh EH8 9AB, UK\protect\\
-  \email{wen.kokke@ed.ac.uk}
-  }
 \date{}
 \addbibresource{main.bib}
 \begin{document}
 \maketitle
-\thispagestyle{empty}
-\clearpage
 
 %% Introduction
-\section{Introduction}\label{sec:introduction}
+\chapter{Introduction}\label{sec:introduction}
 %% - Motivating examples
 %% - Overview
 
 %% Background
-\section{Background}\label{sec:background}
-%% - Work on πDILL and CP
-%% - CP:
-%%   * Terms and types
+\chapter{Background}\label{sec:background}
+%% * Introduction
+%% * - Work on πDILL and CP
+%% * Terms and types
 \input{def-cp-terms}
 \input{def-cp-types}
 \input{def-cp-negation}
 \input{thm-cp-negation-involutive}
-%%   * Reduction rules
+%% * Reduction rules
 \input{def-cp-equiv}
 \input{def-cp-term-reduction}
 \input{thm-cp-cut-assoc2}
+%% TODO:
+%%     insert a note stating that we will leave uses of congruence or gamma
+%%     rules implicit 
 \input{thm-cp-symmetry}
-%%   * Typing judgement
+%% * Typing judgement
 \input{fig-cp-typing-judgement}
-%%   * Cut elimination
-\input{def-cp-canonical-forms}
-\input{def-cp-action}
-\input{thm-cp-progress}
+%% * Preservation 
 \input{thm-cp-preservation-equiv}
 \input{fig-cp-preservation-equiv}
 \input{thm-cp-preservation}
 \input{fig-cp-preservation-1}
 \input{fig-cp-preservation-2}
+%% * Progress
+\input{def-cp-action}
+\input{def-cp-canonical-forms}
+\input{def-cp-evaluation-contexts}
+\input{def-cp-evaluation-contexts-plugging}
+\input{thm-cp-display}
+\input{thm-cp-progress}
 
-\section{Non-deterministic Classical Processes}\label{sec:main}
+
+\chapter{Non-deterministic Classical Processes}\label{sec:main}
 %% Main contribution
-%% - Nodcap:
-%%   * Terms and types
+%% * Terms and types
 \input{def-nc-terms}
 \input{def-nc-types}
 \input{def-nc-negation}
 \input{thm-nc-negation-involutive}
-%%   * Reduction rules
+%% * Reduction rules
 \input{def-nc-equiv}
 \input{def-nc-term-reduction}
 \input{thm-nc-pool-assoc2}
 \input{thm-nc-symmetry}
-%%   * Typing judgement
+%% * Typing judgement
 \input{fig-nc-typing-judgement}
-%%   * Cut elimination
-\input{def-nc-canonical-forms}
-\input{thm-nc-progress}
+%% * Cut elimination
 \input{thm-nc-preservation-equiv}
 \input{fig-nc-preservation-equiv}
 \input{thm-nc-preservation}
 \input{fig-nc-preservation}
-%%   * Equivalence between cut eliminations
-%%   * Equivalence with non-deterministic local choice
+%% * Progress
+\input{def-nc-action}
+\input{def-nc-canonical-forms}
+\input{def-nc-evaluation-contexts}
+\input{def-nc-evaluation-contexts-plugging}
+\input{thm-nc-display-1}
+\input{thm-nc-display-2}
+\input{thm-nc-display-3}
+\input{thm-nc-progress}
+%% * Equivalence with non-deterministic local choice
 
-\section{Discussion}\label{sec:discussion}
+\chapter{Discussion}\label{sec:discussion}
 %% Discussion
 %% - Interaction with recursion
 %% - Interaction with affine and relevant sessions

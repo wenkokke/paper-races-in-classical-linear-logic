@@ -1,20 +1,10 @@
 \begin{definition}[Canonical forms]\label{def:nc-canonical-forms}
-  We extend \cref{def:cp-canonical-forms} with the following canonical forms:
-  \begin{center}
-    \begin{prooftree*}
-      \AXC{\vphantom{\canonical{P}\canonical{Q}}}
-      \UIC{\canonical{\ncCnt{x}{y}{P}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{\vphantom{\canonical{P}\canonical{Q}}}
-      \UIC{\canonical{\ncSrv{x}{y}{P}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{\canonical{P}}
-      \AXC{\canonical{Q}}
-      \BIC{\canonical{\ncPool{P}{Q}}}
-    \end{prooftree*}
-  \end{center}
+  We extend \cref{def:cp-canonical-forms} with the following forms:
+  \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+  \item \tm{\ncCnt{x}{y}{P'}}
+  \item \tm{\ncSrv{x}{y}{P'}}
+  \item \tm{\ncPool{\ncCnt{x_1}{y_1}{P_1}}{\ncPool{\dots}{\ncCnt{x_n}{y_n}{P_n}}\dots}}
+  \end{itemize}
 \end{definition}
 %%% Local Variables:
 %%% TeX-master: "main"
