@@ -1,47 +1,18 @@
 \begin{definition}[Canonical forms]\label{def:cp-canonical-forms}
-  We define the following forms to be canonical:
-  \begin{center}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpLink{x}{y}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpSend{x}{y}{P}{Q}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpRecv{x}{y}{P}}}
-    \end{prooftree*}
-  \end{center}
-  \begin{center}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpHalt{x}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpWait{x}{P}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpAbsurd{x}}}
-    \end{prooftree*}
-  \end{center}
-  \begin{center}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpInl{x}{P}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpInr{x}{P}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{}
-      \UIC{\canonical{\cpCase{x}{P}{Q}}}
-    \end{prooftree*}
-  \end{center}
+  A process \tm{P} is in canonical form if it is in one of the following forms:
+  \begin{multicols}{3}
+    \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+    \item \tm{\cpLink{x}{y}}
+    \item \tm{\cpSend{x}{y}{P'}{Q'}}
+    \item \tm{\cpRecv{x}{y}{P'}}
+    \item \tm{\cpHalt{x}}
+    \item \tm{\cpWait{x}{P'}}
+    \item \tm{\cpInl{x}{P'}}
+    \item \tm{\cpInr{x}{P'}}
+    \item \tm{\cpCase{x}{P'}{Q'}}
+    \item \tm{\cpAbsurd{x}}
+    \end{itemize}
+  \end{multicols}
 \end{definition}
 %%% Local Variables:
 %%% TeX-master: "main"

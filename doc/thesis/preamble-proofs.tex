@@ -1,12 +1,13 @@
 %% Theorem/Proof Style:
 \usepackage{amsthm}
+\usepackage{multicol}
 \usepackage{thmtools}
 \usepackage{nameref,hyperref,cleveref}
 \declaretheoremstyle[headfont=\normalfont]{normalhead}
 \declaretheorem[name=Theorem,
   refname={theorem,theorems},
   Refname={Theorem,Theorems},
-  numberwithin=section,]{theorem}
+  parent=chapter,]{theorem}
 \declaretheorem[name=Lemma,
   refname={lemma,lemmas},
   Refname={Lemma,Lemmas},
@@ -16,6 +17,11 @@
   Refname={Definition,Definitions},
   style=normalhead,
   sibling=theorem,]{definition}
+\declaretheorem[name=Corollary,
+  refname={corollary,corollaries},
+  Refname={corollary,Corollaries},
+  sibling=theorem,]{corollary}
+
   
 %% Proof Tree Syntax:
 \usepackage{bussproofs}
@@ -24,16 +30,18 @@
 \newcommand{\tm}[1]{\textcolor{red}{\ensuremath{#1}}}
 \newcommand{\ty}[1]{\textcolor{blue}{\ensuremath{#1}}}
 \newcommand{\seq}[2][]{\ensuremath{\tm{#1}\vdash\ty{#2}}}
+\newcommand{\actson}[2]{\ensuremath{\tm{#1} \; \text{acts on} \; \tm{#2}}}
 \newcommand{\canonical}[1]{\ensuremath{\text{canonical} \; \tm{#1}}}
+\newcommand{\canonicalpool}[1]{\ensuremath{\text{canonical}^\prime \; \tm{#1}}}
 \newcommand{\reducesto}[2]{\ensuremath{\tm{#1}\Longrightarrow\tm{#2}}}
 \newcommand{\tmty}[2]{\ensuremath{\tm{#1}\colon\!\ty{#2}}}
 \newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
 \newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
 \newenvironment{prooftree*}{\leavevmode\hbox\bgroup}{\DisplayProof\egroup}
-\newenvironment{scprooftree}[1][0.9]%
+\newenvironment{scprooftree}[1][1]%
   {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
   {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center} }
-\newenvironment{scprooftree*}[1][0.9]%
+\newenvironment{scprooftree*}[1][1]%
   {\gdef\scalefactor{#1} \leavevmode\hbox\bgroup}
 
 %%% Local Variables:

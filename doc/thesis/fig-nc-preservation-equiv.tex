@@ -68,6 +68,30 @@
         \NOM{Pool}
         \BIC{$\seq[{ \ncPool{P}{\ncPool{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
       \end{prooftree*}
+    \\[30pt]
+    \ncRedKappaPool
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A}, \tmty{y}{\take[n]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{Q}{R} }]{ \Gamma, \Delta, \Theta, \tmty{y}{\take[n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{\cpCut{x}{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*}
+    \\[30pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A}, \tmty{y}{\take[n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma, \Delta, \tmty{y}{\take[m+n]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{\ncPool{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*} 
   \end{tabular}
   \caption{Type preservation for the structural congruence of \nc}
   \label{fig:nc-preservation-equiv}

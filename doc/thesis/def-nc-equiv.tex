@@ -2,11 +2,6 @@
   We extend \cref{def:cp-equiv} with the following equivalences:
   \[
     \begin{array}{llll}
-%     \ncEquivPoolId
-%     & \tm{\ncPool{P}{\ncHalt}}
-%     & \equiv \;
-%     & \tm{P}
-%     \\
       \ncEquivPoolComm
       & \tm{\ncPool{P}{Q}}
       & \equiv \;
@@ -16,6 +11,11 @@
       & \tm{\ncPool{P}{\ncPool{Q}{R}}}
       & \equiv \;
       & \tm{\ncPool{\ncPool{P}{Q}}{R}}
+      \\
+      \ncRedKappaPool
+      & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
+      & \equiv \;
+      & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; \notFreeIn{x}{P} 
     \end{array}
   \]
 \end{definition} 

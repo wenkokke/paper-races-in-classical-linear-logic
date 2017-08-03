@@ -1,5 +1,5 @@
 \begin{lemma}[\cpEquivCutAssNoParen2]\label{thm:cp-cut-assoc2}
-  If $x \not\in R$ and $y \not\in P$, then we have
+  If $\tm{x}\not\in\tm{R}$ and $\tm{y}\not\in\tm{P}$, then we have
   \[
     \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}} \equiv
     \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
@@ -7,13 +7,14 @@
 \end{lemma}
 \begin{proof}
   \begin{align*}
-    \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}} &\equiv \qquad \text{by \cpEquivCutComm and congruence} \\
+    \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}} &\equiv \qquad \text{by \cpEquivCutComm} \\
     \tm{\cpCut{y}{\cpCut{x}{Q}{P}}{R}} &\equiv \qquad \text{by \cpEquivCutComm} \\
-    \tm{\cpCut{y}{R}{\cpCut{x}{Q}{P}}} &\equiv \qquad \text{by \cpEquivCutAss1 with $y \not\in P$ and $x \not\in R$} \\
+    \tm{\cpCut{y}{R}{\cpCut{x}{Q}{P}}} &\equiv \qquad \text{by \cpEquivCutAss1} \\
     \tm{\cpCut{x}{\cpCut{y}{R}{Q}}{P}} &\equiv \qquad \text{by \cpEquivCutComm} \\
-    \tm{\cpCut{x}{P}{\cpCut{y}{R}{Q}}} &\equiv \qquad \text{by \cpEquivCutComm and congruence} \\
+    \tm{\cpCut{x}{P}{\cpCut{y}{R}{Q}}} &\equiv \qquad \text{by \cpEquivCutComm} \\
     \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
   \end{align*}
+  The side conditions for \cpEquivCutAss1 are given.
 \end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"

@@ -8,37 +8,36 @@
   The only interesting case is when the last rule of the derivation is
   \textsc{Cut}. In every other case, the typing rule constructs a term in which
   is in canonical form. 
-  %
-  If the last rule in the derivation is \textsc{Cut}, we have:
-  \begin{prooftree}
-    \AXC{$\seq[{ P' }]{ \Gamma, \tmty{x}{A} }$}
-    \AXC{$\seq[{ Q' }]{ \Delta, \tmty{x}{A^\bot} }$}
-    \NOM{Cut}
-    \BIC{$\seq[{ \cpCut{x}{P'}{Q'} }]{ \Gamma, \Delta }$}
-  \end{prooftree}
-  We consider three important cases:
+  \\
+  If the last rule in the derivation is \textsc{Cut}, we consider the prefix of
+  the derivation for $\seq[{ P }]{ \Gamma}$ which consists of all top-level
+  cuts. A prefix of $n$ cuts introduces $n$ variables, but composes $n+1$
+  actions. Therefore, one of the following must be true: 
   \begin{itemize}
   \item
-    If either \tm{P'} or \tm{Q'} was introduced using the \textsc{Ax} rule, we
-    can apply one of \cpRedAxCut1 or \cpRedAxCut2; 
+    One of these actions is a link.
+    \\
+    We apply one of \cpRedAxCut1 or \cpRedAxCut2.
   \item
-    If both \tm{P'} and \tm{Q'} act on \tm{x}, we can apply one of the
-    \textbeta-reduction rules;
+    Two of these actions, on different sides of a \textsc{Cut}, act on the same channel.
+    \\
+    Let us name these processes \tm{P_i} and \tm{P_j}, and let us name their
+    shared channel \tm{y}. Therefore, we have:
+    \[\!
+      \begin{array}{ll}
+        \tm{P} & = \quad \text{see above}\\
+        \tm{\cpPlug{G}{\cpCut{y}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}} &
+        \equiv \quad \text{by} \; \cref{thm:cp-display}\\
+        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpCut{y}{P_i}{\cpPlug{H_j}{P_j}}}}} &
+        \equiv \quad \text{by} \; \cref{thm:cp-display} \; \text{and} \; \cref{thm:cp-preservation-equiv}\\
+        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpPlug{H_j}{\cpCut{y}{P_i}{P_j}}}}} & 
+      \end{array}
+    \]
+    We then apply one of the \textbeta-reduction rules.
   \item
-    % TODO introduce the notion of an evaluation context
-    %
-    %   G := [] | vx.(G | P) | vx.(P | G) 
-    %
-    % s.t. we can rewrite any vx.(G[P]|Q) to G[vx.(P|Q)]
-    % then state that there are two cases
-    % either P is of the form 
-    %
-    %   vx.(G[P]|H[Q]) s.t. both P and Q act on x
-    %
-    % or there is a G s.t. vx.(G[P]|Q) or vx.(P|G[Q])
-    % and P (or Q) acts on a free variable
-    % because n cuts are composed of n+1 actions, one of these must be true
-    % the second case is now superfluous
+    Otherwise (at least) one of the actions acts on a free variable.
+    \\
+    We then apply one of the commutative conversions.
   \end{itemize}
 \end{proof}
 %%% Local Variables:

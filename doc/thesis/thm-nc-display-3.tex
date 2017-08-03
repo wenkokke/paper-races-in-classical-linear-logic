@@ -1,0 +1,47 @@
+\begin{lemma}\label{thm:nc-display-3}
+  If $\seq[{ \cpPlug{G}{P} }]{ \Gamma, \tmty{x}{\take[n]{A}} }$ and
+  $\freeIn{x}{P}$, then there exists an $\tm{H}$ and $\tm{R_1}\dots\tm{R_{n-1}}$
+  such that $\tm{\cpPlug{G}{P}} \equiv
+  \tm{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{R_{n-1}}\dots}}}}$,
+  where $\notFreeIn{x}{H}$ and $\freeIn{x}{R_1},\dots,\freeIn{x}{R_{n-1}}$.
+\end{lemma}
+\begin{proof}
+  By induction on the structure of the evaluation context \tm{G}.
+  \begin{itemize}
+  \item Case \tm{\Box}. By reflexivity.
+  \item Case \tm{\cpCut{y}{G}{R}}, \tm{\cpCut{y}{R}{G}}. By the induction hypothesis.
+  \item Case \tm{\ncPool{G}{R}}. There are two cases:
+    \begin{itemize}
+    \item Case $\freeIn{x}{R}$.
+      \[
+        \begin{array}{l}
+          \tm{\ncPool{\cpPlug{G}{P}}{R_{n-1}}} \\
+          \qquad \equiv \quad \text{by the induction hypothesis} \\ 
+          \tm{\ncPool{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
+          \qquad \equiv \quad \text{by \cref{thm:nc-display-2}} \\
+          \tm{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
+        \end{array}
+      \]
+    \item Case $\notFreeIn{x}{R}$. By the induction hypothesis.
+    \end{itemize}
+  \item Case \tm{\ncPool{R}{G}}. There are two cases:
+    \begin{itemize}
+    \item Case $\freeIn{x}{R}$.
+      \[
+        \begin{array}{ll}
+          \tm{\ncPool{R_{n-1}}{\cpPlug{G}{P}}} \\
+          \qquad \equiv \quad \text{by} \; \ncEquivPoolComm \\ 
+          \tm{\ncPool{\cpPlug{G}{P}}{R_{n-1}}} \\
+          \qquad \equiv \quad \text{by the induction hypothesis} \\ 
+          \tm{\ncPool{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
+          \qquad \equiv \quad \text{by \cref{thm:nc-display-2}} \\
+          \tm{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
+        \end{array}
+      \]
+    \item Case $\notFreeIn{x}{R}$. By the induction hypothesis.
+    \end{itemize}
+  \end{itemize}
+\end{proof}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
