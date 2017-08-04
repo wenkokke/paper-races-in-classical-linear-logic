@@ -1,0 +1,13 @@
+\begin{definition}[Environments]\label{def:cp-environments}
+  We define environments as follows:
+  \[
+    \ty{\Gamma}, \ty{\Delta}, \ty{\Theta}
+    ::= \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}
+  \] 
+  Names in environments must be unique, and environments \ty{\Gamma} and
+  \ty{\Delta} can only be combined if
+  $\text{fv}(\ty{\Gamma}) \cap \text{fv}(\ty{\Delta}) = \varnothing$.
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

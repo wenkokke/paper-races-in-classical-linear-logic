@@ -9,7 +9,8 @@ open import Data.Sum using (_⊎_)
 open import Data.Nat using (ℕ)
 open import Data.Unit using (⊤)
 open import Function using (const; _$_)
-open import Relation.Binary using (IsEquivalence; Reflexive; Symmetric; Transitive)
+open import Relation.Binary using (IsEquivalence; Reflexive; Symmetric; Transitive; Setoid)
+open import Relation.Binary.EqReasoning as EqR using ()
 open import Relation.Binary.PropositionalEquality using (_≡_; _≢_)
 open import Relation.Nullary using (¬_)
 
@@ -92,23 +93,24 @@ mutual
     _<,_ : (P : OhTerm) (Q : Term) → OhCase
     _,>_ : (P : Term) (Q : OhTerm) → OhCase
 
-plug : OhTerm → Term → Term
-plug □ R = R
-plug (ν x (P <∣ Q)) R = ν x (plug P R ∣ Q)
-plug (ν x (P ∣> Q)) R = ν x (P ∣ plug Q R)
-plug (x [ y ] (P <∣ Q)) R = x [ y ] (plug P R ∣ Q)
-plug (x [ y ] (P ∣> Q)) R = x [ y ] (P ∣ plug Q R)
-plug (x ⟨ y ⟩ P) R = x ⟨ y ⟩ plug P R
-plug (x ⟨⟩ P) R = x ⟨⟩ plug P R
-plug (x [L] P) R = x [L] plug P R
-plug (x [R] P) R = x [R] plug P R
-plug (case x (P <, Q)) R = case x (plug P R , Q)
-plug (case x (P ,> Q)) R = case x (P , plug Q R)
-plug (⋆ x [ y ] P) R = ⋆ x [ y ] plug P R
-plug (⋆ x ⟨ y ⟩ P) R = ⋆ x ⟨ y ⟩ plug P R
-plug (P <∣ Q) R = (plug P R ∣ Q)
-plug (P ∣> Q) R = (P ∣ plug Q R)
-plug (P [ σ ]) R = plug P R [ σ ]
+plugOhTerm : OhTerm → Term → Term
+plugOhTerm □ R = R
+plugOhTerm (ν x (P <∣ Q)) R = ν x (plugOhTerm P R ∣ Q)
+plugOhTerm (ν x (P ∣> Q)) R = ν x (P ∣ plugOhTerm Q R)
+plugOhTerm (x [ y ] (P <∣ Q)) R = x [ y ] (plugOhTerm P R ∣ Q)
+plugOhTerm (x [ y ] (P ∣> Q)) R = x [ y ] (P ∣ plugOhTerm Q R)
+plugOhTerm (x ⟨ y ⟩ P) R = x ⟨ y ⟩ plugOhTerm P R
+plugOhTerm (x ⟨⟩ P) R = x ⟨⟩ plugOhTerm P R
+plugOhTerm (x [L] P) R = x [L] plugOhTerm P R
+plugOhTerm (x [R] P) R = x [R] plugOhTerm P R
+plugOhTerm (case x (P <, Q)) R = case x (plugOhTerm P R , Q)
+plugOhTerm (case x (P ,> Q)) R = case x (P , plugOhTerm Q R)
+plugOhTerm (⋆ x [ y ] P) R = ⋆ x [ y ] plugOhTerm P R
+plugOhTerm (⋆ x ⟨ y ⟩ P) R = ⋆ x ⟨ y ⟩ plugOhTerm P R
+plugOhTerm (P <∣ Q) R = (plugOhTerm P R ∣ Q)
+plugOhTerm (P ∣> Q) R = (P ∣ plugOhTerm Q R)
+plugOhTerm (P [ σ ]) R = plugOhTerm P R [ σ ]
+
 
 -- Free Variables
 
@@ -161,7 +163,7 @@ data _≈_ : (P Q : Term) → Set where
 
     P ≈ P′ →
     --------------------
-    plug C P ≈ plug C P′
+    plugOhTerm C P ≈ plugOhTerm C P′
 
   ν-swap  : ∀{x P Q} →
 
@@ -222,9 +224,63 @@ sym  |-swap          = |-swap
 sym  |-assoc₁        = |-assoc₂
 
 
-IsEquivalence-≈ : IsEquivalence _≈_
-IsEquivalence-≈ = record
+isEquivalence-≈ : IsEquivalence _≈_
+isEquivalence-≈ = record
   { refl  = refl
   ; sym   = sym
   ; trans = trans
   }
+
+
+Setoid-Term : Setoid _ _
+Setoid-Term = record
+  { Carrier       = Term
+  ; _≈_           = _≈_
+  ; isEquivalence = isEquivalence-≈
+  }
+
+open EqR Setoid-Term
+
+-- Evaluation Context
+
+mutual
+  data ECParr : Set where
+    _<∣_ : (P : ECTerm) (Q : Term) → ECParr
+    _∣>_ : (P : Term) (Q : ECTerm) → ECParr
+
+  data ECTerm : Set where
+    □ : ECTerm
+    ν : (x : Name) (PQ : ECParr) → ECTerm
+
+
+plugECTerm : ECTerm → Term → Term
+plugECTerm □ R = R
+plugECTerm (ν x (G <∣ Q)) R = ν x (plugECTerm G R ∣ Q)
+plugECTerm (ν x (P ∣> G)) R = ν x (P ∣ plugECTerm G R)
+
+-- assume: x ∈ P and P⊢Γ
+-- derive: x ∉ R
+-- derive: y ∉ Q
+
+display : ∀{x P Q} (G : ECTerm) → ν x (plugECTerm G P ∣ Q) ≈ plugECTerm G (ν x (P ∣ Q))
+display □ = refl
+display {x} {P} {Q} (ν y (G <∣ R)) =
+  begin
+      ν x (ν y (plugECTerm G P ∣ R) ∣ Q)
+    ≈⟨ cong (ν x (□ <∣ Q)) ν-swap ⟩
+      ν x (ν y (R ∣ plugECTerm G P) ∣ Q)
+    ≈⟨ ν-assoc₂ {!!} {!!} ⟩
+      ν y (R ∣ ν x (plugECTerm G P ∣ Q))
+    ≈⟨ ν-swap ⟩
+      ν y (ν x (plugECTerm G P ∣ Q) ∣ R)
+    ≈⟨ cong (ν y (□ <∣ R)) (display G) ⟩
+      ν y (plugECTerm G (ν x (P ∣ Q)) ∣ R)
+  ∎
+display {x} {P} {Q} (ν y (R ∣> G)) = 
+  begin
+      ν x (ν y (R ∣ plugECTerm G P) ∣ Q)
+    ≈⟨ ν-assoc₂ {!!} {!!} ⟩
+      ν y (R ∣ ν x (plugECTerm G P ∣ Q))
+    ≈⟨ cong (ν y (R ∣> □)) (display {x} {P} {Q} G) ⟩
+      ν y (R ∣ plugECTerm G (ν x (P ∣ Q)))
+  ∎

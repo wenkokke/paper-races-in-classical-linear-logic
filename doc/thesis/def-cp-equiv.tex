@@ -10,7 +10,7 @@
       & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
       & \equiv \;
       & \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}}
-        \quad \text{if} \; x \not\in R \; \text{and} \; y \not\in P
+        \quad \text{if} \; \notFreeIn{x}{R} \; \text{and} \; \notFreeIn{y}{P}
     \end{array}
   \]
   (plus reflexivity, transitivity, and congruence)

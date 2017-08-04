@@ -36,12 +36,12 @@
       \cpRedKappaTens1
       & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
       & \Longrightarrow \;
-      & \tm{\cpSend{y}{z}{\cpCut{x}{P}{R}}{Q}} \quad \text{if} \; x \not\in Q
+      & \tm{\cpSend{y}{z}{\cpCut{x}{P}{R}}{Q}} \quad \text{if} \; \notFreeIn{x}{Q}
       \\
       \cpRedKappaTens2
       & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
       & \Longrightarrow \;
-      & \tm{\cpSend{y}{z}{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; x \not\in P
+      & \tm{\cpSend{y}{z}{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; \notFreeIn{x}{P}
       \\
       \cpRedKappaParr
       & \tm{\cpCut{x}{\cpRecv{y}{z}{P}}{R}}
