@@ -1,0 +1,210 @@
+\begin{figure*}[ht]
+  \begin{tabular}{ll}
+    \ncRedKappaPoolTens1
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{z}{B}}$}
+        \AXC{$\seq[{ Q }]{\Delta, \tmty{y}{C}}$}
+        \SYM{\tens}
+        \BIC{$\seq[{ \cpSend{y}{z}{P}{Q} }]%
+          {\Gamma, \Delta, \tmty{x}{A}, \tmty{y}{B \tens C}}$}
+        \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{\cpSend{y}{z}{P}{Q}}{R} }]%
+          {\Gamma, \Delta, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B \tens C}}$}
+      \end{prooftree*}
+    \\[30pt]
+    $\Longrightarrow$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{z}{B}}$}
+        \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{R} }]%
+          {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{z}{B}}$}
+        \AXC{$\seq[{ Q }]{\Delta, \tmty{y}{C}}$}
+        \SYM{\tens}
+        \BIC{$\seq[{ \cpSend{y}{z}{\ncPool{P}{R}}{R} }]%
+          {\Gamma, \Delta, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B \tens C}}$}
+      \end{prooftree*}
+    \\[30pt]
+    \ncRedKappaPoolTens2
+    &
+      (as above)
+    \\[20pt]
+    \ncRedKappaPoolParr
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{z}{B}, \tmty{y}{C}}$}
+        \SYM{\parr}
+        \UIC{$\seq[{ \cpRecv{y}{z}{P} }]%
+          {\Gamma, \tmty{x}{\take[m]{A}}, \tmty{z}{B \parr C}}$}
+        \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{\cpRecv{y}{z}{P}}{R} }]%
+          {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B \parr C}}$}
+      \end{prooftree*}
+    \\[30pt]
+    $\Longrightarrow$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{z}{B}, \tmty{y}{C}}$}
+        \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{R} }]%
+          {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{z}{B}, \tmty{y}{C}}$}
+        \SYM{\parr}
+        \UIC{$\seq[{ \cpRecv{y}{z}{\ncPool{P}{R}} }]%
+          {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{z}{B \parr C}}$}
+      \end{prooftree*}
+    \\[40pt]
+    \ncRedKappaPoolBot
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}}$}
+        \SYM{\bot}
+        \UIC{$\seq[{ \cpWait{y}{P} }]{\Gamma, \tmty{x}{\take[m]{A}, \tmty{y}{\bot}}}$}
+        \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$} 
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{\cpWait{y}{P}}{R} }]{\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{\bot}}$}
+      \end{prooftree*}
+    \\[30pt]
+    $\Longrightarrow$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}}$}
+        \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$} 
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{R} }]{\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}}$}
+        \SYM{\bot}
+        \UIC{$\seq[{ \cpWait{y}{\ncPool{P}{R}} }]{\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{\bot}}$}
+      \end{prooftree*}
+  \end{tabular}
+
+  \caption{Type preservation for the commutative conversions with the pooling
+    rules of \nodcap}
+  \label{fig:nc-preservation-2a}
+\end{figure*}
+%
+\begin{figure*}[ht]
+  \makebox[\textwidth][c]{
+    \begin{tabular}{ll}
+      \ncRedKappaPoolPlus1
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{B}}$}
+          \SYM{\plus_1}
+          \UIC{$\seq[{ \cpInl{y}{P} }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{B \plus C}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          \NOM{Pool}
+          \BIC{$\seq[{ \ncPool{\cpInl{x}{P}}{R} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}, \tmty{y}{B \plus C}}}$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{B}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          \NOM{Pool}
+          \BIC{$\seq[{ \ncPool{P}{R} }]{\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B}}$}
+          \SYM{\plus_1}
+          \UIC{$\seq[{ \cpInl{x}{\ncPool{P}{R}} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}, \tmty{y}{B \plus C}}}$}
+        \end{prooftree*}
+      \\[30pt]
+      \ncRedKappaPoolPlus2
+      &
+        (as above)
+      \\[20pt]
+      \ncRedKappaPoolWith
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{B}}$}
+          \AXC{$\seq[{ Q }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{C}}$}
+          \SYM{\with}
+          \BIC{$\seq[{ \cpCase{y}{P}{Q} }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{B \with C}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          \NOM{Pool}
+          \BIC{$\seq[{ \ncPool{\cpCase{y}{P}{Q}}{R} }]{\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B \with C}}$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{B}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          %\NOM{Pool}
+          \BIC{$\seq[{ \ncPool{P}{R} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B}}$}
+          \AXC{$\seq[{ Q }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{C}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          \NOM{Pool}
+          \BIC{$\seq[{ \ncPool{Q}{R} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{C}}$}
+          \SYM{\with}
+          \BIC{$\seq[{ \cpCase{y}{\ncPool{P}{R}}{\ncPool{Q}{R}} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B \with C}}$}
+        \end{prooftree*}
+      \\[40pt]
+      \ncRedKappaPoolTop
+      &
+        \begin{prooftree*}
+          \AXC{}
+          \SYM{\top}
+          \UIC{$\seq[{ \cpAbsurd{y} }]%
+            {\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{\top}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          \NOM{Pool}
+          \BIC{$\seq[{ \ncPool{\cpAbsurd{y}}{R} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[n]{A}}}$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{}
+          \SYM{\top}
+          \UIC{$\seq[{ \cpAbsurd{y} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{\top}}$}
+        \end{prooftree*}
+      \\[40pt]
+      \ncRedKappaPoolTake
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{z}{B}}$}
+          \SYM{\take[1]{}}
+          \UIC{$\seq[{ \ncCnt{y}{z}{P} }]%
+            {\Gamma, \tmty{x}{\take[m]{A}}, \tmty{y}{\take[1]{B}}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          \NOM{Pool}
+          \BIC{$\seq[{ \ncPool{\ncCnt{y}{z}{P}}{R} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{\take[1]{B}}}$}
+        \end{prooftree*}
+      \\[30pt]
+      $\Longrightarrow$
+      &
+        \begin{prooftree*}
+          \AXC{$\seq[{ P }]{\Gamma, \tmty{x}{\take[m]{A}}, \tmty{z}{B}}$}
+          \AXC{$\seq[{ R }]{\Theta, \tmty{x}{\take[n]{A}}}$}
+          \NOM{Pool}
+          \BIC{$\seq[{ \ncPool{P}{R} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{z}{B}}$}
+          \SYM{\take[1]{}}
+          \UIC{$\seq[{ \ncCnt{y}{z}{\ncPool{P}{R}} }]%
+            {\Gamma, \Theta, \tmty{x}{\take[m+n]{A}}, \tmty{y}{B}}$}
+        \end{prooftree*}
+      \\[30pt]
+      \ncRedKappaPoolGive
+      &
+        (as above)
+    \end{tabular}
+  }
+  
+  \caption{Type preservation for the commutative conversions with the pooling
+    rules of \nodcap (cont'd)}
+  \label{fig:nc-preservation-2b}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End: 
