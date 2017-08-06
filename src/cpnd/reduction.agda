@@ -1,10 +1,12 @@
 module cpnd.reduction where
 
-open import Data.List using (List; _∷ʳ_) renaming (_∷_ to _,_; [] to ∅)
+open import Data.List using (List) renaming ([] to ∅; _∷_ to _,_; _∷ʳ_ to _,ʳ_)
+open import Data.String renaming (String to Name) using (_≟_)
 open import Function using (id; _∘_)
 open import Relation.Nullary using (Dec; yes; no)
-open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
+open import Relation.Binary.PropositionalEquality using (_≡_; _≢_)
 open import cpnd.term
+open import cpnd.equiv
 
 rename : Subst → Name → Name
 rename (w / z) x with x ≟ z
@@ -43,7 +45,7 @@ renameAll (w/z , σ) = renameAll σ ∘ rename w/z
     ...| yes y≡z = ⋆ rename w/z x ⟨ y ⟩ P
     ...| no  y≢z = ⋆ rename w/z x ⟨ y ⟩ P [ w/z , ∅ ]
     go (P ∣ Q) = (P [ w/z , ∅ ] ∣ Q [ w/z , ∅ ])
-    go (P [ σ ]) = P [ σ ∷ʳ w/z ]
+    go (P [ σ ]) = P [ σ ,ʳ w/z ]
 
 
 infix 5 _⟹_
@@ -146,11 +148,55 @@ data _⟹_ : (P P′ : Term) → Set where
     ---------------------------------------------
     ν x (⋆ y ⟨ z ⟩ P ∣ R) ⟹ ⋆ y [ z ] ν x (P ∣ R)
 
-  κ| : ∀{x P Q R} →
+  κ|⊗₁ : ∀{y z P Q R} →
 
-    x ∉ P →
-    ------------------------------------
-    ν x ((P ∣ Q) ∣ R) ⟹ (P ∣ ν x (Q ∣ R))
+    ---------------------------------------------------
+    (y [ z ] (P ∣ Q) ∣ R) ⟹ y [ z ] ((P ∣ R) ∣ Q)
+
+  κ|⊗₂ : ∀{y z P Q R} →
+
+    ---------------------------------------------------
+    (y [ z ] (P ∣ Q) ∣ R) ⟹ y [ z ] (P ∣ (Q ∣ R))
+
+  κ|⅋ : ∀{y z P R} →
+
+    ----------------------------------------
+    (y ⟨ z ⟩ P ∣ R) ⟹ y ⟨ z ⟩ (P ∣ R)
+
+  κ|⊥ : ∀{y P R} →
+
+    -----------------------------------
+    (y ⟨⟩ P ∣ R) ⟹ y ⟨⟩ (P ∣ R)
+
+  κ|⊕₁ : ∀{y P R} →
+
+    -------------------------------------
+    (y [L] P ∣ R) ⟹ y [L] (P ∣ R)
+
+  κ|⊕₂ : ∀{y P R} →
+
+    -------------------------------------
+    (y [R] P ∣ R) ⟹ y [R] (P ∣ R)
+
+  κ|& : ∀{y P Q R} →
+
+    ------------------------------------------------------------
+    (case y (P , Q) ∣ R) ⟹ case y ((P ∣ R) , (Q ∣ R))
+
+  κ|⊤ : ∀{y R} →
+
+    ----------------------------
+    (crash y ∣ R) ⟹ crash y
+
+  κ|! : ∀{y z P R} →
+
+    ---------------------------------------------
+    (⋆ y [ z ] P ∣ R) ⟹ ⋆ y [ z ] (P ∣ R)
+
+  κ|? : ∀{y z P R} →
+
+    ---------------------------------------------
+    (⋆ y ⟨ z ⟩ P ∣ R) ⟹ ⋆ y [ z ] (P ∣ R)
 
   γν : ∀{x P Q P′} →
 
