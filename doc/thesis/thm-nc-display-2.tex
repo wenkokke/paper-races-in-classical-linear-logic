@@ -12,7 +12,7 @@
     \[\!
       \begin{array}{ll}
         \tm{\ncPool{\cpCut{y}{\cpPlug{G}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool \\
+        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
         \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{G}{P}}}{R}} & \equiv \quad \text{by} \; \cpEquivCutComm \\
         \tm{\cpCut{y}{\ncPool{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\
         \tm{\cpCut{y}{\cpPlug{G}{\ncPool{P}{Q}}}{R}} &
@@ -23,7 +23,7 @@
     \[\!
       \begin{array}{ll}
         \tm{\ncPool{\cpCut{y}{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool \\
+        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
         \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{G}{P}}}{R}} & \equiv \quad \text{by} \; \cpEquivCutComm \\
         \tm{\cpCut{y}{R}{\ncPool{Q}{\cpPlug{G}{P}}}} & \equiv \quad \text{by the induction hypothesis} \\
         \tm{\cpCut{y}{R}{\cpPlug{G}{\ncPool{P}{Q}}}}
@@ -50,8 +50,11 @@
       \end{array}
     \]
   \end{itemize}
-  In each case, the side conditions for \cpEquivCutAss2, $\notFreeIn{x}{R}$ and
-  $\notFreeIn{y}{Q}$, can be inferred from $\notFreeIn{x}{G}$ and the fact that
+  In each case, the side conditions for \ncRedKappaPool2, $\notFreeIn{y}{Q}$,
+  can be inferred from the fact that
+  $\tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}}$ is well-typed, the side
+  conditions for \cpEquivCutAss2, $\notFreeIn{x}{R}$ and $\notFreeIn{y}{Q}$, can
+  be inferred from $\notFreeIn{x}{G}$ and the fact that
   $\tm{\ncPool{\cpPlug{G}{P}}{Q}}$ is well-typed, and the side conditions for
   the induction hypothesis can be inferred from the fact that
   $\tm{\ncPool{\cpPlug{G}{P}}{Q}}$ is well-typed,
