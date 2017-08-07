@@ -13,7 +13,7 @@
     \[\!
       \begin{array}{ll}
         \tm{\cpCut{x}{\ncPool{\cpPlug{G}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool \\
+        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
         \tm{\ncPool{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
         \tm{\ncPool{\cpCut{x}{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\
         \tm{\ncPool{\cpPlug{G}{\cpCut{x}{P}{Q}}}{R}} &
@@ -23,13 +23,13 @@
     Case $\tm{\ncPool{R}{G}}$.
     \[\!
       \begin{array}{ll}
-        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool \\
+        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
         \tm{\ncPool{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis}\\
         \tm{\ncPool{R}{\cpPlug{G}{\cpCut{x}{P}{Q}}}} &
       \end{array}
     \]
   \end{itemize}
-  In each case, the side condition for \ncRedKappaPool, $\notFreeIn{x}{R}$, can
+  In each case, the side condition for \ncRedKappaPool1, $\notFreeIn{x}{R}$, can
   be inferred from $\notFreeIn{x}{G}$, and the side conditions for the induction
   hypothesis can be inferred from \cref{thm:nc-preservation-equiv} and
   $\notFreeIn{x}{G}$.

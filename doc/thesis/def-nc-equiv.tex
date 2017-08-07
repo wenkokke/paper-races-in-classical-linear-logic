@@ -12,10 +12,15 @@
       & \equiv \;
       & \tm{\ncPool{\ncPool{P}{Q}}{R}}
       \\
-      \ncRedKappaPool
+      \ncRedKappaPool1
       & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
       & \equiv \;
       & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; \notFreeIn{x}{P} 
+      \\
+      \ncRedKappaPool2
+      & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}}
+      & \equiv \;
+      & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}} \quad \text{if} \; \notFreeIn{x}{P} 
     \end{array}
   \]
 \end{definition} 

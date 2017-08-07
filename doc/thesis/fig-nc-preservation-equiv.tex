@@ -44,7 +44,7 @@
       \end{prooftree*}
     \\[20pt]
     or
-    \\[30pt]
+    \\[20pt]
     \ncEquivPoolAss1
     &
       \begin{prooftree*}
@@ -69,7 +69,7 @@
         \BIC{$\seq[{ \ncPool{P}{\ncPool{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
       \end{prooftree*}
     \\[30pt]
-    \ncRedKappaPool
+    \ncRedKappaPool1
     &
       \begin{prooftree*}
         \AXC{$\seq[{ P }]{ \Gamma, \tmty{y}{\take[m]{B}} }$}
@@ -92,6 +92,10 @@
         \NOM{Cut}
         \BIC{$\seq[{ \cpCut{x}{\ncPool{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta, \tmty{y}{\take[m+n]{B}} }$}
       \end{prooftree*} 
+    \\[30pt]
+    \ncRedKappaPool2
+    &
+      (as above)
   \end{tabular}
   \caption{Type preservation for the structural congruence of \nodcap}
   \label{fig:nc-preservation-equiv}
