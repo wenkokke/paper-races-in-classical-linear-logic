@@ -29,9 +29,8 @@
   hyperref=true,
   ]{biblatex}
 
-\newcommand*{\email}[1]{\normalsize\href{mailto:#1}{\texttt{#1}}\par}
-
-\newcommand*{\wen}[1]{\mdframed\textcolor{MidnightBlue}{\bf Wen: #1}\endmdframed}
+\newcommand*{\wen}[1]{%
+\mdframed\textcolor{MidnightBlue}{\bf Wen: #1}\endmdframed}
 
 \input{preamble-emoji}
 \input{preamble-types}

@@ -1,0 +1,90 @@
+%% Introduction
+\chapter{Introduction}\label{sec:introduction}
+%% - Motivating examples
+Consider the following scenario:
+\begin{quote}
+  John and Mary are working from home one morning when they get a craving for a
+  slice of cake. Being denizens of the web, they quickly find the nearest store
+  which does home deliveries.
+  Unfortunately for them, they both order their cake at the \emph{same} store,
+  which has only one slice left. After that, all it can deliver is
+  disappointment.
+\end{quote}
+This is an example of a race condition. We can model this scenario in the
+\textpi-calculus, assuming \john, \mary and \store are three processes
+modeling John, Mary and the store, and \sliceofcake and \nope are two channels
+giving access to a slice of cake and disappointment, respectively.
+As expected, this process has two possible outcomes: either John gets the cake,
+and Mary gets disappointment, or vice versa.
+\[
+  \begin{array}{c}
+    \tm{(\piPar{%
+    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    }{%
+    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    })}
+    \\[1ex]
+    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+    \\[1ex]
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \quad
+    \text{or}
+    \quad
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+  \end{array}
+\]
+While John or Mary may not like all of the outcomes, it is the store which is
+responsible for implementing the online delivery service, and the store is happy
+with either outcome. Thus, the above is program we would like to be able to
+write.
+\\[\baselineskip]\noindent
+Now consider another scenario, which takes place \emph{after} John has already
+bought the cake:
+\begin{quote}
+  Mary is \emph{really} disappointed when she finds out the cake has sold out.
+  John, always looking to make some money, offers to sell the slice to her for a
+  profit. Mary agrees to engage in a little bit of back-alley cake resale, but
+  sadly there is no trust between the two.
+  John demands payment first.
+  Mary would rather get her slice of cake before she gives John the money.
+\end{quote}
+This is an example of a deadlock. We can also model this scenario in the
+\textpi-calculus, assuming that \bill\ is a channel giving access to some
+adequate amount of money.
+\[
+  \begin{array}{c}
+    \tm{(\piPar{%
+    \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}
+    }{%
+    \piRecv{y}{w}{\piSend{x}{\bill}{\mary}}
+    })}
+    \quad
+    \centernot\Longrightarrow^{\star}
+  \end{array}  
+\]
+The above process does not reduce. As both John and Mary would prefer the
+exchange to be made, this program is desired by \emph{neither}. Thus, the above
+is a program we would \emph{somehow} like to exclude.
+
+%% - Overview:
+Session types~\cite{honda1993} can provide a static guarantee that concurrent
+programs, such as those above, respect communication protocols.
+Session-typed calculi with logical foundations, such as
+\piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a
+result of a close correspondence with logic.
+The same correspondence, however, also rules out non-determinism and race
+conditions.
+
+We present \nodcap (nodcap), an extension of CP~\cite{wadler2012} with
+a novel account of non-determinism and races.  Inspired by bounded linear
+logic~\cite{girard1992}, we introduce a form of shared channels, in which the
+type of a shared channel tracks how many times it is reused.  As in the untyped
+$\pi$-calculus, sharing introduces the potential of non-determinism.  We show
+that our approach is sufficient to capture practical examples of races, such as
+the web store, as well as other formal characterizations of non-determinism,
+such as non-deterministic choice.  However, \nodcap does not lose the
+metatheoretical benefits of CP: we show that it enjoys termination and
+deadlock-freedom.
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

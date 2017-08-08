@@ -1,28 +1,30 @@
 %% Theorem/Proof Style:
-\usepackage{amsthm}
 \usepackage{centernot}
 \usepackage{multicol}
-\usepackage{thmtools}
-\usepackage{nameref,hyperref,cleveref}
-\declaretheoremstyle[headfont=\normalfont]{normalhead}
-\declaretheorem[name=Theorem,
-  refname={theorem,theorems},
-  Refname={Theorem,Theorems},
-  parent=chapter,]{theorem}
-\declaretheorem[name=Lemma,
-  refname={lemma,lemmas},
-  Refname={Lemma,Lemmas},
-  sibling=theorem,]{lemma}
-\declaretheorem[name=Definition,
-  refname={definition,definitions},
-  Refname={Definition,Definitions},
-  style=normalhead,
-  sibling=theorem,]{definition}
-\declaretheorem[name=Corollary,
-  refname={corollary,corollaries},
-  Refname={corollary,Corollaries},
-  sibling=theorem,]{corollary}
-  
+\usepackage{amsmath, amssymb}
+\usepackage[thmmarks,amsmath]{ntheorem}
+\usepackage{nameref}
+\usepackage{hyperref}
+\usepackage{cleveref}
+% Theorems, Lemmas, and Corollaries
+\theoremstyle{break}
+\setlength\theoremindent{1\parindent}
+\setlength\theorempreskipamount{1\baselineskip}
+\setlength\theorempostskipamount{1\baselineskip}
+\theorembodyfont{\normalfont}
+\theoremsymbol{\ensuremath{_\Box}}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+% Definitions
+\theoremsymbol{}
+\newtheorem{definition}[theorem]{Definition}
+% Proofs
+\theoremstyle{nonumberplain}
+\theoremheaderfont{\normalfont\scshape}
+\theoremsymbol{\ensuremath{_\blacksquare}}
+\newtheorem{proof}{Proof}
+
 %% Proof Tree Syntax:
 \usepackage{bussproofs}
 \EnableBpAbbreviations
@@ -30,9 +32,6 @@
 \newcommand{\tm}[1]{\textcolor{red}{\ensuremath{#1}}}
 \newcommand{\ty}[1]{\textcolor{blue}{\ensuremath{#1}}}
 \newcommand{\seq}[2][]{\ensuremath{\tm{#1}\vdash\ty{#2}}}
-\newcommand{\actson}[2]{\ensuremath{\tm{#1} \; \text{acts on} \; \tm{#2}}}
-\newcommand{\canonical}[1]{\ensuremath{\text{canonical} \; \tm{#1}}}
-\newcommand{\canonicalpool}[1]{\ensuremath{\text{canonical}^\prime \; \tm{#1}}}
 \newcommand{\reducesto}[2]{\ensuremath{\tm{#1}\Longrightarrow\tm{#2}}}
 \newcommand{\tmty}[2]{\ensuremath{\tm{#1}\colon\!\ty{#2}}}
 \newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
