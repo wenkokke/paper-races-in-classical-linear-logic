@@ -18,12 +18,12 @@
     \begin{prooftree*}
       \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} }$}
       \AXC{$\seq[ Q ]{ \Delta , \tmty{x}{B} }$}
-      \SYM{\tens}
+      \SYM{(\tens)}
       \BIC{$\seq[ \cpSend{x}{y}{P}{Q} ]{ \Gamma , \Delta , \tmty{x}{A \tens B} }$}
     \end{prooftree*}
     \begin{prooftree*}
       \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} , \tmty{x}{B} }$}
-      \SYM{\parr}
+      \SYM{(\parr)}
       \UIC{$\seq[ \cpRecv{x}{y}{P} ]{ \Gamma , \tmty{x}{A \parr B} }$}
     \end{prooftree*}
   \end{center}
@@ -31,12 +31,12 @@
   \begin{center}
     \begin{prooftree*}
       \AXC{$\vphantom{\seq[ P ]{ \Gamma }}$}
-      \SYM{\one}
+      \SYM{(\one)}
       \UIC{$\seq[ \cpHalt{x} ]{ \tmty{x}{\one} }$}
     \end{prooftree*}
     \begin{prooftree*}
       \AXC{$\seq[ P ]{ \Gamma }$}
-      \SYM{\bot}
+      \SYM{(\bot)}
       \UIC{$\seq[ \cpWait{x}{P} ]{ \Gamma , \tmty{x}{\bot} }$}
     \end{prooftree*}
   \end{center}
@@ -44,12 +44,12 @@
   \begin{center}
     \begin{prooftree*}
       \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
-      \SYM{\plus_1}
+      \SYM{(\plus_1)}
       \UIC{$\seq[{ \cpInl{x}{P} }]{ \Gamma , \tmty{x}{A \plus B} }$}
     \end{prooftree*}
     \begin{prooftree*}
       \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{B} }$}
-      \SYM{\plus_2}
+      \SYM{(\plus_2)}
       \UIC{$\seq[ \cpInr{x}{P} ]{ \Gamma , \tmty{x}{A \plus B} }$}
     \end{prooftree*}
   \end{center}
@@ -57,15 +57,15 @@
   \begin{prooftree}
     \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
     \AXC{$\seq[ Q ]{ \Delta , \tmty{x}{B} }$}
-    \SYM{\with}
+    \SYM{(\with)}
     \BIC{$\seq[ \cpCase{x}{P}{Q} ]{ \Gamma , \Delta , \tmty{x}{A \with B} }$}
   \end{prooftree}
 
   \begin{center}
-    (no rule for \nil)
+    (no rule for \ty{\nil})
     \begin{prooftree*}
       \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
-      \SYM{\top}
+      \SYM{(\top)}
       \UIC{$\seq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top} }$}
     \end{prooftree*}
   \end{center}

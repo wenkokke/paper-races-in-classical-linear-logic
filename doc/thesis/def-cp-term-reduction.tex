@@ -74,21 +74,18 @@
       & \tm{\cpAbsurd{y}}
     \end{array}
   \]
-
-  \begin{center}
-    \begin{prooftree*}
-      \AXC{\reducesto{P}{P^\prime}}
-      \SYM{\cpRedGammaCut}
-      \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{$\tm{P}\equiv\tm{Q}$}
-      \AXC{\reducesto{Q}{Q^\prime}}
-      \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
-      \SYM{\cpRedGammaEquiv}
-      \TIC{\reducesto{P}{P^\prime}}
-    \end{prooftree*}
-  \end{center}
+  \begin{prooftree}
+    \AXC{\reducesto{P}{P^\prime}}
+    \SYM{\cpRedGammaCut}
+    \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
+  \end{prooftree}
+  \begin{prooftree}
+    \AXC{$\tm{P}\equiv\tm{Q}$}
+    \AXC{\reducesto{Q}{Q^\prime}}
+    \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
+    \SYM{\cpRedGammaEquiv}
+    \TIC{\reducesto{P}{P^\prime}}
+  \end{prooftree}
 \end{definition}
 %%% Local Variables:
 %%% TeX-master: "main"
