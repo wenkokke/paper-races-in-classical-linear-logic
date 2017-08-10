@@ -14,24 +14,43 @@
   actions. Therefore, one of the following must be true: 
   \begin{itemize}
   \item
-    One of these actions is a link.
-    \\
-    We apply one of \cpRedAxCut1 or \cpRedAxCut2.
-  \item
-    Two of these actions, on different sides of a \textsc{Cut}, act on the same channel.
-    \\
-    Let us name these processes \tm{P_i} and \tm{P_j}, and their shared channel \tm{y}.
-    We have:
-    \[\!
+    One of these actions is a link \tm{\cpLink{x}{y}}. At least one of \tm{x}
+    and \tm{y} is a bound name. Let us assume \tm{x} is bound. We have:
+    \begin{gather*}
       \begin{array}{ll}
-        \tm{P} & = \quad \text{see above}\\
-        \tm{\cpPlug{G}{\cpCut{y}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}} &
-        \equiv \quad \text{by} \; \cref{thm:cp-display}\\
-        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpCut{y}{P_i}{\cpPlug{H_j}{P_j}}}}} &
-        \equiv \quad \text{by} \; \cref{thm:cp-display} \; \text{and} \; \cref{thm:cp-preservation-equiv}\\
-        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpPlug{H_j}{\cpCut{y}{P_i}{P_j}}}}} & 
+        \tm{P}
+        & = \quad \text{see above}
+        \\
+        \tm{\cpPlug{G}{\cpCut{x}{\cpPlug{H}{\cpLink{x}{y}}}{Q}}}
+        & \equiv \quad \text{by \cref{thm:cp-display}}
+          \hphantom{\; \text{and} \; \cref{thm:cp-preservation-equiv}}
+        \\
+        \tm{\cpPlug{G}{\cpPlug{H}{\cpCut{x}{\cpLink{x}{y}}{Q}}}}
       \end{array}
-    \]
+    \end{gather*}
+    Similarly if \tm{y} is bound. We then apply one of \cpRedAxCut1 or
+    \cpRedAxCut2.
+  \item
+    Two of these actions, on different sides of a \textsc{Cut}, act on the same
+    channel. 
+    \\
+    Let us name these processes \tm{P_i} and \tm{P_j}, and their shared channel
+    \tm{y}. We have:
+    \begin{gather*}
+      \begin{array}{ll}
+        \tm{P}
+        & = \quad \text{see above}
+        \\
+        \tm{\cpPlug{G}{\cpCut{y}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
+        & \equiv \quad \text{by} \; \cref{thm:cp-display}
+        \\
+        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpCut{y}{P_i}{\cpPlug{H_j}{P_j}}}}}
+        & \equiv \quad \text{by} \; \cref{thm:cp-display} \; \text{and} \;
+          \cref{thm:cp-preservation-equiv}
+        \\
+        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpPlug{H_j}{\cpCut{y}{P_i}{P_j}}}}} 
+      \end{array}
+    \end{gather*}
     We then apply one of the \textbeta-reduction rules.
   \item
     Otherwise (at least) one of the actions acts on a free variable.

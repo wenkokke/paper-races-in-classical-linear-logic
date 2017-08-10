@@ -13,31 +13,39 @@
   \item Case \tm{\ncPool{G}{R}}. There are two cases:
     \begin{itemize}
     \item Case $\freeIn{x}{R}$.
-      \[
+      \begin{flalign*}
         \begin{array}{l}
           \tm{\ncPool{\cpPlug{G}{P}}{R_{n-1}}} \\
           \qquad \equiv \quad \text{by the induction hypothesis} \\ 
-          \tm{\ncPool{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
+          \tm{\ncPool{\cpPlug{H}{
+          \ncPool{P}{\ncPool{R_1}{
+          \ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
           \qquad \equiv \quad \text{by \cref{thm:nc-display-2}} \\
-          \tm{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
+          \tm{\cpPlug{H}{\ncPool{P}{
+          \ncPool{R_1}{\ncPool{
+          \dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
         \end{array}
-      \]
+      \end{flalign*}
     \item Case $\notFreeIn{x}{R}$. By the induction hypothesis.
     \end{itemize}
   \item Case \tm{\ncPool{R}{G}}. There are two cases:
     \begin{itemize}
     \item Case $\freeIn{x}{R}$.
-      \[
+      \begin{flalign*}
         \begin{array}{ll}
           \tm{\ncPool{R_{n-1}}{\cpPlug{G}{P}}} \\
           \qquad \equiv \quad \text{by} \; \ncEquivPoolComm \\ 
           \tm{\ncPool{\cpPlug{G}{P}}{R_{n-1}}} \\
           \qquad \equiv \quad \text{by the induction hypothesis} \\ 
-          \tm{\ncPool{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
+          \tm{\ncPool{\cpPlug{H}{
+          \ncPool{P}{\ncPool{R_1}{
+          \ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
           \qquad \equiv \quad \text{by \cref{thm:nc-display-2}} \\
-          \tm{\cpPlug{H}{\ncPool{P}{\ncPool{R_1}{\ncPool{\dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
+          \tm{\cpPlug{H}{\ncPool{P}{
+          \ncPool{R_1}{\ncPool{
+          \dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
         \end{array}
-      \]
+      \end{flalign*}
     \item Case $\notFreeIn{x}{R}$. By the induction hypothesis.
     \end{itemize}
   \end{itemize}

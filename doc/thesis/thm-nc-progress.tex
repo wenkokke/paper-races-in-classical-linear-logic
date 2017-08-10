@@ -16,14 +16,13 @@
   Therefore, one of the following must be true:
   \begin{itemize}
   \item
-    One of these actions is a link.
+    One of these actions was introduced by an application of \textsc{Ax}.
     \\
-    We apply one of \cpRedAxCut1 or \cpRedAxCut2.
+    We proceed as in \cref{thm:cp-progress}. 
   \item
-    Two of these actions, on different sides of a \textsc{Cut}, act on the same channel.
-    \\
-    Let us name these processes \tm{P_i} and \tm{P_j}, and their shared channel
-    \tm{y}. We have 
+    Two of these actions, on different sides of a \textsc{Cut}, act on the same
+    channel. Let us name these processes \tm{P_i} and \tm{P_j}, and their shared
+    channel \tm{y}. We have
     $\tm{P} = \tm{\cpPlug{G}{\cpCut{y}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}$.
     We distinguish the following cases:
     \begin{itemize}
@@ -32,15 +31,18 @@
       $\seq[{ \cpPlug{H_i}{P_i}}]{ \Delta, \tmty{y}{\take[n]{A}} }$ or
       $\seq[{ \cpPlug{H_j}{P_j} }]{\Delta, \tmty{y}{\take[n]{A}} }$.
       \\
-      We rewrite by \cref{thm:nc-display-3}, then apply one of \ncRedBetaStar{1} and \ncRedBetaStar{n+1}.
+      We rewrite by \cref{thm:nc-display-3}, then apply one of \ncRedBetaStar{1}
+      and \ncRedBetaStar{n+1}. 
     \item
       Otherwise, we can infer $\notFreeIn{y}{H_i}$ and $\notFreeIn{y}{H_j}$.
       \\
       We proceed as in \cref{thm:cp-progress}. 
     \end{itemize}
   \item
-    The process is in canonical form \tm{\ncPool{\ncCnt{x_1}{y_1}{P_1}}{\ncPool{\dots}{\ncCnt{x_n}{y_n}{P_n}}\dots}}.
-  \item
+    The process is in canonical form \tm{
+      \ncPool{\ncCnt{x_1}{y_1}{P_1}}{
+        \ncPool{\dots}{\ncCnt{x_n}{y_n}{P_n}}\dots}}. 
+  \item 
     Otherwise (at least) one of the actions acts on a free variable.
     \\
     We apply one of the commutative conversions.
