@@ -1,39 +1,68 @@
 %% Background
 \chapter{Background}\label{sec:background}
-% * Introduction
-\section{Related work}
-% * - Work on πDILL and CP
-\section{Classical Processes}
-In this section, we will discuss a rudimentary subset of the typed process calculus \cp~\cite{wadler2012}.
-We do this in order to keep the discussion of our extension in \cref{sec:main} as simple as possible.
-We will refer to the subset as \rcp, after its corresponding logic, rudimentary linear logic~\cite[RLL]{girard1992}, also known as multiplicative-additive linear logic.
-However, as we foresee no problems in extending the proofs given in \cref{sec:main} to the full version of \cp, we will occasionally use \cp where saying \rcp would be more accurate. 
+\section{Classical Processes}\label{sec:cp}
+In this section, we will discuss a rudimentary subset of the typed process
+calculus \cp~\cite{wadler2012}, which we will refer to as \rcp.
+We have chosen to discuss only a subset in order to keep our later discussion of
+our extension to \cp in \cref{sec:main} as simple as possible.
+However, we foresee no problems in extending the proofs from \cref{sec:main} to
+cover the full version of \cp.
+\rcp corresponds to rudimentary linear logic~\cite[RLL]{girard1992}, which is
+also known as multiplicative-applicative linear logic.
 
-% * Terms
-The process calculus used by \rcp is a variant of the \textpi-calculus~\cite{milner1992b}, and its terms are defined by the following grammar:
+This section will proceed as follows. First, we will discuss the terms, the
+structural congruence, and the types of \rcp.
+Then we will discuss the terms and their corresponding types, in small groups,
+together with their typing and reduction rules.
+Finally, we will prove preservation, progress and termination for \rcp.
+
+\subsection{Terms and types}\label{sec:cp:terms-and-types}
+The term language for \rcp is a variant of the
+\textpi-calculus~\cite{milner1992b}.
+Its terms are defined by the following grammar:
 \input{def-cp-terms}
-The construct \tm{\cpLink{x}{y}} links two channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa.
-The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel. Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and \tm{Q}. 
-In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets are used for input, square brackets for output.
+The construct \tm{\cpLink{x}{y}} links two
+channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on
+\tm{x} to \tm{y} and vice versa. 
+The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes
+two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel.
+Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
+\tm{Q}. 
+In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets are used
+for input, square brackets for output. 
 We use bound output~\cite{sangiorgi1996}.
-This means that unlike in the \textpi-calculus, both input and output bind a new name. 
-In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
-In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is only bound in \tm{P}, while \tm{x} is only bound in \tm{Q}.
+This means that unlike in the \textpi-calculus, both input and output bind a new
+name. 
+In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}. 
+In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is only bound in \tm{P}, while
+\tm{x} is only bound in \tm{Q}.
 
-% * Types 
-Processes in \rcp are typed using a session type system which corresponds to
-RLL, the multiplicative and additive connectives from linear logic.
+Terms in \rcp are identified up to structural congruence, which states that
+parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
+It is defined as follows:
+\input{def-cp-equiv}
+We do not add an axiom for \cpEquivCutAss2, as it follows from
+\cref{def:cp-equiv}, see~\cref{thm:cp-cut-assoc2}.
+Note that throughout this thesis, we will leave uses of the transitivity and
+congruence rules implicit.
+\input{thm-cp-cut-assoc2}
+Furthermore, structural congruence is a symmetric relation.
+\input{thm-cp-symmetry}
+%
+Channels in \rcp are typed using a session type system which corresponds to RLL,
+the multiplicative, additive fragment of linear logic.
 These are defined using the following grammar:
 \input{def-cp-types}
-We define the interpretations of each connective below, together with the typing
-rules which introduce them.
-
-It is commonplace, in linear logic, to define negation as a function on types,
-instead of including it in the grammar.
-In this thesis, we follow that practice.
+Duality plays a crucial role in both linear logic and session types.
+In \cp, the two endpoints of a channel are assigned dual types.
+This ensures that, for instance, whenever a process \emph{sends} across a
+channel, the process on the other end of that channel is waiting to
+\emph{receive}.
+Each type \ty{A} has a dual, written \ty{A^\bot}, which is defined as follows:
 \input{def-cp-negation}
-We define our negation such that it is involutive.
+Duality is an involutive function.
 \input{thm-cp-negation-involutive}
+%
 Environments associate channels with types. They are defined as follows:
 \input{def-cp-environments}
 Typing judgements associative processes with their collection of channels, and
@@ -41,52 +70,159 @@ enforce the communication protocols specified by the types of those channels.
 They are defined as follows:
 \input{def-cp-typing-judgement}
 \input{fig-cp-typing-judgement}
+Reductions relate processes with their reduced forms.
+They are defined as follows:
+\input{def-cp-term-reduction}
+\input{fig-cp-term-reduction}
+We will discuss the interpretations of each connective, together with their
+typing and reduction rules, in
+\cref{sec:cp-dependence,sec:cp-choice,sec:cp-duality}.
+
+\subsection{Multiplicatives and in- and interdependence}
+\label{sec:cp-dependence}
 The multiplicatives ($\ty{\tens}, \ty{\parr}$) deal with independence and
-interdependence. A channel of type \ty{A \tens B} represents a pair of channels,
-which communicate with two \emph{independent} processes---that is to say, two
-processes who share no channels. A channel of type \ty{A \parr B} represents a
-pair of interdependent channels, which are used within a single process. This
-means that their usages can depend on one another---e.g.\ the interaction of
-type \ty{B} could depend on the result of the interaction of type \ty{A}, or
-vise versa, and if \ty{A} and \ty{B} are complex types, then their interactions
-could likewise interweave in complex ways.
+interdependence:
+\begin{itemize}
+\item
+  A channel of type \ty{A \tens B} represents a pair of channels, which
+  communicate with two \emph{independent} processes---that is to say, two
+  processes who share no channels.
+  A process acting on a channel of type \ty{A \tens B} will send one endpoint of
+  a fresh channel, and then split into a pair of independent processes.
+  One of these processes will be responsible for an interaction of type \ty{A}
+  over the fresh channel, while the other process continues to interact as
+  \ty{B}.
+\item
+  A channel of type \ty{A \parr B} represents a pair of interdependent channels,
+  which are used within a single process. 
+  A process acting on a channel of type \ty{A \parr B} will receive a channel to
+  act on, and communicate on its channels in whatever order it pleases.
+  This means that the usage of one channel can depend on that of
+  another---e.g.\ the interaction of type \ty{B} could depend on the result of
+  the interaction of type \ty{A}, or vise versa, and if \ty{A} and \ty{B} are
+  complex types, their interactions could likewise interweave in complex ways. 
+\end{itemize}
 While the rules for \ty{\tens} and \ty{\parr} introduce input and output
 operations, these are inessential---the essential distinction lies two in the
-fact that (\tens) composes two independent processes, and must split the
-environment between them, whereas (\parr) uses a single process, which can use
-all the channels in the environment.
-
+fact that (\tens) composes two independent processes, and therefore \emph{must}
+split the environment between them, whereas (\parr) uses a single process, which
+then can---and must---use all the channels in the environment.
+\begin{center}
+  \cpInfTens
+  \cpInfParr
+\end{center}
+The \textbeta-reduction rule for terms introduced by $(\tens)$ and $(\parr)$
+implements the behaviour outlined above: 
+\[
+  \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
+  \Longrightarrow
+  \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
+\]
+%
 The rules for the multiplicative units ($\ty{\one}, \ty{\bot}$) follow the same
-pattern: (\one) composes \emph{zero} independent processes, and thus must halt;
-and (\bot) uses a single process, which is not further restricted.
+pattern, except for the nullary instead of the binary case:
+\begin{itemize}
+\item
+  A term constructed by $(\one)$ must composes \emph{zero} independent
+  processes, and thus must halt. Furthermore, it must be able to split its
+  environment between zero processes, and thus its environment must be empty.
+\item
+  A term constructed by $(\bot)$, on the other hand, uses a single process,
+  which is not further restricted. 
+\end{itemize}
+Note that the rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and
+receive operation, such as those found in the polyadic \textpi-calculus.
+\begin{center}
+  \cpInfOne
+  \cpInfBot
+\end{center}
+The \textbeta-reduction rule for terms introduced by $(\one)$ and $(\bot)$
+implements the behaviour outlined above:
+\[
+  \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
+  \Longrightarrow
+  \tm{P}
+\]
 
-% * Reduction
-Terms in \rcp are identified up to structural congruence, which states that parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
-It is defined as follows:
-\input{def-cp-equiv}
-We do not add an axiom for \cpEquivCutAss2, as it follows from \cref{def:cp-equiv}, which we prove below.
-Note that, throughout this thesis, we will leave uses of the transitivity and congruence rules implicit.
-\input{thm-cp-cut-assoc2}
-Furthermore, the structural congruence from \cref{def:cp-equiv} is a symmetric
-relation.
-\input{thm-cp-symmetry}
-\input{def-cp-term-reduction}
+\subsection{Additives and choice}\label{sec:cp-choice}
+The additives ($\ty{\plus}, \ty{\with}$) deal with choice:
+\begin{itemize}
+\item
+  A process acting on a channel of type \ty{A \plus B} either sends the value
+  \tm{inl} to select an interaction of type \ty{A} or the value \tm{inr} to
+  select one of type \ty{B}.
+\item
+  A process acting on a channel of type \ty{A \with B} receives such a value,
+  and then offers an interaction of either type \ty{A} or \ty{B},
+  correspondingly.
+\end{itemize}
+Note that, in essence, the additive operations implement the sending and
+receiving of a single bit of information, \tm{inl} or \tm{inr}, and branching
+based on the value of that bit.
+The rule for constructing a process which sends \tm{inr}, $(\plus_2)$, has been
+omitted, but can be found in~\cref{fig:cp-typing-judgement}.
+\begin{center}
+  \cpInfPlus1
+  \cpInfWith
+\end{center}
+The \textbeta-reduction rules for terms introduced by $(\plus_1)$, $(\plus_2)$
+and $(\with)$ implements the behaviour outlined above.
+\[
+  \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
+  \Longrightarrow
+  \tm{\cpCut{x}{P}{Q}}
+\]
+\[
+  \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
+  \Longrightarrow
+  \tm{\cpCut{x}{P}{R}}
+\]
+%
+The rules for the additive units ($\ty{\nil}, \ty{\top}$) follow the same
+pattern, except for a nullary choice:
+\begin{itemize}
+\item
+  There is \emph{no} rule for \ty{\nil}, as a process acting on a channel of
+  that type would have to select one of \emph{zero} options, which is clearly
+  impossible.
+\item
+  A process acting on a channel of type \ty{\top} will wait to receive a choice
+  of out \emph{zero} options. Since this will clearly never arrive, we have two
+  options: either we block, waiting forever, or we simply crash.
+\end{itemize}
+It may seem odd at first to include a type for the process which cannot possibly
+exist, and for the process which waits forever, but these make sensible units
+for choice.
+When offered a choice of type \ty{A \plus \nil}, one can either choose to
+interact as \ty{A}, or choose to commit to doing the impossible.
+Similarly, when offering a choice of type \ty{A \with \top}, one can safely
+implement the right branch with a process which waits forever, as no sound
+process will ever be able to select that branch anyway.
+\begin{center}
+  \cpInfNil
+  \cpInfTop
+\end{center}
+As there is no way to construct a process of type \ty{\nil}, there is no
+reduction rule for the additive units.
+However, it is worth discussing the commutative conversion for \ty{\top} here,
+separately.
+In \cp, commutative conversions push communications, \tm{\cpCut{x}{P}{Q}},
+deeper into terms, under unrelated actions.
+However, looking at the commutative conversion for \ty{\top} from different
+perspective, we see that it states that if one of the two communication partners 
+is blocked forever, we can consider their composition to be blocked forever
+as well:
+\[
+  \tm{\cpCut{x}{\cpAbsurd{y}}{R}}
+  \Longrightarrow
+  \tm{\cpAbsurd{y}}
+\]
 
-% * Preservation 
-\input{thm-cp-preservation-equiv}
-\input{fig-cp-preservation-equiv}
-\input{thm-cp-preservation}
-\input{fig-cp-preservation-1}
-\input{fig-cp-preservation-2}
 
-% * Progress
-\input{def-cp-action}
-\input{def-cp-canonical-forms}
-\input{def-cp-evaluation-contexts}
-\input{def-cp-evaluation-contexts-plugging}
-\input{thm-cp-display}
-\input{thm-cp-progress}
-\input{thm-cp-termination}
+\subsection{Structural rules and duality}\label{sec:cp-duality}
+
+\subsection{Properties of \rcp}\label{sec:cp-properties}
+
 
 %%% Local Variables:
 %%% TeX-master: "main"
