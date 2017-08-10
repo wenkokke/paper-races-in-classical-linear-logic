@@ -23,17 +23,17 @@ Its terms are defined by the following grammar:
 \input{def-cp-terms}
 The construct \tm{\cpLink{x}{y}} links two
 channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on
-\tm{x} to \tm{y} and vice versa. 
+\tm{x} to \tm{y} and vice versa.
 The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes
 two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel.
 Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
-\tm{Q}. 
+\tm{Q}.
 In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets are used
-for input, square brackets for output. 
+for input, square brackets for output.
 We use bound output~\cite{sangiorgi1996}.
 This means that unlike in the \textpi-calculus, both input and output bind a new
-name. 
-In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}. 
+name.
+In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
 In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is only bound in \tm{P}, while
 \tm{x} is only bound in \tm{Q}.
 
@@ -94,13 +94,13 @@ interdependence:
   \ty{B}.
 \item
   A channel of type \ty{A \parr B} represents a pair of interdependent channels,
-  which are used within a single process. 
+  which are used within a single process.
   A process acting on a channel of type \ty{A \parr B} will receive a channel to
   act on, and communicate on its channels in whatever order it pleases.
   This means that the usage of one channel can depend on that of
   another---e.g.\ the interaction of type \ty{B} could depend on the result of
   the interaction of type \ty{A}, or vise versa, and if \ty{A} and \ty{B} are
-  complex types, their interactions could likewise interweave in complex ways. 
+  complex types, their interactions could likewise interweave in complex ways.
 \end{itemize}
 While the rules for \ty{\tens} and \ty{\parr} introduce input and output
 operations, these are inessential---the essential distinction lies two in the
@@ -112,7 +112,7 @@ then can---and must---use all the channels in the environment.
   \cpInfParr
 \end{center}
 The \textbeta-reduction rule for terms introduced by $(\tens)$ and $(\parr)$
-implements the behaviour outlined above: 
+implements the behaviour outlined above:
 \[
   \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
   \Longrightarrow
@@ -128,7 +128,7 @@ pattern, except for the nullary instead of the binary case:
   environment between zero processes, and thus its environment must be empty.
 \item
   A term constructed by $(\bot)$, on the other hand, uses a single process,
-  which is not further restricted. 
+  which is not further restricted.
 \end{itemize}
 Note that the rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and
 receive operation, such as those found in the polyadic \textpi-calculus.
@@ -204,24 +204,100 @@ process will ever be able to select that branch anyway.
 \end{center}
 As there is no way to construct a process of type \ty{\nil}, there is no
 reduction rule for the additive units.
-However, it is worth discussing the commutative conversion for \ty{\top} here,
-separately.
-In \cp, commutative conversions push communications, \tm{\cpCut{x}{P}{Q}},
-deeper into terms, under unrelated actions.
-However, looking at the commutative conversion for \ty{\top} from different
-perspective, we see that it states that if one of the two communication partners 
-is blocked forever, we can consider their composition to be blocked forever
-as well:
-\[
-  \tm{\cpCut{x}{\cpAbsurd{y}}{R}}
-  \Longrightarrow
-  \tm{\cpAbsurd{y}}
-\]
 
 
 \subsection{Structural rules and duality}\label{sec:cp-duality}
+Duality plays a crucial role in session type systems.
+In~\cref{sec:cp-choice}, we saw that duality ensures a process offering a choice
+is always matched with a process making a choice.
+In~\cref{sec:cp-dependence}, we saw that it is also crucial to deadlock freedom,
+as it ensures that, for instance, a process which uses communication on \tm{x}
+to decide what to send on \tm{y} is matched with a pair of independent processes
+on \tm{x} and \tm{y}, preventing circular dependencies.
+
+Duality appears in the typing rules for two \rcp term constructs.
+Forwarding, \tm{\cpLink{x}{y}}, connects two dual channels with dual endpoints,
+while composition, \tm{\cpCut{x}{P}{Q}}, composes two processes \tm{P} and
+\tm{Q} with a shared channel \tm{x}, requiring that they follow dual protocols
+on \tm{x}.
+\begin{center}
+  \cpInfAx
+  \cpInfCut
+\end{center}
+There are two reduction rules which deal with the interactions between
+forwarding and compositions. These implement the intuition that if a process is
+meant to communicate on \tm{x}, \tm{x} is forwarding to \tm{y}, and nobody else
+is listening on \tm{x}, then the process might as well start communicating on
+\tm{y}.
+\[
+  \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
+\]
+\[
+  \tm{\cpCut{x}{\cpLink{x}{w}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}}  
+\]
+Note that we can do this \emph{solely} because \rcp implements a binary session
+type system, meaning that each communication has only two participants, and
+therefore we know that no other process is communicating on \tm{x}.
+
+
+% However, it is worth discussing the commutative conversion for \ty{\top} here,
+% separately. In \cp, commutative conversions push compositions,
+% \tm{\cpCut{x}{P}{Q}}, deeper into terms, under unrelated actions. However,
+% looking at the commutative conversion for \ty{\top} from different
+% perspective, we see that it states that if one of the two communication
+% partners is blocked forever, we can consider their composition to be blocked
+% forever as well: 
+% \[\tm{\cpCut{x}{\cpAbsurd{y}}{R}} \Longrightarrow \tm{\cpAbsurd{y}} \]
+
 
 \subsection{Properties of \rcp}\label{sec:cp-properties}
+In this section, we will prove three important properties of \rcp, namely
+preservation, progress and termination.
+
+\subsubsection{Preservation}
+Preservation is the fact that term reduction preserves typing. In order to prove
+this, we will first need to prove that equivalence preserves typing.
+\input{thm-cp-preservation-equiv}
+\input{fig-cp-preservation-equiv}
+Then, we can prove preservation.
+\input{thm-cp-preservation}
+\input{fig-cp-preservation-1}
+\input{fig-cp-preservation-2}
+
+\subsubsection{Progress}
+Progress is the fact that every term is either in some canonical form, or can be
+reduced further. In order for us to even be able to state progress, we will need
+to define when a term is in canonical form.
+
+We have informally used the phrase ``act on'' in previous sections. It is time
+to formally define what it means when we say a process \emph{acts on} some
+channel.
+\input{def-cp-action}
+
+We will need a notion of an \emph{evaluation context}, which
+informally is any term under which a reduction can take place. For \rcp, this is
+any term consisting solely of cuts:
+\input{def-cp-evaluation-contexts}
+We define a plugging function for evaluation contexts, which allows us to plug
+terms into an evaluation context:
+\input{def-cp-evaluation-contexts-plugging}
+One important property of evaluation contexts is permutation: we can rearrange
+the order of cuts, as long as we do not move any channels outside of the scope
+of their cut.
+We can prove that we can push any cut downwards under an evaluation contexts, as
+long as the channel it binds does not occur in the context itself.
+\input{thm-cp-display}
+And vice versa. However, we will not use the following lemma in this
+dissertation, and leave its proof as an exercise to the reader.
+\input{thm-cp-co-display}
+
+\input{def-cp-canonical-forms}
+\input{thm-cp-progress}
+
+\subsubsection{Termination}
+\input{thm-cp-termination}
+
+
 
 
 %%% Local Variables:
