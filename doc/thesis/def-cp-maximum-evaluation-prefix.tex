@@ -1,0 +1,15 @@
+\begin{definition}[Maximum evaluation prefix]\label{def:cp-maximum-evaluation-prefix}
+  We say that \tm{G} is the evaluation prefix of \tm{P} when there exist terms
+  $\tm{P_1} \dots \tm{P_n}$ such that $\tm{P} = \tm{\cpPlug{G}{P_1 \dots P_n}}$.
+  We say that \tm{G} is the maximum evaluation prefix if each \tm{P_i} is an
+  action. 
+\end{definition}
+\begin{lemma}\label{thm:cp-maximum-evaluation-prefix}
+  Every term \tm{P} has a maximum evaluation prefix.
+\end{lemma}
+\begin{proof}
+  By induction on the structure of \tm{P}.
+\end{proof}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

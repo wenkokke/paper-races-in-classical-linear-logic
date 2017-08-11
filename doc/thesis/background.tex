@@ -5,18 +5,30 @@ In this section, we will discuss a rudimentary subset of the typed process
 calculus \cp~\cite{wadler2012}, which we will refer to as \rcp.
 We have chosen to discuss only a subset in order to keep our later discussion of
 our extension to \cp in \cref{sec:main} as simple as possible.
+\rcp is the subset which corresponds to rudimentary linear
+logic~\cite[RLL]{girard1992}, also known as multiplicative-applicative linear
+logic. 
 However, we foresee no problems in extending the proofs from \cref{sec:main} to
-cover the full version of \cp.
-\rcp corresponds to rudimentary linear logic~\cite[RLL]{girard1992}, which is
-also known as multiplicative-applicative linear logic.
+cover the remaining features of \cp, polymophism and the exponentials $\ty{!A}$
+and $\ty{?A}$. 
 
-This section will proceed as follows. First, we will discuss the terms, the
-structural congruence, and the types of \rcp.
-Then we will discuss the terms and their corresponding types, in small groups,
-together with their typing and reduction rules.
-Finally, we will prove preservation, progress and termination for \rcp.
+We will deviate from the formulation of \cp in one more way. In our formulation
+of \rcp, we will leave out the commutative conversions of \cp, in order to
+obtain a tighter correspondence with the reduction semantics of the
+\textpi-calculus.
 
-\subsection{Terms and types}\label{sec:cp:terms-and-types}
+This section will proceed as follows.
+In \cref{sec:cp-terms-and-types}, we will discuss the terms, the structural
+congruence, and the types of \rcp. 
+In \cref{sec:cp-dependence,sec:cp-choice,sec:cp-duality}, we will discuss the
+terms and their corresponding types, in small groups, together with their typing
+and reduction rules. 
+In \cref{sec:cp-properties}, we will prove preservation, progress and
+termination for \rcp.
+And finally, in \cref{sec:cp-correspondence}, we will define an extended version
+of the reduction relation, which corresponds to cut elimination in linear logic.
+
+\subsection{Terms and types}\label{sec:cp-terms-and-types}
 The term language for \rcp is a variant of the
 \textpi-calculus~\cite{milner1992b}.
 Its terms are defined by the following grammar:
@@ -72,8 +84,8 @@ They are defined as follows:
 \input{fig-cp-typing-judgement}
 Reductions relate processes with their reduced forms.
 They are defined as follows:
-\input{def-cp-term-reduction}
-\input{fig-cp-term-reduction}
+\input{def-cp-term-reduction-1}
+\input{fig-cp-term-reduction-1}
 We will discuss the interpretations of each connective, together with their
 typing and reduction rules, in
 \cref{sec:cp-dependence,sec:cp-choice,sec:cp-duality}.
@@ -168,14 +180,11 @@ omitted, but can be found in~\cref{fig:cp-typing-judgement}.
 The \textbeta-reduction rules for terms introduced by $(\plus_1)$, $(\plus_2)$
 and $(\with)$ implements the behaviour outlined above.
 \[
-  \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
-  \Longrightarrow
-  \tm{\cpCut{x}{P}{Q}}
-\]
-\[
-  \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
-  \Longrightarrow
-  \tm{\cpCut{x}{P}{R}}
+  \begin{array}{c}
+    \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}} \Longrightarrow \tm{\cpCut{x}{P}{Q}}
+    \\
+    \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}} \Longrightarrow \tm{\cpCut{x}{P}{R}}
+  \end{array}
 \]
 %
 The rules for the additive units ($\ty{\nil}, \ty{\top}$) follow the same
@@ -230,25 +239,15 @@ meant to communicate on \tm{x}, \tm{x} is forwarding to \tm{y}, and nobody else
 is listening on \tm{x}, then the process might as well start communicating on
 \tm{y}.
 \[
-  \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
-\]
-\[
-  \tm{\cpCut{x}{\cpLink{x}{w}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}}  
+  \begin{array}{c}
+    \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
+    \\
+    \tm{\cpCut{x}{\cpLink{x}{w}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}}  
+  \end{array}
 \]
 Note that we can do this \emph{solely} because \rcp implements a binary session
 type system, meaning that each communication has only two participants, and
 therefore we know that no other process is communicating on \tm{x}.
-
-
-% However, it is worth discussing the commutative conversion for \ty{\top} here,
-% separately. In \cp, commutative conversions push compositions,
-% \tm{\cpCut{x}{P}{Q}}, deeper into terms, under unrelated actions. However,
-% looking at the commutative conversion for \ty{\top} from different
-% perspective, we see that it states that if one of the two communication
-% partners is blocked forever, we can consider their composition to be blocked
-% forever as well: 
-% \[\tm{\cpCut{x}{\cpAbsurd{y}}{R}} \Longrightarrow \tm{\cpAbsurd{y}} \]
-
 
 \subsection{Properties of \rcp}\label{sec:cp-properties}
 In this section, we will prove three important properties of \rcp, namely
@@ -262,7 +261,6 @@ this, we will first need to prove that equivalence preserves typing.
 Then, we can prove preservation.
 \input{thm-cp-preservation}
 \input{fig-cp-preservation-1}
-\input{fig-cp-preservation-2}
 
 \subsubsection{Progress}
 Progress is the fact that every term is either in some canonical form, or can be
@@ -273,32 +271,53 @@ We have informally used the phrase ``act on'' in previous sections. It is time
 to formally define what it means when we say a process \emph{acts on} some
 channel.
 \input{def-cp-action}
+Furthermore, we will need the notion of an \emph{evaluation prefix}.
+Intuitively, evaluation prefixes are multi-holed contexts consisting solely of
+cuts. We will use evaluation prefixes in order to have a view of every
+\emph{action} in a process at once.
+\input{def-cp-evaluation-prefixes}
+Intuitively, we can say that every term of the form
+\tm{\cpPlug{G}{P_1 \dots P_n}} is equivalent to some term of the form
+\tm{\cpCut{x_1}{P_1}{\cpCut{x_2}{P_2}{\dots \cpCut{x_n}{P_{n-1}}{P_n} \dots}}} 
+where $\tm{x_1} \dots \tm{x_{n-1}}$ are the channels bound in \tm{G}.
+In fact, a similar equivalence was used by \citeauthor{lindley2015semantics}
+\cite{lindley2015semantics} in their semantics for \cp. 
+\input{def-cp-maximum-evaluation-prefix}
+We can now define what it means for a term to be in canonical form. Intuitively,
+a process is in canonical form either when there is no top-level cut, or when it
+is blocked on an external communication. We state this formally as follows:
+\input{def-cp-canonical-forms}
+This definition is adequate, as it matches our intuition. We will see this in
+our proof for \cref{thm:cp-progress}. 
 
-We will need a notion of an \emph{evaluation context}, which
-informally is any term under which a reduction can take place. For \rcp, this is
-any term consisting solely of cuts:
+Lastly, we will need the notion of an \emph{evaluation context}.
+Intuitively, evaluation contexts are one-holed term contexts under which
+reduction can take place. For \rcp, these consist solely of cuts.
 \input{def-cp-evaluation-contexts}
-We define a plugging function for evaluation contexts, which allows us to plug
-terms into an evaluation context:
-\input{def-cp-evaluation-contexts-plugging}
-One important property of evaluation contexts is permutation: we can rearrange
-the order of cuts, as long as we do not move any channels outside of the scope
-of their cut.
 We can prove that we can push any cut downwards under an evaluation contexts, as
 long as the channel it binds does not occur in the context itself.
-\input{thm-cp-display}
+\input{thm-cp-display-1}
 And vice versa. However, we will not use the following lemma in this
 dissertation, and leave its proof as an exercise to the reader.
-\input{thm-cp-co-display}
+\input{thm-cp-display-2}
+We also prove two lemmas which relate evaluation prefixes to evaluation
+contexts.
+Specifically, if a process under an evaluation prefix is a link, we can rewrite
+the entire process in such a way as to reveal the cut which introduced one of
+the channels acted upon by that link.
+\input{thm-cp-display-3}
+And if two processes under an evaluation prefix act on the same channel, then we
+can rewrite the entire process in such a way as to reveal the cut which
+introduced that channel. 
+\input{thm-cp-display-4}
 
-\input{def-cp-canonical-forms}
 \input{thm-cp-progress}
 
 \subsubsection{Termination}
 \input{thm-cp-termination}
 
-
-
+\subsection{Correspondence with linear logic}
+\input{fig-cp-preservation-2}
 
 %%% Local Variables:
 %%% TeX-master: "main"

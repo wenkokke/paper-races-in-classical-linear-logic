@@ -1,0 +1,21 @@
+\begin{definition}[Evaluation prefixes]\label{def:cp-evaluation-prefixes}
+  We define evaluation prefixes as:
+  \begin{align*}
+    \tm{G}, \tm{H} := \tm{\Box} \mid \tm{\cpCut{x}{G}{H}}
+  \end{align*}
+\end{definition}
+\begin{definition}[Plugging]\label{def:cp-evaluation-prefix-plugging}
+  We define plugging for an evaluation prefix with $n$ holes as:
+  \[
+    \begin{array}{ll}
+      \tm{\cpPlug{\Box}{R}} & := \; \tm{R} \\
+      \tm{\cpPlug{\cpCut{x}{G}{H}}{R_1 \dots R_m, R_{m+1} \dots R_{n}}}
+                            & := \; \tm{\cpCut{x}{\cpPlug{G}{R_1 \dots R_m}}{\cpPlug{H}{R_{m+1} \dots R_n}}}
+    \end{array}
+  \]
+  Note that in the second case, \tm{G} is an evaluation prefix with $m$ holes,
+  and \tm{H} is an evaluation prefix with $(m-n)$ holes.
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
