@@ -1,11 +1,25 @@
 \begin{definition}[Evaluation contexts]\label{def:cp-evaluation-contexts}
   We define evaluation contexts as:
   \begin{align*}
-    \tm{G}, \tm{H}
-    := \tm{\Box}
-    \mid \tm{\cpCut{x}{P}{G}}
+    \tm{G}, \tm{H} := \tm{\Box}
     \mid \tm{\cpCut{x}{G}{P}}
+    \mid \tm{\cpCut{x}{P}{G}}
   \end{align*}
+\end{definition}
+\begin{definition}[Plugging]\label{def:cp-evaluation-context-plugging}
+  We define plugging for evaluation contexts as:
+  \begin{gather*}
+    \begin{array}{ll}
+      \tm{\cpPlug{\Box}{R}}            
+      & := \; \tm{R}
+      \\
+      \tm{\cpPlug{\cpCut{x}{G}{P}}{R}}
+      & := \; \tm{\cpCut{x}{\cpPlug{G}{R}}{P}}
+      \\
+      \tm{\cpPlug{\cpCut{x}{P}{G}}{R}}
+      & := \; \tm{\cpCut{x}{P}{\cpPlug{G}{R}}}
+    \end{array}
+  \end{gather*}
 \end{definition}
 %%% Local Variables:
 %%% TeX-master: "main"

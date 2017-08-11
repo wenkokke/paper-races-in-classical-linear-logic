@@ -3,7 +3,6 @@
 \usepackage{multicol}
 \usepackage{amsmath, amssymb}
 \usepackage[thmmarks,amsmath]{ntheorem}
-\theoremlisttype{allname}
 \usepackage{nameref}
 \usepackage{hyperref}
 \usepackage{cleveref}
@@ -15,8 +14,16 @@
 \theorembodyfont{\normalfont}
 \theoremsymbol{\ensuremath{_\Box}}
 \newtheorem{theorem}{Theorem}[chapter]
-\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{lemmaB}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
+% Lemmas
+\theoremstyle{plain}
+\setlength\theoremindent{1\parindent}
+\setlength\theorempreskipamount{1\baselineskip}
+\setlength\theorempostskipamount{1\baselineskip}
+\theorembodyfont{\normalfont}
+\theoremsymbol{\ensuremath{_\Box}}
+\newtheorem{lemma}[theorem]{Lemma}
 % Definitions
 \theoremsymbol{}
 \newtheorem{definition}[theorem]{Definition}

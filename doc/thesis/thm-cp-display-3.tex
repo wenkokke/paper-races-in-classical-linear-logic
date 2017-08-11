@@ -1,0 +1,49 @@
+\begin{lemmaB}\label{thm:cp-display-3}
+  If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
+  link \tm{\cpLink{x}{y}}, then either $\tm{\cpPlug{G}{P_1 \dots P_n}} =
+  \tm{\cpLink{x}{y}}$, or there exist \tm{H}, \tm{H'} and \tm{Q} such that
+  \(
+  \tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
+  \tm{\cpPlug{H}{\cpCut{z}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}
+  \)
+  with either $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
+\end{lemmaB}
+\begin{proof}
+  Either $\tm{G} = \tm{\Box}$, and the statement is trivially true, or we
+  proceed by induction on the structure of \tm{G}. We have:
+  \begin{gather*}
+    \begin{array}[t]{ll}
+      \tm{\cpPlug{G}{P_1 \dots P_n}} = \tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_i\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_n}}},&\text{or}
+      \\
+      \tm{\cpPlug{G}{P_1 \dots P_n}} = \tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_i\dots P_n}}}. 
+    \end{array}
+  \end{gather*}
+  There are three cases:
+  \begin{itemize}
+  \item
+    Case $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$
+    and $\tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_i\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_n}}}$.
+    \\
+    Let $\tm{H} := \tm{\Box}$ and $\tm{H'} := \tm{\cpPlug{G'}{P_1\dots P_{j-1},\Box,P_{j+1}\dots P_m}}$.
+    \\[1ex]
+    By reflexivity.
+  \item
+    Case $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$
+    and $\tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_i\dots P_n}}}$.
+    \\
+    Let $\tm{H} := \tm{\Box}$ and $\tm{H'} := \tm{\cpPlug{G''}{P_{m+1}\dots P_{i-1},\Box,P_{i+1}\dots P_n}}$.
+    \\
+    By reflexivity and \cpEquivCutComm.
+  \item
+    Otherwise, we obtain \tm{H}, \tm{H'} and \tm{Q} from the induction
+    hypothesis and \cref{thm:cp-preservation-equiv}, and prepend either
+    \tm{\cpCut{z}{\Box}{\cpPlug{G''}{P_{m+1}\dots P_n}}} or
+    \tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_m}}{\Box}} to \tm{H}.
+    The desired equality follows by congruence.
+  \end{itemize}
+  The case where neither \tm{x} nor \tm{y} is bound in \tm{G}, but $\tm{G} \neq
+  \tm{\Box}$, is excluded by the type system.
+\end{proof}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
