@@ -1,0 +1,119 @@
+\chapter{\cp as a typed \textpi-calculus}
+\cp has a tight correspondence with classical linear logic.
+This has many advantages.
+It is deadlock free and terminating, and as seen in \cref{sec:cp-properties},
+the proofs of its meta-theoretical properties are brief and aesthetically
+pleasing.
+
+The price paid for this is a somewhat weaker correspondence with the
+\textpi-calculus.
+It would be useful to be able to think of \cp as a type system for the
+\textpi-calculus.
+However, as it stands there are many differences between these systems.
+Most prominent of these are the commutative conversions. These reduction rules
+are taken directly from the proof normalisation procedure of classical linear
+logic, and do not correspond to any reductions in the \textpi-calculus.
+
+\citenat{lindley2015semantics} observed that, using a different reduction
+strategy, which more closely resembles that of the \textpi-calculus, we can
+ensure that the commutative conversions are always applied \emph{last}.
+That is to say, they define two separate reduction relations:
+$\longrightarrow_{C}$ for \cpRedAxCut1, \cpRedAxCut2 and \textbeta-reductions,
+and $\longrightarrow_{CC}$ for commutative conversions, and show that any
+sequence of reductions has the following form:
+\[
+  P \longrightarrow_{C} \dots \longrightarrow_{C} Q \longrightarrow_{CC} \dots \longrightarrow_{CC} R
+\]
+In this dissertation, we use a reduction strategy which follows
+\citenat{lindley2015semantics}, but opts to drop the suffix of commutative
+conversions.
+As a consequence of this, we can drop the commutative conversions from our
+reduction system, which therefore more tightly corresponds to that of the
+\textpi-calculus. 
+The price we pay for this is a weaker correspondence to classical linear logic.
+This shows in our notion of canonical form, which is weaker, and in our proof of
+progress, which is much more involved.
+
+This chapter will proceed as follows.
+In \cref{sec:cp-canonical-forms}, we will describe what it means for a term to
+be in canonical form.
+In \cref{sec:cp-evaluation-contexts}, we will define evaluation contexts.
+In \cref{sec:cp-progress}, we will give a new proof of progress, which follows
+\citenat{lindley2015semantics}.
+
+\section{Canonical forms}\label{sec:cp-canonical-forms}
+The reduction strategy described by \citeauthor{lindley2015semantics} applies
+\cpRedAxCut1, \cpRedAxCut2, and \textbeta-reductions until the process blocks on
+one or more external communications, and then applies the commuting conversions
+to bubble one of those external communications to the front of the term.
+This allows them to define canonical forms as any term which is not a cut.
+For us, terms in canonical form will be those terms which are blocked on an
+external communication.
+
+We have informally used the phrase ``act on'' in previous sections. It is time
+to formally define what it means when we say a process \emph{acts on} some
+channel.
+\input{def-cp-action}
+Furthermore, we will need the notion of an \emph{evaluation prefix}.
+Intuitively, evaluation prefixes are multi-holed contexts consisting solely of
+cuts. We will use evaluation prefixes in order to have a view of every
+\emph{action} in a process at once.
+\input{def-cp-evaluation-prefixes}
+Intuitively, we can say that every term of the form
+\tm{\cpPlug{G}{P_1 \dots P_n}} is equivalent to some term of the form
+\tm{\cpCut{x_1}{P_1}{\cpCut{x_2}{P_2}{\dots \cpCut{x_n}{P_{n-1}}{P_n} \dots}}} 
+where $\tm{x_1} \dots \tm{x_{n-1}}$ are the channels bound in \tm{G}.
+In fact, a similar equivalence was used by \citeauthor{lindley2015semantics}
+\cite{lindley2015semantics} in their semantics for \cp. 
+\input{def-cp-maximum-evaluation-prefix}
+We can now define what it means for a term to be in canonical form. Intuitively,
+a process is in canonical form either when there is no top-level cut, or when it
+is blocked on an external communication. We state this formally as follows:
+\input{def-cp-canonical-forms}
+This definition is adequate, as it matches our intuition. We will see this in
+our proof for \cref{thm:cp-progress-3}.
+
+\section{Evaluation contexts}\label{sec:cp-evaluation-contexts}
+Intuitively, evaluation contexts are one-holed term contexts under which
+reduction can take place. For \rcp, these consist solely of cuts.
+\input{def-cp-evaluation-contexts}
+We can prove that we can push any cut downwards under an evaluation contexts, as
+long as the channel it binds does not occur in the context itself.
+\input{thm-cp-display-1}
+And vice versa. However, we will not use the following lemma in this
+dissertation, and leave its proof as an exercise to the reader.
+\input{thm-cp-display-2}
+
+\section{Progress}\label{sec:cp-progress}
+Progress is the fact that every term is either in some canonical form, or can be
+reduced further.
+%
+There are two important lemmas which we will need in order to prove progress.
+These relate evaluation prefixes to evaluation contexts.
+%
+Specifically, if a process under an evaluation prefix is a link, we can rewrite
+the entire process in such a way as to reveal the cut which introduced one of
+the channels acted upon by that link.
+\input{thm-cp-display-3}
+And if two processes under an evaluation prefix act on the same channel, then we
+can rewrite the entire process in such a way as to reveal the cut which
+introduced that channel. 
+\input{thm-cp-display-4}
+
+Finally, we are ready to prove progress.
+Note that in proofs throughout this dissertation, we will leave uses of
+\cpRedGammaEquiv and the congruence rules for reductions implicit. 
+\input{thm-cp-progress-3}
+The proof of progress described in this section is novel, though it takes
+inspiration from the reduction system for \cp described by \citenat{lindley2015semantics}. 
+The proof of itself is somewhat involved. The reason for
+this is that we want our reduction strategy to match that of the
+\textpi-calculus as closely as possible.
+It is also for this reason that our proof of progress involves some
+non-determinism. For instance, in the second case of the proof, we do not
+specify how to select the two processes \tm{P_i} and \tm{P_j} if there are
+multiple options available.
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
