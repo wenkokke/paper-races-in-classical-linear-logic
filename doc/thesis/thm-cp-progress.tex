@@ -2,60 +2,61 @@
   If $\seq[{ P }]{ \Gamma }$, then $\tm{P}$ is in canonical form, or there
   exists a $\tm{P'}$ s.t.\ $\reducesto{P}{P'}$. 
 \end{theorem}
-\begin{proof}
-  By induction on the structure of derivation for $\seq[{ P }]{ \Gamma }$.
-  The only interesting case is when the last rule of the derivation is
-  \textsc{Cut}. In every other case, the typing rule constructs a term in which
-  is in canonical form. 
-  \\
-  If the last rule in the derivation is \textsc{Cut}, we consider the maximum
-  evaluation prefix \tm{G} of \tm{P}, such that $\tm{P} = \tm{\cpPlug{G}{P_1
-      \dots P_{n+1}}}$ and each $P_i$ is an action.
-  The prefix \tm{G} consists of $n$ cuts, and introduces $n$ variables, but
-  composes $n+1$ actions. Therefore, one of the following must be true:
-  \begin{itemize}
-  \item
-    One of the processes is a link \tm{\cpLink{x}{y}}.
-    We have:
-    \begin{gather*}
-      \begin{array}{ll}
-        \tm{\cpPlug{G}{P_1 \dots \cpLink{x}{y} \dots P_{n+1}}}
-        & = \quad \text{by \cref{thm:cp-display-3}}
-        \\
-        \tm{\cpPlug{H}{\cpCut{z}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-1}}
-        \\
-        \tm{\cpPlug{H}{\cpPlug{H'}{\cpCut{z}{\cpLink{x}{y}}{Q}}}}
-      \end{array}
-    \end{gather*}
-    Where $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
-    We then apply one of \cpRedAxCut1 or \cpRedAxCut2.
-  \item
-    Two of the processes, \tm{P_i} and \tm{P_j}, act on the same channel \tm{x}.
-    \begin{gather*}
-      \begin{array}{ll}
-        \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{n+1}}}
-        & = \quad \text{by \cref{thm:cp-display-4}}
-        \\
-        \tm{\cpPlug{G}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-1}} 
-        \\
-        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpCut{x}{P_i}{\cpPlug{H_j}{P_j}}}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-1} and
-          \cref{thm:cp-preservation-equiv}} 
-        \\
-        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpPlug{H_j}{\cpCut{x}{P_i}{P_j}}}}} 
-      \end{array}
-    \end{gather*}
-    We then apply one of the \textbeta-reduction rules.
-  \item
-    Otherwise (at least) one of the actions acts on a free variable.
+  \begin{proof}
+    By induction on the structure of derivation for $\seq[{ P }]{ \Gamma }$.
+    The only interesting case is when the last rule of the derivation is
+    \textsc{Cut}. In every other case, the typing rule constructs a term in which
+    is in canonical form. 
     \\
-    No process \tm{P_i} is a link.
-    No two processes \tm{P_i} and \tm{P_j} act on the same channel \tm{x}.
-    Therefore, \tm{P} is canonical.
-  \end{itemize}
-\end{proof}
+    If the last rule in the derivation is \textsc{Cut}, we consider the maximum
+    evaluation prefix \tm{G} of \tm{P}, such that $\tm{P} = \tm{\cpPlug{G}{P_1
+        \dots P_{n+1}}}$ and each $P_i$ is an action.
+    The prefix \tm{G} consists of $n$ cuts, and introduces $n$ variables, but
+    composes $n+1$ actions. Therefore, one of the following must be true:
+    \begin{itemize}
+    \item
+      One of the processes is a link \tm{\cpLink{x}{y}}.
+      We have:
+      \begin{gather*}
+        \begin{array}{ll}
+          \tm{\cpPlug{G}{P_1 \dots \cpLink{x}{y} \dots P_{n+1}}}
+          & \equiv \quad \text{by \cref{thm:cp-display-3}}
+          \\
+          \tm{\cpPlug{H}{\cpCut{z}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}
+          & \equiv \quad \text{by \cref{thm:cp-display-1}}
+          \\
+          \tm{\cpPlug{H}{\cpPlug{H'}{\cpCut{z}{\cpLink{x}{y}}{Q}}}}
+        \end{array}
+      \end{gather*}
+      Where $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
+      We then apply one of \cpRedAxCut1 or \cpRedAxCut2.
+    \item
+      Two of the processes, \tm{P_i} and \tm{P_j}, act on the same channel \tm{x}.
+      We have:
+      \begin{gather*}
+        \begin{array}{ll}
+          \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{n+1}}}
+          & = \quad \text{by \cref{thm:cp-display-4}}
+          \\
+          \tm{\cpPlug{G}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
+          & \equiv \quad \text{by \cref{thm:cp-display-1}} 
+          \\
+          \tm{\cpPlug{G}{\cpPlug{H_i}{\cpCut{x}{P_i}{\cpPlug{H_j}{P_j}}}}}
+          & \equiv \quad \text{by \cref{thm:cp-display-1} and
+            \cref{thm:cp-preservation-equiv}} 
+          \\
+          \tm{\cpPlug{G}{\cpPlug{H_i}{\cpPlug{H_j}{\cpCut{x}{P_i}{P_j}}}}} 
+        \end{array}
+      \end{gather*}
+      We then apply one of the \textbeta-reduction rules.
+    \item
+      Otherwise (at least) one of the processes acts on an external channel.
+      \\
+      No process \tm{P_i} is a link.
+      No two processes \tm{P_i} and \tm{P_j} act on the same channel \tm{x}.
+      Therefore, \tm{P} is canonical.
+    \end{itemize}
+  \end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:

@@ -2,7 +2,8 @@
 \chapter{Background}\label{sec:background}
 \section{Classical Processes}\label{sec:cp}
 In this section, we will discuss a rudimentary subset of the typed process
-calculus \cp~\cite{wadler2012}, which we will refer to as \rcp.
+calculus \cp~\cite{wadler2012,lindley2015semantics}, which we will refer to as
+\rcp. 
 We have chosen to discuss only a subset in order to keep our later discussion of
 our extension to \cp in \cref{sec:main} as simple as possible.
 \rcp is the subset which corresponds to rudimentary linear
@@ -55,8 +56,8 @@ It is defined as follows:
 \input{def-cp-equiv}
 We do not add an axiom for \cpEquivCutAss2, as it follows from
 \cref{def:cp-equiv}, see~\cref{thm:cp-cut-assoc2}.
-Note that throughout this thesis, we will leave uses of the transitivity and
-congruence rules implicit.
+Note that throughout this dissertation, we will leave uses of the transitivity
+and congruence rules implicit.
 \input{thm-cp-cut-assoc2}
 Furthermore, structural congruence is a symmetric relation.
 \input{thm-cp-symmetry}
@@ -86,9 +87,13 @@ Reductions relate processes with their reduced forms.
 They are defined as follows:
 \input{def-cp-term-reduction-1}
 \input{fig-cp-term-reduction-1}
-We will discuss the interpretations of each connective, together with their
-typing and reduction rules, in
-\cref{sec:cp-dependence,sec:cp-choice,sec:cp-duality}.
+The reduction system for \rcp, as presented in this chapter, is a subset of the
+reduction system for \cp~\cite{wadler2012}, as it does not have any commuting
+conversions.
+An advantage of this is that all reductions in \rcp are compatible with those of
+the \textpi-calculus. We will discuss this further in \cref{sec:cp-correspondence}.
+First, we will discuss the interpretations of each connective, together with
+their typing and reduction rules, in \cref{sec:cp-dependence,sec:cp-choice,sec:cp-duality}.
 
 \subsection{Multiplicatives and in- and interdependence}
 \label{sec:cp-dependence}
@@ -262,11 +267,30 @@ Then, we can prove preservation.
 \input{thm-cp-preservation}
 \input{fig-cp-preservation-1}
 
-\subsubsection{Progress}
+\subsubsection{Canonical forms and progress}
 Progress is the fact that every term is either in some canonical form, or can be
-reduced further. In order for us to even be able to state progress, we will need
-to define when a term is in canonical form.
+reduced further.
 
+The reduction system of \rcp is a subset of than that of \cp, as it leaves out
+all commutative conversions. Therefore, we have to adapt our proof of progress.
+The proof given in this section was inspired by the proof given by
+\citeauthor{lindley2015semantics}~\cite{lindley2015semantics}, who observed that
+using a reduction strategy which more closely resembled that of the
+\textpi-calculus, we can ensure that the commutative conversions are always
+apply last---that is to say, using their reduction strategy, the commutative
+conversions form a suffix of any $\Longrightarrow$ reduction sequence.
+We opt to drop that suffix.
+
+As a consequence of this, we have to refine our notion of canonical forms.
+The reduction strategy described by \citeauthor{lindley2015semantics} applies
+\cpRedAxCut1, \cpRedAxCut2, and \textbeta-reductions until the process blocks on
+one or more external communications, and then applies the commuting conversions
+to bubble one of those external communications to the front of the term.
+This allows them to define canonical forms as any term which is not a cut.
+For us, canonical terms will be \emph{all} terms which are blocked on an
+external communication. 
+
+\paragraph{Canonical forms}
 We have informally used the phrase ``act on'' in previous sections. It is time
 to formally define what it means when we say a process \emph{acts on} some
 channel.
@@ -290,7 +314,7 @@ is blocked on an external communication. We state this formally as follows:
 This definition is adequate, as it matches our intuition. We will see this in
 our proof for \cref{thm:cp-progress}. 
 
-Lastly, we will need the notion of an \emph{evaluation context}.
+\paragraph{Evaluation contexts}
 Intuitively, evaluation contexts are one-holed term contexts under which
 reduction can take place. For \rcp, these consist solely of cuts.
 \input{def-cp-evaluation-contexts}
@@ -311,14 +335,106 @@ can rewrite the entire process in such a way as to reveal the cut which
 introduced that channel. 
 \input{thm-cp-display-4}
 
+\paragraph{Progress}
+Finally, we are ready to prove progress.
+Note that throughout this dissertation, we will leave uses of
+\cpRedGammaEquiv and the congruence rules for reductions implicit.
 \input{thm-cp-progress}
+The proof of progress described in this section is novel, though it takes
+inspiration from the reduction system for \cp described by
+\citeauthor{lindley2015semantics}~\cite{lindley2015semantics}. 
+The proof of itself is somewhat involved. The reason for
+this is that we want our reduction strategy to match that of the
+\textpi-calculus as closely as possible.
+It is also for this reason that our proof of progress involves some
+non-determinism. For instance, in the second case of the proof, we do not
+specify how to select the two processes \tm{P_i} and \tm{P_j} if there are
+multiple options available.
 
 \subsubsection{Termination}
+Termination is the fact that if we iteratively apply progress to obtain a
+reduction, and apply that reduction, we will eventually end up with a term in
+canonical form.
+Its proof is quite simple, owing to the fact that our reduction rules were all
+inspired by cut reductions from classical linear logic.
 \input{thm-cp-termination}
 
-\subsection{Correspondence with linear logic}
-\input{fig-cp-preservation-2}
+\subsection{Correspondence with linear logic}\label{sec:cp-correspondence}
+\cp has a tight correspondence with classical linear logic.
+Its types correspond to propositions, its processes correspond to proofs, and
+its reduction system corresponds to proof normalisation. 
+This is apparent in the normalisation procedure for \cp, as described by
+\citeauthor{wadler2012}~\cite{wadler2012}, which mirrors the cut elimination
+procedure for classical linear logic~\cite{girard1987}.
+However, in order to get this clear correspondence, \citeauthor{wadler2012}
+includes a number of reduction rules which have no correspondence in the
+\textpi-calculus literature (see~\cref{fig:cp-term-reduction-2}).
+\input{fig-cp-term-reduction-2}
 
+\input{fig-cp-preservation-2}
+The commutative conversions respect preservation
+(see~\cref{fig:cp-preservation-2a,fig:cp-preservation-2b}).
+Furthermore, they allow us to simplify our definition of canonical forms
+considerably.
+We will refer to this simplified canonical form as \emph{weak head normal form},
+for the sake of clarity, and for its relation to the eponymous
+\textlambda-calculus normal form. 
+\begin{definition}[Weak head normal form]\label{def:cp-whnf-canonical-forms}
+  A process \tm{P} is in weak head normal form if it is not a cut.
+\end{definition}
+\begin{theorem}[WHNF Progress]\label{thm:cp-whnf-progress-1}
+  If $\seq[{ P }]{ \Gamma }$, then $\tm{P}$ is in weak head normal form, or
+  there exists a $\tm{P'}$ s.t.\ $\reducesto{P}{P'}$. 
+\end{theorem}
+\begin{proof}
+  As \cref{thm:cp-progress}, except for the case which reads:
+  \begin{itemize}
+  \item
+    Otherwise (at least) one of the processes acts on an external channel.
+  \end{itemize}
+  We then apply one of the commutative conversions.
+\end{proof}
+However, the addition of the commutative conversions also allows us to use the
+cut elimination procedure from classical linear logic~\cite{girard1987} as our
+normalisation procedure, which is significantly simpler.
+\begin{theorem}[WHNF Progress$^\prime$]\label{thm:cp-whnf-progress-2}
+  If $\seq[{ P }]{ \Gamma }$, then $\tm{P}$ is in weak head normal form, or
+  there exists a $\tm{P'}$ s.t.\ $\reducesto{P}{P'}$.
+\end{theorem}
+\begin{proof}
+  By induction on the structure of \tm{P}. The only interesting case is the
+  case where \tm{P} is a cut \tm{\cpCut{x}{P'}{Q'}}. In every other case,
+  \tm{P} is in weak head normal form. There are three possibilities:
+  \begin{itemize}
+  \item
+    Both \tm{P'} and \tm{Q'} act on \tm{x}.
+    \\
+    We apply one of the \textbeta-reduction rules.
+  \item
+    Either \tm{P'} or \tm{Q'} acts on an external channel.
+    \\
+    We apply one of the commutative conversions.
+  \item
+    Otherwise one or both of \tm{P'} and \tm{Q'} are themselves cuts.
+    \\
+    We apply the induction hypothesis.
+  \end{itemize}
+\end{proof}
+Furthermore, as noted by \citeauthor{wadler2012}~\cite{wadler2012}, it is
+possible to extend the reduction system with full congruence---not just for
+reduction under cuts, but for reduction under any prefix.
+This would allow us to define an even stronger canonical form.
+\begin{definition}[Normal form]\label{def:cp-nf-canonical-forms}
+  A process \tm{P} is in normal form if it is free of cuts.
+\end{definition}
+\begin{theorem}[NF Progress]\label{thm:cp-nf-progress}
+  If $\seq[{ P }]{ \Gamma }$, then \tm{P} is in normal form, or there exists a
+  \tm{P'} s.t. \reducesto{P}{P'}.
+\end{theorem}
+\begin{proof}
+  As \cref{thm:cp-whnf-progress-2}, but applied to cuts under \emph{any} term
+  context.
+\end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
