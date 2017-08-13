@@ -1,51 +1,65 @@
 \begin{theorem}[Progress]\label{thm:nc-progress}
-  If $\seq[{ P }]{ \Gamma }$, then $\tm{P}$ is in canonical form, or there
-  exists a $\tm{P'}$ s.t.\ $\reducesto{P}{P'}$.
+  If $\seq[{ P }]{ \Gamma }$, then either $\tm{P}$ is in canonical form, or
+  there exists a $\tm{P'}$ such that $\reducesto{P}{P'}$. 
 \end{theorem}
 \begin{proof}
   By induction on the structure of derivation for $\seq[{ P }]{ \Gamma }$.
-  There only interesting cases are when the last rule of the derivation is
+  The only interesting cases are when the last rule of the derivation is
   \textsc{Cut} or \textsc{Pool}. In every other case, the typing rule constructs
   a term in which is in canonical form. 
   \\
   If the last rule in the derivation is \textsc{Cut} or \textsc{Pool}, we
-  consider the prefix of the derivation for $\seq[{ P }]{ \Gamma}$ which
-  consists of all top-level cuts and pooling rules. A prefix of $n$ cuts and $m$
-  pooling rules introduces $n$ variables, but composes $n+m+1$ actions, at most
-  $m+1$ of which are on the same side of all cut rules.
+  consider the maximum evaluation prefix \tm{G} of \tm{P}, such that $\tm{P} =
+  \tm{\cpPlug{G}{P_1 \dots P_{m+n+1}}}$ and each \tm{P_i} is an action.
+  The prefix \tm{G} consists of $m$ pools, $n$ cuts, and introduces $n$
+  channels, but composes $m+n+1$ actions, at most $m+1$ of which are on the same
+  side of all cuts.
   Therefore, one of the following must be true:
   \begin{itemize}
   \item
-    One of these actions was introduced by an application of \textsc{Ax}.
+    One of the processes is a link \tm{\cpLink{x}{y}} acting on a bound channel.
     \\
-    We proceed as in \cref{thm:cp-progress}. 
+    We proceed as in \cref{thm:cp-progress-3}. 
   \item
-    Two of these actions, on different sides of a \textsc{Cut}, act on the same
-    channel. Let us name these processes \tm{P_i} and \tm{P_j}, and their shared
-    channel \tm{y}. We have
-    $\tm{P} = \tm{\cpPlug{G}{\cpCut{y}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}$.
-    We distinguish the following cases:
+    Two of the processes, \tm{P_i} and \tm{P_j}, which are not links, act on the
+    same channel \tm{x}. We have:
+    \begin{gather*}
+      \begin{array}{ll}
+        \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{m+n+1}}}
+        & \equiv \quad \text{by ?} \\
+        \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
+      \end{array}
+    \end{gather*}
+    There are two cases:
     \begin{itemize}
     \item
-      We have either
-      $\seq[{ \cpPlug{H_i}{P_i}}]{ \Delta, \tmty{y}{\take[n]{A}} }$ or
-      $\seq[{ \cpPlug{H_j}{P_j} }]{\Delta, \tmty{y}{\take[n]{A}} }$.
-      \\
-      We rewrite by \cref{thm:nc-display-3}, then apply one of \ncRedBetaStar{1}
-      and \ncRedBetaStar{n+1}. 
+      If \tm{x} is a shared channel, we have either
+      $\seq[{\cpPlug{H_i}{P_i}}]{ \Delta, \tmty{x}{\take[n]{A} }}$ or
+      $\seq[{\cpPlug{H_j}{P_j}}]{ \Delta, \tmty{x}{\take[n]{A} }}$ with $n > 1$.
+      Assume the former. 
+      We can infer $\notFreeIn{x}{H_j}$.
+      We have:
+      \begin{gather*}
+        \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}} \\
+        \qquad \equiv \quad \text{by \cref{thm:nc-display-pool-1}} \\
+        \tm{\cpPlug{H}{\cpPlug{H_j}{\cpCut{x}{\cpPlug{H_i}{P_i}}{P_j}}}} \\
+        \qquad \equiv \quad \text{by \cref{thm:nc-progress-shared}} \\
+        \tm{\cpPlug{H}{\cpPlug{H_j}{\cpPlug{H_i^\prime}{\cpCut{x}{\ncPool{P_i}{
+                    \ncPool{R_1}{\ncPool{\dots}{R_{n-1}} \dots }}}{P_j}}}}}
+      \end{gather*}
+      We apply \ncRedBetaStar{n+1}.
+      Similarly if $\seq[{ \cpPlug{H_j}{P_j}}]{ \Delta, \tmty{x}{\take[n]{A} }}$.
     \item
       Otherwise, we can infer $\notFreeIn{y}{H_i}$ and $\notFreeIn{y}{H_j}$.
       \\
-      We proceed as in \cref{thm:cp-progress}. 
+      We proceed as in \cref{thm:cp-progress-3}.
     \end{itemize}
-  \item
-    The process is in canonical form \tm{
-      \ncPool{\ncCnt{x_1}{y_1}{P_1}}{
-        \ncPool{\dots}{\ncCnt{x_n}{y_n}{P_n}}\dots}}. 
   \item 
     Otherwise (at least) one of the actions acts on a free variable.
     \\
-    We apply one of the commutative conversions.
+    No process \tm{P_i} is a link acting on a bound channel.
+    No two processes \tm{P_i} and \tm{P_j} act on the same channel \tm{x}.
+    Therefore, \tm{P} is canonical.
   \end{itemize}
 \end{proof}
 %%% Local Variables:

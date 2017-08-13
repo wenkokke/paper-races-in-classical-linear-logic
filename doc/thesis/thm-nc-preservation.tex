@@ -3,13 +3,10 @@
   then $\seq[{ Q }]{ \Gamma }$.
 \end{theorem}
 \begin{proof}
-  By induction on the structure of the reduction. See
-  \cref{fig:cp-preservation-1} for \cpRedAxCut1, \cpRedAxCut2, and the
-  \textbeta-reduction rules from \cp, and
-  \cref{fig:cp-preservation-2a,fig:cp-preservation-2b} for the commutative
-  conversions from \cp. 
-  See \cref{fig:nc-preservation-1,fig:nc-preservation-2a,fig:nc-preservation-2b}
-  for the \textbeta-reduction rules and commutative conversions from \nodcap.
+  By induction on the structure of the reduction.
+  See \cref{fig:cp-preservation-1} for \cpRedAxCut1, \cpRedAxCut2, and the
+  \textbeta-reduction rules from \cp.
+  See \cref{fig:nc-preservation-1} for the \textbeta-reduction rules of \nodcap.
   The cases for \cpRedGammaCut and \ncRedGammaPool are trivial by call to the
   induction hypothesis, and the case for \cpRedGammaEquiv is trivial by call to
   the induction hypothesis and \cref{thm:nc-preservation-equiv}.

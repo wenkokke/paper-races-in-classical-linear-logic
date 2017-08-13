@@ -10,8 +10,8 @@
   \\
   If the last rule in the derivation is \textsc{Cut}, we consider the maximum
   evaluation prefix \tm{G} of \tm{P}, such that $\tm{P} = \tm{\cpPlug{G}{P_1
-      \dots P_{n+1}}}$ and each $P_i$ is an action.
-  The prefix \tm{G} consists of $n$ cuts, and introduces $n$ variables, but
+  \dots P_{n+1}}}$ and each $P_i$ is an action.
+  The prefix \tm{G} consists of $n$ cuts, and introduces $n$ channels, but
   composes $n+1$ actions. Therefore, one of the following must be true:
   \begin{itemize}
   \item
@@ -20,10 +20,10 @@
     \begin{gather*}
       \begin{array}{ll}
         \tm{\cpPlug{G}{P_1 \dots \cpLink{x}{y} \dots P_{n+1}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-3}}
+        & \equiv \quad \text{by \cref{thm:cp-progress-link}}
         \\
         \tm{\cpPlug{H}{\cpCut{z}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-1}}
+        & \equiv \quad \text{by \cref{thm:cp-display-cut-1}}
         \\
         \tm{\cpPlug{H}{\cpPlug{H'}{\cpCut{z}{\cpLink{x}{y}}{Q}}}}
       \end{array}
@@ -36,13 +36,13 @@
     \begin{gather*}
       \begin{array}{ll}
         \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{n+1}}}
-        & = \quad \text{by \cref{thm:cp-display-4}}
+        & = \quad \text{by \cref{thm:cp-progress-beta}}
         \\
         \tm{\cpPlug{G}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-1}} 
+        & \equiv \quad \text{by \cref{thm:cp-display-cut-1}} 
         \\
         \tm{\cpPlug{G}{\cpPlug{H_i}{\cpCut{x}{P_i}{\cpPlug{H_j}{P_j}}}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-1} and
+        & \equiv \quad \text{by \cref{thm:cp-display-cut-1} and
           \cref{thm:cp-preservation-equiv}} 
         \\
         \tm{\cpPlug{G}{\cpPlug{H_i}{\cpPlug{H_j}{\cpCut{x}{P_i}{P_j}}}}} 

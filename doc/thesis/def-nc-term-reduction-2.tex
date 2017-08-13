@@ -1,0 +1,71 @@
+\begin{definition}[Term reduction]\label{def:nc-term-reduction-2}
+  We extend \cref{def:nc-term-reduction-1} with the following reductions:
+  \[
+    \begin{array}{llll}
+      \ncRedKappaTake
+      & \tm{\cpCut{x}{\ncCnt{y}{z}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\ncCnt{y}{z}{\cpCut{x}{P}{R}}}
+      \\
+      \ncRedKappaGive
+      & \tm{\cpCut{x}{\ncSrv{y}{z}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\ncSrv{y}{z}{\cpCut{x}{P}{R}}}
+      \\[1ex]
+      \ncRedKappaPoolTens1
+      & \tm{\ncPool{\cpSend{x}{y}{P}{Q}}{R}}
+      & \Longrightarrow \; 
+      & \tm{\cpSend{x}{y}{\ncPool{P}{R}}{Q}}
+        \quad \notFreeIn{y}{Q}
+      \\
+      \ncRedKappaPoolTens2
+      & \tm{\ncPool{\cpSend{x}{y}{P}{Q}}{R}}
+      & \Longrightarrow \; 
+      & \tm{\cpSend{x}{y}{P}{\ncPool{Q}{R}}}
+        \quad \notFreeIn{y}{P}
+      \\
+      \ncRedKappaPoolParr
+      & \tm{\ncPool{\cpRecv{x}{y}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpRecv{x}{y}{\ncPool{P}{R}}}
+      \\
+      \ncRedKappaPoolBot
+      & \tm{\ncPool{\cpWait{x}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpWait{x}{\ncPool{P}{R}}}
+      \\
+      \ncRedKappaPoolPlus1
+      & \tm{\ncPool{\cpInl{x}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpInl{x}{\ncPool{P}{R}}}
+      \\
+      \ncRedKappaPoolPlus2
+      & \tm{\ncPool{\cpInr{x}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpInr{x}{\ncPool{P}{R}}}
+      \\
+      \ncRedKappaPoolWith
+      & \tm{\ncPool{\cpCase{x}{P}{Q}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpCase{x}{\ncPool{P}{R}}{\ncPool{Q}{R}}}
+      \\
+      \ncRedKappaPoolTop
+      & \tm{\ncPool{\cpAbsurd{x}}{R}}
+      & \Longrightarrow \;
+      & \tm{\cpAbsurd{x}}
+      \\
+      \ncRedKappaPoolTake
+      & \tm{\ncPool{\ncCnt{x}{y}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\ncCnt{x}{y}{\ncPool{P}{R}}}
+      \\
+      \ncRedKappaPoolGive
+      & \tm{\ncPool{\ncSrv{x}{y}{P}}{R}}
+      & \Longrightarrow \;
+      & \tm{\ncSrv{x}{y}{\ncPool{P}{R}}}
+    \end{array}
+  \]
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

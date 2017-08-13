@@ -1,4 +1,4 @@
-\begin{lemmaB}\label{thm:cp-display-3}
+\begin{lemmaB}\label{thm:cp-progress-link}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
   link \tm{\cpLink{x}{y}}, then either $\tm{\cpPlug{G}{P_1 \dots P_n}} =
   \tm{\cpLink{x}{y}}$, or there exist \tm{H}, \tm{H'} and \tm{Q} such that
@@ -21,15 +21,15 @@
     There are three cases:
     \begin{itemize}
     \item
-      Case $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$
-      and $\tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_i\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_n}}}$.
+      Case $\tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_i\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_n}}}$
+      with $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
       \\
       Let $\tm{H} := \tm{\Box}$ and $\tm{H'} := \tm{\cpPlug{G'}{P_1\dots P_{j-1},\Box,P_{j+1}\dots P_m}}$.
       \\[1ex]
       By reflexivity.
     \item
-      Case $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$
-      and $\tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_i\dots P_n}}}$.
+      Case $\tm{\cpCut{z}{\cpPlug{G'}{P_1\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_i\dots P_n}}}$
+      with $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
       \\
       Let $\tm{H} := \tm{\Box}$ and $\tm{H'} := \tm{\cpPlug{G''}{P_{m+1}\dots P_{i-1},\Box,P_{i+1}\dots P_n}}$.
       \\

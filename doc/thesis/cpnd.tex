@@ -1,34 +1,45 @@
 \chapter{Non-deterministic Classical Processes}\label{sec:main}
 %% Main contribution
 %% * Terms and types
+\section{Terms and types}
 \input{def-nc-terms}
 \input{def-nc-types}
 \input{def-nc-negation}
+Duality remains an involutive function.
 \input{thm-nc-negation-involutive}
 %% * Reduction rules
+\section{}
 \input{def-nc-equiv}
-\input{def-nc-term-reduction}
 \input{thm-nc-pool-assoc2}
 \input{thm-nc-symmetry}
+\input{def-nc-term-reduction}
 %% * Typing judgement
-\input{def-nc-environments}
+The definition for environments is unchanged.
 \input{fig-nc-typing-judgement}
 %% * Cut elimination
 \input{thm-nc-preservation-equiv}
 \input{fig-nc-preservation-equiv}
 \input{thm-nc-preservation}
 \input{fig-nc-preservation-1}
-\input{fig-nc-preservation-2}
 %% * Progress
 \input{def-nc-action}
+\input{def-nc-evaluation-prefixes}
+The definition for the maximum evaluation prefix is unchanged.
 \input{def-nc-canonical-forms}
+The type system for \cp guarantees that a link acts on a bound channel. In
+\nodcap, a link can also act on two unbound channels, as long as they are
+\emph{shared} channels, such as in
+$\tm{\ncPool{\cpLink{a}{b}}{\ncPool{\ncCnt{a}{y}{P}}{\ncCnt{a}{z}{Q}}}}$.
 \input{def-nc-evaluation-contexts}
-\input{thm-nc-display-1}
-\input{thm-nc-display-2}
-\input{thm-nc-display-3}
+\input{thm-nc-display-cut-1}
+\input{thm-nc-display-pool-1}
+\input{thm-nc-progress-link}
+\input{thm-nc-progress-beta}
+\input{thm-nc-progress-shared}
 \input{thm-nc-progress}
 \input{thm-nc-termination}
 %% * Equivalence with non-deterministic local choice
+\wen{Prove something about the embedding of non-deterministic local choice.}
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
