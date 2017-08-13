@@ -1,37 +1,27 @@
-%% Theorem/Proof Style:
-\usepackage{centernot}
-\usepackage{multicol}
-\usepackage{amsmath, amssymb}
-\usepackage[thmmarks,amsmath]{ntheorem}
-\usepackage{nameref}
-\usepackage{hyperref}
-\usepackage{cleveref}
-% Theorems, Lemmas, and Corollaries
-\theoremstyle{break}
+%% Theorems, Lemmas, and Corollaries
 \setlength\theoremindent{1\parindent}
 \setlength\theorempreskipamount{1\baselineskip}
 \setlength\theorempostskipamount{1\baselineskip}
+\theoremstyle{break}
 \theorembodyfont{\normalfont}
 \theoremsymbol{\ensuremath{_\Box}}
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{lemmaB}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
-% Lemmas
+%% Definitions
+\theoremsymbol{}
+\newtheorem{definition}[theorem]{Definition}
+%% Anonymous Lemmas
 \theoremstyle{plain}
-\setlength\theoremindent{1\parindent}
-\setlength\theorempreskipamount{1\baselineskip}
-\setlength\theorempostskipamount{1\baselineskip}
 \theorembodyfont{\normalfont}
 \theoremsymbol{\ensuremath{_\Box}}
 \newtheorem{lemma}[theorem]{Lemma}
-% Definitions
-\theoremsymbol{}
-\newtheorem{definition}[theorem]{Definition}
-% Proofs
+%% Proofs
 \theoremstyle{nonumberplain}
 \theoremheaderfont{\normalfont\itshape}
 \theoremsymbol{\ensuremath{_\blacksquare}}
 \newtheorem{proof}{Proof.}
+
 
 %% Proof Tree Syntax:
 \usepackage{bussproofs}

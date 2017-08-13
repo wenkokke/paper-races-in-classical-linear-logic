@@ -1,38 +1,6 @@
 \begin{figure*}[b]
   \[
     \begin{array}{llll}
-      \cpRedAxCut1
-      & \tm{\cpCut{x}{\cpLink{w}{x}}{P}}
-      & \Longrightarrow \;
-      & \tm{\cpSub{w}{x}{P}} 
-      \\
-      \cpRedAxCut2
-      & \tm{\cpCut{x}{\cpLink{x}{w}}{P}}
-      & \Longrightarrow \;
-      & \tm{\cpSub{w}{x}{P}} 
-      \\
-      \\
-      \cpRedBetaTensParr
-      & \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
-      & \Longrightarrow \;
-      & \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
-      \\
-      \cpRedBetaOneBot
-      & \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
-      & \Longrightarrow \;
-      & \tm{P}
-      \\
-      \cpRedBetaPlusWith1
-      & \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
-      & \Longrightarrow \;
-      & \tm{\cpCut{x}{P}{Q}}
-      \\
-      \cpRedBetaPlusWith2
-      & \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
-      & \Longrightarrow \;
-      & \tm{\cpCut{x}{P}{R}}
-      \\
-      \\
       \cpRedKappaTens1
       & \tm{\cpCut{x}{\cpSend{y}{z}{P}{Q}}{R}}
       & \Longrightarrow \;
@@ -76,19 +44,7 @@
       & \tm{\cpAbsurd{y}}
     \end{array}
   \]
-  \begin{prooftree}
-    \AXC{\reducesto{P}{P^\prime}}
-    \SYM{\cpRedGammaCut}
-    \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
-  \end{prooftree}
-  \begin{prooftree}
-    \AXC{$\tm{P}\equiv\tm{Q}$}
-    \AXC{\reducesto{Q}{Q^\prime}}
-    \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
-    \SYM{\cpRedGammaEquiv}
-    \TIC{\reducesto{P}{P^\prime}}
-  \end{prooftree}
-  \caption{Term reduction rules for \cp.}
+  \caption{Commutative conversions for \cp.}
   \label{fig:cp-term-reduction-2}
 \end{figure*}
 %%% Local Variables:
