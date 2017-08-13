@@ -34,8 +34,8 @@ The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes
 two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel.
 Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
 \tm{Q}.
-In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets are used
-for input, square brackets for output.
+In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets denote
+input, square brackets denote output. 
 We use bound output~\cite{sangiorgi1996}.
 This means that unlike in the \textpi-calculus, both input and output bind a new
 name.
@@ -71,9 +71,8 @@ Duality is an involutive function.
 %
 Environments associate channels with types. They are defined as follows:
 \input{def-cp-environments}
-Typing judgements associative processes with their collection of channels, and
-enforce the communication protocols specified by the types of those channels.
-They are defined as follows:
+Typing judgements associate processes with collections of typed channels. They
+are defined as follows:
 \input{def-cp-typing-judgement}
 \input{fig-cp-typing-judgement}
 Reductions relate processes with their reduced forms.
@@ -212,9 +211,9 @@ reduction rule for the additive units.
 
 \subsection{Structural rules and duality}\label{sec:cp-duality}
 Duality plays a crucial role in session type systems.
-In~\cref{sec:cp-choice}, we saw that duality ensures a process offering a choice
+In~\cref{sec:cp-additives}, we saw that duality ensures a process offering a choice
 is always matched with a process making a choice.
-In~\cref{sec:cp-dependence}, we saw that it is also crucial to deadlock freedom,
+In~\cref{sec:cp-multiplicatives}, we saw that it is also crucial to deadlock freedom,
 as it ensures that, for instance, a process which uses communication on \tm{x}
 to decide what to send on \tm{y} is matched with a pair of independent processes
 on \tm{x} and \tm{y}, preventing circular dependencies.

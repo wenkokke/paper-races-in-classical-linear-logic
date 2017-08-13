@@ -1,0 +1,20 @@
+\begin{definition}[Evaluation prefixes]\label{def:nc-evaluation-prefixes}
+  We extend \cref{def:cp-evaluation-prefixes} with the following constructs:
+  \begin{align*}
+    \tm{G}, \tm{H} := \dots \mid \tm{\ncPool{G}{H}}
+  \end{align*}
+\end{definition}
+\begin{definition}[Plugging]\label{def:nc-evaluation-prefix-plugging}
+  We extend \cref{def:cp-evaluation-prefix-plugging} with the following case:
+  \[
+    \begin{array}{ll}
+      \tm{\cpPlug{\ncPool{G}{H}}{R_1 \dots R_m, R_{m+1} \dots R_{n}}}
+                            & := \; \tm{\ncPool{\cpPlug{G}{R_1 \dots R_m}}{\cpPlug{H}{R_{m+1} \dots R_n}}}
+    \end{array}
+  \]
+  Note that in the this case, \tm{G} is an evaluation prefix with $m$ holes,
+  and \tm{H} is an evaluation prefix with $(m-n)$ holes.
+\end{definition}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

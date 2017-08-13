@@ -1,10 +1,8 @@
 \begin{definition}[Canonical forms]\label{def:nc-canonical-forms}
-  We extend \cref{def:cp-canonical-forms} with the following forms:
-  \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
-  \item \tm{\ncCnt{x}{y}{P'}}
-  \item \tm{\ncSrv{x}{y}{P'}}
-  \item \tm{\ncPool{\ncCnt{x_1}{y_1}{P_1}}{\ncPool{\dots}{\ncCnt{x_n}{y_n}{P_n}}\dots}}
-  \end{itemize}
+  A process \tm{P} is in canonical form if it is an action, or if it is of the
+  form \tm{\cpPlug{G}{P_1 \dots P_n}}, where \tm{G} is the maximum evaluation
+  prefix of \tm{P}, no \tm{P_i} is a link \emph{which acts on a bound channel},
+  and no \tm{P_i} and \tm{P_j} act on the \emph{same} channel.
 \end{definition}
 %%% Local Variables:
 %%% TeX-master: "main"

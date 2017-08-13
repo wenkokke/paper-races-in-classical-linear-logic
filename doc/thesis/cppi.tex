@@ -1,4 +1,4 @@
-\chapter{\cp as a typed \textpi-calculus}
+\chapter{\cp as a type system for the \textpi-calculus}
 \cp has a tight correspondence with classical linear logic.
 This has many advantages.
 It is deadlock free and terminating, and as seen in \cref{sec:cp-properties},
@@ -34,6 +34,11 @@ The price we pay for this is a weaker correspondence to classical linear logic.
 This shows in our notion of canonical form, which is weaker, and in our proof of
 progress, which is much more involved.
 
+For clarity's sake: whenever we refer to \cp or \rcp, for the remainder of this
+dissertation, we refer to the variant \emph{without} commutative conversions,
+i.e.\ which uses the following definition of term reduction.
+\input{def-cp-term-reduction-2}
+
 This chapter will proceed as follows.
 In \cref{sec:cp-canonical-forms}, we will describe what it means for a term to
 be in canonical form.
@@ -48,7 +53,8 @@ one or more external communications, and then applies the commuting conversions
 to bubble one of those external communications to the front of the term.
 This allows them to define canonical forms as any term which is not a cut.
 For us, terms in canonical form will be those terms which are blocked on an
-external communication.
+external communication, before any commutative conversions are applied.
+In this section, we will describe the form of such terms.
 
 We have informally used the phrase ``act on'' in previous sections. It is time
 to formally define what it means when we say a process \emph{acts on} some
@@ -79,10 +85,10 @@ reduction can take place. For \rcp, these consist solely of cuts.
 \input{def-cp-evaluation-contexts}
 We can prove that we can push any cut downwards under an evaluation contexts, as
 long as the channel it binds does not occur in the context itself.
-\input{thm-cp-display-1}
+\input{thm-cp-display-cut-1}
 And vice versa. However, we will not use the following lemma in this
 dissertation, and leave its proof as an exercise to the reader.
-\input{thm-cp-display-2}
+\input{thm-cp-display-cut-2}
 
 \section{Progress}\label{sec:cp-progress}
 Progress is the fact that every term is either in some canonical form, or can be
@@ -94,11 +100,11 @@ These relate evaluation prefixes to evaluation contexts.
 Specifically, if a process under an evaluation prefix is a link, we can rewrite
 the entire process in such a way as to reveal the cut which introduced one of
 the channels acted upon by that link.
-\input{thm-cp-display-3}
+\input{thm-cp-progress-link}
 And if two processes under an evaluation prefix act on the same channel, then we
 can rewrite the entire process in such a way as to reveal the cut which
 introduced that channel. 
-\input{thm-cp-display-4}
+\input{thm-cp-progress-beta}
 
 Finally, we are ready to prove progress.
 Note that in proofs throughout this dissertation, we will leave uses of

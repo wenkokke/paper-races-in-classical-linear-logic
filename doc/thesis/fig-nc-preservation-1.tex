@@ -52,36 +52,10 @@
           \NOM{Cut}
           \BIC{$\seq[{ \cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}} }]{ \Gamma, \Delta, \Theta }$}
         \end{prooftree*}
-      \\[40pt]
-      \ncRedKappaTake
-      &
-        \begin{prooftree*}
-          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{z}{B} }$}
-          \SYM{\take[1]{}}
-          \UIC{$\seq[{ \ncCnt{y}{z}{P} }]{ \Gamma, \tmty{x}{A}, \tmty{y}{\take[1]{B}} }$}
-          \AXC{$\seq[{ R }]{ \Delta, \tmty{x}{A^\bot} }$}
-          \NOM{Cut}
-          \BIC{$\seq[{ \cpCut{x}{\ncCnt{y}{z}{P}}{R} }]{ \Gamma, \Delta, \tmty{y}{\take[1]{B}} }$}
-        \end{prooftree*}
-      \\[30pt]
-      $\Longrightarrow$
-      &
-        \begin{prooftree*}
-          \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A}, \tmty{z}{B} }$}
-          \AXC{$\seq[{ R }]{ \Delta, \tmty{x}{A^\bot} }$}
-          \NOM{Cut}
-          \BIC{$\seq[{ \cpCut{x}{P}{R} }]{ \Gamma, \Delta, \tmty{z}{B} }$}
-          \SYM{\take[1]{}}
-          \UIC{$\seq[{ \ncCnt{y}{z}{\cpCut{x}{P}{R}} }]{ \Gamma, \Delta, \tmty{z}{\take[1]{B}} }$}
-        \end{prooftree*}
-      \\[30pt]
-      \ncRedKappaGive
-      &
-        (as above)
     \end{tabular}
   }   
 
-  \caption{Type preservation for the \textbeta-reduction rules and commutative conversions of \nodcap}
+  \caption{Type preservation for the \textbeta-reduction rules of \nodcap}
   \label{fig:nc-preservation-1}
 \end{figure*}
 %%% Local Variables:
