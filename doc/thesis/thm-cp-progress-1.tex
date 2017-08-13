@@ -1,0 +1,27 @@
+\begin{theorem}[Progress, WHNF]\label{thm:cp-progress-1}
+  If $\seq[{ P }]{ \Gamma }$, then either $\tm{P}$ is in weak head normal form,
+  or there exists a $\tm{P'}$ such that $\reducesto{P}{P'}$.
+\end{theorem}
+\begin{proof}
+  By induction on the structure of \tm{P}. The only interesting case is the
+  case where \tm{P} is a cut \tm{\cpCut{x}{P'}{Q'}}. In every other case,
+  \tm{P} is in weak head normal form. There are three possibilities:
+  \begin{itemize}
+  \item
+    Both \tm{P'} and \tm{Q'} act on \tm{x}.
+    \\
+    We apply one of the \textbeta-reduction rules.
+  \item
+    Either \tm{P'} or \tm{Q'} acts on an external channel.
+    \\
+    We apply one of the commutative conversions.
+  \item
+    Otherwise one or both of \tm{P'} and \tm{Q'} are themselves cuts.
+    \\
+    We apply the induction hypothesis.
+  \end{itemize}
+\end{proof}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
+  

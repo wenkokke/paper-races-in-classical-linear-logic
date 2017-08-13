@@ -1,0 +1,13 @@
+\begin{theorem}[Progress, NF]\label{thm:cp-progress-2}
+  If $\seq[{ P }]{ \Gamma }$, then either \tm{P} is in normal form, or there
+  exists a \tm{P'} such that \reducesto{P}{P'}.
+\end{theorem}
+\begin{proof}
+  Either \tm{P} is in normal form, or there is a cut \emph{somewhere} in \tm{P}.
+  If there is a cut, then we obtain a reduction by \cref{thm:cp-progress-1} and
+  congruence.
+\end{proof}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
+ 
