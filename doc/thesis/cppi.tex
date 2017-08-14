@@ -120,6 +120,101 @@ non-determinism. For instance, in the second case of the proof, we do not
 specify how to select the two processes \tm{P_i} and \tm{P_j} if there are
 multiple options available.
 
+\section{Example}
+Let's have a look at the differences between the reduction strategy we have
+defined in this chapter, and the reduction strategy which \citenat{wadler2012}
+defines. Let's imagine the following scenario:
+\begin{quote}
+  Alice, John, and Mary went on a lovely trip together.
+  However, John and Mary can be a bit scatterbrained sometimes, and it just so
+  happens that they both forgot to bring their wallets.
+  They both owe Alice some money, which they're now trying to pay back at the
+  same time.
+\end{quote}
+We can model this interaction in \cp as the following term, assuming \alice,
+\john, and \mary are three processes representing Alice, John and Mary, and
+\bankjohn and \bankmary are two processes representing John and Mary's
+respective banks.
+\begin{align*}
+  \tm{\cpCut{x}{\cpCut{y}{
+  \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
+  \cpSend{y}{w}{\bankjohn}{\john}}}{
+  \cpSend{x}{z}{\bankmary}{\mary}}}
+\end{align*}
+Note that in the above interaction, no \textbeta-reduction rule applies
+\emph{immediately}. This means that in the reduction system described by
+\citenat{wadler2012}, we will have to apply a commutative conversion.
+\begin{align*}
+  \begin{array}{lll}
+    \tm{\cpCut{x}{\cpCut{y}{
+    \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
+    \cpSend{y}{w}{\bankjohn}{\john}}}{
+    \cpSend{x}{z}{\bankmary}{\mary}}}
+    & \Longrightarrow & \text{by \cpRedKappaParr}
+    \\
+    \tm{\cpCut{x}{\cpRecv{x}{z}{\cpCut{y}{
+    \cpRecv{y}{w}{\alice}}{
+    \cpSend{y}{w}{\bankjohn}{\john}}}}{
+    \cpSend{x}{z}{\bankmary}{\mary}}}
+    & \Longrightarrow & \text{by \cpRedBetaTensParr}
+    \\
+    \tm{\cpCut{z}{\cpCut{x}{\cpCut{y}{
+    \cpRecv{y}{w}{\alice}}{
+    \cpSend{y}{w}{\bankjohn}{\john}}}{
+    \mary}}{
+    \bankmary}}
+    & \Longrightarrow & \text{by \cpRedBetaTensParr}
+    \\
+    \tm{\cpCut{z}{\cpCut{x}{\cpCut{w}{\cpCut{y}{
+    \alice}{
+    \john}}{
+    \bankjohn}}{
+    \mary}}{
+    \bankmary}}
+  \end{array}
+\end{align*}
+Whereas in the reduction system described in this chapter, we will have to
+rewrite using the equivalence.
+\begin{align*}
+  \begin{array}{lll}
+    \tm{\cpCut{x}{\cpCut{y}{
+    \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
+    \cpSend{y}{w}{\bankjohn}{\john}}}{
+    \cpSend{x}{z}{\bankmary}{\mary}}}
+    & \equiv          & \text{by \cref{thm:cp-display-cut-1}}
+    \\
+    \tm{\cpCut{y}{\cpCut{x}{
+    \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
+    \cpSend{x}{z}{\bankmary}{\mary}}}{
+    \cpSend{y}{w}{\bankjohn}{\john}}}
+    & \Longrightarrow & \text{by \cpRedBetaTensParr}
+    \\
+    \tm{\cpCut{y}{\cpCut{z}{\cpCut{x}{
+    \cpRecv{y}{w}{\alice}}{
+    \mary}}{
+    \bankmary}}{
+    \cpSend{y}{w}{\bankjohn}{\john}}} 
+    & \equiv          & \text{by \cref{thm:cp-display-cut-1}}
+    \\
+    \tm{\cpCut{z}{\cpCut{x}{\cpCut{y}{
+    \cpRecv{y}{w}{\alice}}{
+    \cpSend{y}{w}{\bankjohn}{\john}}}{
+    \mary}}{
+    \bankmary}}
+    & \Longrightarrow & \text{by \cpRedBetaTensParr}
+    \\
+    \tm{\cpCut{z}{\cpCut{x}{\cpCut{w}{\cpCut{y}{
+    \alice}{
+    \john}}{
+    \bankjohn}}{
+    \mary}}{
+    \bankmary}}
+  \end{array}
+\end{align*}
+Note that the second reduction sequence is a \emph{valid} reduction sequence in
+the either system---it is simply not the sequence \emph{chosen} by the reduction
+strategy described by \citenat{wadler2012}.
+
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
