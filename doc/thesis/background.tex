@@ -244,12 +244,61 @@ type system, meaning that each communication has only two participants, and
 therefore we know that no other process is communicating on \tm{x}.
 
 \subsection{Commutative conversions}\label{sec:cp-commutative-conversions}
-\wen{The commutative conversions are not rules typically found in the
-  \textpi-calculus. Instead, they come from classical linear logic, where they
-  play a crucial role in the procedure for cut elimination. These rules allow us
-  to push a cut deeper into a term. Viewed from the other perspective, they
-  allow us to pull actions upwards, past cuts, but never past the cut which
-  introduced the channel on which they act.}
+The commutative conversions are not reductions typically found in the
+\textpi-calculus.
+Instead, they are based on permutation cuts, which are commonly used in logic to
+define a procedure for cut elimination.
+These cut elimination steps push a cut deeper into a term, past unrelated
+inference rules.
+When viewed from the perspective of process calculus, they allow us to pull
+actions upwards, past unrelated cuts.
+The commutative conversion are defined in \cref{fig:cp-term-reduction-2}.
+
+\subsection{Example}
+The multiplicatives are largely responsible for structuring communication, and
+it is this structure which rules out deadlocked interactions.
+Let us go back to our example of a deadlocked interaction from
+\cref{sec:introduction}:
+\[
+  \tm{(\piPar{%
+      \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}
+    }{%
+      \piRecv{y}{w}{\piSend{x}{\bill}{\mary}}
+    })}
+\]
+
+If we want to translate this interaction to \cp, we run into a problem: there is
+no \emph{plain} sending construct in \cp, we only have \tm{\cpSend{x}{y}{P}{Q}},
+which requires that the remainder of the interaction is split in two independent
+processes.
+This enforces a certain structure on the program: either the process
+representing John or the process representing Mary will have to split in two,
+and independently be able to provide whatever we wish to send.
+
+To put it simply: John will already have to have the cake in his hands, or Mary
+will already have to have the money in the bank.
+We model the second scenario below, assuming \john, \mary and \bank are three
+processes modeling John, Mary, and Mary's bank, and \cake and \money are the
+types of two channels which give access to a slice of cake and appropriate
+payment.
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\money^\bot}, \tmty{x}{\cake}}$}
+  \SYM{\parr}
+  \UIC{$\seq[{ \cpRecv{x}{y}{\john} }]{ \Gamma, \tmty{x}{\money^\bot \parr \cake} }$}
+  \AXC{$\seq[{ \bank }]{ \Delta, \tmty{z}{\money} }$}
+  \AXC{$\seq[{ \mary }]{ \Theta, \tmty{x}{\cake^\bot} }$}
+  \SYM{\tens}
+  \BIC{$\seq[{\cpSend{x}{z}{\bank}{\mary} }]{ \Delta, \tmty{x}{\money \tens \cake^\bot} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{ \cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}} }]{\Gamma, \Delta, \Theta }$}
+\end{prooftree}
+The resulting process reduces, as expected:
+\[
+  \reducesto
+  {\cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}}}
+  {\cpCut{y}{\bank}{\cpCut{x}{\john}{\mary}}}
+\]
+
 
 \subsection{Properties of \rcp}\label{sec:cp-properties}
 In this section, we will prove three important properties of \rcp, namely
@@ -306,6 +355,15 @@ Its proof is quite simple, owing to the fact that our reduction rules were all
 inspired by cut reductions from classical linear logic.
 \input{thm-cp-termination}
 
+\section{Non-determinism, logic, and session types}
+\wen{
+  There is little existing work which integrates non-determinism with
+  logic-inspired session type systems.
+  Notable work is \citenat{atkey2016}, \citenat{caires2014} and
+  \citenat{caires2017}. 
+  All of these approaches boil down to adding a primitive called
+  ``non-deterministic local choice.''
+}
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
