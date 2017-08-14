@@ -2,7 +2,8 @@
   A process \tm{P} is in canonical form if it is an action, or if it is of the
   form \tm{\cpPlug{G}{P_1 \dots P_n}}, where \tm{G} is the maximum evaluation
   prefix of \tm{P}, no \tm{P_i} is a link \emph{which acts on a bound channel},
-  and no \tm{P_i} and \tm{P_j} act on the \emph{same} channel.
+  and no \tm{P_i} and \tm{P_j}, \emph{on different sides of at least one cut}, act on
+  the same channel.
 \end{definition}
 %%% Local Variables:
 %%% TeX-master: "main"

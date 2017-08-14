@@ -1,4 +1,4 @@
-\chapter{\cp as a type system for the \textpi-calculus}
+\chapter{\cp as a type system for the \textpi-calculus}\label{sec:cppi}
 \cp has a tight correspondence with classical linear logic.
 This has many advantages.
 It is deadlock free and terminating, and as seen in \cref{sec:cp-properties},
@@ -135,6 +135,11 @@ We can model this interaction in \cp as the following term, assuming \alice,
 \john, and \mary are three processes representing Alice, John and Mary, and
 \bankjohn and \bankmary are two processes representing John and Mary's
 respective banks.
+Note that, in an abuse of notation, we will adopt an ``anti-Barendregt''
+convention for our examples.
+This means that if two channel names will be identified after a reduction, we
+will preemptively give them the same name, for instance, \tm{z} and \tm{w} in
+the example below. 
 \begin{align*}
   \tm{\cpCut{x}{\cpCut{y}{
   \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
