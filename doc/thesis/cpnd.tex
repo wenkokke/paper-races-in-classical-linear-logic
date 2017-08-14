@@ -1,22 +1,143 @@
 \chapter{Non-deterministic Classical Processes}\label{sec:main}
-%% Main contribution
-\section{\nodcap}
+In this section, we will discuss our main contribution: an extension of \cp,
+which allows for races while still excluding deadlocks.
+We have seen in \cref{sec:cp-example} how \cp excludes deadlocks, but how exactly
+does \cp exclude races?
+Let us return to our first example from \cref{sec:introduction}, to the
+interaction between John, Mary and the store.  
+\[
+  \begin{array}{c}
+    \tm{(\piPar{%
+    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    }{%
+    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    })}
+    \\[1ex]
+    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+    \\[1ex]
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \quad
+    \text{or}
+    \quad
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+  \end{array}
+\]
+Races occur when more than two processes attempt to communicate simultaneously
+over the \emph{same} channel. However, the \text{Cut} rule of \cp requires that
+\emph{exactly two} processes communicate over each channel:
+\begin{center}
+  \cpInfCut
+\end{center}
+We could attempt write down a protocol for our example, stating that the store
+has a pair of channels $\tm{x}, \tm{y} : \ty{\cake}$ with which it communicates
+with John and Mary, taking \cake to be the type of interactions in which cake
+\emph{may} be obtained, i.e.\ of both \sliceofcake and \nope, and state that the
+store communicates with John \emph{and} Mary over a channel of type \ty{\cake
+  \parr \cake}.
+However, this \emph{only} models interactions such as the following:
+\begin{scprooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{x}{\cake^\bot} }$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y}{\cake^\bot} }$}
+  \SYM{\tens}
+  \BIC{$\seq[{ \cpSend{y}{x}{\john}{\mary} }]{
+      \Gamma, \Delta, \tmty{y}{\cake^\bot \tens \cake^\bot} }$}
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{x}{\cake}, \tmty{y}{\cake} }$}
+  \SYM{\parr}
+  \UIC{$\seq[{ \cpRecv{y}{x}{\store} }]{
+      \Theta, \tmty{y}{\cake \parr \cake} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}} }]{
+      \Gamma, \Delta, \Theta }$}
+\end{scprooftree}
+Note that in this interaction, John will get whatever the store decides to send
+on \tm{x}, and Mary will get whatever the store decides to send on \tm{y}.
+This means that this interactions gives the choice of who receives what \emph{to
+the store}. This is not at all an accurate model of our original example, where
+the choice of who receives the cake is non-deterministic, and depends on factors
+outside of any of the participants' control!
+And to make matters worse, the term with which we are attempting to model our
+example is entirely different from the one we initially wrote down in the
+\textpi-calculus! 
+
+The ability to model racy behaviour, such as that in our example, is essential
+to describing the interactions that take place in realistic concurrent systems.
+Therefore, we would like to extend \cp to allow such races.
+Specifically, we would like to do it in a way which mirrors the way in which the
+\textpi-calculus handles non-determinism.
+We will base our extension on \rcp, a subset of \cp which we introduced in
+\cref{sec:background}.
+We have chosen to do this to keep our discussion as simple as possible.
+Furthermore, as compatibility with the \textpi-calculus is of interest, we will
+use the reduction system without commutative conversions, which we introduced in
+\cref{sec:cppi}.
+
+This chapter proceeds as follows.
+\wen{I should probably write this bit last.}
+
 %% * Terms and types
-\subsection{Terms and types}
+\section{Terms and types}\label{sec:nc-terms-and-types}
+Let us return, briefly, to our example.
+\[
+  \tm{(\piPar{%
+      \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    }{%
+      \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    })}
+\]
+In this interaction, we see that the channel \tm{x} is used only as a way to
+connect the various clients, John and Mary, to the store.
+The \emph{real} communication, sending the slice of cake and disappointment,
+takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}.
+
+Inspired by this, we add two new constructs to the term language of \cp: sending
+and receiving on a \emph{shared} channel.
+These actions are marked with a \tm{\star} in order to distinguish them
+syntactically from ordinary sending and receiving.
+Furthermore, we need a way to group together clients. For this reason we add
+another form of parallel composition, which we refer to as \emph{pooling}.
 \input{def-nc-terms}
+As before, round brackets denote input, square brackets denote output.
+Note that \tm{\ncCnt{x}{y}{P}}, much like \tm{\cpSend{x}{y}{P}{Q}}, is a bound
+output---this means that both client creation and server interaction bind a new
+name.
+
+In \rcp, we terms are identified up to the commutativity and associativity of
+parallel composition. In \nodcap, we add another form of parallel composition,
+and therefore must extend our structural congruence:
+\input{def-nc-equiv}
+We add axioms for the commutativity and associativity of pooling.
+We do not add an axiom for \ncEquivPoolAss2, as it follows from
+\cref{def:nc-equiv}, see \cref{thm:nc-pool-assoc2}.
+It should be noted that \tm{\cpCut{x}{P}{Q}} is considered a single,
+\emph{atomic} construct.
+Therefore you \emph{cannot} use \ncEquivPoolAss1 to rewrite
+\tm{\cpCut{x}{P}{\ncPool{Q}{R}}} to \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}.
+We do, however, add two axioms which relate cuts and pool.
+We call these \emph{extrusion}, because they closely resemble the
+\textpi-calculus axiom for scope extrusion. 
+We have to add both \ncRedKappaPool1 and \ncRedKappaPool2, as these relate two
+different constructs, and therefore we cannot use the one to derive the other.
+\input{thm-nc-pool-assoc2}
+Furthermore, the extensions to structural congruence preserve symmetry.
+\input{thm-nc-symmetry}
+We can make another, if somewhat obvious, observation from our example.
+In every example in which a server interacts with a pool of clients, and which
+does not deadlock, there should be \emph{exactly} as many clients as there are
+server interactions.
+Therefore, we add two new \emph{dual} types for client pools and servers, which
+will keep track of how many clients or server interactions they represent.
 \input{def-nc-types}
 \input{def-nc-negation}
-Duality remains an involutive function.
+With these new types, duality remains an involutive function.
 \input{thm-nc-negation-involutive}
-%% * Reduction rules
-\subsection{}
-\input{def-nc-equiv}
-\input{thm-nc-pool-assoc2}
-\input{thm-nc-symmetry}
-\input{def-nc-term-reduction}
-%% * Typing judgement
-The definition for environments is unchanged.
+The definition for environments is unchanged, but we extend the definition for
+the typing judgement with the inference rules in \cref{fig:nc-typing-judgement}.
+\input{def-nc-typing-judgement}
 \input{fig-nc-typing-judgement}
+\input{def-nc-term-reduction}
+
+
+\section{Clients and servers}\label{sec:nc-clients-and-servers}
 %% * Cut elimination
 \input{thm-nc-preservation-equiv}
 \input{fig-nc-preservation-equiv}
