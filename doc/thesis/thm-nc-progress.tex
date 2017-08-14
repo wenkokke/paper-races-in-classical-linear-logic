@@ -19,40 +19,49 @@
   \item
     One of the processes is a link \tm{\cpLink{x}{y}} acting on a bound channel.
     \\
-    We proceed as in \cref{thm:cp-progress-3}. 
+    We proceed as in \cref{thm:cp-progress-3},
+    replacing \cref{thm:cp-display-cut-1} and \cref{thm:cp-progress-link}
+    with \cref{thm:nc-display-cut-1} and \cref{thm:nc-progress-link}.
   \item
-    Two of the processes, \tm{P_i} and \tm{P_j}, which are not links, act on the
-    same channel \tm{x}. We have:
+    Two of the processes, \tm{P_i} and \tm{P_j}, on different sides of at least
+    one cut, act on the same bound channel \tm{x}. We have:
     \begin{gather*}
       \begin{array}{ll}
         \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{m+n+1}}}
-        & \equiv \quad \text{by ?} \\
+        & \equiv \quad \text{by \cref{thm:nc-progress-beta}} \\
         \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
       \end{array}
     \end{gather*}
     There are two cases:
     \begin{itemize}
     \item
-      If \tm{x} is a shared channel, we have either
-      $\seq[{\cpPlug{H_i}{P_i}}]{ \Delta, \tmty{x}{\take[n]{A} }}$ or
-      $\seq[{\cpPlug{H_j}{P_j}}]{ \Delta, \tmty{x}{\take[n]{A} }}$ with $n > 1$.
+      If \tm{x} is a shared channel, we have \tmty{x}{\take[n]{A}} with $n > 1$ 
+      in either \tm{\cpPlug{H_i}{P_i}} or \tm{\cpPlug{H_j}{P_j}}.
       Assume the former. 
       We can infer $\notFreeIn{x}{H_j}$.
       We have:
       \begin{gather*}
-        \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}} \\
-        \qquad \equiv \quad \text{by \cref{thm:nc-display-pool-1}} \\
-        \tm{\cpPlug{H}{\cpPlug{H_j}{\cpCut{x}{\cpPlug{H_i}{P_i}}{P_j}}}} \\
-        \qquad \equiv \quad \text{by \cref{thm:nc-progress-shared}} \\
-        \tm{\cpPlug{H}{\cpPlug{H_j}{\cpPlug{H_i^\prime}{\cpCut{x}{\ncPool{P_i}{
-                    \ncPool{R_1}{\ncPool{\dots}{R_{n-1}} \dots }}}{P_j}}}}}
+        \begin{array}{ll}
+          \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
+          & \equiv \quad \text{by \cref{thm:nc-display-pool-1}}
+          \\
+          \tm{\cpPlug{H}{\cpPlug{H_j}{\cpCut{x}{\cpPlug{H_i}{P_i}}{P_j}}}}
+          & \equiv \quad \text{by \cref{thm:nc-progress-shared}}
+          \\
+          \multicolumn{2}{l}{
+          \tm{\cpPlug{H}{\cpPlug{H_j}{\cpPlug{H_i^\prime}{\cpCut{x}{\ncPool{P_i}{
+          \ncPool{R_1}{\ncPool{\dots}{R_{n-1}} \dots }}}{P_j}}}}}}
+        \end{array}
       \end{gather*}
       We apply \ncRedBetaStar{n+1}.
-      Similarly if $\seq[{ \cpPlug{H_j}{P_j}}]{ \Delta, \tmty{x}{\take[n]{A} }}$.
+      Similarly if \tmty{x}{\take[n]{A}} in \tm{\cpPlug{H_j}{P_j}}.
     \item
       Otherwise, we can infer $\notFreeIn{y}{H_i}$ and $\notFreeIn{y}{H_j}$.
       \\
-      We proceed as in \cref{thm:cp-progress-3}.
+      We proceed as in \cref{thm:cp-progress-3}, including \ncRedBetaStar1 in
+      the \textbeta-reduction rules, and replacing \cref{thm:cp-display-cut-1}
+      and \cref{thm:cp-progress-beta} with \cref{thm:nc-display-cut-1} and
+      \cref{thm:nc-progress-beta}.
     \end{itemize}
   \item 
     Otherwise (at least) one of the actions acts on a free variable.
