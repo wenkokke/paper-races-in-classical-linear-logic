@@ -15,7 +15,7 @@
   composes $n+1$ actions. Therefore, one of the following must be true:
   \begin{itemize}
   \item
-    One of the processes is a link \tm{\cpLink{x}{y}}.
+    One of the processes is a link \tm{\cpLink{x}{y}} acting on a bound channel.
     We have:
     \begin{gather*}
       \begin{array}{ll}
@@ -31,8 +31,8 @@
     Where $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
     We then apply one of \cpRedAxCut1 or \cpRedAxCut2.
   \item
-    Two of the processes, \tm{P_i} and \tm{P_j}, act on the same channel \tm{x}.
-    We have:
+    Two of the processes, \tm{P_i} and \tm{P_j}, act on the same bound channel
+    \tm{x}. We have:
     \begin{gather*}
       \begin{array}{ll}
         \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{n+1}}}

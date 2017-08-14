@@ -1,15 +1,16 @@
 \begin{lemmaB}\label{thm:nc-progress-link}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
-  link \tm{\cpLink{x}{y}}, then either $\tm{\cpPlug{G}{P_1 \dots P_n}} =
-  \tm{\cpLink{x}{y}}$, or there exist \tm{H}, \tm{H'} and \tm{Q} such that
-  \(
-  \tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
-  \tm{\cpPlug{H}{\cpCut{z}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}
-  \)
-  with either $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
+  link \tm{\cpLink{x}{y}}, then either \tm{x} and \tm{y} are not bound by
+  \tm{G}, or there exist \tm{H}, \tm{H'} and \tm{Q} such that
+  $\tm{\cpPlug{G}{P_1 \dots P_n}} \equiv \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}$ or
+  $\tm{\cpPlug{G}{P_1 \dots P_n}} \equiv \tm{\cpPlug{H}{\cpCut{y}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}$.
 \end{lemmaB}
 \begin{proof}
-  \textcolor{red}{\bfseries TODO}
+  As \cref{thm:cp-progress-link}. The two cases for
+  \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_i \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_n}}}
+  and
+  \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_i \dots P_n}}}
+  are handled exactly as the cases for cuts which do not bind \tm{x} or \tm{y}.
 \end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"

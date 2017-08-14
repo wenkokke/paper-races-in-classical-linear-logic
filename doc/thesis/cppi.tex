@@ -142,8 +142,8 @@ respective banks.
   \cpSend{x}{z}{\bankmary}{\mary}}}
 \end{align*}
 Note that in the above interaction, no \textbeta-reduction rule applies
-\emph{immediately}. This means that in the reduction system described by
-\citenat{wadler2012}, we will have to apply a commutative conversion.
+\emph{immediately}. This means that using the reduction strategy described by
+\citenat{wadler2012}, we will apply a commutative conversion. 
 \begin{align*}
   \begin{array}{lll}
     \tm{\cpCut{x}{\cpCut{y}{
@@ -173,8 +173,8 @@ Note that in the above interaction, no \textbeta-reduction rule applies
     \bankmary}}
   \end{array}
 \end{align*}
-Whereas in the reduction system described in this chapter, we will have to
-rewrite using the equivalence.
+On the other hand, using the reduction strategy described in this chapter, we will
+rewrite using structural congruence.
 \begin{align*}
   \begin{array}{lll}
     \tm{\cpCut{x}{\cpCut{y}{
@@ -212,8 +212,8 @@ rewrite using the equivalence.
   \end{array}
 \end{align*}
 Note that the second reduction sequence is a \emph{valid} reduction sequence in
-the either system---it is simply not the sequence \emph{chosen} by the reduction
-strategy described by \citenat{wadler2012}.
+the either reduction system---it is simply not the sequence \emph{chosen} by the
+reduction strategy described by \citenat{wadler2012}.
 
 %%% Local Variables:
 %%% TeX-master: "main"
