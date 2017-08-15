@@ -1,7 +1,84 @@
 \chapter{Discussion}\label{sec:discussion}
-%% Discussion
-%% - Interaction with recursion
-%% - Interaction with affine and relevant sessions
+
+\wen{
+  What to discuss? I've done the things I've promised. I can see the following
+  valuable points:
+  \begin{itemize}
+  \item
+    It would be worthwhile to decouple the name restriction from the parallel
+    composition in \cp, as this would greatly simplify our reduction system.
+  \item
+    It would be worthwhile to investigate if, for instance, we could define a
+    cut on a client/server interaction such that it would naturally leave
+    leftovers. This would mash well with client and server pools of arbitrary
+    size.
+  \item
+    It should be acknowledged that, while our system is an improvement over \cp
+    in terms of being able to express non-determinism, it is unclear how to
+    combine this extension with recursion \`{a} la \citenat{lindley2016}.
+  \end{itemize}
+}
+
+\section{Relation to bounded linear logic}
+We mentioned in Section~\ref{sec:introduction} that \nodcap was inspired by
+bounded linear logic~(BLL)~\cite{girard1992}. BLL is a typed lambda calculus
+based on intuitionistic linear logic which guarantees that its programs are
+polynomial-time functions.
+It too uses resource-indexed exponentials. However, instead of interpreting
+these as client and server interactions, BLL interprets them as accesses to a
+memory cell, as is a common interpretation in linear logic~\cite{girard1987}.
+There are some superficial differences between BLL and \nodcap, e.g.\ the former
+is intuitionistic while the latter is classical, but the main difference between
+the two lies in storage versus pooling. In BLL, $\take[n]{A}$ denotes a memory
+cell which can be accessed $n$ times, whereas in \nodcap, $\take[n]{A}$
+represents a pool of $n$ different values, computed independently by $n$
+different processes.
+
+\section{Recursion and resource variables}
+Our formalism so far has only captured servers that provide for a fixed number
+of clients.  More realistically, we would want to define servers that provide
+for arbitrary numbers of clients.  This poses two problems: how would we define
+arbitrarily-interacting stateful processes, and how would we extend the
+typing discipline of \nodcap to account for them without losing its static
+guarantees.
+
+One approach to defining server processes would be to combine \nodcap with
+structural recursion and corecursion, following the $\mu\text{CP}$ extension of Lindley
+and Morris~\cite{lindley2016}.  Their approach can express processes which
+produce streams of $A$ channels; such a process would expose a channel with the
+corecursive type $\nu X. A \parr (1 \plus X)$.  Given such a process, it is
+possible to produce a channel of type $A \parr A \parr \cdots \parr A$ for any
+number of $A$s, allowing us to satisfy the type $\give[n]{A}$ for an arbitrary
+$n$.
+
+We would also need to extend the typing discipline to capture arbitrary use of
+shared channels.  One approach would be to introduce resource variables and
+quantification.  Following this approach, in addition to having types $\give[n]
+A$ and $\take[n] A$ for concrete $n$, we would also have types $\give[x] A$ and
+$\take[x] A$ for resource variables $x$.  These variables would be introduced by
+quantifiers $\forall x A$ and $\exists x A$.  Defining terms
+corresponding to $\forall x A$, and its relationship with structured recursion,
+presents an interesting area of further work.
+
+\section{Relation to exponentials in CP}
+Our account of CP has not included the exponentials $\give A$ and $\take A$.
+The type $\take A$ denotes arbitrarily many independent instances of $A$, while
+the type $\give A$ denotes a concrete (if unspecified) number of
+potentially-dependent instances of $A$.  Existing interpretations of linear
+logic as session types have taken $\take A$ to denote $A$-servers, while
+$\give A$ denotes $A$-clients.  However, the analogy is imperfect: while we
+expect servers to provide arbitrarily many instances of their behavior, we also
+expect those instances to be interdependent.
+
+With quantification over resource variables, we can give precise accounts
+of both CP's exponentials and idealised servers and clients.  CP
+exponentials could be embedded into this framework using the definitions
+$\take{A} := \forall{n}\take[n]{A}$ and $\give{A} := \exists{n}{\give[n]{A}}$.
+We would also have types that precisely matched our intuitions for server and
+client behavior: an $A$ server is of type $\forall n \give[n] A$, being
+unbounded but dependent, while a collection of $A$ clients is of type
+$\exists n \take[n] A$, being definitely sized by independent.
+
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
