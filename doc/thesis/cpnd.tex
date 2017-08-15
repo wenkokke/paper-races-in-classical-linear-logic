@@ -388,7 +388,126 @@ unchanged.
 \input{thm-nc-termination}
 
 \section{\nodcap and non-deterministic local choice}
-\wen{Prove something about the embedding of non-deterministic local choice.}
+In \cref{sec:local-choice}, we discussed the non-deterministic local choice
+operator, which is used in several extensions of \piDILL and
+\cp~\cite{atkey2016,caires2014,caires2017}.
+This operator is admissible in \nodcap.
+We can derive the non-deterministic choice \tm{P+Q} over a single channel \tm{x}
+by constructing the following term:
+\[
+  \arraycolsep=0pt
+  \tm{
+  \begin{array}{lrl}
+    \nu x.&((  & \; \ncCnt{x}{y}{\cpCase{y}{\cpHalt{y}}{P}} \\
+          &\mid& \; \ncCnt{x}{z}{\cpCase{z}{\cpHalt{z}}{Q}} \; )\\
+          &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}}} \; )
+  \end{array}
+  }
+\]
+The term is a cut between two processes. Let's unpack what each side is doing. 
+On the left-hand side, we have a pool with both \tm{P} and \tm{Q} as clients,
+wrapped in a case statement which allows the process they are interacting with
+to choose whether or not they want them to run. Each of these processes is
+constructed as follows: 
+\begin{prooftree}
+  \AXC{$\seq[{ P }]{ \tmty{y}{A} }$}
+  \AXC{}
+  \SYM{(\one)}
+  \UIC{$\seq[{ \cpHalt{y} }]{ \tmty{y}{\one} }$}
+  \SYM{(\with)}
+  \BIC{$\seq[{ \cpCase{y}{P}{\cpHalt{y}} }]{ \tmty{y}{A \with \one} }$}
+  \SYM{(\take[1]{})}
+  \UIC{$\seq[{ \ncCnt{x}{y}{\cpCase{y}{P}{\cpHalt{y}}} }]{
+      \tmty{y}{\take[1]{A \with \one}} }$}
+\end{prooftree}
+On the right-hand side, we have a server which connects to two clients of the
+above form, and chooses to terminate one, while allowing the other to run.
+This process is constructed as follows:
+\begin{prooftree}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq[{ \cpLink{z}{w} }]{
+      \tmty{z}{A^\bot}, \tmty{w}{A} }$}
+  \SYM{(\plus_2)}
+  \UIC{$\seq[{ \cpInr{z}{\cpLink{z}{w}} }]{
+      \tmty{z}{A^\bot \plus \bot}, \tmty{w}{A} }$}
+  \SYM{(\bot)}
+  \UIC{$\seq[{ \cpWait{y}{\cpInr{z}{\cpLink{z}{w}}} }]{
+      \tmty{y}{\bot}, \tmty{z}{A^\bot \plus \bot}, \tmty{w}{A}}$}
+  \SYM{(\plus_1)}
+  \UIC{$\seq[{ \cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}} }]{
+      \tmty{y}{A^\bot \plus \bot}, \tmty{z}{A^\bot \plus \bot}, \tmty{w}{A}}$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x'}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}} }]{
+      \tmty{y}{(A^\bot \plus \bot)}, \tmty{x'}{\give[1]{(A^\bot \plus \bot)}}, \tmty{w}{A} }$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x}{y}{\ncSrv{x'}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}}} }]{
+      \tmty{x}{\give[1]{(A^\bot \plus \bot)}}, \tmty{x'}{\give[1]{(A^\bot \plus \bot)}}, \tmty{w}{A} }$}
+  \NOM{Cont}
+  \UIC{$\seq[{ \ncSrv{x}{y}{\ncSrv{x}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}}} }]{
+      \tmty{x}{\give[2]{(A^\bot \plus \bot)}, \tmty{w}{A}}}$}
+\end{prooftree}
+When we compose these two processes, we get a process of the type
+$\seq[{ P + Q}]{ \tmty{w}{A} }$, using \tm{P+Q} as an abbreviation for the
+encoding of non-deterministic local choice.
+
+The full version of local choice, which allows you to choose between two
+processes with an arbitrary number of channels, is admissible.
+We can construct it using the invertibility of $(\parr)$, the logical property
+that we can turn any context $\tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}$ into a single
+formula $\tmty{x}{A_1 \parr \dots \parr A_n}$, and vice versa.
+In terms of the process calculus, this means that for any number of channels
+there exist processes which can systematically pack or unpack those channels.
+\begin{lemmaB}
+  If $\seq[{ P }]{ \Gamma, \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n} }$, then
+  $\seq[{ \cpRecv{x_1}{x_n}{\dots\cpRecv{x_1}{x_2}{P}} }]{
+    \Gamma, \tmty{x_1}{A_1 \parr \dots \parr A_n} }$.
+\end{lemmaB}
+\begin{proof}
+  By repeated application of $(\parr)$.
+\end{proof}
+
+\begin{lemmaB}
+  If $\seq[{ \cpRecv{x_1}{x_n}{\dots\cpRecv{x_1}{x_2}{P}} }]{
+    \Gamma, \tmty{x_1}{A_1 \parr \dots \parr A_n} }$, then there exists a term
+  \tm{P'} such that
+  $\seq[{ P' }]{ \Gamma, \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}}$
+  and $\tm{P'} \Longrightarrow^{3(n-1)} \tm{P}$.
+\end{lemmaB}
+\begin{proof}
+  By induction on $n$.
+  \begin{itemize}
+  \item
+    Case $n = 1$.
+    We have $\seq[{ P }]{ \Gamma, \tmty{x_1}{A_1} }$.
+    This is our desired result.
+  \item
+    Case $n = k + 1$. We have:
+    \[
+      \seq[{
+      \cpRecv{x_1}{x_n}{\cpRecv{x_1}{x_k}{\dots\cpRecv{x_1}{x_2}{P}}} }]{
+      \Gamma, \tmty{x_1}{A_1 \parr \dots \parr A_k \parr A_n} }.
+    \]
+    We construct the process:
+
+    \[
+      \tm{\cpCut{x_1}{
+          \cpRecv{x_1}{x_n}{\cpRecv{x_1}{x_k}{\dots\cpRecv{x_1}{x_2}{P}}}}{
+          \cpSend{x_1}{x_n}{\cpLink{x_n}{x_n'}}{\cpLink{x_1}{x_1'}}
+        }}.
+    \]
+    In three steps, this reduces to
+    \(
+      \tm{\cpRecv{x_1'}{x_k}{\dots\cpRecv{x_1'}{x_2}{\cpSub{x_1'}{x_1}{\cpSub{x_n'}{x_n}{P}}}}}.
+    \)
+    We then substitute \tm{x_1} for \tm{x_1'} and \tm{x_n} for \tm{x_n'}, and
+    apply the induction hypothesis.
+  \end{itemize}
+\end{proof}
+While there is a certain amount of overhead involved in this encoding, it scales
+linearly in terms of the number of processes.
+The reverse---encoding the non-determinism present in \nodcap using
+non-deterministic local choice---scales exponentially, as with the \textpi-calculus.
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
