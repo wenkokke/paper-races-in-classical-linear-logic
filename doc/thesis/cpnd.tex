@@ -4,7 +4,7 @@ which allows for races while still excluding deadlocks.
 We have seen in \cref{sec:cp-example} how \cp excludes deadlocks, but how exactly
 does \cp exclude races?
 Let us return to our first example from \cref{sec:introduction}, to the
-interaction between John, Mary and the store.  
+interaction between John, Mary and the store.
 \[
   \begin{array}{c}
     \tm{(\piPar{%
@@ -35,7 +35,7 @@ with John and Mary, taking \cake to be the type of interactions in which cake
 store communicates with John \emph{and} Mary over a channel of type \ty{\cake
   \parr \cake}.
 However, this \emph{only} models interactions such as the following:
-\begin{scprooftree}
+\begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{x}{\cake^\bot} }$}
   \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y}{\cake^\bot} }$}
   \SYM{\tens}
@@ -48,7 +48,7 @@ However, this \emph{only} models interactions such as the following:
   \NOM{Cut}
   \BIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}} }]{
       \Gamma, \Delta, \Theta }$}
-\end{scprooftree}
+\end{prooftree}
 Note that in this interaction, John will get whatever the store decides to send
 on \tm{x}, and Mary will get whatever the store decides to send on \tm{y}.
 This means that this interactions gives the choice of who receives what \emph{to
@@ -57,7 +57,7 @@ the choice of who receives the cake is non-deterministic, and depends on factors
 outside of any of the participants' control!
 And to make matters worse, the term with which we are attempting to model our
 example is entirely different from the one we initially wrote down in the
-\textpi-calculus! 
+\textpi-calculus!
 
 The ability to model racy behaviour, such as that in our example, is essential
 to describing the interactions that take place in realistic concurrent systems.
@@ -77,13 +77,13 @@ This chapter proceeds as follows.
 %% * Terms and types
 \section{Terms and types}\label{sec:nc-terms-and-types}
 Let us return, briefly, to our example.
-\[
+\begin{gather*}
   \tm{(\piPar{%
       \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
     }{%
       \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
     })}
-\]
+\end{gather*}
 In this interaction, we see that the channel \tm{x} is used only as a way to
 connect the various clients, John and Mary, to the store.
 The \emph{real} communication, sending the slice of cake and disappointment,
@@ -114,7 +114,7 @@ Therefore you \emph{cannot} use \ncEquivPoolAss1 to rewrite
 \tm{\cpCut{x}{P}{\ncPool{Q}{R}}} to \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}.
 We do, however, add two axioms which relate cuts and pool.
 We call these \emph{extrusion}, because they closely resemble the
-\textpi-calculus axiom for scope extrusion. 
+\textpi-calculus axiom for scope extrusion.
 We have to add both \ncRedKappaPool1 and \ncRedKappaPool2, as these relate two
 different constructs, and therefore we cannot use the one to derive the other.
 \input{thm-nc-pool-assoc2}
@@ -130,37 +130,263 @@ will keep track of how many clients or server interactions they represent.
 \input{def-nc-negation}
 With these new types, duality remains an involutive function.
 \input{thm-nc-negation-involutive}
-The definition for environments is unchanged, but we extend the definition for
-the typing judgement with the inference rules in \cref{fig:nc-typing-judgement}.
+
+\section{Typing clients and servers}\label{sec:nc-clients-and-servers}
+We will have to add typing rules to associate our new client and server
+interactions with their types. We will do so in this section.
+The definition for environments will remain unchanged, but we will extend the
+definition for the typing judgement.
+To determine the new typing rules, we essentially have to answer the question
+``What typing constructs do we need to complete the following proof?''
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \noLine\TIC{$\seq[{
+      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}{
+        \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
+      \Gamma, \Delta, \Theta }$}
+\end{prooftree}
+Ideally, we would still like the composition of the client pool and the server
+to be a cut. This seems reasonable, as the left-hand side of the term above has
+2 clients, and the right-hand side has two server interactions, so \tm{x} is
+used at type \ty{\take[2]{\cake^\bot}} on the left, and as \ty{\give[2]{\cake}}
+on the right.
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \noLine\BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
+      \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
+
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \noLine\UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}} }]{
+      \Theta, \tmty{x}{\give[2]{\cake}} }$}
+
+  \NOM{Cut}
+  \BIC{$\seq[{
+      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}{
+        \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
+      \Gamma, \Delta, \Theta }$}
+\end{prooftree}
+We will defined the typing judgement as follows, and then discuss servers and
+clients, the two sides of the above cut, describe the rules we add, and show how
+they allow us to complete our proof in
+\cref{sec:clients-and-pooling,sec:servers-and-contraction}.
 \input{def-nc-typing-judgement}
 \input{fig-nc-typing-judgement}
+
+\subsection{Clients and pooling}\label{sec:clients-and-pooling}
+A client pool represents a number of independent processes, each wanting to
+interact with the server. Examples of such a pool include John an Mary from our
+example, customers for online stores in general, and any number of processes
+which interact with a single, centralised server.
+
+We introduce two new rules: one to construct clients, and one to pool them
+together. The first rule, $(\take[1]{})$, marks interaction over some channel as
+a client interaction. It does this by receiving a channel \tm{y} over a
+\emph{shared} channel \tm{x}. The channel \tm{y} is the channel across which the
+actual interaction will eventually take place.
+The second rule, \textsc{Pool}, allows us to pool together clients. This is
+implemented, as in the \textpi-calculus, using parallel composition.
+\begin{center}
+  \ncInfTake1
+  \ncInfPool
+\end{center}
+Using these rules, we can derive the left-hand side of our proof by marking John
+and Mary as clients, and pooling them together.
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \SYM{(\take[1]{})}
+  \UIC{$\seq[{ \ncCnt{x}{y}{\john} }]{ \Gamma, \tmty{z}{\take[1]{\cake^\bot}} }$}
+
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \SYM{(\take[1]{})}
+  \UIC{$\seq[{ \ncCnt{x}{y'}{\mary} }]{ \Delta, \tmty{y'}{\take[1]{\cake^\bot}} }$}
+
+  \NOM{Pool}
+  \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
+      \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
+\end{prooftree}
+
+\subsection{Servers and contraction}\label{sec:servers-and-contraction}
+Dual to a pool of clients is a server. Our interpretation of a server is any
+process which offers up some number of interdependent interactions of the same
+type. Examples include the store from our example, which gives out slices of
+cake and disappointment, online stores in general, and any central server which
+interacts with some number of client processes.
+
+We introduce two new rules to construct servers. The first rule, $(\give[1]{})$,
+marks a interaction over some channel as a server interaction. It does this by
+sending a channel \tm{y} over a \emph{shared} channel \tm{x}. The channel \tm{y}
+is the channel across which the actual interaction will eventually take place.
+The second rule, \textsc{Cont}, short for contraction, allows us to contract
+several server interactions into a single server. This allows us to construct a
+server which has multiple interactions of the same type, across the same shared
+channel.\footnote{%
+  While it ultimately does not matter whether $(\give[1]{})$ and $(\take[1]{})$
+  are implemented with a send or a receive action, it feels more natural to have
+  the server do the sending.
+  Clients indicate their interest in interacting with the server by connecting
+  to the shared channel, but it is up to the server to decide \emph{when} to
+  interact with each channel.}
+\begin{center}
+  \ncInfGive1
+  \ncInfCont
+\end{center}
+Using these rules, we can derive the right-hand side of our proof, by marking
+each of the store's interactions as server interactions, and then contracting
+them.
+\begin{prooftree}
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x'}{z'}{\store} }]{
+      \Theta, \tmty{z}{\cake}, \tmty{x'}{\give[1]{\cake}} }$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x'}{z'}{\store}} }]{
+      \Theta, \tmty{x}{\give[1]{\cake}}, \tmty{x'}{\give[1]{\cake}} }$}
+  \NOM{Cont}
+  \UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}} }]{
+      \Theta, \tmty{x}{\give[2]{\cake}} }$}
+\end{prooftree}
+Thus, we complete the typing derivation of our example.
+
+\section{Running clients and servers}
+Once we have a client/server interaction, how do we run it? Ideally, we would
+simply use the reduction rule closest to the one used in the \textpi-calculus. 
+\begin{gather*}
+  \reducesto
+  {\tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}}
+  {\tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
+\end{gather*}
+However, our case is complicated by the fact that in \tm{\cpCut{x}{P}{Q}} the
+name restriction is an inseparable part of the composition, and therefore has to
+be part of our reduction rule. 
+Because of this, the above reduction can only apply in the singleton case.
+If the client pool contains more than one client, such as in the term below,
+then there is no way to isolate a single client together with the server,
+because \tm{x} occurs in both \tm{\ncCnt{x}{y}{P}} and \tm{Q}.
+\begin{gather*}
+  \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}
+  \centernot\Longrightarrow
+\end{gather*}
+Therefore, we add a second reduction rule, which handles communication between a
+one client in a pool of multiple clients and a server.
+\begin{gather*}
+  \reducesto
+  {\tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}}
+  {\tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}}
+\end{gather*}
+Lastly, because we have added another form of parallel composition, we add
+another congruence rule, to allow for reduction inside client pools.
 \input{def-nc-term-reduction}
 
+The rules \ncRedBetaStar1 and \ncRedBetaStar{n+1} seem like the elimination
+rules for a list-like construct. This may come as a surprise, as our client
+pools are built up like binary trees, and the typing rules for both sides are
+tree-like, with $(\take[1]{})$ and $(\give[1]{})$ playing the role of leaves,
+and \textsc{Pool} and \textsc{Cont} merging two trees with $m$ and $n$ leaves
+into one with $m+n$ leaves.
+However, the server process imposes a sequential ordering on its interactions,
+and it is because of this that we have to use list-like elimination rules.
 
-\section{Clients and servers}\label{sec:nc-clients-and-servers}
-%% * Cut elimination
+\section{Properties of \nodcap}
+In this section, we will revisit the proofs for three important properties of
+\rcp, namely preservation, progress, and termination, and show that our
+extensions preserve these properties.
+
+\subsection{Preservation}
+Preservation is the fact that term reduction preserves typing. There are two
+proofs involved in this. First, we show that structural congruence preserves
+typing.
 \input{thm-nc-preservation-equiv}
 \input{fig-nc-preservation-equiv}
+Secondly, we prove that term reduction preserves typing.
 \input{thm-nc-preservation}
 \input{fig-nc-preservation-1}
-%% * Progress
+
+\subsection{Canonical forms and progress}
+In this section, we will extend the definition of canonical forms and the proof
+of progress progress given in \cref{sec:cppi}.
+
+\subsubsection{Canonical forms}
+First, we extend the definitions of actions with our actions for client and
+server creation. 
 \input{def-nc-action}
+Secondly, as we can reduce inside client pools, we will add pooling to our
+definition of evaluation prefixes.
 \input{def-nc-evaluation-prefixes}
 The definition for the maximum evaluation prefix is unchanged.
+
+There are some subtleties to our definition of canonical forms. The type system
+for \cp guarantees that all links directly under an evaluation context act on a
+bound channel. Not so for \nodcap.
+\begin{scprooftree}
+  \AXC{}
+  \NOM{Ax}
+  \UIC{$\seq[{ \cpLink{x}{y} }]{ \tmty{x}{\take[m]{A}}, \tmty{y}{\give[m]{A^\bot}} }$}
+  \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n]{A}} }$}
+  \NOM{Pool}
+  \BIC{$\seq[{ \ncPool{\cpLink{x}{y}}{P} }]{ \Gamma, \tmty{x}{\take[m+n]{A}}, \tmty{y}{\give[m]{A^\bot}} }$}
+\end{scprooftree}
+There is no way to sensibly reduce this link.
+Furthermore, in \cp, if two processes act on the same channel, then they must be
+on different sides of the cut introducing that channel. The addition of shared
+channels and client pools invalidates this property.
+Therefore, we will have to be more careful about the way we define canonical
+forms.
+We restate the definition of canonical forms below. The additions have been
+italicised.
 \input{def-nc-canonical-forms}
-The type system for \cp guarantees that a link acts on a bound channel. In
-\nodcap, a link can also act on two unbound channels, as long as they are
-\emph{shared} channels, such as in
-$\tm{\ncPool{\cpLink{a}{b}}{\ncPool{\ncCnt{a}{y}{P}}{\ncCnt{a}{z}{Q}}}}$.
+
+\subsection{Evaluation contexts}
+Evaluation contexts are one-holed term contexts under which reduction can take
+place. Since we have added another congruence rule, stating that reduction can
+take place inside client pools, we extend our definition of evaluation contexts
+to match this.
 \input{def-nc-evaluation-contexts}
+We also restate \cref{thm:cp-display-cut-1}, and prove that our extension
+preserves the property.
 \input{thm-nc-display-cut-1}
+Furthermore, it will be useful to prove a similar lemma, which shows that we can
+push any pooling downwards under an evaluation context.
 \input{thm-nc-display-pool-1}
+
+\subsection{Progress}
+Progress is the fact that every term is either in some canonical form, or can be
+reduced further.
+First, we will restate \cref{thm:cp-progress-link} and \cref{thm:cp-progress-beta},
+which relate evaluation prefixes and evaluation contexts, and show that our
+extension preserves these properties. 
 \input{thm-nc-progress-link}
 \input{thm-nc-progress-beta}
+In essence, \cref{thm:nc-progress-link} and \cref{thm:nc-progress-beta} cover
+the cases in which either one of \cpRedAxCut1 or \cpRedAxCut2, or a
+\textbeta-reduction rule will be applied.
+However, after applying \cref{thm:nc-progress-beta}, we cannot immediately apply
+\ncRedBetaStar{n+1}. For that, we must uncover at least one layer of pooling.
+We prove a lemma which states that if we have an interaction on a shared channel
+\tm{x}, we can push all pooling rules which pool clients communicating on \tm{x}
+inwards. 
 \input{thm-nc-progress-shared}
+Finally, we are ready to extend our proof of progress. The overall structure of
+the proof remains the same, though the addition of pooling makes the wording
+slightly more subtle.
 \input{thm-nc-progress}
+
+\subsection{Termination}
+Termination is the fact that if we iteratively apply progress to obtain a
+reduction, and apply that reduction, we will eventually end up with a term in
+canonical form.
+We restate its proof here for the sake of completeness, but its wording is
+unchanged.
 \input{thm-nc-termination}
-%% * Equivalence with non-deterministic local choice
+
 \section{\nodcap and non-deterministic local choice}
 \wen{Prove something about the embedding of non-deterministic local choice.}
 %%% Local Variables:

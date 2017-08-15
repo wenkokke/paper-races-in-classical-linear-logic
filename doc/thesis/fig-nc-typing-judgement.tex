@@ -1,43 +1,15 @@
-\begin{figure*}[ht]
+\begin{figure*}[b]
   \centering
   \begin{center}
-    \begin{prooftree*}
-      \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
-      \SYM{\take[1]{}}
-      \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{ \Gamma , \tmty{x}{\take[1]{A}} }$}
-    \end{prooftree*}
-    \begin{prooftree*}
-      \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
-      \SYM{\give[1]{}}
-      \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[1]{A}} }$}
-    \end{prooftree*}
+    \ncInfTake1
+    \ncInfGive1
   \end{center}
-
-  \begin{prooftree}
-    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\give[m]{A}} , \tmty{y}{\give[n]{A}} }$}
-    \NOM{Cont}
-    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[m+n]{A}} }$}
-  \end{prooftree}
-  \begin{prooftree}
-    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\take[m]{A}} }$}
-    \AXC{$\seq[{ Q }]{ \Delta , \tmty{x}{\take[n]{A}} }$}
-    \NOM{Pool}
-    \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma , \Delta , \tmty{x}{\take[m+n]{A}} }$}
-  \end{prooftree}
-
-% \begin{center}
-%   \begin{prooftree*}
-%     \AXC{\vphantom{$\seq[{ P }]{ \Gamma  }$}}
-%     \SYM{\take[0]{}}
-%     \UIC{$\seq[{ \ncHalt }]{ \tmty{x}{\take[0]{A}} }$}
-%   \end{prooftree*}
-%   \begin{prooftree*}
-%     \AXC{$\seq[{ P }]{ \Gamma  }$}
-%     \SYM{\give[0]{}}
-%     \UIC{$\seq[{ P }]{ \Gamma , \tmty{x}{\give[0]{A}} }$}
-%   \end{prooftree*}
-% \end{center}
-  
+  \begin{center}
+    \ncInfPool
+  \end{center}
+  \begin{center}
+    \ncInfCont
+  \end{center}
   \caption{Typing judgement for \nodcap extending that of Figure~\ref{fig:cp-typing-judgement}}
   \label{fig:nc-typing-judgement}
 \end{figure*}
