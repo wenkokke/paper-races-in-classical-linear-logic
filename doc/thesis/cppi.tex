@@ -30,6 +30,8 @@ conversions.
 As a consequence of this, we can drop the commutative conversions from our
 reduction system, which therefore more tightly corresponds to that of the
 \textpi-calculus. 
+A consequence of dropping the commutative conversions is that the reduction
+system as a whole becomes deterministic.
 The price we pay for this is a weaker correspondence to classical linear logic.
 This shows in our notion of canonical form, which is weaker, and in our proof of
 progress, which is much more involved.
@@ -83,7 +85,7 @@ our proof for \cref{thm:cp-progress-3}.
 Intuitively, evaluation contexts are one-holed term contexts under which
 reduction can take place. For \rcp, these consist solely of cuts.
 \input{def-cp-evaluation-contexts}
-We can prove that we can push any cut downwards under an evaluation contexts, as
+We can prove that we can push any cut downwards under an evaluation context, as
 long as the channel it binds does not occur in the context itself.
 \input{thm-cp-display-cut-1}
 And vice versa. However, we will not use the following lemma in this
