@@ -391,123 +391,67 @@ operator, which is used in several extensions of \piDILL and
 \cp~\cite{atkey2016,caires2014,caires2017}.
 This operator is admissible in \nodcap.
 We can derive the non-deterministic choice \tm{P+Q} by constructing the
-following term, provided that \tm{P} and \tm{Q} only communicate over a single
-channel: 
+following term:
 \[
   \arraycolsep=0pt
   \tm{
-  \begin{array}{lrl}
-    \nu x.&((  & \; \ncCnt{x}{y}{\cpCase{y}{P}{\cpHalt{y}}} \\
-          &\mid& \; \ncCnt{x}{z}{\cpCase{z}{Q}{\cpHalt{z}}} \; )\\
-          &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}}} \; )
+  \begin{array}{lrlrl}
+    \nu x.&((  & \; \ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}} \\
+          &\mid& \; \ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}} \; )\\
+          &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{}}\text{case}\;y\;
+          &\;\{& \; \cpWait{y}{\cpCase{y}{\cpWait{y}{P}}{\cpWait{y}{P}}}\\
+          &&& ;& \; \cpWait{y}{\cpCase{y}{\cpWait{y}{Q}}{\cpWait{y}{Q}}}\;\}\;)
   \end{array}
   }
 \]
-The term is a cut between two processes. Let us unpack what each side is doing. 
-On the left-hand side, we have a pool with both \tm{P} and \tm{Q} as clients,
-wrapped in a case statement which allows the process they are interacting with
-to choose whether or not they want them to run. Each of these processes is
-constructed as follows: 
-\begin{prooftree}
-  \AXC{$\seq[{ P }]{ \tmty{y}{A} }$}
-  \AXC{}
-  \SYM{(\one)}
-  \UIC{$\seq[{ \cpHalt{y} }]{ \tmty{y}{\one} }$}
-  \SYM{(\with)}
-  \BIC{$\seq[{ \cpCase{y}{P}{\cpHalt{y}} }]{ \tmty{y}{A \with \one} }$}
-  \SYM{(\take[1]{})}
-  \UIC{$\seq[{ \ncCnt{x}{y}{\cpCase{y}{P}{\cpHalt{y}}} }]{
-      \tmty{y}{\take[1]{A \with \one}} }$}
-\end{prooftree}
-On the right-hand side, we have a server which connects to two clients of the
-above form, and chooses to terminate one, while allowing the other to run.
-This process is constructed as follows:
-\begin{prooftree}
-  \AXC{}
-  \NOM{Ax}
-  \UIC{$\seq[{ \cpLink{z}{w} }]{
-      \tmty{z}{A^\bot}, \tmty{w}{A} }$}
-  \SYM{(\plus_2)}
-  \UIC{$\seq[{ \cpInr{z}{\cpLink{z}{w}} }]{
-      \tmty{z}{A^\bot \plus \bot}, \tmty{w}{A} }$}
-  \SYM{(\bot)}
-  \UIC{$\seq[{ \cpWait{y}{\cpInr{z}{\cpLink{z}{w}}} }]{
-      \tmty{y}{\bot}, \tmty{z}{A^\bot \plus \bot}, \tmty{w}{A}}$}
-  \SYM{(\plus_1)}
-  \UIC{$\seq[{ \cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}} }]{
-      \tmty{y}{A^\bot \plus \bot}, \tmty{z}{A^\bot \plus \bot}, \tmty{w}{A}}$}
-  \SYM{(\give[1]{})}
-  \UIC{$\seq[{ \ncSrv{x'}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}} }]{
-      \tmty{y}{(A^\bot \plus \bot)}, \tmty{x'}{\give[1]{(A^\bot \plus \bot)}}, \tmty{w}{A} }$}
-  \SYM{(\give[1]{})}
-  \UIC{$\seq[{ \ncSrv{x}{y}{\ncSrv{x'}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}}} }]{
-      \tmty{x}{\give[1]{(A^\bot \plus \bot)}}, \tmty{x'}{\give[1]{(A^\bot \plus \bot)}}, \tmty{w}{A} }$}
-  \NOM{Cont}
-  \UIC{$\seq[{ \ncSrv{x}{y}{\ncSrv{x}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}}} }]{
-      \tmty{x}{\give[2]{(A^\bot \plus \bot)}, \tmty{w}{A}}}$}
-\end{prooftree}
-When we compose these two processes, we get a process of the type
-$\seq[{ P + Q}]{ \tmty{w}{A} }$, using \tm{P+Q} as an abbreviation for the
-encoding of non-deterministic local choice.
+The term is a cut between two processes.
+Both sides are well-typed, see~\cref{fig:nc-local-choice}.
+\input{fig-nc-local-choice}
+Let us unpack what each side is doing. 
+On the left-hand side, we have a pool of two processes,
+\tm{\ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}}} and \tm{\ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}}}.
+Each makes a choice---the first sends \tm{\text{inl}}, the second sends \tm{\text{inr}}.
+On the right-hand side, we have a server with both \tm{P} and \tm{Q}.
+This server has two channels on which a choice is offered, \tm{y} and
+\tm{z}. However, the choice on \tm{z} does not affect the outcome of the
+process.
+When these clients and the server are put together, the choices offered by the
+server will be non-deterministically lined up with the clients which make
+choices, and either \tm{P} or \tm{Q} will run.
 
-The full version of local choice, which allows you to choose between two
-processes with an arbitrary number of channels, is admissible.
-We can construct it using the invertibility of $(\parr)$, the logical property
-that we can turn any context $\tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}$ into a single
-formula $\tmty{x}{A_1 \parr \dots \parr A_n}$, and vice versa.
-In terms of the process calculus, this means that for any number of channels
-there exist processes which can systematically pack or unpack those channels.
-\begin{lemmaB}
-  If $\seq[{ P }]{ \Gamma, \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n} }$, then
-  $\seq[{ \cpRecv{x_1}{x_n}{\dots\cpRecv{x_1}{x_2}{P}} }]{
-    \Gamma, \tmty{x_1}{A_1 \parr \dots \parr A_n} }$.
-\end{lemmaB}
-\begin{proof}
-  By repeated application of $(\parr)$.
-\end{proof}
-
-\begin{lemmaB}
-  If $\seq[{ \cpRecv{x_1}{x_n}{\dots\cpRecv{x_1}{x_2}{P}} }]{
-    \Gamma, \tmty{x_1}{A_1 \parr \dots \parr A_n} }$, then there exists a term
-  \tm{P'} such that
-  $\seq[{ P' }]{ \Gamma, \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}}$
-  and $\tm{P'} \Longrightarrow^{3(n-1)} \tm{P}$.
-\end{lemmaB}
-\begin{proof}
-  By induction on $n$.
-  \begin{itemize}
-  \item
-    Case $n = 1$.
-    We have $\seq[{ P }]{ \Gamma, \tmty{x_1}{A_1} }$.
-    This is our desired result.
-  \item
-    Case $n = k + 1$. We have:
-    \[
-      \seq[{
-      \cpRecv{x_1}{x_n}{\cpRecv{x_1}{x_k}{\dots\cpRecv{x_1}{x_2}{P}}} }]{
-      \Gamma, \tmty{x_1}{A_1 \parr \dots \parr A_k \parr A_n} }.
-    \]
-    We construct the process:
-
-    \[
-      \tm{\cpCut{x_1}{
-          \cpRecv{x_1}{x_n}{\cpRecv{x_1}{x_k}{\dots\cpRecv{x_1}{x_2}{P}}}}{
-          \cpSend{x_1}{x_n}{\cpLink{x_n}{x_n'}}{\cpLink{x_1}{x_1'}}
-        }}.
-    \]
-    In three steps, this reduces to
-    \(
-      \tm{\cpRecv{x_1'}{x_k}{\dots\cpRecv{x_1'}{x_2}{\cpSub{x_1'}{x_1}{\cpSub{x_n'}{x_n}{P}}}}}.
-    \)
-    We then substitute \tm{x_1} for \tm{x_1'} and \tm{x_n} for \tm{x_n'}, and
-    apply the induction hypothesis.
-  \end{itemize}
-\end{proof}
 While there is a certain amount of overhead involved in this encoding, it scales
 linearly in terms of the number of processes.
 The reverse---encoding the non-determinism present in \nodcap using
 non-deterministic local choice---scales exponentially, as with the \textpi-calculus.
 
+Nonetheless, it is worrying that we duplicate each program \tm{P} and \tm{Q} in
+order to encode non-deterministic local choice.
+However, we can replace the each term of the form \tm{\cpCase{y}{\cpWait{y}{P}}{\cpWait{y}{P}}}
+with \tm{\cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{\cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{P}}}.
+This process is also well-typed, see below.
+\begin{scprooftree}
+  \AXC{}
+  \SYM{(\one)}
+  \UIC{$\seq[{ \cpHalt{w} }]{ \tmty{w}{\one} }$}
+  \SYM{(\bot)}
+  \UIC{$\seq[{ \cpWait{z}{\cpHalt{w}} }]{ \tmty{w}{\one}, \tmty{z}{\bot} }$} 
+  \AXC{}
+  \SYM{(\one)}
+  \UIC{$\seq[{ \cpHalt{w} }]{ \tmty{w}{\one} }$}
+  \SYM{(\bot)}
+  \UIC{$\seq[{ \cpWait{z}{\cpHalt{w}} }]{ \tmty{w}{\one}, \tmty{z}{\bot} }$} 
+  \SYM{(\with)}
+  \BIC{$\seq[{
+      \cpCase{z}{\cpWait{z}{\cpHalt{w}}}{\cpWait{z}{\cpHalt{w}}}
+    }]{ \tmty{w}{\one}, \tmty{z}{\bot\with\bot} }$} 
+  \AXC{$\seq[{ P }]{ \Gamma }$}
+  \SYM{(\bot)} 
+  \UIC{$\seq[{ \cpWait{w}{P} }]{ \Gamma, \tmty{w}{\bot} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{
+      \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{\cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{P}}
+    }]{ \Gamma, \tmty{z}{\bot\with\bot} }$} 
+\end{scprooftree}
 
 \wen{Add a discussion of non-determinism in \nodcap versus non-determinism in
   the \textpi-calculus. Mention at least that terms which have clients who are
