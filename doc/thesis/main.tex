@@ -1,26 +1,29 @@
-\documentclass[12pt,a4paper,UKenglish,mscres,logo,twoside,plainprepages,notimes,lfcs]{infthesis}
+\documentclass[12pt,a4paper,UKenglish,mscres,logo,twoside,notimes,parskip,lfcs]{infthesis}
 \shieldtype{3}
 \input{preamble}
 \title{Races in Classical Linear Logic}
-\author{%
-  Wen Kokke\\
-  Supervised by Philip Wadler and J.\ Garrett Morris}
-\date{}
+\author{Wen Kokke}
 \addbibresource{main.bib}
-\abstract{%
-  Process calculi based in logic, such as CP, provide a foundation for
-  deadlock-free concurrent programming, but at the cost of excluding
-  non-determinism and races.  We introduce \nodcap (nodcap), which extends CP
-  with a novel account of non-determinism.  Our approach draws on bounded linear
-  logic to provide a strongly-typed account of standard process calculus
-  expressions of non-determinism.  We show that our extension is expressive
-  enough to capture many uses of non-determinism in untyped calculi, such as
-  non-deterministic choice, while preserving CP's meta-theoretic properties,
-  including deadlock freedom.  We have formalized our calculus and its
-  properties using Agda.
-}
 \begin{document}
-\maketitle
+\begin{preliminary}
+  \abstract{%
+    Process calculi based in logic, such as CP, provide a foundation for
+    deadlock-free concurrent programming, but at the cost of excluding
+    non-determinism and races.  We introduce \nodcap (nodcap), which extends CP
+    with a novel account of non-determinism.  Our approach draws on bounded linear
+    logic to provide a strongly-typed account of standard process calculus
+    expressions of non-determinism.  We show that our extension is expressive
+    enough to capture many uses of non-determinism in untyped calculi, such as
+    non-deterministic choice, while preserving CP's meta-theoretic properties,
+    including deadlock freedom.  We have formalized our calculus and its
+    properties using Agda.
+  }
+  \maketitle
+  \begin{acknowledgements}
+  \end{acknowledgements}
+  \standarddeclaration
+  \tableofcontents
+\end{preliminary}
 
 \input{introduction}
 \input{background}

@@ -1,7 +1,7 @@
 %% Theorems, Lemmas, and Corollaries
-\setlength\theoremindent{1\parindent}
+\setlength\theoremindent{17.625pt}
 \setlength\theorempreskipamount{1\baselineskip}
-\setlength\theorempostskipamount{1\baselineskip}
+%\setlength\theorempostskipamount{1\baselineskip}
 \theoremstyle{break}
 \theorembodyfont{\normalfont}
 \theoremsymbol{\ensuremath{_\Box}}
@@ -51,7 +51,7 @@
 \newcommand{\cpInfCut}{%
   \begin{prooftree*}
     \AXC{$\seq[ P ]{ \Gamma, \tmty{x}{A} }$}
-    \AXC{$\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }$}
+    \AXC{$\seq[ Q ]{ \Delta, \tmty{x}{A^\bot} }$}
     \NOM{Cut}
     \BIC{$\seq[ \cpCut{x}{P}{Q} ]{ \Gamma, \Delta }$}
   \end{prooftree*}}

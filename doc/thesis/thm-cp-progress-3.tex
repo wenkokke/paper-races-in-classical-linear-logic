@@ -5,12 +5,11 @@
 \begin{proof}
   By induction on the structure of derivation for $\seq[{ P }]{ \Gamma }$.
   The only interesting case is when the last rule of the derivation is
-  \textsc{Cut}. In every other case, the typing rule constructs a term in which
+  \textsc{Cut}---in every other case, the typing rule constructs a term in which 
   is in canonical form. 
   \\
-  If the last rule in the derivation is \textsc{Cut}, we consider the maximum
-  evaluation prefix \tm{G} of \tm{P}, such that $\tm{P} = \tm{\cpPlug{G}{P_1
-  \dots P_{n+1}}}$ and each $P_i$ is an action.
+  We consider the maximum evaluation prefix \tm{G} of \tm{P}, such that $\tm{P}
+  = \tm{\cpPlug{G}{P_1 \dots P_{n+1}}}$ and each $P_i$ is an action.
   The prefix \tm{G} consists of $n$ cuts, and introduces $n$ channels, but
   composes $n+1$ actions. Therefore, one of the following must be true:
   \begin{itemize}

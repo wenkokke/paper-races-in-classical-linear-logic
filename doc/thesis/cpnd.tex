@@ -1,6 +1,6 @@
 \chapter{Non-deterministic Classical Processes}\label{sec:main}
-In this section, we will discuss our main contribution: an extension of \cp,
-which allows for races while still excluding deadlocks.
+In this section, we will discuss our main contribution: an extension of \cp
+which allows for races while still excluding deadlocks. 
 We have seen in \cref{sec:cp-example} how \cp excludes deadlocks, but how exactly
 does \cp exclude races?
 Let us return to our first example from \cref{sec:introduction}, to the
@@ -52,12 +52,11 @@ However, this \emph{only} models interactions such as the following:
 Note that in this interaction, John will get whatever the store decides to send
 on \tm{x}, and Mary will get whatever the store decides to send on \tm{y}.
 This means that this interactions gives the choice of who receives what \emph{to
-the store}. This is not at all an accurate model of our original example, where
-the choice of who receives the cake is non-deterministic, and depends on factors
+the store}. This is not an accurate model of our original example, where
+the choice of who receives the cake is non-deterministic and depends on factors
 outside of any of the participants' control!
-And to make matters worse, the term with which we are attempting to model our
-example is entirely different from the one we initially wrote down in the
-\textpi-calculus!
+And to make matters worse, the term which models our example is entirely
+different from the one we initially wrote down in the \textpi-calculus!
 
 The ability to model racy behaviour, such as that in our example, is essential
 to describing the interactions that take place in realistic concurrent systems.
@@ -93,8 +92,8 @@ Inspired by this, we add two new constructs to the term language of \cp: sending
 and receiving on a \emph{shared} channel.
 These actions are marked with a \tm{\star} in order to distinguish them
 syntactically from ordinary sending and receiving.
-Furthermore, we need a way to group together clients. For this reason we add
-another form of parallel composition, which we refer to as \emph{pooling}.
+To group clients, we add another form of parallel composition, which we refer to
+as \emph{pooling}. 
 \input{def-nc-terms}
 As before, round brackets denote input, square brackets denote output.
 Note that \tm{\ncCnt{x}{y}{P}}, much like \tm{\cpSend{x}{y}{P}{Q}}, is a bound
@@ -115,25 +114,25 @@ Therefore you \emph{cannot} use \ncEquivPoolAss1 to rewrite
 We do, however, add two axioms which relate cuts and pool.
 We call these \emph{extrusion}, because they closely resemble the
 \textpi-calculus axiom for scope extrusion.
-We have to add both \ncRedKappaPool1 and \ncRedKappaPool2, as these relate two
-different constructs, and therefore we cannot use the one to derive the other.
+We add both \ncRedKappaPool1 and \ncRedKappaPool2, as these relate two different
+constructs, and therefore we cannot use the one to derive the other. 
 \input{thm-nc-pool-assoc2}
 Furthermore, the extensions to structural congruence preserve symmetry.
 \input{thm-nc-symmetry}
-We can make another, if somewhat obvious, observation from our example.
+We can make another observation from our examples.
 In every example in which a server interacts with a pool of clients, and which
-does not deadlock, there should be \emph{exactly} as many clients as there are
+does not deadlock, there are \emph{exactly} as many clients as there are
 server interactions.
 Therefore, we add two new \emph{dual} types for client pools and servers, which
-will keep track of how many clients or server interactions they represent.
+track how many clients or server interactions they represent.
 \input{def-nc-types}
 \input{def-nc-negation}
 With these new types, duality remains an involutive function.
 \input{thm-nc-negation-involutive}
 
 \section{Typing clients and servers}\label{sec:nc-clients-and-servers}
-We will have to add typing rules to associate our new client and server
-interactions with their types. We will do so in this section.
+We have to add typing rules to associate our new client and server
+interactions with their types.
 The definition for environments will remain unchanged, but we will extend the
 definition for the typing judgement.
 To determine the new typing rules, we essentially have to answer the question
@@ -174,16 +173,15 @@ on the right.
         \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
-We will defined the typing judgement as follows, and then discuss servers and
-clients, the two sides of the above cut, describe the rules we add, and show how
-they allow us to complete our proof in
-\cref{sec:clients-and-pooling,sec:servers-and-contraction}.
+We will define the typing judgement, and then discuss servers and clients, the
+two sides of the above cut, describe the rules we add, and show how they allow
+us to complete our proof.
 \input{def-nc-typing-judgement}
 \input{fig-nc-typing-judgement}
 
 \subsection{Clients and pooling}\label{sec:clients-and-pooling}
 A client pool represents a number of independent processes, each wanting to
-interact with the server. Examples of such a pool include John an Mary from our
+interact with the server. Examples of such a pool include John and Mary from our
 example, customers for online stores in general, and any number of processes
 which interact with a single, centralised server.
 
@@ -215,7 +213,7 @@ and Mary as clients, and pooling them together.
 \end{prooftree}
 
 \subsection{Servers and contraction}\label{sec:servers-and-contraction}
-Dual to a pool of clients is a server. Our interpretation of a server is any
+Dual to a pool of clients is a server. Our interpretation of a server is a
 process which offers up some number of interdependent interactions of the same
 type. Examples include the store from our example, which gives out slices of
 cake and disappointment, online stores in general, and any central server which
@@ -270,9 +268,9 @@ be part of our reduction rule.
 Because of this, the above reduction can only apply in the singleton case.
 If the client pool contains more than one client, such as in the term below,
 then there is no way to isolate a single client together with the server,
-because \tm{x} occurs in both \tm{\ncCnt{x}{y}{P}} and \tm{Q}.
+because \tm{x} occurs in both \tm{\ncCnt{x}{y}{P}} and \tm{\ncCnt{x}{z}{Q}}.
 \begin{gather*}
-  \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}
+  \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{\ncCnt{x}{z}{Q}}}{\ncSrv{x}{w}{R}}}
   \centernot\Longrightarrow
 \end{gather*}
 Therefore, we add a second reduction rule, which handles communication between a
@@ -384,7 +382,7 @@ Termination is the fact that if we iteratively apply progress to obtain a
 reduction, and apply that reduction, we will eventually end up with a term in
 canonical form.
 We restate its proof here for the sake of completeness, but its wording is
-unchanged.
+unchanged, module references to figures.
 \input{thm-nc-termination}
 
 \section{\nodcap and non-deterministic local choice}
@@ -392,19 +390,20 @@ In \cref{sec:local-choice}, we discussed the non-deterministic local choice
 operator, which is used in several extensions of \piDILL and
 \cp~\cite{atkey2016,caires2014,caires2017}.
 This operator is admissible in \nodcap.
-We can derive the non-deterministic choice \tm{P+Q} over a single channel \tm{x}
-by constructing the following term:
+We can derive the non-deterministic choice \tm{P+Q} by constructing the
+following term, provided that \tm{P} and \tm{Q} only communicate over a single
+channel: 
 \[
   \arraycolsep=0pt
   \tm{
   \begin{array}{lrl}
-    \nu x.&((  & \; \ncCnt{x}{y}{\cpCase{y}{\cpHalt{y}}{P}} \\
-          &\mid& \; \ncCnt{x}{z}{\cpCase{z}{\cpHalt{z}}{Q}} \; )\\
+    \nu x.&((  & \; \ncCnt{x}{y}{\cpCase{y}{P}{\cpHalt{y}}} \\
+          &\mid& \; \ncCnt{x}{z}{\cpCase{z}{Q}{\cpHalt{z}}} \; )\\
           &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{\cpInl{y}{\cpWait{y}{\cpInr{z}{\cpLink{z}{w}}}}}} \; )
   \end{array}
   }
 \]
-The term is a cut between two processes. Let's unpack what each side is doing. 
+The term is a cut between two processes. Let us unpack what each side is doing. 
 On the left-hand side, we have a pool with both \tm{P} and \tm{Q} as clients,
 wrapped in a case statement which allows the process they are interacting with
 to choose whether or not they want them to run. Each of these processes is
@@ -508,6 +507,12 @@ While there is a certain amount of overhead involved in this encoding, it scales
 linearly in terms of the number of processes.
 The reverse---encoding the non-determinism present in \nodcap using
 non-deterministic local choice---scales exponentially, as with the \textpi-calculus.
+
+
+\wen{Add a discussion of non-determinism in \nodcap versus non-determinism in
+  the \textpi-calculus. Mention at least that terms which have clients who are
+  and who aren't blocked on an external communication will prefer those clients
+  who aren't blocked when non-deterministically reducing.}
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:

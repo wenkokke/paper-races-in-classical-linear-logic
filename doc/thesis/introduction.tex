@@ -37,7 +37,7 @@ While John or Mary may not like all of the outcomes, it is the store which is
 responsible for implementing the online delivery service, and the store is happy
 with either outcome. Thus, the above is an interaction we would like to be able to
 model.
-\\[\baselineskip]\noindent
+
 Now consider another scenario, which takes place \emph{after} John has already
 bought the cake:
 \begin{quote}
@@ -67,7 +67,7 @@ exchange to be made, this interaction is desired by \emph{neither}. Thus, the
 above is an interaction we would \emph{somehow} like to exclude.
 
 %% - Overview:
-Session types~\cite{honda1993} can provide a static guarantee that concurrent
+Session types~\cite{honda1993} statically guarantee that concurrent
 programs, such as those above, respect communication protocols.
 Session-typed calculi with logical foundations, such as
 \piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a
@@ -87,6 +87,8 @@ such as the web store, as well as other formal characterizations of
 non-determinism, such as non-deterministic choice.  However, \nodcap does not
 lose the metatheoretical benefits of CP: we show that it enjoys termination and
 deadlock-freedom.
+
+\wen{Outline the structure of the dissertation.}
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
