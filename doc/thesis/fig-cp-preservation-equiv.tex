@@ -1,6 +1,24 @@
 \begin{figure*}[ht]
   \centering
   \begin{tabular}{ll}
+    \cpEquivLinkComm
+    &
+      \begin{prooftree*}
+        \AXC{}
+        \NOM{Ax}
+        \UIC{$\seq[{ \cpLink{x}{y} }]{ \tmty{x}{A}, \tmty{y}{A^\bot} }$}
+      \end{prooftree*}
+    \\[30pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{}
+        \NOM{Ax}
+        \UIC{$\seq[{ \cpLink{y}{x} }]{ \tmty{y}{A^\bot}, \tmty{x}{A^{\bot\bot}} }$}
+        \NOM{\cref{thm:cp-negation-involutive}}
+        \UIC{$\seq[{ \cpLink{y}{x} }]{ \tmty{y}{A^\bot}, \tmty{x}{A} }$}
+      \end{prooftree*}
+    \\[40pt]
     \cpEquivCutComm
     &
       \begin{prooftree*}

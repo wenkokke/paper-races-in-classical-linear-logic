@@ -18,7 +18,7 @@ logic, and do not correspond to any reductions in the \textpi-calculus.
 strategy, which more closely resembles that of the \textpi-calculus, we can
 ensure that the commutative conversions are always applied \emph{last}.
 That is to say, they define two separate reduction relations:
-$\longrightarrow_{C}$ for \cpRedAxCut1, \cpRedAxCut2 and \textbeta-reductions,
+$\longrightarrow_{C}$ for \cpRedAxCut1 and \textbeta-reductions,
 and $\longrightarrow_{CC}$ for commutative conversions, and show that any
 sequence of reductions is equivalent to one of the form:
 \[
@@ -47,7 +47,7 @@ In \cref{sec:cp-progress}, we will give a new proof of progress, which follows
 
 \section{Canonical forms}\label{sec:cp-canonical-forms}
 The reduction strategy described by \citeauthor{lindley2015semantics} applies
-\cpRedAxCut1, \cpRedAxCut2, and \textbeta-reductions until the process blocks on
+\cpRedAxCut1 and \textbeta-reductions until the process blocks on
 one or more external communications, and then applies the commuting conversions
 to bubble one of those external communications to the front of the term.
 This allows them to define canonical forms as any term which is not a cut.
@@ -86,6 +86,8 @@ reduction can take place. For \rcp, these consist solely of cuts.
 \input{def-cp-evaluation-contexts}
 We can prove that we can push any cut downwards under an evaluation context, as
 long as the channel it binds does not occur in the context itself.
+In proofs throughout this dissertation, we will leave uses of
+\cref{thm:cp-preservation-equiv} and \cref{thm:cp-preservation} implicit.
 \input{thm-cp-display-cut-1}
 And vice versa. However, we will not use the following lemma in this
 dissertation, and leave its proof as an exercise to the reader.
