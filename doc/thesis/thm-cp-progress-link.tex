@@ -1,11 +1,9 @@
 \begin{lemmaB}\label{thm:cp-progress-link}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
   link \tm{\cpLink{x}{y}}, then either \tm{x} and \tm{y} are not bound by
-  \tm{G}, or there exist \tm{H}, \tm{H'} and \tm{Q} such that either
+  \tm{G}, or there exist \tm{H}, \tm{H'} and \tm{Q} such that
   $\tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
-  \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}$ or 
-  $\tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
-  \tm{\cpPlug{H}{\cpCut{y}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}$. 
+  \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}$. 
 \end{lemmaB}
 \begin{proof}
   By induction on the structure of \tm{G}.

@@ -1,10 +1,10 @@
-\begin{lemma}[\cpEquivCutAssNoParen2]\label{thm:cp-cut-assoc2}
+\begin{lemmaB}[\cpEquivCutAssNoParen2]\label{thm:cp-cut-assoc2}
   If $\tm{x}\not\in\tm{R}$ and $\tm{y}\not\in\tm{P}$, then 
   \(
     \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}} \equiv
     \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
   \).
-\end{lemma}
+\end{lemmaB}
   \begin{proof}
     \begin{align*}
       \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}} &\equiv \qquad \text{by \cpEquivCutComm} \\

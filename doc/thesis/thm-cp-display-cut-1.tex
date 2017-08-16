@@ -15,7 +15,7 @@
           \tm{\cpCut{x}{\cpCut{y}{\cpPlug{G}{P}}{R}}{Q}} & \equiv \quad \text{by \cpEquivCutComm}\\
           \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
           \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by \cpEquivCutComm}\\
-          \tm{\cpCut{y}{\cpCut{x}{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis and \cref{thm:cp-preservation-equiv}}\\ 
+          \tm{\cpCut{y}{\cpCut{x}{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\ 
           \tm{\cpCut{y}{\cpPlug{G}{\cpCut{x}{P}{Q}}}{R}} &
         \end{array}
       \]
@@ -24,7 +24,7 @@
       \[\!
         \begin{array}{ll}
           \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
-          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis and \cref{thm:cp-preservation-equiv}}\\
+          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis}\\
           \tm{\cpCut{y}{R}{\cpPlug{G}{\cpCut{x}{P}{Q}}}}
         \end{array}
       \]
