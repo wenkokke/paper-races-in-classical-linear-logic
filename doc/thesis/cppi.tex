@@ -2,11 +2,8 @@
 \cp has a tight correspondence with classical linear logic.
 This has many advantages.
 It is deadlock free and terminating, and as seen in \cref{sec:cp-properties},
-the proofs of its meta-theoretical properties are brief and aesthetically
-pleasing.
-
-The price paid for this is a somewhat weaker correspondence with the
-\textpi-calculus.
+the proofs of its meta-theoretical properties are concise and elegant.
+The price paid for this is a weaker correspondence with the \textpi-calculus.
 It would be useful to be able to think of \cp as a type system for the
 \textpi-calculus.
 However, as it stands there are many differences between these systems.
@@ -14,31 +11,31 @@ Most prominent of these are the commutative conversions. These reduction rules
 are taken directly from the proof normalisation procedure of classical linear
 logic, and do not correspond to any reductions in the \textpi-calculus.
 
+\wen{Mention the other differences, e.g.\ case instead of input-guarded choice,
+  name restriction and parallel composition as a single construct, etc.}
+
 \citenat{lindley2015semantics} observed that, using a different reduction
 strategy, which more closely resembles that of the \textpi-calculus, we can
 ensure that the commutative conversions are always applied \emph{last}.
 That is to say, they define two separate reduction relations:
 $\longrightarrow_{C}$ for \cpRedAxCut1, \cpRedAxCut2 and \textbeta-reductions,
 and $\longrightarrow_{CC}$ for commutative conversions, and show that any
-sequence of reductions has the following form:
+sequence of reductions is equivalent to one of the form:
 \[
   P \longrightarrow_{C} \dots \longrightarrow_{C} Q \longrightarrow_{CC} \dots \longrightarrow_{CC} R
 \]
 In this dissertation, we use a reduction strategy which follows
-\citenat{lindley2015semantics}, but opts to drop the suffix of commutative
+\citenat{lindley2015semantics}, but drops the suffix of commutative
 conversions.
-As a consequence of this, we can drop the commutative conversions from our
-reduction system, which therefore more tightly corresponds to that of the
-\textpi-calculus. 
-A consequence of dropping the commutative conversions is that the reduction
-system as a whole becomes deterministic.
+Consequently, we can drop the commutative conversions from our reduction system,
+which therefore more tightly corresponds to that of the \textpi-calculus.
 The price we pay for this is a weaker correspondence to classical linear logic.
 This shows in our notion of canonical form, which is weaker, and in our proof of
 progress, which is much more involved.
 
-For clarity's sake: whenever we refer to \cp or \rcp, for the remainder of this
-dissertation, we refer to the variant \emph{without} commutative conversions,
-i.e.\ which uses the following definition of term reduction.
+Whenever we refer to \cp or \rcp, for the remainder of this dissertation, we
+refer to the variant \emph{without} commutative conversions, i.e.\ which uses
+the following definition of term reduction.
 \input{def-cp-term-reduction-2}
 
 This chapter will proceed as follows.
@@ -56,6 +53,10 @@ to bubble one of those external communications to the front of the term.
 This allows them to define canonical forms as any term which is not a cut.
 For us, terms in canonical form will be those terms which are blocked on an
 external communication, before any commutative conversions are applied.
+\wen{
+  Say something about how I'm making explicit the implicit motivation of
+  \citeauthor{lindley2015semantics}.
+}
 In this section, we will describe the form of such terms.
 
 We have informally used the phrase ``act on'' in previous sections. It is time
@@ -78,8 +79,6 @@ We can now define what it means for a term to be in canonical form. Intuitively,
 a process is in canonical form either when there is no top-level cut, or when it
 is blocked on an external communication. We state this formally as follows:
 \input{def-cp-canonical-forms}
-This definition is adequate, as it matches our intuition. We will see this in
-our proof for \cref{thm:cp-progress-3}.
 
 \section{Evaluation contexts}\label{sec:cp-evaluation-contexts}
 Intuitively, evaluation contexts are one-holed term contexts under which
@@ -103,13 +102,13 @@ Specifically, if a process under an evaluation prefix is a link, we can rewrite
 the entire process in such a way as to reveal the cut which introduced one of
 the channels acted upon by that link.
 \input{thm-cp-progress-link}
-And if two processes under an evaluation prefix act on the same channel, then we
-can rewrite the entire process in such a way as to reveal the cut which
-introduced that channel. 
+If two processes under an evaluation prefix act on the same channel, then we
+can rewrite the entire process in such a way as to reveal the cut that 
+introduced the channel. 
 \input{thm-cp-progress-beta}
 
 Finally, we are ready to prove progress.
-Note that in proofs throughout this dissertation, we will leave uses of
+In proofs throughout this dissertation, we will leave uses of
 \cpRedGammaEquiv and the congruence rules for reductions implicit. 
 \input{thm-cp-progress-3}
 The proof of progress described in this section is novel, though it takes
@@ -137,8 +136,8 @@ We can model this interaction in \cp as the following term, assuming \alice,
 \john, and \mary are three processes representing Alice, John and Mary, and
 \bankjohn and \bankmary are two processes representing John and Mary's
 respective banks.
-Note that, in an abuse of notation, we will adopt an ``anti-Barendregt''
-convention for our examples.
+To simplify notation, we will adopt an ``anti-Barendregt'' convention in our
+examples. 
 This means that if two channel names will be identified after a reduction, we
 will preemptively give them the same name, for instance, \tm{z} and \tm{w} in
 the example below. 
@@ -150,7 +149,7 @@ the example below.
 \end{align*}
 Note that in the above interaction, no \textbeta-reduction rule applies
 \emph{immediately}. This means that using the reduction strategy described by
-\citenat{wadler2012}, we will apply a commutative conversion. 
+\citenat{wadler2012}, we apply a commutative conversion. 
 \begin{align*}
   \begin{array}{lll}
     \tm{\cpCut{x}{\cpCut{y}{
@@ -221,6 +220,9 @@ rewrite using structural congruence.
 Note that the second reduction sequence is a \emph{valid} reduction sequence in
 the either reduction system---it is simply not the sequence \emph{chosen} by the
 reduction strategy described by \citenat{wadler2012}.
+
+\wen{%
+  Explain that CP \emph{barely} uses its structural congruence in its reduction strategy.}
 
 %%% Local Variables:
 %%% TeX-master: "main"

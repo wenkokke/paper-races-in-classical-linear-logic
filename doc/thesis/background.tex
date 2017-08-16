@@ -1,32 +1,43 @@
 %% Background
-\chapter{Background}\label{sec:background}
-\section{Classical Processes}\label{sec:cp}
+\chapter{Background}
+\label{sec:background}
+\wen{
+  In \cref{sec:cp}, we will discuss classical processes~\cite[CP]{wadler2012},
+  the process calculus which we are extending. 
+  In \cref{sec:local-choice}, we will discuss some existing work which extends
+  logic-inspired session typed process calculi with non-determinism.
+}
+
+\section{Classical Processes}
+\label{sec:cp}
 In this section, we will discuss a rudimentary subset of the typed process
 calculus \cp~\cite{wadler2012,lindley2015semantics}, which we will refer to as
 \rcp. 
-We have chosen to discuss only a subset in order to keep our later discussion of
-our extension to \cp in \cref{sec:main} as simple as possible.
-\rcp is the subset which corresponds to rudimentary linear
+We have chosen to discuss only a subset in order to keep the discussion of
+\nodcap in \cref{sec:main} as simple as possible.
+\rcp is the subset of \cp which corresponds to rudimentary linear
 logic~\cite[RLL]{girard1992}, also known as multiplicative-applicative linear
 logic. 
-However, we foresee no problems in extending the proofs from \cref{sec:main} to
+We foresee no problems in extending the proofs from \cref{sec:main} to
 cover the remaining features of \cp, polymophism and the exponentials $\ty{!A}$
 and $\ty{?A}$. 
 
-This chapter will proceed as follows.
-In \cref{sec:cp-terms-and-types}, we will discuss the terms, the structural
+This chapter proceeds as follows.
+In \cref{sec:cp-terms-and-types}, we introduce the terms, the structural
 congruence, and the types of \rcp. 
 In \cref{sec:cp-multiplicatives,sec:cp-additives,sec:cp-duality,sec:cp-commutative-conversions},
-we will discuss the terms and their corresponding types, in small groups,
+we discuss the terms and their corresponding types, in small groups,
 together with their typing and reduction rules.
-In \cref{sec:cp-properties}, we will prove preservation, progress and
+In \cref{sec:cp-properties}, we prove preservation, progress and
 termination for \rcp.
 
-\subsection{Terms and types}\label{sec:cp-terms-and-types}
+\subsection{Terms and types}
+\label{sec:cp-terms-and-types}
 The term language for \rcp is a variant of the
 \textpi-calculus~\cite{milner1992b}.
 Its terms are defined by the following grammar:
 \input{def-cp-terms}
+The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names.
 The construct \tm{\cpLink{x}{y}} links two
 channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on
 \tm{x} to \tm{y} and vice versa.
@@ -36,9 +47,8 @@ Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
 \tm{Q}.
 In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets denote
 input, square brackets denote output. 
-We use bound output~\cite{sangiorgi1996}.
-This means that unlike in the \textpi-calculus, both input and output bind a new
-name.
+We use bound output~\cite{sangiorgi1996}, meaning that both input and output
+bind a new name. 
 In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
 In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is only bound in \tm{P}, while
 \tm{x} is only bound in \tm{Q}.
@@ -48,31 +58,30 @@ parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
 It is defined as follows:
 \input{def-cp-equiv}
 We do not add an axiom for \cpEquivCutAss2, as it follows from
-\cref{def:cp-equiv}, see~\cref{thm:cp-cut-assoc2}.
-Note that throughout this dissertation, we will leave uses of the transitivity
-and congruence rules implicit.
+\cref{def:cp-equiv}---see~\cref{thm:cp-cut-assoc2}.
+Throughout this dissertation, we will leave uses of the transitivity and
+congruence rules implicit.
 \input{thm-cp-cut-assoc2}
 Furthermore, structural congruence is a symmetric relation.
 \input{thm-cp-symmetry}
 %
 Channels in \rcp are typed using a session type system which corresponds to RLL,
 the multiplicative, additive fragment of linear logic.
-These are defined using the following grammar:
+The types are defined by the following grammar:
 \input{def-cp-types}
 Duality plays a crucial role in both linear logic and session types.
 In \rcp, the two endpoints of a channel are assigned dual types.
 This ensures that, for instance, whenever a process \emph{sends} across a
 channel, the process on the other end of that channel is waiting to
 \emph{receive}.
-Each type \ty{A} has a dual, written \ty{A^\bot}, which is defined as follows:
+Each type \ty{A} has a dual, written \ty{A^\bot}.
 \input{def-cp-negation}
 Duality is an involutive function.
 \input{thm-cp-negation-involutive}
 %
-Environments associate channels with types. They are defined as follows:
+Environments associate channels with types.
 \input{def-cp-environments}
-Typing judgements associate processes with collections of typed channels. They
-are defined as follows:
+Typing judgements associate processes with collections of typed channels.
 \input{def-cp-typing-judgement}
 \input{fig-cp-typing-judgement}
 Reductions relate processes with their reduced forms.
@@ -90,7 +99,7 @@ interdependence:
 \begin{itemize}
 \item
   A channel of type \ty{A \tens B} represents a pair of channels, which
-  communicate with two \emph{independent} processes---that is to say, two
+  communicate with two independent processes---that is to say, two
   processes who share no channels.
   A process acting on a channel of type \ty{A \tens B} will send one endpoint of
   a fresh channel, and then split into a pair of independent processes.
@@ -123,6 +132,8 @@ implements the behaviour outlined above:
   \Longrightarrow
   \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
 \]
+The function \tm{\cpSub{x}{y}{P}} denotes the substitution of the name \tm{x}
+for the name \tm{y} in the term \tm{P}.
 %
 The rules for the multiplicative units ($\ty{\one}, \ty{\bot}$) follow the same
 pattern, except for the nullary instead of the binary case:
@@ -132,11 +143,11 @@ pattern, except for the nullary instead of the binary case:
   processes, and thus must halt. Furthermore, it must be able to split its
   environment between zero processes, and thus its environment must be empty.
 \item
-  A term constructed by $(\bot)$, on the other hand, uses a single process,
-  which is not further restricted.
+  A term constructed by $(\bot)$, on the other hand, consists of a single
+  process, which is not further restricted.
 \end{itemize}
-Note that the rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and
-receive operation, such as those found in the polyadic \textpi-calculus.
+The rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and receive
+operation, such as those found in the polyadic \textpi-calculus. 
 \begin{center}
   \cpInfOne
   \cpInfBot
@@ -162,15 +173,15 @@ The additives ($\ty{\plus}, \ty{\with}$) deal with choice:
   and then offers an interaction of either type \ty{A} or \ty{B},
   correspondingly.
 \end{itemize}
-Note that, in essence, the additive operations implement the sending and
-receiving of a single bit of information, \tm{inl} or \tm{inr}, and branching
-based on the value of that bit.
-The rule for constructing a process which sends \tm{inr}, $(\plus_2)$, has been
-omitted, but can be found in~\cref{fig:cp-typing-judgement}.
+In essence, the additive operations implement sending and receiving of a single
+bit of information (\tm{inl} or \tm{inr}) and branching based on the value of
+that bit. 
 \begin{center}
   \cpInfPlus1
   \cpInfWith
 \end{center}
+The rule for constructing a process which sends \tm{inr}, $(\plus_2)$, has been
+omitted, but can be found in~\cref{fig:cp-typing-judgement}.
 The \textbeta-reduction rules for terms introduced by $(\plus_1)$, $(\plus_2)$
 and $(\with)$ implement the behaviour outlined above.
 \[
@@ -209,7 +220,8 @@ As there is no way to construct a process of type \ty{\nil}, there is no
 reduction rule for the additive units.
 
 
-\subsection{Structural rules and duality}\label{sec:cp-duality}
+\subsection{Structural rules and duality}
+\label{sec:cp-duality}
 Duality plays a crucial role in session type systems.
 In~\cref{sec:cp-additives}, we saw that duality ensures a process offering a choice
 is always matched with a process making a choice.
@@ -217,6 +229,9 @@ In~\cref{sec:cp-multiplicatives}, we saw that it is also crucial to deadlock fre
 as it ensures that, for instance, a process which uses communication on \tm{x}
 to decide what to send on \tm{y} is matched with a pair of independent processes
 on \tm{x} and \tm{y}, preventing circular dependencies.
+
+\wen{Add a note to \cref{sec:cp-multiplicatives} which explains the relationship
+with deadlock freedom.}
 
 Duality appears in the typing rules for two \rcp term constructs.
 Forwarding, \tm{\cpLink{x}{y}}, connects two dual channels with dual endpoints,
@@ -243,7 +258,8 @@ Note that we can do this \emph{solely} because \rcp implements a binary session
 type system, meaning that each communication has only two participants, and
 therefore we know that no other process is communicating on \tm{x}.
 
-\subsection{Commutative conversions}\label{sec:cp-commutative-conversions}
+\subsection{Commutative conversions}
+\label{sec:cp-commutative-conversions}
 The commutative conversions are not reductions typically found in the
 \textpi-calculus.
 Instead, they are based on permutation cuts, which are commonly used in logic to
@@ -254,8 +270,12 @@ When viewed from the perspective of process calculus, they allow us to pull
 actions upwards, past unrelated cuts.
 The commutative conversion are defined in \cref{fig:cp-term-reduction-2}.
 
-\subsection{Example}\label{sec:cp-example}
-The multiplicatives are largely responsible for structuring communication, and
+\wen{Write bit on why Phil doesn't use structural congruence for anything,
+  because he uses commutative conversions.}
+
+\subsection{Example}
+\label{sec:cp-example}
+The multiplicatives are responsible for structuring communication, and
 it is this structure which rules out deadlocked interactions.
 Let us go back to our example of a deadlocked interaction from
 \cref{sec:introduction}:
@@ -268,16 +288,13 @@ Let us go back to our example of a deadlocked interaction from
 \]
 
 If we want to translate this interaction to \cp, we run into a problem: there is
-no \emph{plain} sending construct in \cp, we only have \tm{\cpSend{x}{y}{P}{Q}},
+no \emph{plain} sending construct in \cp---we only have \tm{\cpSend{x}{y}{P}{Q}},
 which requires that the remainder of the interaction is split in two independent
 processes.
-This enforces a certain structure on the program: either the process
-representing John or the process representing Mary will have to split in two,
-and independently be able to provide whatever we wish to send.
-
-To put it simply: John will already have to have the cake in his hands, or Mary
-will already have to have the money in the bank.
-We model the second scenario below, assuming \john, \mary and \bank are three
+This enforces a certain structure on the program. Either John will already have
+to have the cake in his hands, or Mary will already have to have the money in
+the bank.
+We model the second scenario below, assuming \john, \mary and \bank are
 processes modeling John, Mary, and Mary's bank, and \cake and \money are the
 types of two channels which give access to a slice of cake and appropriate
 payment.
@@ -300,7 +317,8 @@ The resulting process reduces, as expected:
 \]
 
 
-\subsection{Properties of \rcp}\label{sec:cp-properties}
+\subsection{Properties of \rcp}
+\label{sec:cp-properties}
 In this section, we will prove three important properties of \rcp, namely
 preservation, progress and termination.
 
@@ -347,7 +365,8 @@ processes'', and his choice is analogous to a common practice in the
   waiting for an external communication to come in. It is simply eager a form of
   evaluation.}
 
-\subsubsection{Termination}\label{sec:cp-termination}
+\subsubsection{Termination}
+\label{sec:cp-termination}
 Termination is the fact that if we iteratively apply progress to obtain a
 reduction, and apply that reduction, we will eventually end up with a term in
 canonical form.
@@ -355,7 +374,8 @@ Its proof is quite simple, owing to the fact that our reduction rules were all
 inspired by cut reductions from classical linear logic.
 \input{thm-cp-termination}
 
-\section{Non-determinism, logic, and session types}\label{sec:local-choice}
+\section{Non-determinism, logic, and session types}
+\label{sec:local-choice}
 In recent work, we have seen the extension of \piDILL and \cp with operators for
 non-deterministic behaviour~\cite{atkey2016,caires2014,caires2017}.
 These extensions all implement an operator known as non-deterministic local
@@ -407,7 +427,7 @@ input-guarded choice:
 \]
 However, there are many non-deterministic processes in the \textpi-calculus
 which are awkward to encode using non-deterministic local choice.
-Let's look at our example:
+Let us look at our example:
 \[
   \begin{array}{c}
     \tm{(\piPar{%
@@ -426,8 +446,8 @@ Let's look at our example:
   \end{array}
 \]
 This non-deterministic interaction involves communication. If we wanted to write
-down a process which reduced to the same possible processes using
-non-deterministic local choice, we would have to write the following process:
+down a process which reduced to the same result using non-deterministic local
+choice, we would have to write the following process: 
 \[
   \begin{array}{c}
     \tm{
@@ -448,7 +468,7 @@ non-deterministic local choice, we would have to write the following process:
 In essence, instead of modelling a non-deterministic interaction, we are
 enumerating the outcomes of such an interaction.
 This means non-deterministic local choice does not adequately model
-non-determinism the way the \textpi-calculus does.
+non-determinism in the way the \textpi-calculus does.
 %
 Enumerating all possible outcomes becomes worse the more processes are involved
 in an interaction. Imagine a scenario the following scenario:
@@ -465,39 +485,41 @@ and \sliceofcake, \doughnut, and \nope are three channels giving access to a
 slice of cake, a so-so doughnut, and disappointment, respectively.
 \begin{center}
   \makebox[\textwidth][c]{\ensuremath{
-  \begin{array}{c}
-    \tm{(\piPar{%
-    \piSend{x}{\sliceofcake}{\piSend{x}{\doughnut}{\piSend{x}{\nope}{\store}}}
-    }{%
-    \piPar{\piRecv{x}{y}{\alice}}{\piPar{\piRecv{x}{z}{\john}}{\piRecv{x}{w}{\mary}}
-    })}}
-    \\[1ex]
-    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
-    \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
-    \;
-    \text{or}
-    \;
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
-    \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
-    \;
-    \text{or}
-    \;
-    \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
-    \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
-    \;
-    \text{or}
-    \;
-    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
-  \end{array}}}
+      \begin{array}{c}
+        \tm{(\piPar{%
+        \piSend{x}{\sliceofcake}{\piSend{x}{\doughnut}{\piSend{x}{\nope}{\store}}}
+        }{%
+        \piPar{\piRecv{x}{y}{\alice}}{\piPar{\piRecv{x}{z}{\john}}{\piRecv{x}{w}{\mary}}
+        })}}
+        \\[1ex]
+        \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+        \\[1ex]
+        \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
+        \;
+        \text{or}
+        \;
+        \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
+        \\[1ex]
+        \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
+        \;
+        \text{or}
+        \;
+        \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
+        \\[1ex]
+        \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
+        \;
+        \text{or}
+        \;
+        \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
+        \\[1ex]
+      \end{array}
+    }}
 \end{center}
 With the addition of one process, Alice, we have increased the number of possible
 outcomes enormously! In general, the number of outcomes for these types of
 scenarios is $n!$, where $n$ is the number of processes. This means that if we
 wish to translate any non-deterministic process to one using non-deterministic
-local choice, we can expect an exponential growth in the size of the term!
+local choice, we can expect a factorial growth in the size of the term!
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:
