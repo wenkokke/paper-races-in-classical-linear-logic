@@ -1,9 +1,21 @@
 \chapter{Conclusions and future work}\label{sec:discussion}
+We have presented \nodcap, an extension of \cp~\cite{wadler2012} which permits
+non-deterministic communication. 
+We have given proofs for preservation, progress, and termination for the term
+reduction system of \nodcap.
+We have shown that we can define non-deterministic local choice in \nodcap.
 
-\wen{
-  What to discuss? I've done the things I've promised. I can see the following
-  valuable points:
-}
+We have also presented an alternative reduction system for \cp, based on the
+work by \citenat{lindley2015semantics}, which more closely resembles reduction
+in the \textpi-calculus.
+
+\section{Mechanisation of \nodcap}
+We have mechanised a variant of \nodcap, which has the same terms and types, but
+has a different reduction system for the non-deterministic terms.
+While the existence of this mechanisation gives us some confidence in the
+correctness of the proofs given in this dissertation, and shows that the type
+system of \nodcap corresponds to a sound logical system, it would be worthwhile
+to extend this mechanisation to cover the work described in this dissertation.
 
 \section{Relation to bounded linear logic}
 We mentioned in \cref{sec:introduction} that \nodcap was inspired by
