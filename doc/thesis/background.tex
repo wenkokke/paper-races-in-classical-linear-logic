@@ -1,12 +1,6 @@
 %% Background
 \chapter{Background}
 \label{sec:background}
-\wen{
-  In \cref{sec:cp}, we will discuss classical processes~\cite[CP]{wadler2012},
-  the process calculus which we are extending. 
-  In \cref{sec:local-choice}, we will discuss some existing work which extends
-  logic-inspired session typed process calculi with non-determinism.
-}
 
 \section{Classical Processes}
 \label{sec:cp}
@@ -25,7 +19,7 @@ and $\ty{?A}$.
 This chapter proceeds as follows.
 In \cref{sec:cp-terms-and-types}, we introduce the terms, the structural
 congruence, and the types of \rcp. 
-In \cref{sec:cp-multiplicatives,sec:cp-additives,sec:cp-duality,sec:cp-commutative-conversions},
+In \cref{sec:cp-multiplicatives,sec:cp-additives,sec:cp-duality,sec:cp-commuting-conversions}, 
 we discuss the terms and their corresponding types, in small groups,
 together with their typing and reduction rules.
 In \cref{sec:cp-properties}, we prove preservation, progress and
@@ -57,8 +51,13 @@ Terms in \rcp are identified up to structural congruence, which states that
 parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
 It is defined as follows:
 \input{def-cp-equiv}
+We deviate from the original presentation of \cp here, as the structural
+congruence defined by \citenat{wadler2012} does not include \cpEquivLinkComm.
+We include it here because it fits well with our notion of links, and it
+simplifies our reduction system and the proofs of meta-theoretical properties of
+\cp. 
 We do not add an axiom for \cpEquivCutAss2, as it follows from
-\cref{def:cp-equiv}---see~\cref{thm:cp-cut-assoc2}.
+\cref{def:cp-equiv}.
 Throughout this dissertation, we will leave uses of the transitivity and
 congruence rules implicit.
 \input{thm-cp-cut-assoc2}
@@ -166,22 +165,22 @@ The additives ($\ty{\plus}, \ty{\with}$) deal with choice:
 \begin{itemize}
 \item
   A process acting on a channel of type \ty{A \plus B} either sends the value
-  \tm{inl} to select an interaction of type \ty{A} or the value \tm{inr} to
-  select one of type \ty{B}.
+  \tm{\text{inl}} to select an interaction of type \ty{A} or the value
+  \tm{\text{inr}} to select one of type \ty{B}. 
 \item
   A process acting on a channel of type \ty{A \with B} receives such a value,
   and then offers an interaction of either type \ty{A} or \ty{B},
   correspondingly.
 \end{itemize}
 In essence, the additive operations implement sending and receiving of a single
-bit of information (\tm{inl} or \tm{inr}) and branching based on the value of
-that bit. 
+bit of information (\tm{\text{inl}} or \tm{\text{inr}}) and branching based on
+the value of that bit. 
 \begin{center}
   \cpInfPlus1
   \cpInfWith
 \end{center}
-The rule for constructing a process which sends \tm{inr}, $(\plus_2)$, has been
-omitted, but can be found in~\cref{fig:cp-typing-judgement}.
+The rule for constructing a process which sends \tm{\text{inr}}, $(\plus_2)$,
+has been omitted, but can be found in~\cref{fig:cp-typing-judgement}.
 The \textbeta-reduction rules for terms introduced by $(\plus_1)$, $(\plus_2)$
 and $(\with)$ implement the behaviour outlined above.
 \[
@@ -225,13 +224,10 @@ reduction rule for the additive units.
 Duality plays a crucial role in session type systems.
 In~\cref{sec:cp-additives}, we saw that duality ensures a process offering a choice
 is always matched with a process making a choice.
-In~\cref{sec:cp-multiplicatives}, we saw that it is also crucial to deadlock freedom,
-as it ensures that, for instance, a process which uses communication on \tm{x}
-to decide what to send on \tm{y} is matched with a pair of independent processes
-on \tm{x} and \tm{y}, preventing circular dependencies.
-
-\wen{Add a note to \cref{sec:cp-multiplicatives} which explains the relationship
-with deadlock freedom.}
+In~\cref{sec:cp-multiplicatives}, we saw that it also ensures that, for instance
+a process which uses communication on \tm{x} to decide what to send on \tm{y} is
+matched with a pair of independent processes on \tm{x} and \tm{y}, a property
+which is crucial to deadlock freedom, as it prevents circular dependencies. 
 
 Duality appears in the typing rules for two \rcp term constructs.
 Forwarding, \tm{\cpLink{x}{y}}, connects two dual channels with dual endpoints,
@@ -248,19 +244,20 @@ meant to communicate on \tm{x}, \tm{x} is forwarding to \tm{y}, and nobody else
 is listening on \tm{x}, then the process might as well start communicating on
 \tm{y}.
 \[
-  \begin{array}{c}
-    \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
-%   \\
-%   \tm{\cpCut{x}{\cpLink{x}{w}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}}  
-  \end{array}
+  \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
 \]
-Note that we can do this \emph{solely} because \rcp implements a binary session
-type system, meaning that each communication has only two participants, and
-therefore we know that no other process is communicating on \tm{x}.
+We can do this because \rcp implements a binary session type system, meaning
+that each communication has only two participants, and therefore we know that no
+other process is communicating on \tm{x}.
 
-\subsection{Commutative conversions}
-\label{sec:cp-commutative-conversions}
-The commutative conversions are not reductions typically found in the
+\citenat{wadler2012} has two reduction rules which deal with links. The first of
+these can be seen above, and the second of these deals with the case in which
+the link is flipped.
+As we consider links commutative, this rule is derivable.
+
+\subsection{Commuting conversions}
+\label{sec:cp-commuting-conversions}
+The commuting conversions are not reductions typically found in the
 \textpi-calculus.
 Instead, they are based on permutation cuts, which are commonly used in logic to
 define a procedure for cut elimination.
@@ -268,10 +265,7 @@ These cut elimination steps push a cut deeper into a term, past unrelated
 inference rules.
 When viewed from the perspective of process calculus, they allow us to pull
 actions upwards, past unrelated cuts.
-The commutative conversion are defined in \cref{fig:cp-term-reduction-2}.
-
-\wen{Write bit on why Phil doesn't use structural congruence for anything,
-  because he uses commutative conversions.}
+The commuting conversion are defined in \cref{fig:cp-term-reduction-2}.
 
 \subsection{Example}
 \label{sec:cp-example}
@@ -326,9 +320,12 @@ preservation, progress and termination.
 Preservation is the fact that term reduction preserves typing. In order to prove
 this, we will first need to prove that structural congruence preserves typing.
 \input{thm-cp-preservation-equiv}
+%
 \input{fig-cp-preservation-equiv}
+%
 Then, we can prove preservation.
 \input{thm-cp-preservation}
+%
 \input{fig-cp-preservation-1}
 \input{fig-cp-preservation-2}
 
@@ -355,15 +352,11 @@ because ``such rules do not correspond well to our notion of computation on
 processes'', and his choice is analogous to a common practice in the
 \textlambda-calculus to not allow reduction under lambdas.
 
-\wen{Perhaps, however, it would not be so odd to allow these reductions in the
-  context of \cp, as the rigid structure of communication disallows the strange
-  behaviours which could surface if we were to allow such reductions in the
-  \textpi-calculus. In fact, it does not seem at all unreasonable, when one
-  conceives of the two sides of a parallel composition \tm{\cpCut{x}{P}{Q}} as
-  separate processes, to allow the communication on \tm{x} to happen even when
-  the parent process, e.g.\ \tm{\cpRecv{y}{z}{\cpCut{x}{P}{Q}}}, is still
-  waiting for an external communication to come in. It is simply eager a form of
-  evaluation.}
+It might not be so odd to allow these reductions in the context of \cp.
+If one conceives of the two sides of a parallel composition in
+\tm{\cpRecv{y}{z}{\cpCut{x}{P}{Q}}} as separate processes, both waiting on an
+external communication on \tm{y}, it does not seem odd to allow the
+communication on \tm{x} to happen. It is simply eager a form of evaluation.
 
 \subsubsection{Termination}
 \label{sec:cp-termination}

@@ -1,4 +1,4 @@
-\begin{sidewaysfigure}[hb]
+\begin{sidewaysfigure}[ht]
   \begin{landscape}
     \begin{prooftree}
       \AXC{}
@@ -26,24 +26,19 @@
     \end{prooftree}
     \vspace*{1\baselineskip}
     \begin{prooftree}
-      \AXC{}
-      \SYM{(\one)}
-      \UIC{$\seq[{ \cpHalt{w} }]{ \tmty{w}{\one} }$}
-      \SYM{(\bot)}
       \AXC{$\seq[{ P }]{ \Gamma }$}
       \SYM{(\bot)} 
-      \UIC{$\seq[{ \cpWait{w}{P} }]{ \Gamma, \tmty{w}{\bot} }$}
-      
+      \UIC{$\seq[{ \cpWait{z}{P} }]{ \Gamma, \tmty{z}{\bot} }$}
       \AXC{$\seq[{ P }]{ \Gamma }$}
       \SYM{(\bot)} 
-      \UIC{$\seq[{ \cpWait{y}{P} }]{ \Gamma, \tmty{y}{\bot} }$}
+      \UIC{$\seq[{ \cpWait{z}{P} }]{ \Gamma, \tmty{z}{\bot} }$}
       \SYM{(\with)}
-      \BIC{$\seq[{ \cpCase{y}{\cpWait{y}{P}}{\cpWait{y}{P}} }]{
-          \Gamma, \tmty{y}{\bot\with\bot} }$}
+      \BIC{$\seq[{ \cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}} }]{
+          \Gamma, \tmty{z}{\bot\with\bot} }$}
       \SYM{(\bot)} 
-      \UIC{$\seq[{ \cpWait{y}{\cpCase{y}{\cpWait{y}{P}}{\cpWait{y}{P}}} }]{
-          \Gamma, \tmty{y}{\bot\with\bot}, \tmty{y}{\bot} }$}
-      
+      \UIC{$\seq[{ \cpWait{z}{\cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}}} }]{
+          \Gamma, \tmty{z}{\bot\with\bot}, \tmty{y}{\bot} }$}
+ 
       \AXC{$\seq[{ Q }]{ \Gamma }$}
       \SYM{(\bot)} 
       \UIC{$\seq[{ \cpWait{z}{Q} }]{ \Gamma, \tmty{z}{\bot} }$}

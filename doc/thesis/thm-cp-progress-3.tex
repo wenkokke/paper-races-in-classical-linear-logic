@@ -9,7 +9,7 @@
   is in canonical form. 
   \\
   We consider the maximum evaluation prefix \tm{G} of \tm{P}, such that $\tm{P}
-  = \tm{\cpPlug{G}{P_1 \dots P_{n+1}}}$ and each $P_i$ is an action.
+  = \tm{\cpPlug{G}{P_1 \dots P_{n+1}}}$ and each \tm{P_i} is an action.
   The prefix \tm{G} consists of $n$ cuts, and introduces $n$ channels, but
   composes $n+1$ actions. Therefore, one of the following must be true:
   \begin{itemize}
@@ -21,10 +21,10 @@
         \tm{\cpPlug{G}{P_1 \dots \cpLink{x}{y} \dots P_{n+1}}}
         & \equiv \quad \text{by \cref{thm:cp-progress-link}}
         \\
-        \tm{\cpPlug{H}{\cpCut{z}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}
+        \tm{\cpPlug{E}{\cpCut{z}{\cpPlug{E'}{\cpLink{x}{y}}}{Q}}}
         & \equiv \quad \text{by \cref{thm:cp-display-cut-1}}
         \\
-        \tm{\cpPlug{H}{\cpPlug{H'}{\cpCut{z}{\cpLink{x}{y}}{Q}}}}
+        \tm{\cpPlug{E}{\cpPlug{E'}{\cpCut{z}{\cpLink{x}{y}}{Q}}}}
       \end{array}
     \end{gather*}
     Where $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
@@ -37,14 +37,13 @@
         \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{n+1}}}
         & = \quad \text{by \cref{thm:cp-progress-beta}}
         \\
-        \tm{\cpPlug{G}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
+        \tm{\cpPlug{G}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
         & \equiv \quad \text{by \cref{thm:cp-display-cut-1}} 
         \\
-        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpCut{x}{P_i}{\cpPlug{H_j}{P_j}}}}}
-        & \equiv \quad \text{by \cref{thm:cp-display-cut-1} and
-          \cref{thm:cp-preservation-equiv}} 
+        \tm{\cpPlug{G}{\cpPlug{E_i}{\cpCut{x}{P_i}{\cpPlug{E_j}{P_j}}}}}
+        & \equiv \quad \text{by \cref{thm:cp-display-cut-1}} 
         \\
-        \tm{\cpPlug{G}{\cpPlug{H_i}{\cpPlug{H_j}{\cpCut{x}{P_i}{P_j}}}}} 
+        \tm{\cpPlug{G}{\cpPlug{E_i}{\cpPlug{E_j}{\cpCut{x}{P_i}{P_j}}}}} 
       \end{array}
     \end{gather*}
     We then apply one of the \textbeta-reduction rules.

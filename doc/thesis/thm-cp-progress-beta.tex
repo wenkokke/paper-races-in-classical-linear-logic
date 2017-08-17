@@ -1,10 +1,10 @@
 \begin{lemmaB}\label{thm:cp-progress-beta}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} and
   \tm{P_j}, on different sides of at least one cut, act on the same bound
-  channel \tm{x}, then there exist \tm{H}, \tm{H_i} and \tm{H_j} such that 
+  channel \tm{x}, then there exist \tm{E}, \tm{E_i} and \tm{E_j} such that 
   \(
   \tm{\cpPlug{G}{P_1 \dots P_n}} =
-  \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H_i}{P_i}}{\cpPlug{H_j}{P_j}}}}
+  \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
   \).
 \end{lemmaB}
 \begin{proof}
@@ -14,9 +14,9 @@
     Case \tm{\cpCut{x}{\cpPlug{G'}{P_1\dots P_i\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_j\dots P_n}}}. 
     \\
     \(\arraycolsep=0pt\begin{array}[t]{lll}
-      \text{Let}&\ \tm{H}  &\ :=\ \tm{\Box}, \\
-                &\ \tm{H_i}&\ :=\ \tm{\cpPlug{G'}{P_1\dots P_{i-1},\Box,P_{i+1}\dots P_m}}, \\
-                &\ \tm{H_j}&\ :=\ \tm{\cpPlug{G''}{P_{m+1}\dots P_{j-1},\Box,P_{j+1}\dots P_n}},
+      \text{Let}&\ \tm{E}  &\ :=\ \tm{\Box}, \\
+                &\ \tm{E_i}&\ :=\ \tm{\cpPlug{G'}{P_1\dots P_{i-1},\Box,P_{i+1}\dots P_m}}, \\
+                &\ \tm{E_j}&\ :=\ \tm{\cpPlug{G''}{P_{m+1}\dots P_{j-1},\Box,P_{j+1}\dots P_n}}.
     \end{array}\)
     \\[1ex]
     By reflexivity.
@@ -28,10 +28,10 @@
     Case \tm{\cpCut{y}{\cpPlug{G'}{P_1\dots P_i\dots P_j\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_n}}}. \\
     Case \tm{\cpCut{y}{\cpPlug{G'}{P_1\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_i\dots P_j\dots P_n}}}.
     \\
-    We obtain \tm{H}, \tm{H_1} and \tm{H_2} from the induction hypothesis and
+    We obtain \tm{E}, \tm{E_1} and \tm{E_2} from the induction hypothesis and
     \cref{thm:cp-preservation-equiv}, and then prepend either
     \tm{\cpCut{y}{\Box}{\cpPlug{G''}{P_{m+1}\dots P_n}}} or
-    \tm{\cpCut{y}{\cpPlug{G'}{P_1\dots P_m}}{\Box}} to \tm{H}.
+    \tm{\cpCut{y}{\cpPlug{G'}{P_1\dots P_m}}{\Box}} to \tm{E}.
     The desired equality follows by congruence.
   \end{itemize}
   The case for \tm{\Box} is excluded because $n > 1$.

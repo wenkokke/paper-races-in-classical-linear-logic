@@ -1,9 +1,9 @@
 \begin{definition}[Evaluation contexts]\label{def:cp-evaluation-contexts}
   We define evaluation contexts as:
   \begin{align*}
-    \tm{G}, \tm{H} := \tm{\Box}
-    \mid \tm{\cpCut{x}{G}{P}}
-    \mid \tm{\cpCut{x}{P}{G}}
+    \tm{E} := \tm{\Box}
+    \mid \tm{\cpCut{x}{E}{P}}
+    \mid \tm{\cpCut{x}{P}{E}}
   \end{align*}
 \end{definition}
 \begin{definition}[Plugging]\label{def:cp-evaluation-context-plugging}
@@ -13,11 +13,11 @@
       \tm{\cpPlug{\Box}{R}}            
       & := \; \tm{R}
       \\
-      \tm{\cpPlug{\cpCut{x}{G}{P}}{R}}
-      & := \; \tm{\cpCut{x}{\cpPlug{G}{R}}{P}}
+      \tm{\cpPlug{\cpCut{x}{E}{P}}{R}}
+      & := \; \tm{\cpCut{x}{\cpPlug{E}{R}}{P}}
       \\
-      \tm{\cpPlug{\cpCut{x}{P}{G}}{R}}
-      & := \; \tm{\cpCut{x}{P}{\cpPlug{G}{R}}}
+      \tm{\cpPlug{\cpCut{x}{P}{E}}{R}}
+      & := \; \tm{\cpCut{x}{P}{\cpPlug{E}{R}}}
     \end{array}
   \end{gather*}
 \end{definition}

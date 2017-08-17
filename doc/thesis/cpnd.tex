@@ -67,22 +67,31 @@ We will base our extension on \rcp, a subset of \cp which we introduced in
 \cref{sec:background}.
 We have chosen to do this to keep our discussion as simple as possible.
 Furthermore, as compatibility with the \textpi-calculus is of interest, we will
-use the reduction system without commutative conversions, which we introduced in
+use the reduction system without commuting conversions, which we introduced in
 \cref{sec:cppi}.
 
 This chapter proceeds as follows.
-\wen{I should probably write this bit last.}
+In \cref{sec:nc-terms-and-types}, we introduce the extensions to the terms,
+structural congruence and types of \cp.
+In \cref{sec:nc-typing-clients-and-servers}, we introduce the typing rules for
+\nodcap. 
+In \cref{sec:nc-running-clients-and-servers}, we introduce the reduction rules
+for \nodcap.
+In \cref{sec:nc-properties}, we prove that our extension preserves the
+meta-theoretical of \cp.
+Finally, in \cref{sec:nc-local-choice}, we discuss the relation between
+non-determinism in \nodcap and the non-determinism introduced by the addition of
+non-deterministic local choice.
 
-%% * Terms and types
 \section{Terms and types}\label{sec:nc-terms-and-types}
 Let us return, briefly, to our example.
-\begin{gather*}
+\[
   \tm{(\piPar{%
       \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
     }{%
       \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
     })}
-\end{gather*}
+\]
 In this interaction, we see that the channel \tm{x} is used only as a way to
 connect the various clients, John and Mary, to the store.
 The \emph{real} communication, sending the slice of cake and disappointment,
@@ -130,7 +139,7 @@ track how many clients or server interactions they represent.
 With these new types, duality remains an involutive function.
 \input{thm-nc-negation-involutive}
 
-\section{Typing clients and servers}\label{sec:nc-clients-and-servers}
+\section{Typing clients and servers}\label{sec:nc-typing-clients-and-servers}
 We have to add typing rules to associate our new client and server
 interactions with their types.
 The definition for environments will remain unchanged, but we will extend the
@@ -254,14 +263,14 @@ them.
 \end{prooftree}
 Thus, we complete the typing derivation of our example.
 
-\section{Running clients and servers}
+\section{Running clients and servers}\label{sec:nc-running-clients-and-servers}
 Once we have a client/server interaction, how do we run it? Ideally, we would
 simply use the reduction rule closest to the one used in the \textpi-calculus. 
-\begin{gather*}
+\[
   \reducesto
   {\tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}}
   {\tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
-\end{gather*}
+\]
 However, our case is complicated by the fact that in \tm{\cpCut{x}{P}{Q}} the
 name restriction is an inseparable part of the composition, and therefore has to
 be part of our reduction rule. 
@@ -269,17 +278,17 @@ Because of this, the above reduction can only apply in the singleton case.
 If the client pool contains more than one client, such as in the term below,
 then there is no way to isolate a single client together with the server,
 because \tm{x} occurs in both \tm{\ncCnt{x}{y}{P}} and \tm{\ncCnt{x}{z}{Q}}.
-\begin{gather*}
+\[
   \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{\ncCnt{x}{z}{Q}}}{\ncSrv{x}{w}{R}}}
   \centernot\Longrightarrow
-\end{gather*}
+\]
 Therefore, we add a second reduction rule, which handles communication between a
 one client in a pool of multiple clients and a server.
-\begin{gather*}
+\[
   \reducesto
   {\tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}}
   {\tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}}
-\end{gather*}
+\]
 Lastly, because we have added another form of parallel composition, we add
 another congruence rule, to allow for reduction inside client pools.
 \input{def-nc-term-reduction}
@@ -293,7 +302,52 @@ into one with $m+n$ leaves.
 However, the server process imposes a sequential ordering on its interactions,
 and it is because of this that we have to use list-like elimination rules.
 
-\section{Properties of \nodcap}
+So where does the non-determinism in \nodcap come from? Let us say we have a
+term of the following form:
+\[
+  \tm{
+    \cpCut{x}
+    {\ncPool{\ncCnt{x}{y_1}{P_1}}{\dots \mid \ncCnt{x}{y_n}{P_n}}}
+    {\ncSrv{x}{y}{Q}}
+  }
+\]
+Because pooling is commutative and associative, we can rewrite this term to
+bring any client in the pool to the front, before applying \ncRedBetaStar{n+1}.
+Thus, like in the \textpi-calculus, the non-determinism is introduced by the
+structural congruence.
+
+Does this mean that, for an arbitrary client pool \tm{P} in
+\tm{\cpCut{x}{P}{\ncSrv{x}{z}{Q}}}, every client in that pool is competing for
+the server interaction on \tm{x}?
+Not necessarily, as some portion of the clients can be blocked on an external
+communication. For instance, in the term below, clients
+$\tm{\ncCnt{x}{y_{n+1}}{P_{n+1}}} \dots \tm{\ncCnt{x}{y_m}{P_m}}$ are blocked
+on a communication on the external channel \tm{a}.
+\[
+  \arraycolsep=0pt
+  \tm{
+  \begin{array}{lrl}
+    \nu x.&  ((&\; \ncPool{\ncCnt{x}{y_1}{P_1}}{\dots\mid\ncCnt{x}{y_n}{P_n}}\\
+          &\mid&\; \cpWait{a}{\ncPool{\ncCnt{x}{y_{n+1}}{P_{n+1}}}{\dots \mid \ncCnt{x}{y_m}{P_m}}}\;)\\
+          &\mid&\; \ncSrv{x}{y_1}{\dots\ncSrv{x}{y_m}{Q}}\;)
+  \end{array}}
+\]
+If we reduce this term, then only the clients
+$\tm{\ncCnt{x}{y_1}{P_1}} \dots \tm{\ncCnt{x}{y_n}{P_n}}$
+will be assigned server interactions, and we end up with the following canonical
+form term. 
+\[
+  \arraycolsep=0pt
+  \tm{
+  \begin{array}{lrl}
+    \nu x.&   (&\; \cpWait{a}{\ncPool{\ncCnt{x}{y_{n+1}}{P_{n+1}}}{\dots\mid\ncCnt{x}{y_m}{P_m}}}\\
+          &\mid&\; \ncSrv{x}{y_{n+1}}{\dots\ncSrv{x}{y_m}{Q}}\;)
+  \end{array}}
+\]
+This matches the reduction behaviour of the \textpi-calculus, and it fits with
+out notion of computation with processes.
+
+\section{Properties of \nodcap}\label{sec:nc-properties}
 In this section, we will revisit the proofs for three important properties of
 \rcp, namely preservation, progress, and termination, and show that our
 extensions preserve these properties.
@@ -385,7 +439,7 @@ We restate its proof here for the sake of completeness, but its wording is
 unchanged, module references to figures.
 \input{thm-nc-termination}
 
-\section{\nodcap and non-deterministic local choice}
+\section{\nodcap and non-deterministic local choice}\label{sec:nc-local-choice}
 In \cref{sec:local-choice}, we discussed the non-deterministic local choice
 operator, which is used in several extensions of \piDILL and
 \cp~\cite{atkey2016,caires2014,caires2017}.
@@ -452,11 +506,6 @@ This process is also well-typed, see below.
       \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{\cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{P}}
     }]{ \Gamma, \tmty{z}{\bot\with\bot} }$} 
 \end{scprooftree}
-
-\wen{Add a discussion of non-determinism in \nodcap versus non-determinism in
-  the \textpi-calculus. Mention at least that terms which have clients who are
-  and who aren't blocked on an external communication will prefer those clients
-  who aren't blocked when non-deterministically reducing.}
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:

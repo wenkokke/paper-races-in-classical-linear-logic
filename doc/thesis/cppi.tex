@@ -7,34 +7,35 @@ The price paid for this is a weaker correspondence with the \textpi-calculus.
 It would be useful to be able to think of \cp as a type system for the
 \textpi-calculus.
 However, as it stands there are many differences between these systems.
-Most prominent of these are the commutative conversions. These reduction rules
-are taken directly from the proof normalisation procedure of classical linear
-logic, and do not correspond to any reductions in the \textpi-calculus.
-
-\wen{Mention the other differences, e.g.\ case instead of input-guarded choice,
-  name restriction and parallel composition as a single construct, etc.}
+For instance, in \cp name restriction and parallel composition are considered a
+single, atomic construct, and it uses case statements instead of input-guarded
+choice.
+Most prominent among the differences, however, are the commuting conversions.
+These reduction rules are taken directly from the proof normalisation procedure
+of classical linear logic, and do not correspond to any reductions in the
+\textpi-calculus. 
 
 \citenat{lindley2015semantics} observed that, using a different reduction
 strategy, which more closely resembles that of the \textpi-calculus, we can
-ensure that the commutative conversions are always applied \emph{last}.
+ensure that the commuting conversions are always applied \emph{last}.
 That is to say, they define two separate reduction relations:
 $\longrightarrow_{C}$ for \cpRedAxCut1 and \textbeta-reductions,
-and $\longrightarrow_{CC}$ for commutative conversions, and show that any
+and $\longrightarrow_{CC}$ for commuting conversions, and show that any
 sequence of reductions is equivalent to one of the form:
 \[
   P \longrightarrow_{C} \dots \longrightarrow_{C} Q \longrightarrow_{CC} \dots \longrightarrow_{CC} R
 \]
 In this dissertation, we use a reduction strategy which follows
-\citenat{lindley2015semantics}, but drops the suffix of commutative
+\citenat{lindley2015semantics}, but drop the suffix of commutative
 conversions.
-Consequently, we can drop the commutative conversions from our reduction system,
+Consequently, we can drop the commuting conversions from our reduction system,
 which therefore more tightly corresponds to that of the \textpi-calculus.
 The price we pay for this is a weaker correspondence to classical linear logic.
 This shows in our notion of canonical form, which is weaker, and in our proof of
 progress, which is much more involved.
 
 Whenever we refer to \cp or \rcp, for the remainder of this dissertation, we
-refer to the variant \emph{without} commutative conversions, i.e.\ which uses
+refer to the variant \emph{without} commuting conversions, i.e.\ which uses
 the following definition of term reduction.
 \input{def-cp-term-reduction-2}
 
@@ -52,11 +53,7 @@ one or more external communications, and then applies the commuting conversions
 to bubble one of those external communications to the front of the term.
 This allows them to define canonical forms as any term which is not a cut.
 For us, terms in canonical form will be those terms which are blocked on an
-external communication, before any commutative conversions are applied.
-\wen{
-  Say something about how I'm making explicit the implicit motivation of
-  \citeauthor{lindley2015semantics}.
-}
+external communication, before any commuting conversions are applied.
 In this section, we will describe the form of such terms.
 
 We have informally used the phrase ``act on'' in previous sections. It is time
@@ -123,7 +120,7 @@ non-determinism. For instance, in the second case of the proof, we do not
 specify how to select the two processes \tm{P_i} and \tm{P_j} if there are
 multiple options available.
 
-\section{Example}
+\section{Rewriting versus commuting}
 Let's have a look at the differences between the reduction strategy we have
 defined in this chapter, and the reduction strategy which \citenat{wadler2012}
 defines. Let's imagine the following scenario:
@@ -143,17 +140,17 @@ examples.
 This means that if two channel names will be identified after a reduction, we
 will preemptively give them the same name, for instance, \tm{z} and \tm{w} in
 the example below. 
-\begin{align*}
+\[
   \tm{\cpCut{x}{\cpCut{y}{
   \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
   \cpSend{y}{w}{\bankjohn}{\john}}}{
   \cpSend{x}{z}{\bankmary}{\mary}}}
-\end{align*}
-Note that in the above interaction, no \textbeta-reduction rule applies
+\]
+In the above interaction, no \textbeta-reduction rule applies
 \emph{immediately}. This means that using the reduction strategy described by
-\citenat{wadler2012}, we apply a commutative conversion. 
-\begin{align*}
-  \begin{array}{lll}
+\citenat{wadler2012}, we apply a commuting conversion.
+\[
+  \begin{array}{cll}
     \tm{\cpCut{x}{\cpCut{y}{
     \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
     \cpSend{y}{w}{\bankjohn}{\john}}}{
@@ -180,11 +177,11 @@ Note that in the above interaction, no \textbeta-reduction rule applies
     \mary}}{
     \bankmary}}
   \end{array}
-\end{align*}
+\]
 On the other hand, using the reduction strategy described in this chapter, we will
 rewrite using structural congruence.
-\begin{align*}
-  \begin{array}{lll}
+\[
+  \begin{array}{cll}
     \tm{\cpCut{x}{\cpCut{y}{
     \cpRecv{x}{z}{\cpRecv{y}{w}{\alice}}}{
     \cpSend{y}{w}{\bankjohn}{\john}}}{
@@ -218,13 +215,13 @@ rewrite using structural congruence.
     \mary}}{
     \bankmary}}
   \end{array}
-\end{align*}
+\]
 Note that the second reduction sequence is a \emph{valid} reduction sequence in
 the either reduction system---it is simply not the sequence \emph{chosen} by the
 reduction strategy described by \citenat{wadler2012}.
-
-\wen{%
-  Explain that CP \emph{barely} uses its structural congruence in its reduction strategy.}
+In fact, the structural congruence is only used in a \emph{single} instance in
+the original reduction strategy for \cp---to derive the flipped version of
+\cpRedGammaCut.
 
 %%% Local Variables:
 %%% TeX-master: "main"

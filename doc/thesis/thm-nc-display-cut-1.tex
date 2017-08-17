@@ -1,38 +1,38 @@
 \begin{lemmaB}\label{thm:nc-display-cut-1}
-  If $\seq[{ \tm{\cpCut{x}{\cpPlug{G}{P}}{Q}} }]{ \Gamma }$ and
-  $\notFreeIn{x}{G}$, then $\tm{\cpCut{x}{\cpPlug{G}{P}}{Q}} \equiv
-  \tm{\cpPlug{G}{\cpCut{x}{P}{Q}}}$.
+  If $\seq[{ \tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} }]{ \Gamma }$ and
+  $\notFreeIn{x}{E}$, then $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} \equiv
+  \tm{\cpPlug{E}{\cpCut{x}{P}{Q}}}$.
 \end{lemmaB}
 \begin{proof}
-  By induction on the structure of the evaluation context \tm{G}.
+  By induction on the structure of the evaluation context \tm{E}.
   \begin{itemize}
   \item
     Case $\tm{\Box}$, $\tm{\cpCut{y}{H}{R}}$, and $\tm{\cpCut{y}{R}{H}}$. See \cref{thm:cp-display-cut-1}.
   \item
-    Case $\tm{\ncPool{G}{R}}$.
+    Case $\tm{\ncPool{E}{R}}$.
     \[\!
       \begin{array}{ll}
-        \tm{\cpCut{x}{\ncPool{\cpPlug{G}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
-        \tm{\ncPool{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\ncPool{\cpCut{x}{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\
-        \tm{\ncPool{\cpPlug{G}{\cpCut{x}{P}{Q}}}{R}} &
+        \tm{\cpCut{x}{\ncPool{\cpPlug{E}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
+        \tm{\ncPool{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+        \tm{\ncPool{\cpCut{x}{\cpPlug{E}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\
+        \tm{\ncPool{\cpPlug{E}{\cpCut{x}{P}{Q}}}{R}} &
       \end{array}
     \]
   \item
-    Case $\tm{\ncPool{R}{G}}$.
+    Case $\tm{\ncPool{R}{E}}$.
     \[\!
       \begin{array}{ll}
-        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
-        \tm{\ncPool{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis}\\
-        \tm{\ncPool{R}{\cpPlug{G}{\cpCut{x}{P}{Q}}}} &
+        \tm{\cpCut{x}{\ncPool{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
+        \tm{\ncPool{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis}\\
+        \tm{\ncPool{R}{\cpPlug{E}{\cpCut{x}{P}{Q}}}} &
       \end{array}
     \]
   \end{itemize}
   In each case, the side condition for \ncRedKappaPool1, $\notFreeIn{x}{R}$, can
-  be inferred from $\notFreeIn{x}{G}$, and the side conditions for the induction
+  be inferred from $\notFreeIn{x}{E}$, and the side conditions for the induction
   hypothesis can be inferred from \cref{thm:nc-preservation-equiv} and
-  $\notFreeIn{x}{G}$.
+  $\notFreeIn{x}{E}$.
 \end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"

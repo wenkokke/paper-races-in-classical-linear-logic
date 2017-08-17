@@ -1,18 +1,8 @@
-\chapter{Discussion}\label{sec:discussion}
+\chapter{Conclusions and future work}\label{sec:discussion}
 
 \wen{
   What to discuss? I've done the things I've promised. I can see the following
   valuable points:
-  \begin{itemize}
-  \item
-    It would be worthwhile to decouple the name restriction from the parallel
-    composition in \cp, as this would greatly simplify our reduction system.
-  \item
-    It would be worthwhile to investigate if, for instance, we could define a
-    cut on a client/server interaction such that it would naturally leave
-    leftovers. This would mash well with client and server pools of arbitrary
-    size.
-  \end{itemize}
 }
 
 \section{Relation to bounded linear logic}
@@ -30,6 +20,29 @@ cell which can be accessed $n$ times, whereas in \nodcap, \ty{\take[n]{A}}
 represents a pool of $n$ different values, computed independently by $n$
 different processes.
 
+\section{Name restriction and parallel composition}
+It would be worthwhile to decouple the name restriction from the parallel
+composition in \cp, as this would greatly simplify our reduction system.
+We could do this, for instance, using a two-layered environment, which tracks
+which sets of channels are interdependent.
+\begin{center}
+  \[
+    \ty{X}, \ty{Y}, \ty{Z} := \ty{\Gamma_1} ; \dots ; \ty{\Gamma_n}
+  \]
+  \vspace*{1\baselineskip}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ X }$}
+    \AXC{$\seq[{ Q }]{ Y }$}
+    \BIC{$\seq[{ \piPar{P}{Q} }]{ X ; Y }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \tmty{x}{A} , \Gamma ; \tmty{x}{A^\bot}, \Delta ; X }$}
+    \UIC{$\seq[{ \piNew{x}{P} }]{ \Gamma, \Delta ; X }$}
+  \end{prooftree*}
+\end{center}
+This decoupling would allow us to reduce the number of reduction rules for
+servers and clients, and strengthen our correspondence to the \textpi-calculus.
+
 \section{Recursion and resource variables}
 Our formalism so far has only captured servers that provide for a fixed number
 of clients.  More realistically, we would want to define servers that provide
@@ -41,22 +54,35 @@ guarantees.
 One approach to defining server processes would be to combine \nodcap with
 structural recursion and corecursion, following the $\mu\text{CP}$ extension of Lindley
 and Morris~\cite{lindley2016}.  Their approach can express processes which
-produce streams of \ty{A} channels; such a process would expose a channel with the
+produce streams of \ty{A} channels. Such a process would expose a channel with the
 corecursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is
 possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for any
-number of $A$s, allowing us to satisfy the type \ty{\give[n]{A}} for an arbitrary
+number of \ty{A}s, allowing us to satisfy the type \ty{\give[n]{A}} for an arbitrary
 $n$.
 
 We would also need to extend the typing discipline to capture arbitrary use of
 shared channels.  One approach would be to introduce resource variables and
-quantification.  Following this approach, in addition to having types $\give[n]
-A$ and $\take[n] A$ for concrete $n$, we would also have types $\give[x] A$ and
-$\take[x] A$ for resource variables $x$.  These variables would be introduced by
-quantifiers $\forall x A$ and $\exists x A$.  Defining terms
-corresponding to $\forall x A$, and its relationship with structured recursion,
+quantification.  Following this approach, in addition to having types \ty{\give[n]
+A} and \ty{\take[n] A} for concrete $n$, we would also have types \ty{\give[x] A} and
+\ty{\take[x] A} for resource variables $x$.  These variables would be introduced by
+quantifiers \ty{\forall x A} and \ty{\exists x A}.  Defining terms
+corresponding to \ty{\forall x A}, and its relationship with structured recursion,
 presents an interesting area of further work.
 
-\wen{Update to reflect how I currently think about this.}
+\section{Cuts with leftovers}
+So far, our account of non-determinism in client/server interactions only allows
+interactions between equal numbers of clients and server interactions.
+A natural extension of this would be to investigate if we could define a special
+case of cut on a client/server interaction, such that e.g.\ the clients only
+consume part of the server resources.
+\begin{scprooftree}
+  \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n]{A}} }$}
+  \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\give[m]{A^\bot}} }$}
+  \AXC{$n < m$}
+  \TIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta, \tmty{x}{\give[m-n]{A^\bot}} }$}
+\end{scprooftree}
+Such an extension would work well together with an extension allowing clients
+and servers to provide an arbitrary number of interactions.
 
 \section{Relation to exponentials in CP}
 Our account of CP has not included the exponentials \ty{\give A} and \ty{\take A}.

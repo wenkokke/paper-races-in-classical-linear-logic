@@ -1,9 +1,9 @@
 \begin{lemmaB}\label{thm:cp-progress-link}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
   link \tm{\cpLink{x}{y}}, then either \tm{x} and \tm{y} are not bound by
-  \tm{G}, or there exist \tm{H}, \tm{H'} and \tm{Q} such that
+  \tm{G}, or there exist \tm{E}, \tm{E'} and \tm{Q} such that
   $\tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
-  \tm{\cpPlug{H}{\cpCut{x}{\cpPlug{H'}{\cpLink{x}{y}}}{Q}}}$. 
+  \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E'}{\cpLink{x}{y}}}{Q}}}$. 
 \end{lemmaB}
 \begin{proof}
   By induction on the structure of \tm{G}.
@@ -22,9 +22,8 @@
       \tm{\cpCut{z}{\Box}{\cpPlug{G''}{P_{m+1} \dots P_n}}},
       \tm{\cpCut{z}{\cpPlug{G'}{P_1 \dots P_m}}{\Box}},
       \tm{\ncPool{\Box}{\cpPlug{G''}{P_{m+1} \dots P_n}}}, or
-      \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_m}}{\Box}} to \tm{H}.
-      \\
-      The desired equality follows by congruence.
+      \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_m}}{\Box}} to \tm{E}.
+      The desired equivalence follows by congruence.
     \end{itemize}
   \item
     Case \tm{\cpCut{x}{\cpPlug{G'}{P_1 \dots P_i \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_n}}}.\\
@@ -32,13 +31,10 @@
     Case \tm{\cpCut{x}{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_i \dots P_n}}}.\\
     Case \tm{\cpCut{y}{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_i \dots P_n}}}.
     \\
-    Let $\tm{H} := \tm{\Box}$ and 
-    \(\arraycolsep=0pt\begin{array}[t]{ll}
-      \text{let}
-      & \; \tm{H_i} := \tm{\cpPlug{G'}{P_1 \dots P_{i-1}, \Box, P_{i+1}, \dots P_m}}
-      \\
-      \text{or}
-      & \; \tm{H_i} := \tm{\cpPlug{G''}{P_{m+1} \dots P_{i-1}, \Box, P_{i+1}, \dots P_n}}
+    \(\arraycolsep=0pt\begin{array}[t]{llrl}
+      \text{Let} & \; \tm{E}  &\; :=     &\; \tm{\Box} \; \text{and} \\
+      \text{let} & \; \tm{E'} &\; :=     &\; \tm{\cpPlug{G'}{P_1 \dots P_{i-1}, \Box, P_{i+1}, \dots P_m}} \\
+                 &            &\text{or} &\; \tm{\cpPlug{G''}{P_{m+1} \dots P_{i-1}, \Box, P_{i+1}, \dots P_n}}
     \end{array}\)
     \\[1ex]
     By reflexivity and \cpEquivCutComm.
