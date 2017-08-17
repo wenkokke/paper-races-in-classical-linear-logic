@@ -66,7 +66,6 @@ The above process does not reduce. As both John and Mary would prefer the
 exchange to be made, this interaction is desired by \emph{neither}. Thus, the
 above is an interaction we would \emph{somehow} like to exclude.
 
-%% - Overview:
 Session types~\cite{honda1993} statically guarantee that concurrent
 programs, such as those above, respect communication protocols.
 Session-typed calculi with logical foundations, such as
@@ -88,7 +87,15 @@ non-determinism, such as non-deterministic choice.  However, \nodcap does not
 lose the metatheoretical benefits of CP: we show that it enjoys termination and
 deadlock-freedom.
 
-\wen{Outline the structure of the dissertation.}
+This dissertation proceeds as follows.
+In \cref{sec:background}, we introduce \cp and reproduce the proofs of some of
+its meta-theoretical results, and discuss related work which also addresses the
+addition of non-determinism to logic-inspired session typed process calculi.
+In \cref{sec:cppi}, we introduce an alternative reduction strategy for \cp,
+which more closely resembles reduction in the \textpi-calculus.
+In \cref{sec:main}, we introduce \nodcap.
+Finally, in \cref{sec:discussion}, we conclude with a discussion of the work
+done in this dissertation and potential avenues for future work.
 %%% Local Variables:
 %%% TeX-master: "main"
 %%% End:

@@ -1,37 +1,37 @@
 \begin{lemmaB}\label{thm:cp-display-cut-1}
-  If $\seq[{ \tm{\cpCut{x}{\cpPlug{G}{P}}{Q}} }]{ \Gamma }$ and
-  $\notFreeIn{x}{G}$, then $\tm{\cpCut{x}{\cpPlug{G}{P}}{Q}} \equiv
-  \tm{\cpPlug{G}{\cpCut{x}{P}{Q}}}$. 
+  If $\seq[{ \tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} }]{ \Gamma }$ and
+  $\notFreeIn{x}{E}$, then $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} \equiv
+  \tm{\cpPlug{E}{\cpCut{x}{P}{Q}}}$. 
 \end{lemmaB}
   \begin{proof}
-    By induction on the structure of the evaluation context \tm{G}.
+    By induction on the structure of the evaluation context \tm{E}.
     \begin{itemize}
     \item
       Case $\tm{\Box}$. By reflexivity.
     \item
-      Case $\tm{\cpCut{y}{G}{R}}$.
+      Case $\tm{\cpCut{y}{E}{R}}$.
       \[\!
         \begin{array}{ll}
-          \tm{\cpCut{x}{\cpCut{y}{\cpPlug{G}{P}}{R}}{Q}} & \equiv \quad \text{by \cpEquivCutComm}\\
-          \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
-          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by \cpEquivCutComm}\\
-          \tm{\cpCut{y}{\cpCut{x}{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\ 
-          \tm{\cpCut{y}{\cpPlug{G}{\cpCut{x}{P}{Q}}}{R}} &
+          \tm{\cpCut{x}{\cpCut{y}{\cpPlug{E}{P}}{R}}{Q}} & \equiv \quad \text{by \cpEquivCutComm}\\
+          \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
+          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by \cpEquivCutComm}\\
+          \tm{\cpCut{y}{\cpCut{x}{\cpPlug{E}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\ 
+          \tm{\cpCut{y}{\cpPlug{E}{\cpCut{x}{P}{Q}}}{R}} &
         \end{array}
       \]
     \item
-      Case $\tm{\cpCut{y}{R}{G}}$.
+      Case $\tm{\cpCut{y}{R}{E}}$.
       \[\!
         \begin{array}{ll}
-          \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
-          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis}\\
-          \tm{\cpCut{y}{R}{\cpPlug{G}{\cpCut{x}{P}{Q}}}}
+          \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
+          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis}\\
+          \tm{\cpCut{y}{R}{\cpPlug{E}{\cpCut{x}{P}{Q}}}}
         \end{array}
       \]
     \end{itemize}
     In each case, the side conditions for \cpEquivCutAss2, $\notFreeIn{x}{R}$ and
-    $\notFreeIn{y}{Q}$, can be inferred from $\notFreeIn{x}{G}$ and the fact that
-    $\tm{\cpCut{x}{\cpPlug{G}{P}}{Q}}$ is well-typed.
+    $\notFreeIn{y}{Q}$, can be inferred from $\notFreeIn{x}{E}$ and the fact that
+    $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}}$ is well-typed.
   \end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"

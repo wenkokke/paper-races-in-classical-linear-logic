@@ -1,64 +1,64 @@
 \begin{lemmaB}\label{thm:nc-display-pool-1}
-  If $\seq[{ \ncPool{\cpPlug{G}{P}}{Q} }]{ \Gamma }$, then
-  $\tm{\ncPool{\cpPlug{G}{P}}{Q}} \equiv \tm{\cpPlug{G}{\ncPool{P}{Q}}}$. 
+  If $\seq[{ \ncPool{\cpPlug{E}{P}}{Q} }]{ \Gamma }$, then
+  $\tm{\ncPool{\cpPlug{E}{P}}{Q}} \equiv \tm{\cpPlug{E}{\ncPool{P}{Q}}}$. 
 \end{lemmaB}
 \begin{proof}
-  By induction on the structure of the evaluation context \tm{G}.
+  By induction on the structure of the evaluation context \tm{E}.
   \begin{itemize}
   \item
     Case $\tm{\Box}$. By reflexivity.
   \item
-    Case $\tm{\cpCut{y}{G}{R}}$.
+    Case $\tm{\cpCut{y}{E}{R}}$.
     \[\!
       \begin{array}{ll}
-        \tm{\ncPool{\cpCut{y}{\cpPlug{G}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
-        \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{G}{P}}}{R}} & \equiv \quad \text{by} \; \cpEquivCutComm \\
-        \tm{\cpCut{y}{\ncPool{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\
-        \tm{\cpCut{y}{\cpPlug{G}{\ncPool{P}{Q}}}{R}} &
+        \tm{\ncPool{\cpCut{y}{\cpPlug{E}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{E}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
+        \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{E}{P}}}{R}} & \equiv \quad \text{by} \; \cpEquivCutComm \\
+        \tm{\cpCut{y}{\ncPool{\cpPlug{E}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\
+        \tm{\cpCut{y}{\cpPlug{E}{\ncPool{P}{Q}}}{R}} &
       \end{array}
     \]
   \item
-    Case $\tm{\cpCut{y}{R}{G}}$.
+    Case $\tm{\cpCut{y}{R}{E}}$.
     \[\!
       \begin{array}{ll}
-        \tm{\ncPool{\cpCut{y}{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
-        \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{G}{P}}}{R}} & \equiv \quad \text{by} \; \cpEquivCutComm \\
-        \tm{\cpCut{y}{R}{\ncPool{Q}{\cpPlug{G}{P}}}} & \equiv \quad \text{by the induction hypothesis} \\
-        \tm{\cpCut{y}{R}{\cpPlug{G}{\ncPool{P}{Q}}}}
+        \tm{\ncPool{\cpCut{y}{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+        \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{E}{P}}{R}}} & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
+        \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{E}{P}}}{R}} & \equiv \quad \text{by} \; \cpEquivCutComm \\
+        \tm{\cpCut{y}{R}{\ncPool{Q}{\cpPlug{E}{P}}}} & \equiv \quad \text{by the induction hypothesis} \\
+        \tm{\cpCut{y}{R}{\cpPlug{E}{\ncPool{P}{Q}}}}
       \end{array}
     \]
   \item
-    Case $\tm{\ncPool{G}{R}}$.
+    Case $\tm{\ncPool{E}{R}}$.
     \[\!
       \begin{array}{ll}
-        \tm{\ncPool{\ncPool{\cpPlug{G}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\ncPool{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolAss2 \\
-        \tm{\ncPool{R}{\ncPool{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
-        \tm{\ncPool{\ncPool{\cpPlug{G}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis} \\
-        \tm{\ncPool{\cpPlug{G}{\ncPool{P}{Q}}}{R}} &
+        \tm{\ncPool{\ncPool{\cpPlug{E}{P}}{R}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+        \tm{\ncPool{\ncPool{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolAss2 \\
+        \tm{\ncPool{R}{\ncPool{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+        \tm{\ncPool{\ncPool{\cpPlug{E}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis} \\
+        \tm{\ncPool{\cpPlug{E}{\ncPool{P}{Q}}}{R}} &
       \end{array}
     \]
   \item
-    Case $\tm{\ncPool{R}{G}}$.
+    Case $\tm{\ncPool{R}{E}}$.
     \[\!
       \begin{array}{ll}
-        \tm{\ncPool{\ncPool{R}{\cpPlug{G}{P}}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolAss2 \\
-        \tm{\ncPool{R}{\ncPool{\cpPlug{G}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis} \\
-        \tm{\ncPool{R}{\cpPlug{G}{\ncPool{P}{Q}}}} &
+        \tm{\ncPool{\ncPool{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by} \; \ncEquivPoolAss2 \\
+        \tm{\ncPool{R}{\ncPool{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis} \\
+        \tm{\ncPool{R}{\cpPlug{E}{\ncPool{P}{Q}}}} &
       \end{array}
     \]
   \end{itemize}
   In each case, the side conditions for \ncRedKappaPool2, $\notFreeIn{y}{Q}$,
   can be inferred from the fact that
-  $\tm{\ncPool{Q}{\cpCut{y}{\cpPlug{G}{P}}{R}}}$ is well-typed; the side
+  $\tm{\ncPool{Q}{\cpCut{y}{\cpPlug{E}{P}}{R}}}$ is well-typed; the side
   conditions for \cpEquivCutAss2, $\notFreeIn{x}{R}$ and $\notFreeIn{y}{Q}$, can
-  be inferred from $\notFreeIn{x}{G}$ and the fact that
-  $\tm{\ncPool{\cpPlug{G}{P}}{Q}}$ is well-typed; and the side conditions for
+  be inferred from $\notFreeIn{x}{E}$ and the fact that
+  $\tm{\ncPool{\cpPlug{E}{P}}{Q}}$ is well-typed; and the side conditions for
   the induction hypothesis can be inferred from the fact that
-  $\tm{\ncPool{\cpPlug{G}{P}}{Q}}$ is well-typed,
-  \cref{thm:nc-preservation-equiv} and $\notFreeIn{x}{G}$. 
+  $\tm{\ncPool{\cpPlug{E}{P}}{Q}}$ is well-typed,
+  \cref{thm:nc-preservation-equiv} and $\notFreeIn{x}{E}$. 
 \end{proof}
 %%% Local Variables:
 %%% TeX-master: "main"
