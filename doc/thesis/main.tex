@@ -7,19 +7,33 @@
 \begin{document}
 \begin{preliminary}
   \abstract{%
-    Process calculi based in logic, such as CP, provide a foundation for
-    deadlock-free concurrent programming, but at the cost of excluding
-    non-determinism and races.  We introduce \nodcap (nodcap), which extends CP
-    with a novel account of non-determinism.  Our approach draws on bounded linear
-    logic to provide a strongly-typed account of standard process calculus
-    expressions of non-determinism.  We show that our extension is expressive
-    enough to capture many uses of non-determinism in untyped calculi, such as
-    non-deterministic choice, while preserving CP's meta-theoretic properties,
-    including deadlock freedom.  We have formalized our calculus and its
-    properties using Agda.
+    Process calculi based in logic, such as \piDILL and CP, provide a foundation
+    for deadlock-free concurrent programming, but at the cost of excluding
+    non-determinism and races.
+    We introduce \nodcap (nodcap), which extends CP with a novel account of
+    non-determinism.
+    Our approach draws on bounded linear logic to provide a strongly-typed
+    account of standard process calculus expressions of non-determinism.
+    We show that our extension is expressive enough to capture many uses of
+    non-determinism in untyped calculi, such as non-deterministic choice, while
+    preserving CP's meta-theoretic properties, including deadlock freedom.
   }
   \maketitle
   \begin{acknowledgements}
+    I would like to thank Phil Wadler, who taught me that there is no such thing
+    as too many examples, and who encouraged my tendency to fill all of them
+    with emoji.
+    
+    I would like to thank Garrett Morris, who saved my half-baked theories so
+    often that I've lost count, and for the bakeware---thanks!
+
+    I would like to thank Simon Fowler, who showed me around the Forum on the
+    day that I first got to Edinburgh, and who has been wonderfully kind ever
+    since.
+
+    And finally, I would like to thank Rudi Horn, Thomas Wright, and all the
+    others who helped me during the writing of this dissertation by giving me
+    invaluable feedback or simply clarifying little things\ldots
   \end{acknowledgements}
   \standarddeclaration
   \tableofcontents

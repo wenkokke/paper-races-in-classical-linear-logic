@@ -564,7 +564,7 @@ Computer Science}}
    except where explicitly stated otherwise in the text,
    and that this work has not been submitted for any other degree or
    professional qualification except as specified.\par
-   \vspace{1in}\raggedleft({\em \@author\/})
+   \vspace{1in}\raggedleft{\em ---\@author\/}
    \end{declaration}
 }
 
@@ -612,7 +612,9 @@ Computer Science}}
         do not permit the abstract on the front page}}
         {}
      \renewcommand{\maketitle}{
-        \begin{titlepage}\begin{center}
+        \begin{titlepage}
+        \addtolength{\oddsidemargin}{-0.75cm}
+        \begin{center}
         {\LARGE\bfseries \@chapterfont \@title \par
           \ifthenelse{\boolean{draftthesis}}{\large (Draft Copy)}{}
         }\vspace{3cm}
@@ -626,12 +628,15 @@ Computer Science}}
         \end{titlepage}
      }}{
      \renewcommand{\maketitle}{
-        \begin{titlepage}\begin{center}
-        \null\vfil\vskip 60\p@
+        \begin{titlepage}
+        \addtolength{\oddsidemargin}{-0.75cm}
+        \begin{center}
+        \null\vfill\vskip 160\p@
         {\LARGE\bfseries \@chapterfont \@title \par
            \ifthenelse{\boolean{draftthesis}}{\large (Draft Copy)}{}
         }\vfill
-        {\Large\itshape \@author \par}\vskip 1cm\vfill
+        {\Large\itshape \@author \par
+        }\vskip 1cm\vfill
         \ifthenelse{\boolean{logo}}%
             {\resizebox{30mm}{!}{\includeshield}\\\vfill}
             {}
