@@ -1,4 +1,7 @@
+module nodcap.NF.Cut where
+
 open import Algebra
+open import Data.Environment
 open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺
 open import Data.List as L using (List; []; _∷_; _++_)
@@ -11,13 +14,10 @@ open import Function.Equality using (_⟨$⟩_)
 open import Function.Inverse as I using ()
 open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
-open import Logic.Context
 open import nodcap.Base
 open import nodcap.NF.Typing
 open import nodcap.NF.Contract
 open import nodcap.NF.Expand
-
-module nodcap.NF.Cut where
 
 open I.Inverse using (to; from)
 private module ++ {a} {A : Set a} = Monoid (L.monoid A)
@@ -26,7 +26,7 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 -- Theorem:
 --   Cut elimination.
 mutual
-  cut : {Γ Δ : Context} {A : Type} →
+  cut : {Γ Δ : Environment} {A : Type} →
 
     ⊢ⁿᶠ A ∷ Γ → ⊢ⁿᶠ A ^ ∷ Δ →
     ---------------------
@@ -68,7 +68,7 @@ mutual
     $ cutIn (here P.refl) (from b ⟨$⟩ here P.refl) x y
 
 
-  cutIn : {Γ Δ : Context} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
+  cutIn : {Γ Δ : Environment} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
 
     ⊢ⁿᶠ Γ → ⊢ⁿᶠ Δ →
     ----------------
@@ -205,7 +205,7 @@ mutual
     = exch (B.++-cong {xs₁ = Γ - i} I.id (del-from b j))
     $ cutIn i (from b ⟨$⟩ j) x y
 
-  interleaveIn : {Γ Δ : Context} {A : Type} {n : ℕ⁺} (i : ![ n ] A ∈ Γ) →
+  interleaveIn : {Γ Δ : Environment} {A : Type} {n : ℕ⁺} (i : ![ n ] A ∈ Γ) →
 
     ⊢ⁿᶠ Γ → ⊢ⁿᶠ replicate⁺ n (A ^) ++ Δ →
     -----------------------------------------------

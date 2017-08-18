@@ -1,3 +1,5 @@
+module TicketServer where
+
 open import IO using (run; putStrLn; mapM′; _>>_)
 open import Coinduction using (♯_)
 open import Data.Nat as ℕ using (ℕ; suc; zero)
@@ -7,14 +9,12 @@ open import Data.List using (List; []; _∷_; map)
 open import Data.Colist using (fromList)
 open import Function using (_$_; _∘_)
 
-open import Logic.Context
+open import Data.Environment
 open import nodcap.Base
 open import nodcap.Typing
 open import nodcap.Norm
 open import nodcap.Show renaming (showTerm to show)
 open import nodcap.NF.Show renaming (showTerm to showNF)
-
-module TicketServer where
 
 Ticket UserId Sale Receipt : Type
 Ticket  = ⊥ ⊕ ⊥
@@ -22,11 +22,11 @@ UserId  = 𝟏 ⊕ 𝟏
 Sale    = UserId ⊸ Ticket
 Receipt = UserId ⊗ Ticket
 
-ticket₁ ticket₂ : {Γ : Context} → ⊢ Γ → ⊢ Ticket ∷ Γ
+ticket₁ ticket₂ : {Γ : Environment} → ⊢ Γ → ⊢ Ticket ∷ Γ
 ticket₁ x = sel₁ (wait x)
 ticket₂ x = sel₂ (wait x)
 
-sale₁ sale₂ : {Γ : Context} → ⊢ Γ → ⊢ Sale ∷ Receipt ∷ Γ
+sale₁ sale₂ : {Γ : Environment} → ⊢ Γ → ⊢ Sale ∷ Receipt ∷ Γ
 sale₁ x
   = recv
   $ exch (bbl [])
@@ -65,7 +65,7 @@ main = run (mapM′ putStrLn (fromList strs))
     strs = "Process:"
          ∷ show proc
          ∷ "Result:"
-         ∷ map showNF (normND proc)
+         ∷ map showNF (nfND proc)
 
 -- -}
 -- -}
