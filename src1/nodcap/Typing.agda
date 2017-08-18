@@ -6,7 +6,7 @@ open import Data.Product using (_,_)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
-open import Logic.Context
+open import Data.Environment
 open import nodcap.Base
 
 module nodcap.Typing where
@@ -16,44 +16,44 @@ module nodcap.Typing where
 
 infix 1 ⊢_
 
-data ⊢_ : Context → Set where
+data ⊢_ : Environment → Set where
 
   ax   : {A : Type} →
 
-       -------------- 
+       --------------
        ⊢ A ∷ A ^ ∷ []
 
-  cut  : {Γ Δ : Context} {A : Type} →
+  cut  : {Γ Δ : Environment} {A : Type} →
 
        ⊢ A ∷ Γ → ⊢ A ^ ∷ Δ →
        ---------------------
        ⊢ Γ ++ Δ
 
-  send : {Γ Δ : Context} {A B : Type} →
+  send : {Γ Δ : Environment} {A B : Type} →
 
        ⊢ A ∷ Γ → ⊢ B ∷ Δ →
        -------------------
        ⊢ A ⊗ B ∷ Γ ++ Δ
 
-  recv : {Γ : Context} {A B : Type} →
+  recv : {Γ : Environment} {A B : Type} →
 
        ⊢ A ∷ B ∷ Γ →
        -------------
        ⊢ A ⅋ B ∷ Γ
 
-  sel₁ : {Γ : Context} {A B : Type} →
+  sel₁ : {Γ : Environment} {A B : Type} →
 
        ⊢ A ∷ Γ →
        -----------
        ⊢ A ⊕ B ∷ Γ
 
-  sel₂ : {Γ : Context} {A B : Type} →
+  sel₂ : {Γ : Environment} {A B : Type} →
 
        ⊢ B ∷ Γ →
        -----------
        ⊢ A ⊕ B ∷ Γ
 
-  case : {Γ : Context} {A B : Type} →
+  case : {Γ : Environment} {A B : Type} →
 
        ⊢ A ∷ Γ → ⊢ B ∷ Γ →
        -------------------
@@ -64,48 +64,48 @@ data ⊢_ : Context → Set where
        --------
        ⊢ 𝟏 ∷ []
 
-  wait : {Γ : Context} →
+  wait : {Γ : Environment} →
 
        ⊢ Γ →
        -------
        ⊢ ⊥ ∷ Γ
 
-  loop : {Γ : Context} →
+  loop : {Γ : Environment} →
 
        -------
        ⊢ ⊤ ∷ Γ
 
-  mk?₁ : {Γ : Context} {A : Type} →
+  mk?₁ : {Γ : Environment} {A : Type} →
 
        ⊢ A ∷ Γ →
        --------------
        ⊢ ?[ 1 ] A ∷ Γ
 
-  mk!₁ : {Γ : Context} {A : Type} →
+  mk!₁ : {Γ : Environment} {A : Type} →
 
        ⊢ A ∷ Γ →
        --------------
        ⊢ ![ 1 ] A ∷ Γ
 
-  cont : {Γ : Context} {A : Type} {m n : ℕ⁺} →
+  cont : {Γ : Environment} {A : Type} {m n : ℕ⁺} →
 
        ⊢ ?[ m ] A ∷ ?[ n ] A ∷ Γ →
        ------------------------------
        ⊢ ?[ m + n ] A ∷ Γ
 
-  pool : {Γ Δ : Context} {A : Type} {m n : ℕ⁺} →
+  pool : {Γ Δ : Environment} {A : Type} {m n : ℕ⁺} →
 
        ⊢ ![ m ] A ∷ Γ → ⊢ ![ n ] A ∷ Δ →
        -------------------------------------
        ⊢ ![ m + n ] A ∷ Γ ++ Δ
 
-  exch : {Γ Δ : Context} →
+  exch : {Γ Δ : Environment} →
 
        Γ ∼[ bag ] Δ → ⊢ Γ →
        --------------------
        ⊢ Δ
 
-cutIn : {Γ Δ : Context} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
+cutIn : {Γ Δ : Environment} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
 
   ⊢ Γ → ⊢ Δ →
   ----------------

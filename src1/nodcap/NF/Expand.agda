@@ -11,7 +11,7 @@ open import Function.Equality using (_⟨$⟩_)
 open import Function.Inverse as I using ()
 open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
-open import Logic.Context
+open import Data.Environment
 open import nodcap.Base
 open import nodcap.NF.Typing
 
@@ -29,7 +29,7 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 --   * in the recursive call under cont, the index n is split as
 --     n₁ + n₂, for which we have n₁, n₂ < n, but not definitionally.
 mutual
-  expand : {Γ : Context} {A : Type} {n : ℕ⁺} →
+  expand : {Γ : Environment} {A : Type} {n : ℕ⁺} →
 
     ⊢ⁿᶠ ?[ n ] A ∷ Γ →
     --------------------
@@ -47,7 +47,7 @@ mutual
     = exch (B.++-cong {xs₁ = replicate⁺ n A} I.id (del-from b (here P.refl)))
     $ expandIn (from b ⟨$⟩ here P.refl) x
 
-  expandIn : {Γ : Context} {A : Type} {n : ℕ⁺} (i : ?[ n ] A ∈ Γ) →
+  expandIn : {Γ : Environment} {A : Type} {n : ℕ⁺} (i : ?[ n ] A ∈ Γ) →
 
     ⊢ⁿᶠ Γ →
     ----------------------------

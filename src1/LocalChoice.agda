@@ -1,3 +1,5 @@
+module LocalChoice where
+
 open import IO using (run; putStrLn; mapM′; _>>_)
 open import Coinduction using (♯_)
 open import Data.Nat as ℕ using (ℕ; suc; zero)
@@ -7,15 +9,13 @@ open import Data.List using (List; []; _∷_; map)
 open import Data.Colist using (fromList)
 open import Function using (_$_; _∘_)
 
-open import Logic.Context
+open import Data.Environment
 open import nodcap.Base
 open import nodcap.Typing
 open import nodcap.LocalChoice
 open import nodcap.Norm
 open import nodcap.Show renaming (showTerm to show)
 open import nodcap.NF.Show renaming (showTerm to showNF)
-
-module LocalChoice where
 
 Bit : Type
 Bit = 𝟏 ⊕ 𝟏
@@ -32,7 +32,7 @@ main = run (mapM′ putStrLn (fromList strs))
     strs = "Process:"
          ∷ show randomBit
          ∷ "Result:"
-         ∷ map showNF (normND randomBit)
+         ∷ map showNF (nfND randomBit)
 
 -- -}
 -- -}

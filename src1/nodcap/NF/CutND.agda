@@ -1,3 +1,5 @@
+module nodcap.NF.CutND where
+
 open import Algebra
 open import Category.Monad
 open import Data.Nat as ℕ using (ℕ; suc; zero)
@@ -12,14 +14,12 @@ open import Function.Equality using (_⟨$⟩_)
 open import Function.Inverse as I using ()
 open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
-open import Logic.Context
+open import Data.Environment
 open import nodcap.Base
 open import nodcap.NF.Typing
 open import nodcap.NF.Contract
 open import nodcap.NF.Expand
 open import nodcap.NF.Cut
-
-module nodcap.NF.CutND where
 
 open I.Inverse using (to; from)
 private
@@ -30,7 +30,7 @@ private module ++ {a} {A : Set a} = Monoid (L.monoid A)
 -- Theorem:
 --   Nondeterministic cut elimination.
 mutual
-  cutND : {Γ Δ : Context} {A : Type} →
+  cutND : {Γ Δ : Environment} {A : Type} →
 
     ⊢ⁿᶠ A ∷ Γ → ⊢ⁿᶠ A ^ ∷ Δ →
     ---------------------
@@ -64,7 +64,7 @@ mutual
   cutND {Γ} {Δ} {A = ![ n ] A} x y
     = all (replicate⁺ n (A ^)) >>= return ∘ withPerm ∘ proj₂
     where
-      withPerm : {Θ : Context} → replicate⁺ n (A ^) ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
+      withPerm : {Θ : Environment} → replicate⁺ n (A ^) ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
       withPerm {Θ} b
         = cut x
         $ contract
@@ -73,7 +73,7 @@ mutual
   cutND {Γ} {Δ} {A = ?[ n ] A} x y
     = all (replicate⁺ n A) >>= return ∘ withPerm ∘ proj₂
     where
-      withPerm : {Θ : Context} → replicate⁺ n A ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
+      withPerm : {Θ : Environment} → replicate⁺ n A ∼[ bag ] Θ → ⊢ⁿᶠ Γ ++ Δ
       withPerm {Θ} b
         = exch (swp₂ Γ)
         $ cut y
@@ -89,12 +89,12 @@ mutual
     = return
     ∘ exch (B.++-cong {xs₁ = Γ} I.id (del-from b (here P.refl)))
     =<< cutNDIn (here P.refl) (from b ⟨$⟩ here P.refl) x y
- 
 
-  cutNDIn : {Γ Δ : Context} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
+
+  cutNDIn : {Γ Δ : Environment} {A : Type} (i : A ∈ Γ) (j : A ^ ∈ Δ) →
 
     ⊢ⁿᶠ Γ → ⊢ⁿᶠ Δ →
-    ----------------------- 
+    -----------------------
     List (⊢ⁿᶠ Γ - i ++ Δ - j)
 
   cutNDIn (here P.refl) (here P.refl) x y = cutND x y

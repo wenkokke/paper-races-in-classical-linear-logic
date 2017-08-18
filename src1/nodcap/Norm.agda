@@ -1,3 +1,5 @@
+module nodcap.Norm where
+
 open import Category.Monad
 open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺ using (ℕ⁺; suc; _+_)
@@ -7,6 +9,7 @@ open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Function using (_$_)
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
 
+open import Data.Environment
 open import nodcap.Base
 open import nodcap.Typing as FF using (⊢_)
 open import nodcap.NF.Typing as NF using (⊢ⁿᶠ_)
@@ -14,12 +17,10 @@ import nodcap.NF.Axiom as NFA
 import nodcap.NF.Cut as NFD
 import nodcap.NF.CutND as NFND
 
-module nodcap.Norm where
-
 private
   open module LM {ℓ} = RawMonadPlus (L.monadPlus {ℓ})
 
-nf : {Γ : Context} → ⊢ Γ → ⊢ⁿᶠ Γ
+nf : {Γ : Environment} → ⊢ Γ → ⊢ⁿᶠ Γ
 nf  FF.ax        = NFA.ax
 nf (FF.cut  x y) = NFD.cut (nf x) (nf y)
 nf (FF.send x y) = NF.send (nf x) (nf y)
@@ -36,7 +37,7 @@ nf (FF.cont x)   = NF.cont (nf x)
 nf (FF.pool x y) = NF.pool (nf x) (nf y)
 nf (FF.exch b x) = NF.exch b (nf x)
 
-nfND : {Γ : Context} → ⊢ Γ → List (⊢ⁿᶠ Γ)
+nfND : {Γ : Environment} → ⊢ Γ → List (⊢ⁿᶠ Γ)
 nfND  FF.ax        = return NFA.ax
 nfND (FF.cut  x y) = nfND x >>= λ x → nfND y >>= λ y → NFND.cutND x y
 nfND (FF.send x y) = nfND x >>= λ x → nfND y >>= λ y → return $ NF.send x y

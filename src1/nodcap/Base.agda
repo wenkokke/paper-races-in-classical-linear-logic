@@ -1,7 +1,8 @@
 open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺ using (ℕ⁺; suc; _+_)
 open import Data.List as L using (List; []; _∷_; _++_)
-open import Data.List.Any as LA using (Any; here; there)
+open import Data.List.Any using (Any; here; there)
+open import Data.List.Any.Membership.Propositional using (_∈_; _∼[_]_; bag)
 open import Data.Product using (_×_; _,_; uncurry; map)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Function using (id; _$_)
@@ -100,13 +101,10 @@ pol? (?[ n ] A) = inj₂ (?[ n ] A)
 ^-negpos (?[ n ] A) = ![ n ] (A ^)
 
 
--- Contexts.
+-- Environments.
 
-Context : Set
-Context = List Type
-
-open LA.Membership-≡ public
-
+Environment : Set
+Environment = List Type
 
 -- Injectivity.
 

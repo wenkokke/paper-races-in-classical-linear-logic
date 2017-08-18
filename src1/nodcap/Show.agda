@@ -1,3 +1,5 @@
+module nodcap.Show where
+
 open import Coinduction
 open import Category.Monad.State using (State; StateMonadState; module RawMonadState)
 open import Data.Nat as ℕ using (ℕ; suc; zero)
@@ -16,15 +18,13 @@ open import Function.Equality using (_⟨$⟩_)
 open import Function.Inverse as I using ()
 open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
 
-open import Logic.Context
+open import Data.Environment
 open import nodcap.Base
 open import nodcap.Typing
 
-module nodcap.Show where
-
 open I.Inverse using (to; from)
 
-showTerm : {Γ : Context} → ⊢ Γ → String
+showTerm : {Γ : Environment} → ⊢ Γ → String
 showTerm {Γ} x = proj₁ (go bound x state)
   where
     open RawMonadState (StateMonadState (Stream String))
@@ -38,7 +38,7 @@ showTerm {Γ} x = proj₁ (go bound x state)
     fresh : State (Stream String) String
     fresh = get >>= λ{(x ∷ xs) → put (♭ xs) >> return x}
 
-    go : {Γ : Context} (bound : {w : Type} → w ∈ Γ → String) → ⊢ Γ → State (Stream String) String
+    go : {Γ : Environment} (bound : {w : Type} → w ∈ Γ → String) → ⊢ Γ → State (Stream String) String
     go bound ax
       = return (boundˣ ++ "<->" ++ boundʸ)
       where
@@ -173,7 +173,7 @@ showTerm {Γ} x = proj₁ (go bound x state)
     bound : {w : Type} → w ∈ Γ → String
     bound i = V.lookup (toFin i) (X.take (length Γ) names)
       where
-        toFin : {Γ : Context} {w : Type} → w ∈ Γ → Fin (length Γ)
+        toFin : {Γ : Environment} {w : Type} → w ∈ Γ → Fin (length Γ)
         toFin (here px) = zero
         toFin (there i) = suc (toFin i)
 

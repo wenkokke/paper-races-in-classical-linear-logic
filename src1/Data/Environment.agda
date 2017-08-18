@@ -1,22 +1,20 @@
+module Data.Environment {a} {A : Set a} where
+
 open import Algebra
 open import Data.Nat
-open import Data.Empty                                 using (⊥-elim)
-open import Data.Pos                                   using (ℕ⁺; suc; replicate⁺)
-open import Data.List as L                             using (List; []; _∷_; [_]; _++_; map; concatMap; replicate)
-open import Data.List.Any                              using (here; there)
-open import Data.List.Any.BagAndSetEquality as B       using ()
-open import Data.List.Any.Membership.Propositional     using (_∈_; _∼[_]_; bag)
-open import Data.Product                               using (Σ-syntax; ∃₂; _×_; proj₁; proj₂; _,_)
-open import Data.Sum                                   using (_⊎_; inj₁; inj₂)
-open import Function                                   using (_$_; flip)
-open import Function.Equality                          using (_⟨$⟩_)
-open import Function.Inverse                           using (id; sym; _∘_)
-open        Function.Inverse.Inverse                   using (to; from)
-open import Relation.Binary.PropositionalEquality as P using (_≡_)
-
-
-module Logic.Context {a} {A : Set a} where
-
+open import Data.Empty                                    using (⊥-elim)
+open import Data.Pos                                      using (ℕ⁺; suc; replicate⁺)
+open import Data.List as L                                using (List; []; _∷_; [_]; _++_; map; concatMap; replicate)
+open import Data.List.Any                                 using (here; there)
+open import Data.List.Any.BagAndSetEquality as B          using ()
+open import Data.List.Any.Membership.Propositional public using (_∈_; _∼[_]_; bag)
+open import Data.Product                                  using (Σ-syntax; ∃₂; _×_; proj₁; proj₂; _,_)
+open import Data.Sum                                      using (_⊎_; inj₁; inj₂)
+open import Function                                      using (_$_; flip)
+open import Function.Equality                             using (_⟨$⟩_)
+open import Function.Inverse                              using (id; sym; _∘_)
+open        Function.Inverse.Inverse                      using (to; from)
+open import Relation.Binary.PropositionalEquality as P    using (_≡_)
 
 private module ++ = Monoid (L.monoid A)
 
@@ -30,8 +28,8 @@ bubble (x ∷ xs) (here px)         = here px
 bubble (x ∷ xs) (there i)         = there (bubble xs i)
 
 
--- There is a bijection between indices into the context
--- ΓBAΔ and the context ΓABΔ. This is called a 'bubble',
+-- There is a bijection between indices into the environment
+-- ΓBAΔ and the environment ΓABΔ. This is called a 'bubble',
 -- because it swaps two adjacent elements, as in bubble
 -- sort.
 bbl : (xs {ys} : List A) {x y : A} →
@@ -53,8 +51,8 @@ bbl xs {ys} {x} {y} = record
     inv (x ∷ xs) (there i)         = P.cong there (inv xs i)
 
 
--- There is a bijection between indices into the context
--- ΓΔAΘ and the context ΓAΔΘ.
+-- There is a bijection between indices into the environment
+-- ΓΔAΘ and the environment ΓAΔΘ.
 fwd : (xs ys {zs} : List A) {w : A} →
       xs ++ ys ++ w ∷ zs ∼[ bag ] xs ++ w ∷ ys ++ zs
 fwd (x ∷ xs) ys = B.∷-cong P.refl (fwd xs ys)
@@ -97,9 +95,9 @@ private
     test-allSplit = P.refl
 -}
 
--- It is possible to list all contexts Δ for which there
--- exists a bijection between indices into the context Γ
--- and the context Δ.
+-- It is possible to list all environments Δ for which there
+-- exists a bijection between indices into the environment Γ
+-- and the environment Δ.
 all : (xs : List A) → List (Σ[ ys ∈ List A ] xs ∼[ bag ] ys)
 all [] = ([] , id) ∷ []
 all (x ∷ xs) = concatMap insAll (all xs)
@@ -152,8 +150,8 @@ all-replicate⁺ {x ∷ xs} {y} (suc n) b = P.cong₂ _∷_ x=y (all-replicate n
     b'  = B.drop-cons (P.subst (λ x → x ∷ xs ∼[ bag ] y ∷ replicate n y) x=y b)
 
 
--- There is a bijection between indices into the context
--- ΓΣΔΠ and the context ΓΔΣΠ.
+-- There is a bijection between indices into the environment
+-- ΓΣΔΠ and the environment ΓΔΣΠ.
 swp₄ : (xs ys zs {ws} : List A) →
       xs ++ zs ++ ys ++ ws ∼[ bag ] xs ++ ys ++ zs ++ ws
 swp₄ xs []       zs = id
@@ -165,8 +163,8 @@ swp₄ xs (y ∷ ys) zs =
 -- Alias for swp₄.
 swp = swp₄
 
--- There is a bijection between indices into the context
--- ΓΣΔ and the context ΓΔΣ. This is mostly a convenience
+-- There is a bijection between indices into the environment
+-- ΓΣΔ and the environment ΓΔΣ. This is mostly a convenience
 -- function because of the annoyance of using ++.identity
 -- in the logic proofs.
 swp₃ : (xs ys {zs} : List A) →
@@ -178,8 +176,8 @@ swp₃ xs ys {zs} =
   $ swp₄ xs ys zs
   )
 
--- There is a bijection between indices into the context
--- ΓΣΔ and the context ΓΔΣ. This is mostly a convenience
+-- There is a bijection between indices into the environment
+-- ΓΣΔ and the environment ΓΔΣ. This is mostly a convenience
 -- function because of the annoyance of using ++.identity
 -- in the logic proofs.
 swp₂ : (xs {ys} : List A) →
@@ -235,7 +233,7 @@ del-from {xs} {ys} {x} eq i
 ... | (ys₁ , ys₂ , q₁ , q₂) rewrite q₁ | q₂
     = B.drop-cons (fwd [] xs₁ ∘ eq ∘ sym (fwd [] ys₁))
 
--- Split a context based on a proof of membership (used as index).
+-- Split a environment based on a proof of membership (used as index).
 split : ∀ (xs {ys} : List A) {x : A} →
         (i : x ∈ xs ++ ys) →
         Σ[ j ∈ x ∈ xs ] ((xs ++ ys) - i ≡ xs - j ++ ys) ⊎

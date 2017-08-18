@@ -1,14 +1,13 @@
+module nodcap.NF.Axiom where
+
 open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺
 open import Data.List as L using (List; []; _∷_; _++_)
 open import Function using (_$_)
 open import Relation.Binary.PropositionalEquality as P using (_≡_; _≢_)
-
-open import Logic.Context
+open import Data.Environment
 open import nodcap.Base
 open import nodcap.NF.Typing
-
-module nodcap.NF.Axiom where
 
 {-# TERMINATING #-}
 -- Theorem:

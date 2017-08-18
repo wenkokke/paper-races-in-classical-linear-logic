@@ -187,12 +187,7 @@ TSWLatexianTemp*
 
 # KBibTeX
 *~[0-9]*
-old/
-*.bib-stamp
-feedback-*.txt
-depr/
-*.clean
 MAlonzo/
-src/TicketServer
-src/LocalChoice
-coloremoji/
+src1/TicketServer
+src1/LocalChoice
+depr/
