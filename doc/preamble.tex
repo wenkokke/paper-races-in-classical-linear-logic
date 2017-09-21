@@ -1,0 +1,48 @@
+\usepackage{babel}
+\usepackage[dvipsnames,table]{xcolor}
+
+\usepackage{geometry}
+\usepackage{lmodern,microtype}
+\usepackage{etex,etoolbox,environ}
+
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{mdframed}
+\usepackage{lscape}
+\usepackage{multicol,multirow}
+\usepackage{tikz}
+\usepackage{rotating}
+\usepackage{xspace}
+\xspaceaddexceptions{]\}}
+
+\usepackage[fleqn,leqno]{amsmath}
+\usepackage{amssymb}
+\usepackage{csquotes}
+\usepackage{centernot}
+\usepackage{textgreek,textcomp}
+\usepackage[thmmarks,amsmath]{ntheorem}%after babel
+\usepackage{nameref,hyperref,cleveref}
+
+\usepackage[%
+  backend=biber,
+  style=numeric,
+  natbib=true,
+  backref=false,
+  backrefstyle=all+,
+  hyperref=true,
+  ]{biblatex}
+\newcommand*{\citenat}[1]{\citeauthor{#1}~\cite{#1}}
+
+\newcommand*{\wen}[1]{%
+\mdframed\textcolor{MidnightBlue}{\bf Wen: #1}\endmdframed}
+
+\input{preamble-emoji}
+\input{preamble-types}
+\input{preamble-terms}
+\input{preamble-proofs}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
