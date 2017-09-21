@@ -1,0 +1,242 @@
+\documentclass[12pt,UKenglish]{article}
+\usepackage[left=1cm,right=1cm,top=1cm,bottom=1cm]{geometry}
+\newcounter{chapter}
+\input{preamble}
+\newcommand{\oldemoji}[2][1em]{\ensuremath{\vcenter{\hbox{\includegraphics[width=#1]{twemoji/assets/#2.ai}}}}\xspace}
+\newcommand{\oldjohn}{\oldemoji{1f469}}
+\newcommand{\oldmary}{\oldemoji{1f466}}
+\newcommand{\oldnope}{\oldemoji{1f64c}}
+\newcommand{\giftbox}{\oldemoji{1f381}}
+\pagestyle{empty}
+\begin{document}
+
+
+\[\!
+  \tm{
+    \begin{aligned} 
+      \nu x.( &\; \ncCnt{x}{y}{\oldjohn}\\
+         \mid &\; \ncCnt{x}{y'}{\oldmary}\\
+         \mid &\; \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}\;)
+    \end{aligned}
+  }
+\]
+
+\clearpage
+
+\begin{prooftree}
+  \AXC{$\seq[{ \oldjohn }]{ \Gamma, \tmty{y}{\giftbox^\bot} }$}
+  \SYM{(\take[1]{})}
+  \UIC{$\seq[{ \ncCnt{x}{y}{\oldjohn} }]{ \Gamma, \tmty{z}{\take[1]{\giftbox^\bot}} }$}
+
+  \AXC{$\seq[{ \oldmary }]{ \Delta, \tmty{z}{\giftbox^\bot} }$}
+  \SYM{(\take[1]{})}
+  \UIC{$\seq[{ \ncCnt{x}{z}{\oldmary} }]{ \Delta, \tmty{z}{\take[1]{\giftbox^\bot}} }$}
+
+  \NOM{Pool}
+  \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\oldjohn}}{\ncCnt{x}{z}{\oldmary}} }]{
+      \Gamma, \Delta, \tmty{x}{\take[2]{\giftbox^\bot}} }$}
+
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{\cake}{\giftbox}, \tmty{\oldnope}{\giftbox} }$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x'}{\oldnope}{\store} }]{
+      \Theta, \tmty{\cake}{\giftbox}, \tmty{x'}{\give[1]{\giftbox}} }$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x}{\cake}{\ncSrv{x'}{\oldnope}{\store}} }]{
+      \Theta, \tmty{x}{\give[1]{\giftbox}}, \tmty{x'}{\give[1]{\giftbox}} }$}
+  \NOM{Cont}
+  \UIC{$\seq[{ \ncSrv{x}{\cake}{\ncSrv{x}{\oldnope}{\store}} }]{
+      \Theta, \tmty{x}{\give[2]{\giftbox}} }$}
+
+  \NOM{Cut}
+  \BIC{$\seq[{
+      \cpCut{x}
+      {\ncPool{\ncCnt{x}{y}{\oldjohn}}{\ncCnt{x}{z}{\oldmary}}}
+      {\ncSrv{x}{\cake}{\ncSrv{x}{\oldnope}{\store}}}
+    }]{
+      \Gamma, \Delta, \Theta
+    }$}
+\end{prooftree}
+
+
+\clearpage
+
+\[\!
+  \begin{aligned}
+    \tm{P}, \tm{Q}, \tm{R}
+         :=& \; \tm{\cpLink{x}{y}}       &&\text{link}
+    \\ \mid& \; \tm{\cpCut{x}{P}{Q}}     &&\text{parallel composition, or ``cut'''}
+    \\ \mid& \; \tm{\cpSend{x}{y}{P}{Q}} &&\text{``output''}
+    \\ \mid& \; \tm{\cpRecv{x}{y}{P}}    &&\text{``input''}
+    \\ \mid& \; \tm{\cpHalt{x}}          &&\text{halt}
+    \\ \mid& \; \tm{\cpWait{x}{P}}       &&\text{wait}
+    \\ \mid& \; \tm{\cpInl{x}{P}}        &&\text{select left choice}
+    \\ \mid& \; \tm{\cpInr{x}{P}}        &&\text{select right choice}
+    \\ \mid& \; \tm{\cpCase{x}{P}{Q}}    &&\text{offer binary choice}
+    \\ \mid& \; \tm{\cpAbsurd{x}}        &&\text{offer nullary choice}
+    \\ \mid& \; \tm{\ncCnt{x}{y}{P}} &&\text{client creation}
+    \\ \mid& \; \tm{\ncSrv{x}{y}{P}} &&\text{server interaction}
+    \\ \mid& \; \tm{\ncPool{P}{Q}}   &&\text{parallel composition of clients}
+  \end{aligned}
+\]  
+
+\clearpage
+
+\[\!
+  \begin{aligned}
+    \ty{A}, \ty{B}, \ty{C}
+         :=& \; \ty{A \tens B} &&\text{pair of independent processes}
+    \\ \mid& \; \ty{A \parr B} &&\text{pair of interdependent processes}
+    \\ \mid& \; \ty{\one}      &&\text{unit for} \; {\tens}
+    \\ \mid& \; \ty{\bot}      &&\text{unit for} \; {\parr}
+    \\ \mid& \; \ty{A \plus B} &&\text{internal choice}
+    \\ \mid& \; \ty{A \with B} &&\text{external choice}
+    \\ \mid& \; \ty{\nil}      &&\text{unit for} \; {\plus}
+    \\ \mid& \; \ty{\top}      &&\text{unit for} \; {\with}
+    \\ \mid& \; \ty{\take[n]{A}} &&\text{pool of} \; n \; \text{clients}
+    \\ \mid& \; \ty{\give[n]{A}} &&n \; \text{server interactions}
+  \end{aligned}
+\]
+
+\clearpage
+
+\begin{landscape}
+\begin{center}
+  \cpInfAx
+  \cpInfCut
+\end{center}
+\begin{center}
+  \cpInfTens
+  \cpInfParr
+\end{center}
+\begin{center}
+  \cpInfOne
+  \cpInfBot 
+\end{center}
+\begin{center}
+  \cpInfPlus1
+  \cpInfPlus2
+\end{center}
+\begin{center}
+  \cpInfWith
+  \cpInfTop 
+\end{center}
+\end{landscape}
+
+\clearpage
+
+\[\!
+  \begin{aligned}
+    \ty{A}, \ty{B}, \ty{C}
+         :=& \; \dots
+    \\ \mid& \; \ty{\take[n]{A}} &&\text{pool of} \; n \; \text{clients}
+    \\ \mid& \; \ty{\give[n]{A}} &&n \; \text{server interactions}
+  \end{aligned}
+  \qquad
+  \begin{aligned}
+    \tm{P}, \tm{Q}, \tm{R}
+         :=& \; \dots
+    \\ \mid& \; \tm{\ncCnt{x}{y}{P}} &&\text{client creation}
+    \\ \mid& \; \tm{\ncSrv{x}{y}{P}} &&\text{server interaction}
+    \\ \mid& \; \tm{\ncPool{P}{Q}}   &&\text{parallel composition of clients}
+  \end{aligned}
+\]
+
+\vspace*{1\baselineskip}
+
+\begin{center}
+  \ncInfTake1%
+  \ncInfGive1%
+\end{center}
+\begin{center}
+  \ncInfPool
+  \ncInfCont
+\end{center}
+
+\clearpage
+
+\[
+  \renewcommand{\arraystretch}{1.15}
+  \begin{array}{rcl}
+    \tm{\cpCut{x}{\cpLink{w}{x}}{P}}
+    & \Longrightarrow \;
+    & \tm{\cpSub{w}{x}{P}} 
+    \\
+    \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
+    \\
+    \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
+    & \Longrightarrow \;
+    & \tm{P}
+    \\
+    \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{x}{P}{Q}}
+    \\
+    \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{x}{P}{R}}
+    \\
+    \tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}
+    \\
+    \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}
+    & \Longrightarrow \;
+    & \tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
+    \\[1ex]
+    \tm{\cpLink{x}{y}}
+    & \equiv \;
+    & \tm{\cpLink{y}{x}}
+    \\
+    \tm{\cpCut{x}{P}{Q}}
+    & \equiv \;
+    & \tm{\cpCut{x}{Q}{P}}
+    \\
+    \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
+    & \equiv \;
+    & \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}}
+    \\
+    \multicolumn{3}{c}{(\text{if} \; \notFreeIn{x}{R} \; \text{and} \; \notFreeIn{y}{P})}    
+    \\[1ex]
+    \tm{\ncPool{P}{Q}}
+    & \equiv \;
+    & \tm{\ncPool{Q}{P}}
+    \\
+    \tm{\ncPool{P}{\ncPool{Q}{R}}}
+    & \equiv \;
+    & \tm{\ncPool{\ncPool{P}{Q}}{R}}
+    \\
+    \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
+    & \equiv \;
+    & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}}
+    \\
+    \multicolumn{3}{c}{(\text{if} \; \notFreeIn{x}{P})}
+    \\
+    \tm{\ncPool{P}{\cpCut{x}{Q}{R}}}
+    & \equiv \;
+    & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
+    \\
+  \end{array}
+\]
+\begin{center}
+  \begin{prooftree*}
+    \AXC{\reducesto{P}{P^\prime}}
+    \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{\reducesto{P}{P'}}
+    \UIC{\reducesto{\ncPool{P}{Q}}{\ncPool{P'}{Q}}}
+  \end{prooftree*}
+\end{center}
+\begin{prooftree}
+  \AXC{$\tm{P}\equiv\tm{Q}$}
+  \AXC{\reducesto{Q}{Q^\prime}}
+  \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
+  \TIC{\reducesto{P}{P^\prime}}
+\end{prooftree}
+
+\end{document}
+%%% Local Variables:
+%%% TeX-master: "system"
+%%% End:

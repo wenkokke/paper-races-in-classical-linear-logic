@@ -1,3 +1,5 @@
+module nodcap.Base where
+
 open import Data.Nat as ℕ using (ℕ; suc; zero)
 open import Data.Pos as ℕ⁺ using (ℕ⁺; suc; _+_)
 open import Data.List as L using (List; []; _∷_; _++_)
@@ -7,9 +9,6 @@ open import Data.Product using (_×_; _,_; uncurry; map)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Function using (id; _$_)
 open import Relation.Binary.PropositionalEquality as P using (_≡_)
-
-
-module nodcap.Base where
 
 -- Types.
 
