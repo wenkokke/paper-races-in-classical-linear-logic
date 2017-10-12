@@ -1,0 +1,71 @@
+\begin{figure*}[ht]
+  \centering
+  \begin{tabular}{ll}
+    \cpEquivLinkComm
+    &
+      \begin{prooftree*}
+        \AXC{}
+        \NOM{Ax}
+        \UIC{$\seq[{ \cpLink{x}{y} }]{ \tmty{x}{A}, \tmty{y}{A^\bot} }$}
+      \end{prooftree*}
+    \\[20pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{}
+        \NOM{Ax}
+        \UIC{$\seq[{ \cpLink{y}{x} }]{ \tmty{y}{A^\bot}, \tmty{x}{A^{\bot\bot}} }$}
+        \RightLabel{$(\cdot)^\bot$-Involutive}
+        \UIC{$\seq[{ \cpLink{y}{x} }]{ \tmty{y}{A^\bot}, \tmty{x}{A} }$}
+      \end{prooftree*}
+    \\[25pt]
+    \cpEquivCutComm
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta }$}
+      \end{prooftree*}
+    \\[20pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A^\bot} }$}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A} }$}
+        \RightLabel{$(\cdot)^\bot$-Involutive}
+        \UIC{$\seq[{ P }]{ \Gamma, \tmty{x}{A^{\bot\bot}} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{Q}{P} }]{ \Gamma, \Delta }$}
+      \end{prooftree*}
+    \\[25pt]
+    \cpEquivCutAss1
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A^\bot}, \tmty{y}{B} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{y}{B^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{y}{Q}{R} }]{ \Delta, \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{P}{\cpCut{y}{Q}{R}} }]{ \Gamma, \Delta, \Theta }$}
+      \end{prooftree*}
+    \\[20pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{A} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A^\bot}, \tmty{y}{B} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta, \tmty{y}{B} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{y}{B^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{y}{\cpCut{x}{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta }$}
+      \end{prooftree*}
+  \end{tabular}
+  \caption{Type preservation for the structural congruence of \cp}
+  \label{fig:cp-preservation-equiv}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
