@@ -1,0 +1,78 @@
+\begin{sidewaysfigure}[ht]
+  \begin{landscape}
+    \begin{prooftree}
+      \AXC{}
+      \SYM{(\one)}
+      \UIC{$\seq[{ \cpHalt{y} }]{ \tmty{y}{\one} }$}
+      \SYM{(\plus_1)}
+      \UIC{$\seq[{ \cpInl{y}{\cpHalt{y}} }]{ \tmty{y}{\one \plus \one} }$}
+      \SYM{(\take[1]{})}
+      \UIC{$\seq[{ \ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}} }]{ \tmty{x}{\take[1]{\one \plus \one}} }$}
+      
+      \AXC{}
+      \SYM{(\one)}
+      \UIC{$\seq[{ \cpHalt{z} }]{ \tmty{z}{\one} }$}
+      \SYM{(\plus_2)}
+      \UIC{$\seq[{ \cpInr{z}{\cpHalt{z}} }]{ \tmty{z}{\one \plus \one} }$}
+      \SYM{(\take[1]{})}
+      \UIC{$\seq[{ \ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}} }]{ \tmty{x}{\take[1]{\one \plus \one}} }$}
+      
+      \NOM{Pool}
+      \BIC{$\seq[{
+          \ncPool{\ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}}}{\ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}}}
+        }]{
+          \tmty{x}{\take[2]{\one \plus \one}}
+        }$}
+    \end{prooftree}
+    \vspace*{1\baselineskip}
+    \begin{prooftree}
+      \AXC{$\seq[{ P }]{ \Gamma }$}
+      \SYM{(\bot)} 
+      \UIC{$\seq[{ \cpWait{z}{P} }]{ \Gamma, \tmty{z}{\bot} }$}
+      \AXC{$\seq[{ P }]{ \Gamma }$}
+      \SYM{(\bot)} 
+      \UIC{$\seq[{ \cpWait{z}{P} }]{ \Gamma, \tmty{z}{\bot} }$}
+      \SYM{(\with)}
+      \BIC{$\seq[{ \cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}} }]{
+          \Gamma, \tmty{z}{\bot\with\bot} }$}
+      \SYM{(\bot)} 
+      \UIC{$\seq[{ \cpWait{z}{\cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}}} }]{
+          \Gamma, \tmty{z}{\bot\with\bot}, \tmty{y}{\bot} }$}
+ 
+      \AXC{$\seq[{ Q }]{ \Gamma }$}
+      \SYM{(\bot)} 
+      \UIC{$\seq[{ \cpWait{z}{Q} }]{ \Gamma, \tmty{z}{\bot} }$}
+      \AXC{$\seq[{ Q }]{ \Gamma }$}
+      \SYM{(\bot)} 
+      \UIC{$\seq[{ \cpWait{z}{Q} }]{ \Gamma, \tmty{z}{\bot} }$}
+      \SYM{(\with)}
+      \BIC{$\seq[{ \cpCase{z}{\cpWait{z}{Q}}{\cpWait{z}{Q}} }]{
+          \Gamma, \tmty{z}{\bot\with\bot} }$}
+      \SYM{(\bot)} 
+      \UIC{$\seq[{ \cpWait{z}{\cpCase{z}{\cpWait{z}{Q}}{\cpWait{z}{Q}}} }]{
+          \Gamma, \tmty{z}{\bot\with\bot}, \tmty{y}{\bot} }$}
+      
+      \SYM{(\with)}
+      \BIC{$\seq[{
+          \cpCase{y}{\cpWait{y}{\cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}}}}{\cpWait{y}{\cpCase{z}{\cpWait{z}{Q}}{\cpWait{z}{Q}}}}
+        }]{ \Gamma, \tmty{z}{\bot\with\bot}, \tmty{y}{\bot\with\bot} }$} 
+      \SYM{(\give[1]{})}
+      \UIC{$\seq[{
+          \ncSrv{x'}{z}{\cpCase{y}{\cpWait{y}{\cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}}}}{\cpWait{y}{\cpCase{z}{\cpWait{z}{Q}}{\cpWait{z}{Q}}}}}
+        }]{ \Gamma, \tmty{x'}{\give[1]{\bot\with\bot}}, \tmty{y}{\bot\with\bot} }$}
+      \SYM{(\give[1]{})}
+      \UIC{$\seq[{
+          \ncSrv{x}{y}{\ncSrv{x'}{z}{\cpCase{y}{\cpWait{y}{\cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}}}}{\cpWait{y}{\cpCase{z}{\cpWait{z}{Q}}{\cpWait{z}{Q}}}}}}
+        }]{ \Gamma, \tmty{x'}{\give[1]{\bot\with\bot}}, \tmty{x}{\give[1]{\bot\with\bot}} }$} 
+      \NOM{Cont}
+      \UIC{$\seq[{
+          \ncSrv{x}{y}{\ncSrv{x}{z}{\cpCase{y}{\cpWait{y}{\cpCase{z}{\cpWait{z}{P}}{\cpWait{z}{P}}}}{\cpWait{y}{\cpCase{z}{\cpWait{z}{Q}}{\cpWait{z}{Q}}}}}}
+        }]{ \Gamma, \tmty{x}{\give[1]{\bot\with\bot}}, \tmty{x}{\give[1]{\bot\with\bot}} }$} 
+    \end{prooftree}
+  \end{landscape}
+  \caption{Derivations for the encoding of non-deterministic local choice in \nodcap.}
+  \label{fig:nc-local-choice}
+\end{sidewaysfigure}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

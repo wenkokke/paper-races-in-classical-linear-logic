@@ -1,0 +1,1518 @@
+\documentclass[UKenglish]{llncs}
+\usepackage{makeidx}
+\input{preamble}
+\input{preamble-emoji}
+\input{preamble-terms}
+\input{preamble-types}
+\input{preamble-proofs}
+\addbibresource{main.bib}
+\arraycolsep=1ex
+\mainmatter % start of the contributions
+\title{Races in Classical Linear Logic}
+\titlerunning{Races in Classical Linear Logic} 
+\author{Wen Kokke \and J.\ Garrett Morris \and Philip Wadler}
+\tocauthor{Wen Kokke, J.\ Garrett Morris, and Philip Wadler}
+\institute{University of Edinburgh, Edinburgh, UK,\\
+\email{wen.kokke@ed.ac.uk}}
+\begin{document}
+
+\maketitle % typeset the title of the contribution
+
+\begin{abstract}
+  Process calculi based in logic, such as \piDILL and CP, provide a foundation
+  for deadlock-free concurrent programming, but at the cost of excluding
+  non-determinism and races.
+  We introduce \nodcap (nodcap), which extends CP with a novel account of
+  non-determinism.
+  Our approach draws on bounded linear logic to provide a strongly-typed
+  account of standard process calculus expressions of non-determinism.
+  We show that our extension is expressive enough to capture many uses of
+  non-determinism in untyped calculi, such as non-deterministic choice, while
+  preserving CP's meta-theoretic properties, including deadlock freedom.  
+\end{abstract}
+
+%% Introduction
+\section{Introduction}\label{sec:introduction}
+
+Consider the following scenario:
+\begin{quote}
+  John and Mary are working from home one morning when they get a craving for a
+  slice of cake. Being denizens of the web, they quickly find the nearest store
+  which does home deliveries.
+  Unfortunately for them, they both order their cake at the \emph{same} store,
+  which has only one slice left. After that, all it can deliver is
+  disappointment.
+\end{quote}
+This is an example of a \emph{race condition}. We can model this scenario in the
+\textpi-calculus, assuming \john, \mary and \store are three processes
+modeling John, Mary and the store, and \sliceofcake and \nope are two channels
+giving access to a slice of cake and disappointment, respectively.
+As expected, this process has two possible outcomes: either John gets the cake,
+and Mary gets disappointment, or vice versa.
+\[
+  \begin{array}{c}
+    \tm{(\piPar{%
+    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    }{%
+    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    })}
+    \\[1ex]
+    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+    \\[1ex]
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{%
+    \piSub{\nope}{z}{\mary}}})}
+    \quad
+    \text{or}
+    \quad
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{%
+    \piSub{\sliceofcake}{z}{\mary}}})}
+  \end{array}
+\]
+While John or Mary may not like all of the outcomes, it is the store which is
+responsible for implementing the online delivery service, and the store is happy
+with either outcome. Thus, the above is an interaction we would like to be able to
+model.
+
+Now consider another scenario, which takes place \emph{after} John has already
+bought the cake:
+\begin{quote}
+  Mary is \emph{really} disappointed when she finds out the cake has sold out.
+  John, always looking to make some money, offers to sell the slice to her for a
+  profit. Mary agrees to engage in a little bit of back-alley cake resale, but
+  sadly there is no trust between the two.
+  John demands payment first.
+  Mary would rather get her slice of cake before she gives John the money.
+\end{quote}
+This is an example of a \emph{deadlock}. We can also model this scenario in the
+\textpi-calculus, assuming that \bill\ is a channel giving access to some
+adequate amount of money.
+\[
+  \begin{array}{c}
+    \tm{(\piPar{%
+    \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}
+    }{%
+    \piRecv{y}{w}{\piSend{x}{\bill}{\mary}}
+    })}
+    \quad
+    \centernot\Longrightarrow^{\star}
+  \end{array}  
+\]
+The above process does not reduce. As both John and Mary would prefer the
+exchange to be made, this interaction is desired by \emph{neither}. Thus, the
+above is an interaction we would \emph{somehow} like to exclude.
+
+Session types~\cite{honda1993} statically guarantee that concurrent
+programs, such as those above, respect communication protocols.
+Session-typed calculi with logical foundations, such as
+\piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a
+result of a close correspondence with logic.
+The same correspondence, however, also rules out non-determinism and race
+conditions.
+
+In this paper, we present \nodcap (nodcap), an extension of
+CP~\cite{wadler2012} with a novel account of non-determinism and races.
+Inspired by bounded linear logic~\cite{girard1992}, we introduce a form of
+shared channels, in which the type of a shared channel tracks how many times it
+is reused.
+As in the untyped $\pi$-calculus, sharing introduces the potential for
+non-determinism.
+We show that our approach is sufficient to capture practical examples of races,
+such as the web store, as well as other formal characterizations of
+non-determinism, such as non-deterministic choice.  However, \nodcap does not
+lose the metatheoretical benefits of CP: we show that it enjoys termination and
+deadlock-freedom.
+
+This paper proceeds as follows.
+In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in
+logic-inspired session-typed process calculi.
+In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and
+preservation.
+In \cref{sec:cpnd}, we introduce \nodcap.
+Finally, in \cref{sec:discussion}, we conclude with a discussion of the work
+done in this paper and potential avenues for future work.
+
+\section{Non-determinism, logic, and session types}
+\label{sec:local-choice}
+In recent work, we have seen the extension of \piDILL and \cp with operators for
+non-deterministic behaviour~\cite{atkey2016,caires2014,caires2017}.
+These extensions all implement an operator known as non-deterministic local
+choice.
+While this operator is written as \tm{P+Q}, it should not be confused with
+input-guarded choice~\cite{milner1992b} from the \textpi-calculus.
+Essentially, non-deterministic local choice can be summarised by the following
+typing and reduction rules: 
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma }$}
+    \AXC{$\seq[{ Q }]{ \Gamma }$}
+    \BIC{$\seq[{ P + Q }]{ \Gamma }$}
+  \end{prooftree*}
+  \hspace*{2cm}
+  \(
+  \begin{array}{c}
+    \reducesto{P + Q}{P}\\
+    \reducesto{P + Q}{Q}
+  \end{array}
+  \)
+\end{center}
+While non-deterministic local choice forms a good basis for the discussion of
+non-determinism in session-typed process calculi, it has some shortcomings.
+For this operator, the non-determinism arises from the fact that for any term
+\tm{P+Q}, two different reduction rules apply simultaneously. These reduction
+rules are written specifically to introduce non-determinism.
+This is unlike the \textpi-calculus, where non-determinism arises due to
+multiple processes communicating on a single, shared channel.
+We can easily implement this operator in the \textpi-calculus, using a nullary
+communication:
+\[
+  \begin{array}{c}
+    \tm{( \piPar{\piPar{\piSend{x}{}{\piHalt}}{\piRecv{x}{}{P}}}{\piRecv{x}{}{Q}} )}
+    \\[1ex]
+    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+    \\[1ex]
+    \tm{( \piPar{P}{\piRecv{x}{}{Q}} )}
+    \quad
+    \text{or}
+    \quad
+    \tm{( \piPar{\piRecv{x}{}{P}}{Q} )}
+  \end{array}
+\]
+In this implementation, the process \tm{\piSend{x}{}{0}} will ``unlock'' either
+\tm{P} or \tm{Q}, leaving the other process deadlocked. Or we could use
+input-guarded choice:
+\[
+  \tm{( \piPar{\piSend{x}{}{\piHalt}}{( \piRecv{x}{}{P} + \piRecv{x}{}{Q} )} )}
+\]
+However, there are many non-deterministic processes in the \textpi-calculus
+which are awkward to encode using non-deterministic local choice.
+Let us look at our example:
+\[
+  \begin{array}{c}
+    \tm{(\piPar{%
+    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    }{%
+    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    })}
+    \\[1ex]
+    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+    \\[1ex]
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \quad
+    \text{or}
+    \quad
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+  \end{array}
+\]
+This non-deterministic interaction involves communication. If we wanted to write
+down a process which reduced to the same result using non-deterministic local
+choice, we would have to write the following process: 
+\[
+  \begin{array}{c}
+    \tm{
+    (\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})
+    +
+    (\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})
+    }
+    \\[1ex]
+    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+    \\[1ex]
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \quad
+    \text{or}
+    \quad
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+  \end{array}
+\]
+In essence, instead of modelling a non-deterministic interaction, we are
+enumerating the outcomes of such an interaction.
+This means non-deterministic local choice cannot model non-determinism in the
+way the \textpi-calculus does.
+%
+Enumerating all possible outcomes becomes worse the more processes are involved
+in an interaction. Imagine a scenario the following scenario:
+\begin{quote}
+  Three customers, Alice, John and Mary, have a craving for cake. Should cake be
+  sold out, however, well... a doughnut will do. They prepare to order their
+  goods via an online store. Unfortunately, they all decide to use the
+  same \emph{shockingly} under-stocked store, which has only one slice of cake,
+  and a single doughnut. After that, all it can deliver is disappointment.
+\end{quote}
+We can model this scenario in the \textpi-calculus, assuming \alice, \john,
+\mary, and \store are four processes modelling Alice, John, Mary and the store,
+and \sliceofcake, \doughnut, and \nope are three channels giving access to a
+slice of cake, a so-so doughnut, and disappointment, respectively.
+\begin{center}
+  \makebox[\textwidth][c]{\ensuremath{
+      \begin{array}{c}
+        \tm{(\piPar{%
+        \piSend{x}{\sliceofcake}{\piSend{x}{\doughnut}{\piSend{x}{\nope}{\store}}}
+        }{%
+        \piPar{\piRecv{x}{y}{\alice}}{\piPar{\piRecv{x}{z}{\john}}{\piRecv{x}{w}{\mary}}
+        })}}
+        \\[1ex]
+        \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+        \\[1ex]
+        \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
+        \;
+        \text{or}
+        \;
+        \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
+        \\[1ex]
+        \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
+        \;
+        \text{or}
+        \;
+        \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
+        \\[1ex]
+        \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
+        \;
+        \text{or}
+        \;
+        \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
+        \\[1ex]
+      \end{array}
+    }}
+\end{center}
+With the addition of one process, Alice, we have increased the number of
+possible outcomes enormously! In general, the number of outcomes for these types
+of scenarios is $n!$, where $n$ is the number of processes. This means that if
+we wish to translate any non-deterministic process to one using
+non-deterministic local choice, we can expect a factorial growth in the size of
+the term!
+
+\section{Classical Processes Revisited}\label{sec:cp-revisited}
+
+In this section, we introduce of \cp~\cite{wadler2012,lindley2015semantics}.
+To keep the discussion simple, we will only discuss the subset which corresponds
+to multiplicative-additive linear logic~\cite[MALL]{girard1987} or rudimentary
+linear logic~\cite[RLL]{girard1992}.
+We foresee no problems in extending the proofs from \cref{sec:cpnd} to
+cover the remaining features of \cp, polymophism and the exponentials $\ty{!A}$
+and $\ty{?A}$. 
+
+We deviate from the original presentation of \cp~\cite{wadler2012} in two ways:
+we include the commutativity of links in our structural congruence, as done by
+\citenat{paykin2016}; and we exclude the commutative conversions from our
+reduction system, inspired by \citenat{lindley2015semantics}, which leads to a
+different notion of canonical form and a reduction strategy closer to that of
+the \textpi-calculus.
+
+The term language for \cp is a variant of the
+\textpi-calculus~\cite{milner1992b}. 
+Its terms are defined by the following grammar:
+\begin{definition}[Terms]\label{def:cp-terms}
+  \[\!
+    \begin{aligned}
+      \tm{P}, \tm{Q}, \tm{R}
+           :=& \; \tm{\cpLink{x}{y}}       &&\text{link}
+      \\ \mid& \; \tm{\cpCut{x}{P}{Q}}     &&\text{parallel composition, or ``cut'''}
+      \\ \mid& \; \tm{\cpSend{x}{y}{P}{Q}} &&\text{``output''}
+      \\ \mid& \; \tm{\cpRecv{x}{y}{P}}    &&\text{``input''}
+      \\ \mid& \; \tm{\cpHalt{x}}          &&\text{halt}
+      \\ \mid& \; \tm{\cpWait{x}{P}}       &&\text{wait}
+      \\ \mid& \; \tm{\cpInl{x}{P}}        &&\text{select left choice}
+      \\ \mid& \; \tm{\cpInr{x}{P}}        &&\text{select right choice}
+      \\ \mid& \; \tm{\cpCase{x}{P}{Q}}    &&\text{offer binary choice}
+      \\ \mid& \; \tm{\cpAbsurd{x}}        &&\text{offer nullary choice}
+    \end{aligned}
+  \]  
+  \qed
+\end{definition}
+The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names.
+The construct \tm{\cpLink{x}{y}} links two
+channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on
+\tm{x} to \tm{y} and vice versa.
+The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes
+two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel.
+Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
+\tm{Q}.
+In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets denote
+input, square brackets denote output. 
+We use bound output~\cite{sangiorgi1996}, meaning that both input and output
+bind a new name. 
+In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
+In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is only bound in \tm{P}, while
+\tm{x} is only bound in \tm{Q}.
+
+Terms in \cp are identified up to structural congruence, which states that
+parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
+It is defined as follows:
+\begin{definition}[Structural congruence]\label{def:cp-equiv}
+  We define the structural congruence $\equiv$ as a reflexive, transitive
+  congruence over terms which satisfies the following additional axioms:
+  \[
+    \begin{array}{llll}
+      \cpEquivLinkComm
+      & \tm{\cpLink{x}{y}}
+      & \equiv \;
+      & \tm{\cpLink{y}{x}}
+      \\
+      \cpEquivCutComm
+      & \tm{\cpCut{x}{P}{Q}}
+      & \equiv \;
+      & \tm{\cpCut{x}{Q}{P}}
+      \\
+      \cpEquivCutAss1
+      & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
+      & \equiv \;
+      & \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}}
+        \quad \text{if} \; \notFreeIn{x}{R} \; \text{and} \; \notFreeIn{y}{P}
+    \end{array}
+  \]
+  \qed
+\end{definition}
+We do not add an axiom for \cpEquivCutAss2, as it follows from
+\cref{def:cp-equiv}.
+Throughout this dissertation, we will leave uses of the transitivity and
+congruence rules implicit.
+Structural congruence is a symmetric relation.
+%
+Channels in \cp are typed using a session type system which corresponds to RLL,
+the multiplicative, additive fragment of linear logic.
+The types are defined by the following grammar:
+\begin{definition}[Types]\label{def:cp-types}
+  \[\!
+    \begin{aligned}
+      \ty{A}, \ty{B}, \ty{C}
+           :=& \; \ty{A \tens B} &&\text{pair of independent channels}
+      \\ \mid& \; \ty{A \parr B} &&\text{pair of interdependent channels}
+      \\ \mid& \; \ty{\one}      &&\text{unit for} \; {\tens}
+      \\ \mid& \; \ty{\bot}      &&\text{unit for} \; {\parr}
+      \\ \mid& \; \ty{A \plus B} &&\text{internal choice}
+      \\ \mid& \; \ty{A \with B} &&\text{external choice}
+      \\ \mid& \; \ty{\nil}      &&\text{unit for} \; {\plus}
+      \\ \mid& \; \ty{\top}      &&\text{unit for} \; {\with}
+    \end{aligned}
+  \]  
+  \qed
+\end{definition}
+Duality plays a crucial role in both linear logic and session types.
+In \cp, the two endpoints of a channel are assigned dual types.
+This ensures that, for instance, whenever a process \emph{sends} across a
+channel, the process on the other end of that channel is waiting to
+\emph{receive}.
+Each type \ty{A} has a dual, written \ty{A^\bot}.
+Duality is an involutive function.
+\begin{definition}[Duality]\label{def:cp-negation}
+  \[\!
+    \begin{array}{lclclcl}
+              \ty{(A \tens B)^\bot} &=& \ty{A^\bot \parr B^\bot}
+      &\quad& \ty{\one^\bot}        &=& \ty{\bot}
+      \\      \ty{(A \parr B)^\bot} &=& \ty{A^\bot \tens B^\bot}
+      &\quad& \ty{\bot^\bot}        &=& \ty{\one}
+      \\      \ty{(A \plus B)^\bot} &=& \ty{A^\bot \with B^\bot}
+      &\quad& \ty{\nil^\bot}        &=& \ty{\top}
+      \\      \ty{(A \with B)^\bot} &=& \ty{A^\bot \plus B^\bot}
+      &\quad& \ty{\top^\bot}        &=& \ty{\nil}
+    \end{array}
+  \]
+  \qed
+\end{definition}
+Environments associate channels with types.
+\begin{definition}[Environments]\label{def:cp-environments}
+  We define environments as follows:
+  \[
+    \ty{\Gamma}, \ty{\Delta}, \ty{\Theta}
+    ::= \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}
+  \] 
+  Names in environments must be unique, and environments \ty{\Gamma} and
+  \ty{\Delta} can only be combined as $\ty{\Gamma}, \ty{\Delta}$ if
+  $\text{fv}(\ty{\Gamma}) \cap \text{fv}(\ty{\Delta}) = \varnothing$. 
+  \qed
+\end{definition}
+Typing judgements associate processes with collections of typed channels.
+\begin{definition}[Typing judgements]\label{def:cp-typing-judgement}
+  A typing judgement $\seq[{ P }]{\tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}}$ denotes
+  that the process \tm{P} communicates along channels $\tm{x_1}\dots\tm{x_n}$
+  following protocols $\ty{A_1}\dots\ty{A_n}$.
+  Typing judgements can be constructed using the following rules:
+  {\normalfont
+    \begin{center} \cpInfAx    \cpInfCut   \end{center}
+    \begin{center} \cpInfTens  \cpInfParr  \end{center}
+    \begin{center} \cpInfOne   \cpInfBot   \end{center}
+    \begin{center} \cpInfPlus1 \cpInfPlus2 \end{center}
+    \begin{center} \cpInfWith              \end{center}
+    \begin{center} \cpInfNil   \cpInfTop   \end{center}
+  }
+  \qed
+\end{definition}
+Reductions relate processes with their reduced forms.
+They are defined as follows:
+\begin{definition}[Term reduction]\label{def:cp-term-reduction}
+  A reduction $\reducesto{P}{P'}$ denotes that the process \tm{P} can reduce to
+  the process \tm{P'} in a single step. Reductions can only be constructed using
+  the following rules:
+  \[
+    \begin{array}{llll}
+      \cpRedAxCut1
+      & \tm{\cpCut{x}{\cpLink{w}{x}}{P}}
+      & \Longrightarrow \;
+      & \tm{\cpSub{w}{x}{P}} 
+      \\
+      \cpRedBetaTensParr
+      & \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
+      \\
+      \cpRedBetaOneBot
+      & \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
+      & \Longrightarrow \;
+      & \tm{P}
+      \\
+      \cpRedBetaPlusWith1
+      & \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{x}{P}{Q}}
+      \\
+      \cpRedBetaPlusWith2
+      & \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{x}{P}{R}}
+    \end{array}
+  \]
+  \begin{prooftree}
+    \AXC{\reducesto{P}{P^\prime}}
+    \SYM{\cpRedGammaCut}
+    \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
+  \end{prooftree}
+  \begin{prooftree}
+    \AXC{$\tm{P}\equiv\tm{Q}$}
+    \AXC{\reducesto{Q}{Q^\prime}}
+    \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
+    \SYM{\cpRedGammaEquiv}
+    \TIC{\reducesto{P}{P^\prime}}
+  \end{prooftree}
+  %
+  The relation $\Longrightarrow^\star$ is the reflexive, transitive closure of
+  $\Longrightarrow$.
+  \qed
+\end{definition}
+We will discuss the interpretations of each connective, together with their
+typing and reduction rules, in \cref{sec:cp-multiplicatives,sec:cp-additives,sec:cp-duality}.
+
+\subsection{Multiplicatives and in- and interdependence}
+\label{sec:cp-multiplicatives}
+The multiplicatives ($\ty{\tens}, \ty{\parr}$) deal with independence and
+interdependence:
+\begin{itemize}
+\item
+  A channel of type \ty{A \tens B} represents a pair of channels, which
+  communicate with two independent processes---that is to say, two
+  processes who share no channels.
+  A process acting on a channel of type \ty{A \tens B} will send one endpoint of
+  a fresh channel, and then split into a pair of independent processes.
+  One of these processes will be responsible for an interaction of type \ty{A}
+  over the fresh channel, while the other process continues to interact as
+  \ty{B}.
+\item
+  A channel of type \ty{A \parr B} represents a pair of interdependent channels,
+  which are used within a single process.
+  A process acting on a channel of type \ty{A \parr B} will receive a channel to
+  act on, and communicate on its channels in whatever order it pleases.
+  This means that the usage of one channel can depend on that of
+  another---e.g.\ the interaction of type \ty{B} could depend on the result of
+  the interaction of type \ty{A}, or vise versa, and if \ty{A} and \ty{B} are
+  complex types, their interactions could likewise interweave in complex ways.
+\end{itemize}
+While the rules for \ty{\tens} and \ty{\parr} introduce input and output
+operations, these are inessential---the essential distinction lies two in the
+fact that (\tens) composes two independent processes, and therefore \emph{must}
+split the environment between them, whereas (\parr) uses a single process, which
+then can---and must---use all the channels in the environment.
+\begin{center}
+  \cpInfTens
+  \cpInfParr
+\end{center}
+The \textbeta-reduction rule for terms introduced by $(\tens)$ and $(\parr)$
+implements the behaviour outlined above:
+\[
+  \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
+  \Longrightarrow
+  \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
+\]
+The function \tm{\cpSub{x}{y}{P}} denotes the substitution of the name \tm{x}
+for the name \tm{y} in the term \tm{P}.
+%
+The rules for the multiplicative units ($\ty{\one}, \ty{\bot}$) follow the same
+pattern, except for the nullary instead of the binary case:
+\begin{itemize}
+\item
+  A term constructed by $(\one)$ must composes \emph{zero} independent
+  processes, and thus must halt. Furthermore, it must be able to split its
+  environment between zero processes, and thus its environment must be empty.
+\item
+  A term constructed by $(\bot)$, on the other hand, consists of a single
+  process, which is not further restricted.
+\end{itemize}
+The rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and receive
+operation, such as those found in the polyadic \textpi-calculus~\cite{milner1993}. 
+\begin{center}
+  \cpInfOne
+  \cpInfBot
+\end{center}
+The \textbeta-reduction rule for terms introduced by $(\one)$ and $(\bot)$
+implements the behaviour outlined above:
+\[
+  \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
+  \Longrightarrow
+  \tm{P}
+\]
+
+\subsection{Additives and choice}
+\label{sec:cp-additives}
+The additives ($\ty{\plus}, \ty{\with}$) deal with choice:
+\begin{itemize}
+\item
+  A process acting on a channel of type \ty{A \plus B} either sends the value
+  \tm{\text{inl}} to select an interaction of type \ty{A} or the value
+  \tm{\text{inr}} to select one of type \ty{B}. 
+\item
+  A process acting on a channel of type \ty{A \with B} receives such a value,
+  and then offers an interaction of either type \ty{A} or \ty{B},
+  correspondingly.
+\end{itemize}
+In essence, the additive operations implement sending and receiving of a single
+bit of information (\tm{\text{inl}} or \tm{\text{inr}}) and branching based on
+the value of that bit. 
+\begin{center}
+  \cpInfPlus1
+  \cpInfWith
+\end{center}
+The rule for constructing a process which sends \tm{\text{inr}}, $(\plus_2)$,
+has been omitted, but can be found in~\cref{def:cp-typing-judgement}.
+The \textbeta-reduction rules for terms introduced by $(\plus_1)$, $(\plus_2)$
+and $(\with)$ implement the behaviour outlined above.
+\[
+  \begin{array}{c}
+    \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}} \Longrightarrow \tm{\cpCut{x}{P}{Q}}
+    \\
+    \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}} \Longrightarrow \tm{\cpCut{x}{P}{R}}
+  \end{array}
+\]
+%
+The rules for the additive units ($\ty{\nil}, \ty{\top}$) follow the same
+pattern, except for a nullary choice:
+\begin{itemize}
+\item
+  There is \emph{no} rule for \ty{\nil}, as a process acting on a channel of
+  that type would have to select one of \emph{zero} options, which is clearly
+  impossible.
+\item
+  A process acting on a channel of type \ty{\top} will wait to receive a choice
+  of out \emph{zero} options. Since this will clearly never arrive, we have two
+  options: either we block, waiting forever, or we simply crash.
+\end{itemize}
+It may seem odd at first to include a type for the process which cannot possibly
+exist, and for the process which waits forever, but these make sensible units
+for choice.
+When offered a choice of type \ty{A \plus \nil}, one can either choose to
+interact as \ty{A}, or choose to commit to doing the impossible.
+Similarly, when offering a choice of type \ty{A \with \top}, one can safely
+implement the right branch with a process which waits forever, as no sound
+process will ever be able to select that branch anyway.
+\begin{center}
+  \cpInfNil
+  \cpInfTop
+\end{center}
+As there is no way to construct a process of type \ty{\nil}, there is no
+reduction rule for the additive units.
+
+
+\subsection{Structural rules and duality}
+\label{sec:cp-duality}
+Duality plays a crucial role in session type systems.
+In~\cref{sec:cp-additives}, we saw that duality ensures a process offering a choice
+is always matched with a process making a choice.
+In~\cref{sec:cp-multiplicatives}, we saw that it also ensures that, for instance
+a process which uses communication on \tm{x} to decide what to send on \tm{y} is
+matched with a pair of independent processes on \tm{x} and \tm{y}, a property
+which is crucial to deadlock freedom, as it prevents circular dependencies. 
+
+Duality appears in the typing rules for two \cp term constructs.
+Forwarding, \tm{\cpLink{x}{y}}, connects two dual channels with dual endpoints,
+while composition, \tm{\cpCut{x}{P}{Q}}, composes two processes \tm{P} and
+\tm{Q} with a shared channel \tm{x}, requiring that they follow dual protocols
+on \tm{x}.
+\begin{center}
+  \cpInfAx
+  \cpInfCut
+\end{center}
+There are two reduction rules which deal with the interactions between
+forwarding and compositions. These implement the intuition that if a process is
+meant to communicate on \tm{x}, \tm{x} is forwarding to \tm{y}, and nobody else
+is listening on \tm{x}, then the process might as well start communicating on
+\tm{y}.
+\[
+  \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
+\]
+We can do this because \cp implements a binary session type system, meaning
+that each communication has only two participants, and therefore we know that no
+other process is communicating on \tm{x}.
+
+\subsection{Example}
+\label{sec:cp-example}
+The multiplicatives are responsible for structuring communication, and
+it is this structure which rules out deadlocked interactions.
+Let us go back to our example of a deadlocked interaction from
+\cref{sec:introduction}:
+\[
+  \tm{(\piPar{%
+      \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}
+    }{%
+      \piRecv{y}{w}{\piSend{x}{\bill}{\mary}}
+    })}
+\]
+If we want to translate this interaction to \cp, we run into a problem: there is
+no \emph{plain} sending construct in \cp---we only have \tm{\cpSend{x}{y}{P}{Q}},
+which requires that the remainder of the interaction is split in two independent
+processes.
+This enforces a certain structure on the program. Either John will already have
+to have the cake in his hands, or Mary will already have to have the money in
+the bank.
+We model the second scenario below, assuming \john, \mary and \bank are
+processes modeling John, Mary, and Mary's bank, and \cake and \money are the
+types of two channels which give access to a slice of cake and appropriate
+payment.
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\money^\bot}, \tmty{x}{\cake}}$}
+  \SYM{\parr}
+  \UIC{$\seq[{ \cpRecv{x}{y}{\john} }]{ \Gamma, \tmty{x}{\money^\bot \parr \cake} }$}
+  \AXC{$\seq[{ \bank }]{ \Delta, \tmty{z}{\money} }$}
+  \AXC{$\seq[{ \mary }]{ \Theta, \tmty{x}{\cake^\bot} }$}
+  \SYM{\tens}
+  \BIC{$\seq[{\cpSend{x}{z}{\bank}{\mary} }]{ \Delta, \tmty{x}{\money \tens \cake^\bot} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{ \cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}} }]{\Gamma, \Delta, \Theta }$}
+\end{prooftree}
+The resulting process reduces, as expected:
+\[
+  \reducesto
+  {\cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}}}
+  {\cpCut{y}{\bank}{\cpCut{x}{\john}{\mary}}}
+\]
+
+\subsection{Preservation}
+\label{sec:cp-preservation}
+Preservation is the fact that term reduction preserves typing. In order to prove
+this, we will first need to prove that structural congruence preserves typing.
+\begin{theorem}[Preservation for $\equiv$]\label{thm:cp-preservation-equiv}
+  If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
+  then $\seq[{ Q }]{\Gamma }$.
+  \qed
+\end{theorem}
+\begin{proof}
+  By induction on the structure of the equivalence. The cases for reflexivity,
+  transitivity and congruence are trivial. The two interesting cases, for
+  \cpEquivCutComm and \cpEquivCutAss1 are given in \cref{fig:cp-preservation-equiv}
+  \qed
+\end{proof}
+\input{fig-cp-preservation-equiv}
+Then, we can prove preservation.
+\begin{theorem}[Preservation]\label{thm:cp-preservation}
+  If $\seq[{ P }]{ \Gamma }$ and \reducesto{P}{Q},
+  then $\seq[{ Q }]{ \Gamma }$.
+  \qed
+\end{theorem}
+\begin{proof}
+  By induction on the structure of the reduction.
+  See \cref{fig:cp-preservation}.
+  % 
+  The case for \cpRedGammaCut is trivial by the induction hypothesis, and the
+  case for \cpRedGammaEquiv is trivial by the induction hypothesis and
+  \cref{thm:cp-preservation-equiv}.
+  \qed
+\end{proof}
+\input{fig-cp-preservation}
+
+\subsection{Canonical Forms and Progress}
+\label{sec:cp-progress}
+There are several reduction strategies for \cp, all of which use as their
+canonical form terms which are not a cut.
+
+The reduction strategy described by \citenat{wadler2012} matches precisely the
+proof of cut-elimination for linear logic. It applies commutative conversions to
+bubble actions over unrelated \textnu-binders to the \textnu-binder which
+introduces the channel on which they act. It does this until it creates a
+\textbeta-redex, upon which it applies \textbeta-reduction, and continues.
+
+The reduction strategy described by \citeauthor{lindley2015semantics} creates
+redexes by rewriting using the structural congruence, then applies
+\cpRedAxCut1 or \textbeta-reduction. It does this until the process blocks on
+one or more external communications. Then, to convert the term to canonical
+form, it applies the commuting conversions to bubble one of those external
+communications to the front of the term.
+
+In this paper, we follow the reduction strategy detailed by
+\citeauthor{lindley2015semantics}, but instead define canonical forms as terms
+which are blocked on an external communication.
+This allows us to exclude the commutative conversions from our reduction system,
+which makes our reduction system more closely resemble that of the
+\textpi-calculus.
+
+We start out by formally defining actions, and what we mean when we say a
+process ``acts on'' a channel.
+\begin{definition}[Actions]\label{def:cp-action}
+  A process \tm{P} \emph{acts on} a channel \tm{x} if it is in one of the
+  following forms:
+  \begin{multicols}{3}
+    \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+    \item \tm{\cpLink{x}{y}}
+    \item \tm{\cpLink{y}{x}}
+    \item \tm{\cpSend{x}{y}{P'}{Q'}}
+    \item \tm{\cpRecv{x}{y}{P'}}
+    \item \tm{\cpHalt{x}}
+    \item \tm{\cpWait{x}{P'}}
+    \item \tm{\cpInl{x}{P'}}
+    \item \tm{\cpInr{x}{P'}}
+    \item \tm{\cpCase{x}{P'}{Q'}}
+    \item \tm{\cpAbsurd{x}}
+    \end{itemize}
+  \end{multicols}
+  \noindent
+  We say a process \tm{P} is an \emph{action} if it acts on some channel \tm{x}.
+  \qed
+\end{definition}
+Furthermore, we will need the notion of an \emph{evaluation prefix}.
+Intuitively, evaluation prefixes are multi-holed contexts consisting solely of
+cuts. We will use evaluation prefixes in order to have a view of every
+\emph{action} in a process at once.
+\begin{definition}[Evaluation prefixes]\label{def:cp-evaluation-prefixes}
+  We define evaluation prefixes as:
+  \begin{align*}
+    \tm{G}, \tm{H} := \tm{\Box} \mid \tm{\cpCut{x}{G}{H}}
+  \end{align*}
+  The \tm{\Box} construct represents a hole.
+  \\
+  We define plugging for an evaluation prefix with $n$ holes as:
+  \begin{align*}
+    \!\begin{array}{ll}
+      \tm{\cpPlug{\Box}{R}} & = \; \tm{R} \\
+      \tm{\cpPlug{\cpCut{x}{G}{H}}{R_1 \dots R_m, R_{m+1} \dots R_{n}}}
+                            & = \; \tm{\cpCut{x}{\cpPlug{G}{R_1 \dots R_m}}{\cpPlug{H}{R_{m+1} \dots R_n}}}
+    \end{array}
+  \end{align*}
+  Note that in the second case, \tm{G} is an evaluation prefix with $m$ holes,
+  and \tm{H} is an evaluation prefix with $(n-m)$ holes.
+  \qed
+\end{definition}
+Intuitively, we can say that every term of the form
+\tm{\cpPlug{G}{P_1 \dots P_n}} is equivalent to some term of the form
+\tm{\cpCut{x_1}{P_1}{\cpCut{x_2}{P_2}{\dots \cpCut{x_n}{P_{n-1}}{P_n} \dots}}} 
+where $\tm{x_1} \dots \tm{x_{n-1}}$ are the channels bound in \tm{G}.
+A similar equivalence was used by \citenat{lindley2015semantics} in their
+semantics for \cp.
+\begin{definition}[Maximum evaluation prefix]\label{def:cp-maximum-evaluation-prefix}
+  We say that \tm{G} is the evaluation prefix of \tm{P} when there exist terms
+  $\tm{P_1} \dots \tm{P_n}$ such that $\tm{P} = \tm{\cpPlug{G}{P_1 \dots P_n}}$.
+  We say that \tm{G} is the maximum evaluation prefix if each \tm{P_i} is an
+  action. 
+  \qed
+\end{definition}
+\begin{lemma}\label{thm:cp-maximum-evaluation-prefix}
+  Every term \tm{P} has a maximum evaluation prefix.
+  \qed
+\end{lemma}
+\begin{proof}
+  By induction on the structure of the term \tm{P}. 
+  \qed
+\end{proof}
+We can now define what it means for a term to be in canonical form. Intuitively,
+a process is in canonical form either when there is no top-level cut, or when it
+is blocked on an external communication. We state this formally as follows:
+\begin{definition}[Canonical forms]\label{def:cp-canonical-forms}
+  A process \tm{P} is in canonical form if it is an action, or if it is of the
+  form \tm{\cpPlug{G}{P_1 \dots P_n}}, where \tm{G} is the maximum evaluation
+  prefix of \tm{P}, no \tm{P_i} is a link which acts on a bound channel, and no
+  \tm{P_i} and \tm{P_j} act on the same channel.
+  \qed
+\end{definition}
+In addition to evaluation prefixes, we also need a concept of evaluation
+contexts to prove progress. Intuitively, evaluation contexts are one-holed term
+contexts under which reduction can take place. For \cp, these consist solely of
+cuts.
+\begin{definition}[Evaluation contexts]\label{def:cp-evaluation-contexts}
+  We define evaluation contexts as:
+  \begin{align*}
+    \tm{E} := \tm{\Box}
+    \mid \tm{\cpCut{x}{E}{P}}
+    \mid \tm{\cpCut{x}{P}{E}}
+  \end{align*}
+  We define plugging for evaluation contexts as:
+  \begin{align*}
+    \!\begin{array}{ll}
+      \tm{\cpPlug{\Box}{R}}            
+      & = \; \tm{R}
+      \\
+      \tm{\cpPlug{\cpCut{x}{E}{P}}{R}}
+      & = \; \tm{\cpCut{x}{\cpPlug{E}{R}}{P}}
+      \\
+      \tm{\cpPlug{\cpCut{x}{P}{E}}{R}}
+      & = \; \tm{\cpCut{x}{P}{\cpPlug{E}{R}}}
+    \end{array}
+  \end{align*}
+  \qed
+\end{definition}
+Next, we prove that we can push a \textnu-binder under any evaluation context
+\tm{E}, as long as \tm{E} does not use the channel name introduced by that
+\textnu-binder.
+\begin{lemma}\label{thm:cp-display-cut}
+  If $\seq[{ \tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} }]{ \Gamma }$ and
+  $\notFreeIn{x}{E}$, then $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} \equiv
+  \tm{\cpPlug{E}{\cpCut{x}{P}{Q}}}$. 
+  \qed
+\end{lemma}
+\begin{proof}
+  By induction on the structure of the evaluation context \tm{E}.
+  \qed
+\end{proof}
+Last, we prove two lemmas relating evaluation contexts to evaluation prefixes,
+showing that if we have a process acting on a channel \tm{x} under an evaluation
+prefix, we can rewrite it to reveal the binder introducing \tm{x}.
+Each of these lemmas deals with one of the cases for reduction.
+The first allows us to reveal the binder for links.
+It is an equivalence instead of an equality because it uses commutativity of
+links. 
+The second allows us to reveal the binder introducing the channel shared by two
+actions. It is a plain equality.
+Both have similar proofs.
+\begin{lemma}\label{thm:cp-progress-link}
+  If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
+  link \tm{\cpLink{x}{y}}, then either \tm{x} and \tm{y} are not bound by
+  \tm{G}, or there exist \tm{E}, \tm{E'} and \tm{Q} such that
+  \(
+  \tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
+  \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E'}{\cpLink{x}{y}}}{Q}}}
+  \).
+  \qed
+\end{lemma}
+\begin{lemma}\label{thm:cp-progress-beta}
+  If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} and
+  \tm{P_j} act on the same bound channel \tm{x}, then there exist \tm{E},
+  \tm{E_i} and \tm{E_j} such that
+  \(
+  \tm{\cpPlug{G}{P_1 \dots P_n}} =
+  \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
+  \).
+  \qed
+\end{lemma}
+\begin{proof}
+  By induction on the structure of the evaluation prefix \tm{G}.
+  \qed
+\end{proof}
+Finally, we are ready to prove progress.
+\begin{theorem}[Progress]\label{thm:cp-progress}
+  If $\seq[{ P }]{ \Gamma }$, then either $\tm{P}$ is in canonical form, or
+  there exists a $\tm{P'}$ such that $\reducesto{P}{P'}$. 
+  \qed
+\end{theorem}
+\begin{proof}
+  By induction on the structure of the derivation of \seq[P]{\Gamma}.
+  The only interesting case is that in which \tm{P} was constructed using a cut,
+  as all other rules introduce canonical forms.
+  We consider the maximum evaluation prefix \tm{G} of \tm{P}. This consists of
+  $n$ cuts, but composes $n+1$ actions. Therefore, one of the following must be
+  true:
+  \begin{itemize}
+  \item
+    One of the actions is a link on a bound channel.\\
+    We rewrite by \cref{thm:cp-display-cut} and \cref{thm:cp-progress-link},
+    and apply \cpRedAxCut1.
+  \item
+    Two of the processes act on the same bound channel.\\
+    We rewrite by \cref{thm:cp-display-cut} and \cref{thm:cp-progress-beta},
+    and apply one of the \textbeta-rules.
+  \item
+    At least one process acts on a free channel.\\
+    No process is a link acting on a bound channel. No two process act on the
+    same bound channel. Therefore, \tm{P} is canonical.
+  \end{itemize}
+  \qed
+\end{proof}
+
+\section{Shared Channels and Non-Determinism}\label{sec:cpnd}
+In this section, we will discuss our main contribution: an extension of \cp
+which allows for races while still excluding deadlocks. 
+We have seen in \cref{sec:cp-example} how \cp excludes deadlocks, but how
+exactly does \cp exclude races?
+Let us return to our first example from \cref{sec:introduction}, to the
+interaction between John, Mary and the store.
+\[
+  \begin{array}{c}
+    \tm{(\piPar{%
+    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    }{%
+    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    })}
+    \\[1ex]
+    \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+    \\[1ex]
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \quad
+    \text{or}
+    \quad
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+  \end{array}
+\]
+Races occur when more than two processes attempt to communicate simultaneously
+over the \emph{same} channel. However, the \text{Cut} rule of \cp requires that
+\emph{exactly two} processes communicate over each channel:
+\begin{center}
+  \cpInfCut
+\end{center}
+We could attempt write down a protocol for our example, stating that the store
+has a pair of channels $\tm{x}, \tm{y} : \ty{\cake}$ with which it communicates
+with John and Mary, taking \cake to be the type of interactions in which cake
+\emph{may} be obtained, i.e.\ of both \sliceofcake and \nope, and state that the
+store communicates with John \emph{and} Mary over a channel of type \ty{\cake
+  \parr \cake}.
+However, this \emph{only} models interactions such as the following:
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{x}{\cake^\bot} }$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y}{\cake^\bot} }$}
+  \SYM{\tens}
+  \BIC{$\seq[{ \cpSend{y}{x}{\john}{\mary} }]{
+      \Gamma, \Delta, \tmty{y}{\cake^\bot \tens \cake^\bot} }$}
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{x}{\cake}, \tmty{y}{\cake} }$}
+  \SYM{\parr}
+  \UIC{$\seq[{ \cpRecv{y}{x}{\store} }]{
+      \Theta, \tmty{y}{\cake \parr \cake} }$}
+  \NOM{Cut}
+  \BIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}} }]{
+      \Gamma, \Delta, \Theta }$}
+\end{prooftree}
+In this interaction, John will get whatever the store decides to send on \tm{x},
+and Mary will get whatever the store decides to send on \tm{y}. This means that
+this interactions gives the choice of who receives what \emph{to the store}.
+This is not an accurate model of our original example, where the choice of who
+receives the cake is non-deterministic and depends on factors outside of any of
+the participants' control!
+To make matters worse, the term which models our example is entirely different
+from the one we initially wrote down in the \textpi-calculus!
+
+The ability to model racy behaviour, such as that in our example, is essential
+to describing the interactions that take place in realistic concurrent systems.
+Therefore, we would like to extend \cp to allow such races.
+Specifically, we would like to do it in a way which mirrors the way in which the
+\textpi-calculus handles non-determinism.
+Let us return, briefly, to our example.
+\[
+  \tm{(\piPar{%
+      \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    }{%
+      \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    })}
+\]
+In this interaction, we see that the channel \tm{x} is used only as a way to
+connect the various clients, John and Mary, to the store.
+The \emph{real} communication, sending the slice of cake and disappointment,
+takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}.
+Inspired by this, we add two new constructs to the term language of \cp: sending
+and receiving on a \emph{shared} channel.
+These actions are marked with a \tm{\star} in order to distinguish them
+syntactically from ordinary sending and receiving.
+To group clients, we add another form of parallel composition, which we refer to
+as \emph{pooling}.
+\begin{definition}[Terms]\label{def:nc-terms}
+  We extend \cref{def:cp-terms} with the following constructs:
+  \[\!
+    \begin{aligned}
+      \tm{P}, \tm{Q}, \tm{R}
+           :=& \; \dots
+      \\ \mid& \; \tm{\ncCnt{x}{y}{P}} &&\text{client creation}
+      \\ \mid& \; \tm{\ncSrv{x}{y}{P}} &&\text{server interaction}
+      \\ \mid& \; \tm{\ncPool{P}{Q}}   &&\text{parallel composition of clients}
+    \end{aligned}
+  \]
+  \qed
+\end{definition}
+As before, round brackets denote input, square brackets denote output.
+Note that \tm{\ncCnt{x}{y}{P}}, much like \tm{\cpSend{x}{y}{P}{Q}}, is a bound
+output---this means that both client creation and server interaction bind a new
+name.
+
+In \cp, we identified terms up to the commutativity and associativity of
+parallel composition. In \nodcap, we add another form of parallel composition,
+and therefore must extend our structural congruence:
+\begin{definition}[Structural congruence]\label{def:nc-equiv}
+  We extend \cref{def:cp-equiv} with the following equivalences:
+  \[
+    \begin{array}{llll}
+      \ncEquivPoolComm
+      & \tm{\ncPool{P}{Q}}
+      & \equiv \;
+      & \tm{\ncPool{Q}{P}}
+      \\
+      \ncEquivPoolAss1
+      & \tm{\ncPool{P}{\ncPool{Q}{R}}}
+      & \equiv \;
+      & \tm{\ncPool{\ncPool{P}{Q}}{R}}
+      \\
+      \ncRedKappaPool1
+      & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
+      & \equiv \;
+      & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; \notFreeIn{x}{P} 
+      \\
+      \ncRedKappaPool2
+      & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}}
+      & \equiv \;
+      & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}} \quad \text{if} \; \notFreeIn{x}{P}
+    \end{array}
+  \]
+  \qed
+\end{definition}
+We do not add \ncEquivPoolAss2, as follows from \cref{def:nc-equiv}.
+We add both \ncRedKappaPool1 and \ncRedKappaPool2, as \tm{\cpCut{x}{P}{Q}} and
+\tm{\ncPool{P}{Q}} are two distinct constructs, and hence the rules are not 
+mutually derivable. Structural congruence remains a symmetric relation.
+
+In any interaction between a server and some clients which does not deadlock,
+there must be \emph{exactly} as many clients as there are server interactions.
+Therefore, we add two new \emph{dual} types for client pools and servers, which
+track how many clients or server interactions they represent.
+\begin{definition}[Types]\label{def:nc-types}
+  We extend \cref{def:cp-types} with the following types:
+  \[\!
+    \begin{aligned}
+      \ty{A}, \ty{B}, \ty{C}
+           :=& \; \dots
+      \\ \mid& \; \ty{\take[n]{A}} &&\text{pool of} \; n \; \text{clients}
+      \\ \mid& \; \ty{\give[n]{A}} &&n \; \text{server interactions}
+    \end{aligned}
+  \]  
+  \qed
+\end{definition}
+The types \ty{\take[n]{A}} and \ty{\give[n]{A}} are dual.
+Duality remains an involutive function.
+
+We have to add typing rules to associate our new client and server interactions
+with their types. 
+The definition for environments will remain unchanged, but we will extend the
+definition for the typing judgement.
+To determine the new typing rules, we essentially have to answer the question
+``What typing constructs do we need to complete the following proof?''
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \noLine\TIC{$\seq[{
+      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}{
+        \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
+      \Gamma, \Delta, \Theta }$}
+\end{prooftree}
+Ideally, we would still like the composition of the client pool and the server
+to be a cut. This seems reasonable, as the left-hand side of the term above has
+two clients, and the right-hand side has two server interactions, so \tm{x} is
+used at type \ty{\take[2]{\cake^\bot}} on the left, and as \ty{\give[2]{\cake}}
+on the right.
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \noLine\BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
+      \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
+
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
+  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
+  \noLine\UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}} }]{
+      \Theta, \tmty{x}{\give[2]{\cake}} }$}
+
+  \NOM{Cut}
+  \BIC{$\seq[{
+      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}{
+        \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
+      \Gamma, \Delta, \Theta }$}
+\end{prooftree}
+We will define the typing judgement, and then discuss servers and clients, the
+two sides of the above cut, describe the rules we add, and show how they allow
+us to complete our proof.
+\begin{definition}[Typing judgements]\label{def:nc-typing-judgement}
+  We extend \cref{def:cp-typing-judgement} with the following rules:
+  {\normalfont
+    \begin{center} \ncInfTake1 \ncInfGive1 \end{center}
+    \begin{center} \ncInfPool  \ncInfCont  \end{center}
+  }
+  \qed
+\end{definition}
+
+\subsection{Clients and pooling}\label{sec:clients-and-pooling}
+A client pool represents a number of independent processes, each wanting to
+interact with the server. Examples of such a pool include John and Mary from our
+example, customers for online stores in general, and any number of processes
+which interact with a single, centralised server.
+
+We introduce two new rules: one to construct clients, and one to pool them
+together. The first rule, $(\take[1]{})$, marks interaction over some channel as
+a client interaction. It does this by receiving a channel \tm{y} over a
+\emph{shared} channel \tm{x}. The channel \tm{y} is the channel across which the
+actual interaction will eventually take place.
+The second rule, \textsc{Pool}, allows us to pool together clients. This is
+implemented, as in the \textpi-calculus, using parallel composition.
+\begin{center}
+  \ncInfTake1
+  \ncInfPool
+\end{center}
+Using these rules, we can derive the left-hand side of our proof by marking John
+and Mary as clients, and pooling them together.
+\begin{prooftree}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \SYM{(\take[1]{})}
+  \UIC{$\seq[{ \ncCnt{x}{y}{\john} }]{ \Gamma, \tmty{z}{\take[1]{\cake^\bot}} }$}
+
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \SYM{(\take[1]{})}
+  \UIC{$\seq[{ \ncCnt{x}{y'}{\mary} }]{ \Delta, \tmty{y'}{\take[1]{\cake^\bot}} }$}
+
+  \NOM{Pool}
+  \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
+      \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
+\end{prooftree}
+
+\subsection{Servers and contraction}\label{sec:servers-and-contraction}
+Dual to a pool of clients is a server. Our interpretation of a server is a
+process which offers up some number of interdependent interactions of the same
+type. Examples include the store from our example, which gives out slices of
+cake and disappointment, online stores in general, and any central server which
+interacts with some number of client processes.
+
+We introduce two new rules to construct servers. The first rule, $(\give[1]{})$,
+marks a interaction over some channel as a server interaction. It does this by
+sending a channel \tm{y} over a \emph{shared} channel \tm{x}. The channel \tm{y}
+is the channel across which the actual interaction will eventually take place.
+The second rule, \textsc{Cont}, short for contraction, allows us to contract
+several server interactions into a single server. This allows us to construct a
+server which has multiple interactions of the same type, across the same shared
+channel.\footnote{%
+  While it ultimately does not matter whether $(\give[1]{})$ and $(\take[1]{})$
+  are implemented with a send or a receive action, it feels more natural to have
+  the server do the sending.
+  Clients indicate their interest in interacting with the server by connecting
+  to the shared channel, but it is up to the server to decide \emph{when} to
+  interact with each client.}
+\begin{center}
+  \ncInfGive1
+  \ncInfCont
+\end{center}
+Using these rules, we can derive the right-hand side of our proof, by marking
+each of the store's interactions as server interactions, and then contracting
+them.
+\begin{prooftree}
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x'}{z'}{\store} }]{
+      \Theta, \tmty{z}{\cake}, \tmty{x'}{\give[1]{\cake}} }$}
+  \SYM{(\give[1]{})}
+  \UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x'}{z'}{\store}} }]{
+      \Theta, \tmty{x}{\give[1]{\cake}}, \tmty{x'}{\give[1]{\cake}} }$}
+  \NOM{Cont}
+  \UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}} }]{
+      \Theta, \tmty{x}{\give[2]{\cake}} }$}
+\end{prooftree}
+Thus, we complete the typing derivation of our example.
+
+\section{Running clients and servers}
+\label{sec:nc-running-clients-and-servers}
+Once we have a client/server interaction, how do we run it? Ideally, we would
+simply use the reduction rule closest to the one used in the \textpi-calculus. 
+\[
+  \reducesto
+  {\tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}}
+  {\tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
+\]
+However, our case is complicated by the fact that in \tm{\cpCut{x}{P}{Q}} the
+name restriction is an inseparable part of the composition, and therefore has to
+be part of our reduction rule. 
+Because of this, the above reduction can only apply in the singleton case.
+If the client pool contains more than one client, such as in the term below,
+then there is no way to isolate a single client together with the server,
+because \tm{x} occurs in both \tm{\ncCnt{x}{y}{P}} and \tm{\ncCnt{x}{z}{Q}}.
+\[
+  \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{\ncCnt{x}{z}{Q}}}{\ncSrv{x}{w}{R}}}
+  \centernot\Longrightarrow
+\]
+Therefore, we add a second reduction rule, which handles communication between a
+one client in a pool of multiple clients and a server.
+\[
+  \reducesto
+  {\tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}}
+  {\tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}}
+\]
+Lastly, because we have added another form of parallel composition, we add
+another congruence rule, to allow for reduction inside client pools.
+\begin{definition}[Term reduction]\label{def:nc-term-reduction}
+  We extend \cref{def:cp-term-reduction} with the following reductions:
+  \[
+    \begin{array}{llll}
+      \ncRedBetaStar{1}
+      & \tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}
+      \\
+      \ncRedBetaStar{n+1}
+      & \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}
+      & \Longrightarrow \;
+      & \tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
+    \end{array}
+  \]
+  \begin{prooftree}
+    \AXC{\reducesto{P}{P'}}
+    \SYM{\ncRedGammaPool}
+    \UIC{\reducesto{\ncPool{P}{Q}}{\ncPool{P'}{Q}}}
+  \end{prooftree}
+  \qed
+\end{definition}
+The rules \ncRedBetaStar1 and \ncRedBetaStar{n+1} seem like the elimination
+rules for a list-like construct. This may come as a surprise, as our client
+pools are built up like binary trees, and the typing rules for both sides are
+tree-like, with $(\take[1]{})$ and $(\give[1]{})$ playing the role of leaves,
+and \textsc{Pool} and \textsc{Cont} merging two trees with $m$ and $n$ leaves
+into one with $m+n$ leaves.
+However, the server process imposes a sequential ordering on its interactions,
+and it is because of this that we have to use list-like elimination rules.
+
+So where does the non-determinism in \nodcap come from? Let us say we have a
+term of the following form:
+\[
+  \tm{
+    \cpCut{x}
+    {\ncPool{\ncCnt{x}{y_1}{P_1}}{\dots \mid \ncCnt{x}{y_n}{P_n}}}
+    {\ncSrv{x}{y}{Q}}
+  }
+\]
+Because pooling is commutative and associative, we can rewrite this term to
+bring any client in the pool to the front, before applying \ncRedBetaStar{n+1}.
+Thus, like in the \textpi-calculus, the non-determinism is introduced by the
+structural congruence.
+
+Does this mean that, for an arbitrary client pool \tm{P} in
+\tm{\cpCut{x}{P}{\ncSrv{x}{z}{Q}}}, every client in that pool is competing for
+the server interaction on \tm{x}?
+Not necessarily, as some portion of the clients can be blocked on an external
+communication. For instance, in the term below, clients
+$\tm{\ncCnt{x}{y_{n+1}}{P_{n+1}}} \dots \tm{\ncCnt{x}{y_m}{P_m}}$ are blocked
+on a communication on the external channel \tm{a}.
+\[
+  \arraycolsep=0pt
+  \tm{
+  \begin{array}{lrl}
+    \nu x.&  ((&\; \ncPool{\ncCnt{x}{y_1}{P_1}}{\dots\mid\ncCnt{x}{y_n}{P_n}}\\
+          &\mid&\; \cpWait{a}{\ncPool{\ncCnt{x}{y_{n+1}}{P_{n+1}}}{\dots \mid \ncCnt{x}{y_m}{P_m}}}\;)\\
+          &\mid&\; \ncSrv{x}{y_1}{\dots\ncSrv{x}{y_m}{Q}}\;)
+  \end{array}}
+\]
+If we reduce this term, then only the clients
+$\tm{\ncCnt{x}{y_1}{P_1}} \dots \tm{\ncCnt{x}{y_n}{P_n}}$
+will be assigned server interactions, and we end up with the following canonical
+form term. 
+\[
+  \arraycolsep=0pt
+  \tm{
+  \begin{array}{lrl}
+    \nu x.&   (&\; \cpWait{a}{\ncPool{\ncCnt{x}{y_{n+1}}{P_{n+1}}}{\dots\mid\ncCnt{x}{y_m}{P_m}}}\\
+          &\mid&\; \ncSrv{x}{y_{n+1}}{\dots\ncSrv{x}{y_m}{Q}}\;)
+  \end{array}}
+\]
+This matches the reduction behaviour of the \textpi-calculus, and it fits with
+out notion of computation with processes.
+
+\subsection{Preservation}
+\label{sec:nc-preservation}
+Structural congruence and reduction continue to preserve typing. In this
+section, we show this by extending the proofs of preservation given in
+\cref{sec:cp-preservation}.
+\begin{theorem}[Preservation for $\equiv$]\label{thm:nc-preservation-equiv}
+  If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
+  then $\seq[{ Q }]{\Gamma }$.
+  \qed
+\end{theorem}
+\begin{proof}
+  As \cref{thm:cp-preservation-equiv}.
+  The new cases are given in \cref{fig:nc-preservation-equiv}.
+  \qed
+\end{proof}
+\input{fig-nc-preservation-equiv}
+\begin{theorem}[Preservation]\label{thm:nc-preservation}
+  If $\seq[{ P }]{ \Gamma }$ and \reducesto{P}{Q},
+  then $\seq[{ Q }]{ \Gamma }$.
+  \qed
+\end{theorem}
+\begin{proof}
+  As \cref{thm:cp-preservation}.
+  The new cases are given in \cref{fig:nc-preservation}.
+  \qed
+\end{proof}
+\input{fig-nc-preservation}
+
+\subsection{Canonical Forms and Progress}
+In this section, we extend the definition of canonical forms and the proof of
+progress progress given in \cref{sec:cp-progress}.
+First, we extend the definitions of actions with our actions for client and
+server creation.
+\begin{definition}[Action]\label{def:nc-action}
+  We extend \cref{def:cp-action} with the following cases:
+  \begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+  \item \tm{\ncCnt{x}{y}{P'}}
+  \item \tm{\ncSrv{x}{y}{P'}}
+  \end{itemize}    
+  \qed
+\end{definition}
+It is important that we are able to reduce under pooling, as clients may need to
+perform some internal computation before they are ready to communicate along
+their shared channels.
+Therefore, we add pooling to our definition of evaluation prefixes.
+\begin{definition}[Evaluation prefixes]\label{def:nc-evaluation-prefixes}
+  We extend \cref{def:cp-evaluation-prefixes} with the following constructs:
+  \begin{align*}
+    \tm{G}, \tm{H} := \dots \mid \tm{\ncPool{G}{H}}
+  \end{align*}
+  \begin{align*}
+    \tm{\cpPlug{\ncPool{G}{H}}{R_1 \dots R_m, R_{m+1} \dots R_{n}}} \; =
+    \tm{\ncPool{\cpPlug{G}{R_1 \dots R_m}}{\cpPlug{H}{R_{m+1} \dots R_n}}}
+  \end{align*}
+  Note that in the this case, \tm{G} is an evaluation prefix with $m$ holes,
+  and \tm{H} is an evaluation prefix with $(n-m)$ holes.
+  \\
+  We also define a special case of evaluation prefixes, which we will refer to
+  as \emph{pooling prefixes}. These are evaluation prefixes which consist solely
+  of pooling operators and holes. 
+  \qed
+\end{definition}
+The definition for the maximum evaluation prefix is unchanged.
+
+There are some subtleties to our definition of canonical forms. The type system
+for \cp guarantees that all links directly under a non-empty evaluation context
+act on a bound channel. Similarly, \cp guarantees that two actions acting on the
+same channel are always on opposite sides of the cut which introduces that
+channel. Not so for \nodcap.
+\begin{definition}[Canonical forms]\label{def:nc-canonical-forms}
+  A process \tm{P} is in canonical form if it is an action, or if it is of the
+  form \tm{\cpPlug{G}{P_1 \dots P_n}}, where \tm{G} is the maximum evaluation
+  prefix of \tm{P}, no \tm{P_i} is a link \emph{which acts on a bound channel},
+  and no \tm{P_i} and \tm{P_j}, \emph{on opposite sides of at least one cut},
+  act on the same channel.
+  \qed
+\end{definition}
+We also add pooling to our definition of evaluation prefixes.
+\begin{definition}[Evaluation contexts]\label{def:nc-evaluation-contexts}
+  We extend \cref{def:cp-evaluation-contexts} with the following constructs:
+  \begin{align*}
+    \tm{E} := \dots \mid \tm{\ncPool{E}{P}} \mid \tm{\ncPool{P}{E}}
+  \end{align*}
+  \begin{align*}
+    \tm{\cpPlug{\ncPool{E}{P}}{R}}
+    & = \; \tm{\ncPool{\cpPlug{E}{R}}{P}}
+    \\
+    \tm{\cpPlug{\ncPool{P}{E}}{R}}
+    & = \; \tm{\ncPool{P}{\cpPlug{E}{R}}}
+  \end{align*}
+  We also define a special case of evaluation contexts, which we will refer to
+  as \emph{pooling contexts}. These are evaluation contexts which consist solely
+  of pooling operators and holes.
+  \qed
+\end{definition}
+We can still push \textnu-binders under any evaluation context \tm{E}, assuming
+that \tm{E} does not use the channel name which the \textnu-binder introduces.
+However, this lemma splits up into two separate lemmas in \nodcap.
+One for the case in which the evaluation context is a cut, and one for the case
+in which it is a pool.
+\begin{lemma}\label{thm:nc-display-cut}
+  If $\seq[{ \tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} }]{ \Gamma }$ and
+  $\notFreeIn{x}{E}$, then $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} \equiv
+  \tm{\cpPlug{E}{\cpCut{x}{P}{Q}}}$.
+  \qed
+\end{lemma}
+\begin{lemma}\label{thm:nc-display-pool}
+  If $\seq[{ \ncPool{\cpPlug{E}{P}}{Q} }]{ \Gamma }$, then
+  $\tm{\ncPool{\cpPlug{E}{P}}{Q}} \equiv \tm{\cpPlug{E}{\ncPool{P}{Q}}}$. 
+  \qed
+\end{lemma}
+\begin{proof}
+  By induction on the structure of the evaluation context \tm{E}.
+  \qed
+\end{proof}
+\Cref{thm:cp-progress-link,thm:cp-progress-beta} have to be reworded slightly,
+in light of subtleties in \nodcap's canonical form.
+In addition, we prove a third lemma, which is used in the case for communication
+on shared channels.
+\begin{lemma}\label{thm:nc-progress-link}
+  If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
+  link \tm{\cpLink{x}{y}}, then either \tm{x} and \tm{y} are not bound by
+  \tm{G}, or there exist \tm{E}, \tm{E'} and \tm{Q} such that
+  $\tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
+  \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E'}{\cpLink{x}{y}}}{Q}}}$.
+  \qed
+\end{lemma}
+\begin{lemma}\label{thm:nc-progress-beta}
+  If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} and
+  \tm{P_j}, on different sides of at least one cut, act on the same bound
+  channel \tm{x}, then there exist \tm{E}, \tm{E_i} and \tm{E_j} such that 
+  \(
+  \tm{\cpPlug{G}{P_1 \dots P_n}} =
+  \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
+  \).
+  \qed
+\end{lemma}
+\begin{lemma}\label{thm:nc-progress-shared}
+  If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma, \tmty{x}{\take[n]{A}} }$ and
+  some $\tm{P_i}$ acts as a client on a shared channel \tm{x}, then there exists
+  an $\tm{E}$ and $\tm{R_1}\dots\tm{R_{n-1}}$ such that
+  \[
+    \tm{\cpPlug{G}{P}} \equiv
+    \tm{\cpPlug{E}{\ncPool{P_i}{\ncPool{R_1}{\ncPool{\dots}{R_{n-1}}\dots}}}},
+  \]
+  where $\notFreeIn{x}{E}$ and $\freeIn{x}{R_1},\dots,\freeIn{x}{R_{n-1}}$.
+  \qed
+\end{lemma}
+\begin{proof}
+  By induction on the structure of the evaluation prefix \tm{G}.
+  \qed
+\end{proof}
+Finally, we are ready to prove progress for \nodcap.
+\begin{theorem}[Progress]\label{thm:nc-progress}
+  If $\seq[{ P }]{ \Gamma }$, then either $\tm{P}$ is in canonical form, or
+  there exists a $\tm{P'}$ such that $\reducesto{P}{P'}$. 
+  \qed
+\end{theorem}
+\begin{proof}
+  By induction on the structure of the derivation of \seq[P]{\Gamma}.
+  The only interesting case is that in which \tm{P} was constructed using a cut,
+  as all other rules introduce canonical forms.
+  We consider the maximum evaluation prefix \tm{G} of \tm{P}. This consists of
+  $n$ cuts, but composes $n+1$ actions. Therefore, one of the following must be
+  true:
+  \begin{itemize}
+  \item
+    One of the actions is a link on a bound channel.\\
+    We rewrite by \cref{thm:nc-display-cut} and \cref{thm:nc-progress-link},
+    and apply \cpRedAxCut1.
+  \item
+    Two of the processes act on the same bound channel. There are two cases:
+    \begin{itemize}
+    \item
+      The channel is a shared channel with \emph{more than one client}.\\
+      We rewrite by \cref{thm:nc-progress-beta,thm:nc-display-cut,thm:nc-display-pool,thm:nc-progress-shared} and apply \ncRedBetaStar{n+1}.
+    \item
+      Otherwise, we rewrite by \cref{thm:nc-display-cut} and
+      \cref{thm:nc-progress-beta}, and apply one of the other
+      \textbeta-rules---including \ncRedBetaStar{1}.
+    \end{itemize}
+  \item
+    At least one process acts on a free channel.\\
+    No process is a link acting on a bound channel. No two process act on the
+    same bound channel. Therefore, \tm{P} is canonical.
+  \end{itemize}
+  \qed
+\end{proof}
+
+\section{Discussion and Future Work}\label{sec:discussion}
+
+\clearpage
+\printbibliography
+
+\end{document}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
