@@ -20,7 +20,7 @@
 
 \begin{abstract}
   Process calculi based in logic, such as \piDILL and CP, provide a foundation
-  for deadlock-free concurrent programming, but excludes non-determinism and
+  for deadlock-free concurrent programming, but exclude non-determinism and
   races.
   We introduce \nodcap (nodcap), which extends CP with a novel account of
   non-determinism.
@@ -44,7 +44,7 @@ Consider the following scenario:
   disappointment.
 \end{quote}
 This is an example of a \emph{race condition}. We can model this scenario in the
-\textpi-calculus, where \john, \mary and \store are processes modeling John,
+\textpi-calculus, where \john, \mary and \store are processes modelling John,
 Mary and the store, and \sliceofcake and \nope are channels giving access to a
 slice of cake and disappointment, respectively.
 This process has two possible outcomes: either John gets the cake, and Mary gets
@@ -106,18 +106,19 @@ programs, such as those above, respect communication protocols.
 Session-typed calculi with logical foundations, such as
 \piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a
 result of a close correspondence with logic.
-The same correspondence, however, also rules out non-determinism and race
-conditions.
+These systems, however, also rule out non-determinism and race conditions. In
+this paper, we demonstrate that logic-inspired type systems need not rule out
+races.
 
-In this paper, we present \nodcap (nodcap), an extension of
-CP with a novel account of non-determinism and races.
+We present \nodcap (nodcap), an extension of CP with a novel account of
+non-determinism and races.
 Inspired by bounded linear logic~\cite{girard1992}, we introduce a form of
 shared channels in which the type of a shared channel tracks how many times it
 is reused.
 As in the untyped $\pi$-calculus, sharing introduces the potential for
 non-determinism.
 We show that our approach is sufficient to capture practical examples of races,
-such as the web store, as well as other formal characterizations of
+such as an online store, as well as other formal characterizations of
 non-determinism, such as non-deterministic choice.  However, \nodcap does not
 lose the metatheoretical benefits of CP: we show that it enjoys termination and
 deadlock-freedom.
@@ -156,14 +157,10 @@ reduction rules:
   \end{array}
   \)
 \end{center}
-\wen{%
-  Write about local choice introducing non-determinism explicitly, as opposed to
-  the \textpi-calculus, which introduces it implicitly through shared channels.
-}
-This is unlike the \textpi-calculus, where non-determinism arises due to
-multiple processes communicating on shared channels.
-We can easily implement local choice in the \textpi-calculus, using a nullary
-communication:
+Local choice introduces non-determinism explicitly, by listing all possible
+choices. This is unlike the \textpi-calculus, where non-determinism arises due
+to multiple processes communicating on shared channels. We can easily implement
+local choice in the \textpi-calculus, using a nullary communication:
 \[
   \begin{array}{c}
     \tm{( \piPar{\piPar{\piSend{x}{}{\piHalt}}{\piRecv{x}{}{P}}}{\piRecv{x}{}{Q}} )}
@@ -196,16 +193,18 @@ Let us recall our example:
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
     \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{
+    \piSub{\nope}{z}{\mary}}})}
     \quad
     \text{or}
     \quad
-    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{
+    \sliceofcake}{z}{\mary}}})}
   \end{array}
 \]
 This non-deterministic interaction involves communication. If we wanted to write
-down a process which reduced to the same result using non-deterministic local
-choice, we would have to write the following process: 
+down a process which exhibited the same behaviour using non-deterministic local
+choice, we would have to write the following process:
 \[
   \begin{array}{c}
     \tm{
@@ -246,7 +245,7 @@ in an interaction. Imagine a scenario the following scenario:
   and a single doughnut. After that, all it can deliver is disappointment.
 \end{quote}
 We can model this scenario in the \textpi-calculus, where \alice, \john,
-\mary, and \store are four processes modeling Alice, John, Mary and the store,
+\mary, and \store are four processes modelling Alice, John, Mary and the store,
 and \sliceofcake, \doughnut, and \nope are three channels giving access to a
 slice of cake, a so-so doughnut, and disappointment, respectively.
 \begin{center}
@@ -281,7 +280,7 @@ slice of cake, a so-so doughnut, and disappointment, respectively.
       \end{array}
     }}
 \end{center}
-With the addition of one process, modeling Alice, we have increased the number
+With the addition of one process, modelling Alice, we have increased the number
 of possible outcomes enormously! In general, the number of outcomes for these
 types of scenarios is $n!$, where $n$ is the number of processes. This means
 that if we wish to translate any non-deterministic process to one using
@@ -598,12 +597,11 @@ pattern, except for a nullary choice:
 \begin{itemize}
 \item
   There is \emph{no} rule for \ty{\nil}, as a process acting on a channel of
-  that type would have to select one of \emph{zero} options, which is clearly
-  impossible.
+  that type would have to select one of \emph{zero} options, which is impossible.
 \item
   A process acting on a channel of type \ty{\top} will wait to receive a choice
-  of out \emph{zero} options. Since this will clearly never arrive, we have two
-  options: either we block, waiting forever, or we simply crash.
+  of \emph{zero} options. Since this will clearly never happen, we have two
+  options: either we wait forever, or we crash.
 \end{itemize}
 It may seem odd at first to include a type for the process which cannot possibly
 exist, and for the process which waits forever, but these make sensible units
@@ -628,8 +626,8 @@ In~\cref{sec:cp-additives}, we saw that duality ensures a process offering a cho
 is always matched with a process making a choice.
 In~\cref{sec:cp-multiplicatives}, we saw that it also ensures that, for instance
 a process which uses communication on \tm{x} to decide what to send on \tm{y} is
-matched with a pair of independent processes on \tm{x} and \tm{y}, a property
-which is crucial to deadlock freedom, as it prevents circular dependencies. 
+matched with a pair of independent processes on \tm{x} and \tm{y}, which is
+crucial to deadlock freedom as it prevents circular dependencies.  
 
 Duality appears in the typing rules for two \cp term constructs.
 Forwarding, \tm{\cpLink{x}{y}}, connects two dual channels with dual endpoints,
@@ -648,9 +646,9 @@ is listening on \tm{x}, then the process might as well start communicating on
 \[
   \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
 \]
-We can do this because \cp implements a binary session type system, meaning
-that each communication has only two participants, and therefore we know that no
-other process is communicating on \tm{x}.
+We can do this because \cp implements a \emph{binary} session type system,
+meaning that each communication has only two participants, and therefore we know
+that no other process is communicating on \tm{x}.
 
 \subsection{Example}
 \label{sec:cp-example}
@@ -670,34 +668,38 @@ no \emph{plain} sending construct in \cp---we only have \tm{\cpSend{x}{y}{P}{Q}}
 which requires that the remainder of the interaction is split in two independent
 processes.
 This enforces a certain structure on the program. Either John will already have
-to have the cake in his hands, or Mary will already have to have the money in
+to have the cake in his hands, or Mary will already have to have the bill in
 the bank.
 We model the second scenario below, assuming \john, \mary and \bank are
-processes modeling John, Mary, and Mary's bank, and \cake and \money are the
+processes modelling John, Mary, and Mary's bank, and \cake and \money are the
 types of two channels which give access to a slice of cake and appropriate
 payment.
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\money^\bot}, \tmty{x}{\cake}}$}
   \SYM{\parr}
-  \UIC{$\seq[{ \cpRecv{x}{y}{\john} }]{ \Gamma, \tmty{x}{\money^\bot \parr \cake} }$}
+  \UIC{$\seq[{ \cpRecv{x}{y}{\john} }]{
+      \Gamma, \tmty{x}{\money^\bot \parr \cake} }$}
   \AXC{$\seq[{ \bank }]{ \Delta, \tmty{z}{\money} }$}
   \AXC{$\seq[{ \mary }]{ \Theta, \tmty{x}{\cake^\bot} }$}
   \SYM{\tens}
-  \BIC{$\seq[{\cpSend{x}{z}{\bank}{\mary} }]{ \Delta, \tmty{x}{\money \tens \cake^\bot} }$}
+  \BIC{$\seq[{ \cpSend{x}{z}{\bank}{\mary} }]{
+      \Delta, \tmty{x}{\money \tens \cake^\bot} }$}
   \NOM{Cut}
-  \BIC{$\seq[{ \cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}} }]{\Gamma, \Delta, \Theta }$}
+  \BIC{$\seq[{
+      \cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}} }]{
+      \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 The resulting process reduces, as expected:
 \[
   \reducesto
   {\cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}}}
-  {\cpCut{y}{\bank}{\cpCut{x}{\john}{\mary}}}
+  {\cpCut{y}{\bank}{\cpCut{x}{\cpSub{y}{z}{\john}}{\mary}}}
 \]
 
 \subsection{Preservation}
 \label{sec:cp-preservation}
-Preservation is the fact that term reduction preserves typing. In order to prove
-this, we will first need to prove that structural congruence preserves typing.
+We show that term reduction preserves typing. To do so, we first prove that
+structural congruence preserves typing.
 \begin{theorem}[Preservation for $\equiv$]\label{thm:cp-preservation-equiv}
   If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
   then $\seq[{ Q }]{\Gamma }$.
@@ -717,8 +719,7 @@ Then, we can prove preservation.
   \qed
 \end{theorem}
 \begin{proof}
-  By induction on the structure of the reduction.
-  See \cref{fig:cp-preservation}.
+  By induction on the structure of the reduction; see \cref{fig:cp-preservation}.
   % 
   The case for \cpRedGammaCut is trivial by the induction hypothesis, and the
   case for \cpRedGammaEquiv is trivial by the induction hypothesis and
@@ -729,8 +730,8 @@ Then, we can prove preservation.
 
 \subsection{Canonical Forms and Progress}
 \label{sec:cp-progress}
-There are several reduction strategies for \cp, all of which use as their
-canonical form terms which are not a cut.
+There are several reduction strategies for \cp, all of which use non-cut terms
+as canonical forms.
 
 The reduction strategy described by \citenat{wadler2012} matches precisely the
 proof of cut-elimination for linear logic. It applies commutative conversions to
@@ -742,18 +743,16 @@ The reduction strategy described by \citeauthor{lindley2015semantics} creates
 redexes by rewriting using the structural congruence, then applies
 \cpRedAxCut1 or \textbeta-reduction. It does this until the process blocks on
 one or more external communications. Then, to convert the term to canonical
-form, it applies the commuting conversions to bubble one of those external
+form, it applies the commutative conversions to bubble one of those external
 communications to the front of the term.
 
-In this paper, we follow the reduction strategy detailed by
-\citeauthor{lindley2015semantics}, but instead define canonical forms as terms
-which are blocked on an external communication.
+In this paper, we follow the latter strategy, but instead define canonical forms
+as terms which are blocked on an external communication.
 This allows us to exclude the commutative conversions from our reduction system,
 which makes our reduction system more closely resemble that of the
 \textpi-calculus.
 
-We start out by formally defining actions, and what we mean when we say a
-process ``acts on'' a channel.
+We start out by formally defining actions, and acting.
 \begin{definition}[Actions]\label{def:cp-action}
   A process \tm{P} \emph{acts on} a channel \tm{x} if it is in one of the
   following forms:
@@ -805,7 +804,7 @@ where $\tm{x_1} \dots \tm{x_{n-1}}$ are the channels bound in \tm{G}.
 A similar equivalence was used by \citenat{lindley2015semantics} in their
 semantics for \cp.
 \begin{definition}[Maximum evaluation prefix]\label{def:cp-maximum-evaluation-prefix}
-  We say that \tm{G} is the evaluation prefix of \tm{P} when there exist terms
+  We say that \tm{G} is an evaluation prefix of \tm{P} when there exist terms
   $\tm{P_1} \dots \tm{P_n}$ such that $\tm{P} = \tm{\cpPlug{G}{P_1 \dots P_n}}$.
   We say that \tm{G} is the maximum evaluation prefix if each \tm{P_i} is an
   action. 
@@ -932,6 +931,29 @@ Finally, we are ready to prove progress.
   \qed
 \end{proof}
 
+\subsection{Termination}
+\label{sec:cp-termination}
+Termination is the fact that if we iteratively apply progress to obtain a
+reduction, and apply that reduction, we will eventually end up with a term in
+canonical form.
+Its proof is quite simple, owing to the fact that our reduction rules were all
+inspired by cut reductions from classical linear logic.
+\begin{theorem}[Termination]\label{thm:cp-termination}
+  If $\seq[{ P }]{ \Gamma }$, then there are no infinite $\Longrightarrow$
+  reduction sequences.
+  \qed
+\end{theorem}
+\begin{proof}
+  Every reduction reduces a single cut to zero, one or two cuts.
+  However, each of these cuts is \emph{smaller}, in the sense that the type of
+  the channel on which the communication takes place is smaller, as each
+  reduction eliminates a connective (see \cref{fig:cp-preservation}), and
+  structural congruence preserves the size of the cut (see
+  \cref{fig:cp-preservation-equiv}). 
+  Therefore, there cannot be an infinite reduction sequence.
+  \qed
+\end{proof}
+
 \section{Shared Channels and Non-Determinism}\label{sec:cpnd}
 In this section, we will discuss our main contribution: an extension of \cp
 which allows for races while still excluding deadlocks. 
@@ -992,12 +1014,11 @@ the participants' control!
 To make matters worse, the term which models our example is entirely different
 from the one we initially wrote down in the \textpi-calculus!
 
-The ability to model racy behaviour, such as that in our example, is essential
+Modelling racy behaviour, such as that in our example, is essential
 to describing the interactions that take place in realistic concurrent systems.
-Therefore, we would like to extend \cp to allow such races.
-Specifically, we would like to do it in a way which mirrors the way in which the
-\textpi-calculus handles non-determinism.
-Let us return, briefly, to our example.
+We would like to extend \cp to allow such races in a way which mirrors the way
+in which the \textpi-calculus handles non-determinism.
+Let us return to our example.
 \[
   \tm{(\piPar{%
       \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
@@ -1005,16 +1026,15 @@ Let us return, briefly, to our example.
       \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
     })}
 \]
-In this interaction, we see that the channel \tm{x} is used only as a way to
+In this interaction, we see that the channel \tm{x} is only used only as a way to
 connect the various clients, John and Mary, to the store.
 The \emph{real} communication, sending the slice of cake and disappointment,
 takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}.
-Inspired by this, we add two new constructs to the term language of \cp: sending
-and receiving on a \emph{shared} channel.
-These actions are marked with a \tm{\star} in order to distinguish them
-syntactically from ordinary sending and receiving.
-To group clients, we add another form of parallel composition, which we refer to
-as \emph{pooling}.
+Inspired by this, we add two new constructs to the term language of \cp for
+sending and receiving on a \emph{shared} channel.
+These actions are marked with a \tm{\star} to distinguish them from ordinary
+sending and receiving. 
+To group clients, we add \emph{pooling}, another form of parallel composition.
 \begin{definition}[Terms]\label{def:nc-terms}
   We extend \cref{def:cp-terms} with the following constructs:
   \[\!
@@ -1023,15 +1043,14 @@ as \emph{pooling}.
            :=& \; \dots
       \\ \mid& \; \tm{\ncCnt{x}{y}{P}} &&\text{client creation}
       \\ \mid& \; \tm{\ncSrv{x}{y}{P}} &&\text{server interaction}
-      \\ \mid& \; \tm{\ncPool{P}{Q}}   &&\text{parallel composition of clients}
+      \\ \mid& \; \tm{\ncPool{P}{Q}}   &&\text{parallel composition of clients, ``pooling''}
     \end{aligned}
   \]
   \qed
 \end{definition}
 As before, round brackets denote input, square brackets denote output.
 Note that \tm{\ncCnt{x}{y}{P}}, much like \tm{\cpSend{x}{y}{P}{Q}}, is a bound
-output---this means that both client creation and server interaction bind a new
-name.
+output: both client creation and server interaction bind a new name.
 
 In \cp, we identified terms up to the commutativity and associativity of
 parallel composition. In \nodcap, we add another form of parallel composition,
@@ -1066,9 +1085,9 @@ and therefore must extend our structural congruence:
 We do not add \ncEquivPoolAss2, as follows from \cref{def:nc-equiv}.
 We add both \ncRedKappaPool1 and \ncRedKappaPool2, as \tm{\cpCut{x}{P}{Q}} and
 \tm{\ncPool{P}{Q}} are two distinct constructs, and hence the rules are not 
-mutually derivable. Structural congruence remains a symmetric relation.
+mutually derivable. Structural congruence remains symmetric.
 
-In any interaction between a server and some clients which does not deadlock,
+In any non-deadlock interaction between a server and some clients, 
 there must be \emph{exactly} as many clients as there are server interactions.
 Therefore, we add two new \emph{dual} types for client pools and servers, which
 track how many clients or server interactions they represent.
@@ -1091,7 +1110,7 @@ We have to add typing rules to associate our new client and server interactions
 with their types. 
 The definition for environments will remain unchanged, but we will extend the
 definition for the typing judgement.
-To determine the new typing rules, we essentially have to answer the question
+To determine the new typing rules, we essentially answer the question
 ``What typing constructs do we need to complete the following proof?''
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
@@ -1148,10 +1167,10 @@ example, customers for online stores in general, and any number of processes
 which interact with a single, centralised server.
 
 We introduce two new rules: one to construct clients, and one to pool them
-together. The first rule, $(\take[1]{})$, marks interaction over some channel as
-a client interaction. It does this by receiving a channel \tm{y} over a
-\emph{shared} channel \tm{x}. The channel \tm{y} is the channel across which the
-actual interaction will eventually take place.
+together. The first rule, $(\take[1]{})$, interacts over a channel as a client.
+It does this by receiving a channel \tm{y} over a \emph{shared} channel \tm{x}.
+The channel \tm{y} is the channel across which the actual interaction will
+eventually take place. 
 The second rule, \textsc{Pool}, allows us to pool together clients. This is
 implemented, as in the \textpi-calculus, using parallel composition.
 \begin{center}
@@ -1184,17 +1203,11 @@ interacts with some number of client processes.
 We introduce two new rules to construct servers. The first rule, $(\give[1]{})$,
 marks a interaction over some channel as a server interaction. It does this by
 sending a channel \tm{y} over a \emph{shared} channel \tm{x}. The channel \tm{y}
-is the channel across which the actual interaction will eventually take place.
-The second rule, \textsc{Cont}, short for contraction, allows us to contract
-several server interactions into a single server. This allows us to construct a
-server which has multiple interactions of the same type, across the same shared
-channel.\footnote{%
-  While it ultimately does not matter whether $(\give[1]{})$ and $(\take[1]{})$
-  are implemented with a send or a receive action, it feels more natural to have
-  the server do the sending.
-  Clients indicate their interest in interacting with the server by connecting
-  to the shared channel, but it is up to the server to decide \emph{when} to
-  interact with each client.}
+is the channel across which the actual interaction will take place.
+The second rule, \textsc{Cont}, short for contraction, allows us to merge two
+servers into a single server. This allows us to construct a server which has
+multiple interactions of the same type, across the same shared
+channel.
 \begin{center}
   \ncInfGive1
   \ncInfCont
@@ -1240,8 +1253,8 @@ Therefore, we add a second reduction rule, which handles communication between a
 one client in a pool of multiple clients and a server.
 \[
   \reducesto
-  {\tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}}
-  {\tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}}
+  {\tm{\cpCut{x}{\ncPool{P}{\ncCnt{x}{y}{Q}}}{\ncSrv{x}{z}{R}}}}
+  {\tm{\cpCut{x}{P}{\cpCut{y}{Q}{\cpSub{y}{z}{R}}}}}
 \]
 Lastly, because we have added another form of parallel composition, we add
 another congruence rule, to allow for reduction inside client pools.
@@ -1255,9 +1268,9 @@ another congruence rule, to allow for reduction inside client pools.
       & \tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}
       \\
       \ncRedBetaStar{n+1}
-      & \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{R}}}
+      & \tm{\cpCut{x}{\ncPool{P}{\ncCnt{x}{y}{Q}}}{\ncSrv{x}{z}{R}}}
       & \Longrightarrow \;
-      & \tm{\cpCut{x}{Q}{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
+      & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{\cpSub{y}{z}{R}}}}
     \end{array}
   \]
   \begin{prooftree}
@@ -1274,7 +1287,7 @@ tree-like, with $(\take[1]{})$ and $(\give[1]{})$ playing the role of leaves,
 and \textsc{Pool} and \textsc{Cont} merging two trees with $m$ and $n$ leaves
 into one with $m+n$ leaves.
 However, the server process imposes a sequential ordering on its interactions,
-and it is because of this that we have to use list-like elimination rules.
+and it is because of this that we use list-like elimination rules.
 
 So where does the non-determinism in \nodcap come from? Let us say we have a
 term of the following form:
@@ -1323,9 +1336,9 @@ out notion of computation with processes.
 
 \subsection{Preservation}
 \label{sec:nc-preservation}
-Structural congruence and reduction continue to preserve typing. In this
-section, we show this by extending the proofs of preservation given in
-\cref{sec:cp-preservation}.
+Structural congruence and reduction continue to preserve typing.
+We show this by extending the proofs of preservation given in
+\cref{sec:cp-preservation}. 
 \begin{theorem}[Preservation for $\equiv$]\label{thm:nc-preservation-equiv}
   If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
   then $\seq[{ Q }]{\Gamma }$.
@@ -1387,9 +1400,22 @@ The definition for the maximum evaluation prefix is unchanged.
 
 There are some subtleties to our definition of canonical forms. The type system
 for \cp guarantees that all links directly under a non-empty evaluation context
-act on a bound channel. Similarly, \cp guarantees that two actions acting on the
-same channel are always on opposite sides of the cut which introduces that
-channel. Not so for \nodcap.
+act on a bound channel, and that two processes acting on the same channel are
+always on opposite sides of the cut which introduces that channel.
+Not so for \nodcap.
+For instance, the client pool from our example contains two processes acting on
+the same channel, and we can add a link on two unbound shared channels to a
+client pool.
+\[
+  \seq[{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{z}{\mary}}}]{
+    \Gamma, \tmty{x}{\take[2]{\cake}}}
+  \qquad
+  \seq[{\ncPool{\cpLink{x}{y}}{\bank}}]{
+    \Gamma, \tmty{x}{\take[2]{\money}, \tmty{y}{\give[1]{\money^\bot}}}}
+\]
+Neither of these examples can reduce, nor would they be considered canonical
+under our old definition. We refine the definition of canonical forms to include
+these examples.
 \begin{definition}[Canonical forms]\label{def:nc-canonical-forms}
   A process \tm{P} is in canonical form if it is an action, or if it is of the
   form \tm{\cpPlug{G}{P_1 \dots P_n}}, where \tm{G} is the maximum evaluation
@@ -1509,6 +1535,72 @@ Finally, we are ready to prove progress for \nodcap.
   \end{itemize}
   \qed
 \end{proof}
+
+\subsection{Termination}
+\label{sec:nc-termination}
+Communication in \nodcap remains terminating. We show this by extending the
+proof of termination given in \cref{sec:cp-termination}.
+\begin{theorem}[Termination]\label{thm:nc-termination}
+  If $\seq[{ P }]{ \Gamma }$, then there are no infinite $\Longrightarrow$
+  reduction sequences.
+  \qed
+\end{theorem}
+\begin{proof}
+  As \cref{thm:cp-termination}, extended with the reductions and equivalences in
+  \cref{fig:nc-preservation,fig:cp-preservation-equiv}.
+  \qed
+\end{proof}
+
+\subsection{\nodcap and non-deterministic local choice}
+\label{sec:nc-local-choice}
+In \cref{sec:local-choice}, we discussed the non-deterministic local choice
+operator, which is used in several extensions of \piDILL and
+\cp~\cite{atkey2016,caires2014,caires2017}.
+This operator is admissible in \nodcap.
+We can derive the non-deterministic choice \tm{P+Q} by constructing the
+following term:
+\[
+  \arraycolsep=0pt
+  \tm{
+  \begin{array}{lrlrl}
+    \nu x.&((  & \; \ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}} \\
+          &\mid& \; \ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}} \; )\\
+          &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{}}\text{case}\;y\\
+          &    & \quad
+                 \begin{array}{rl}
+                   \{ & \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
+                           \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{P}}
+                   \\
+                    ; & \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
+                           \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{Q}} \; \})
+                 \end{array}
+  \end{array}
+  }
+\]
+This term is a cut between two processes.
+\begin{itemize}
+\item
+  On the left-hand side, we have a pool of two processes,
+  \tm{\ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}}} and
+  \tm{\ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}}}.
+  Each makes a choice:
+  the first sends \tm{\text{inl}},
+  and the second sends \tm{\text{inr}}. 
+\item
+  On the right-hand side, we have a server with both \tm{P} and \tm{Q}. This
+  server has two channels on which a choice is offered, \tm{y} and \tm{z}.
+  The choice on \tm{y} selects between \tm{P} and \tm{Q}.
+  The choice on \tm{z} does not affect the outcome of the process at all.
+  Instead, it is discarded.
+\end{itemize}
+When these clients and the server are put together, the choices offered by the
+server will be non-deterministically lined up with the clients which make
+choices, and either \tm{P} or \tm{Q} will run.
+
+While there is a certain amount of overhead involved in this encoding, it scales
+linearly in terms of the number of processes.
+The reverse---encoding the non-determinism present in \nodcap using
+non-deterministic local choice---scales exponentially, as with the \textpi-calculus.
 
 \section{Discussion and Future Work}\label{sec:discussion}
 
