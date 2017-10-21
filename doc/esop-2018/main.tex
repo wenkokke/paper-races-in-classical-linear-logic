@@ -5,6 +5,8 @@
 \input{preamble-terms}
 \input{preamble-types}
 \input{preamble-proofs}
+\usepackage{thm-restate}
+\usepackage[title]{appendix}
 \addbibresource{main.bib}
 \arraycolsep=1ex
 \mainmatter % start of the contributions
@@ -101,10 +103,10 @@ The above process does not reduce. As both John and Mary would prefer the
 exchange to be made, this interaction is desired by \emph{neither}. Thus, the
 above is an interaction we would \emph{somehow} like to exclude.
 
-Session types~\cite{honda1993} statically guarantee that concurrent
+Session types~\parencite{honda1993} statically guarantee that concurrent
 programs, such as those above, respect communication protocols.
 Session-typed calculi with logical foundations, such as
-\piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a
+\piDILL~\parencite{caires2010} and CP~\parencite{wadler2012}, obtain deadlock freedom as a
 result of a close correspondence with logic.
 These systems, however, also rule out non-determinism and race conditions. In
 this paper, we demonstrate that logic-inspired type systems need not rule out
@@ -112,7 +114,7 @@ races.
 
 We present \nodcap (nodcap), an extension of CP with a novel account of
 non-determinism and races.
-Inspired by bounded linear logic~\cite{girard1992}, we introduce a form of
+Inspired by bounded linear logic~\parencite{girard1992}, we introduce a form of
 shared channels in which the type of a shared channel tracks how many times it
 is reused.
 As in the untyped $\pi$-calculus, sharing introduces the potential for
@@ -135,12 +137,10 @@ done in this paper and potential avenues for future work.
 \section{Non-determinism, logic, and session types}
 \label{sec:local-choice}
 Recent work, extended \piDILL and \cp with operators for non-deterministic
-behaviour~\cite{atkey2016,caires2014,caires2017}.
+behaviour~\parencite{atkey2016,caires2014,caires2017}.
 These extensions all implement an operator known as non-deterministic local
-choice.\footnote{%
-  This operator is written as \tm{P+Q}, but should not be confused with
-  input-guarded choice~\cite{milner1992b} from the \textpi-calculus.
-}
+choice. (This operator is written as \tm{P+Q}, but should not be confused with
+input-guarded choice from the \textpi-calculus~\parencite{milner1992b}.)
 Non-deterministic local choice can be summarised by the following typing and
 reduction rules:
 \begin{center}
@@ -231,7 +231,7 @@ choice, we would have to write the following process:
   \end{array}
 \]
 In essence, instead of modelling a non-deterministic interaction, we are
-enumerating the outcomes of such an interaction.
+enumerating the resulting deterministic interactions.
 This means non-deterministic local choice cannot model non-determinism in the
 way the \textpi-calculus does.
 %
@@ -289,7 +289,7 @@ the term.
 
 \section{Classical Processes Revisited}\label{sec:cp-revisited}
 
-In this section, we introduce of \cp~\cite{wadler2012,lindley2015semantics}.
+In this section, we introduce an extension of \cp.
 To keep the discussion simple, we will only discuss the subset which corresponds
 to multiplicative-additive linear logic~\cite[MALL]{girard1987} or rudimentary
 linear logic~\cite[RLL]{girard1992}.
@@ -297,15 +297,15 @@ We foresee no problems in extending the proofs from \cref{sec:cpnd} to
 cover the remaining features of \cp, polymophism and the exponentials $\ty{!A}$
 and $\ty{?A}$. 
 
-We deviate from the original presentation of \cp~\cite{wadler2012} in two ways:
+We deviate from the original presentation of \cp~\parencite{wadler2012} in two ways:
 we include the commutativity of links in our structural congruence, as done by
-\citenat{paykin2016}; and, inspired by \citenat{lindley2015semantics}, we
+\textcite{paykin2016}; and, inspired by \textcite{lindley2015semantics}, we
 exclude the commutative conversions from our reduction system which leads to a 
 different notion of canonical form and a reduction strategy closer to that of
 the \textpi-calculus.
 
 The term language for \cp is a variant of the
-\textpi-calculus~\cite{milner1992b}.
+\textpi-calculus~\parencite{milner1992b}.
 \begin{definition}[Terms]\label{def:cp-terms}
   \[\!
     \begin{aligned}
@@ -326,7 +326,7 @@ The term language for \cp is a variant of the
 \end{definition}
 The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names.
 The construct \tm{\cpLink{x}{y}} links two
-channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on
+channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on
 \tm{x} to \tm{y} and vice versa.
 The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes
 two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel.
@@ -334,7 +334,7 @@ Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
 \tm{Q}.
 In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets denote
 input, square brackets denote output. 
-We use bound output~\cite{sangiorgi1996}, meaning that both input and output
+We use bound output~\parencite{sangiorgi1996}, meaning that both input and output
 bind a new name. 
 In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
 In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is bound in \tm{P}, while
@@ -547,7 +547,7 @@ pattern, except for the nullary instead of the binary case:
   process, which is not further restricted.
 \end{itemize}
 The rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and receive
-operation, such as those found in the polyadic \textpi-calculus~\cite{milner1993}. 
+operation, such as those found in the polyadic \textpi-calculus~\parencite{milner1993}. 
 \begin{center}
   \cpInfOne
   \cpInfBot
@@ -700,11 +700,11 @@ The resulting process reduces, as expected:
 \label{sec:cp-preservation}
 We show that term reduction preserves typing. To do so, we first prove that
 structural congruence preserves typing.
-\begin{theorem}[Preservation for $\equiv$]\label{thm:cp-preservation-equiv}
+\begin{restatable}[Preservation for $\equiv$]{theorem}{thmcppreservationequiv}\label{thm:cp-preservation-equiv}
   If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
   then $\seq[{ Q }]{\Gamma }$.
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the equivalence. The cases for reflexivity,
   transitivity and congruence are trivial. The two interesting cases, for
@@ -713,11 +713,11 @@ structural congruence preserves typing.
 \end{proof}
 \input{fig-cp-preservation-equiv}
 Then, we can prove preservation.
-\begin{theorem}[Preservation]\label{thm:cp-preservation}
+\begin{restatable}[Preservation]{theorem}{thmcppreservation}\label{thm:cp-preservation}
   If $\seq[{ P }]{ \Gamma }$ and \reducesto{P}{Q},
   then $\seq[{ Q }]{ \Gamma }$.
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the reduction; see \cref{fig:cp-preservation}.
   % 
@@ -733,7 +733,7 @@ Then, we can prove preservation.
 There are several reduction strategies for \cp, all of which use non-cut terms
 as canonical forms.
 
-The reduction strategy described by \citenat{wadler2012} matches precisely the
+The reduction strategy described by \textcite{wadler2012} matches precisely the
 proof of cut-elimination for linear logic. It applies commutative conversions to
 bubble actions over unrelated \textnu-binders to the \textnu-binder which
 introduces the channel on which they act. It does this until it creates a
@@ -801,7 +801,7 @@ Intuitively, we can say that every term of the form
 \tm{\cpPlug{G}{P_1 \dots P_n}} is equivalent to some term of the form
 \tm{\cpCut{x_1}{P_1}{\cpCut{x_2}{P_2}{\dots \cpCut{x_n}{P_{n-1}}{P_n} \dots}}} 
 where $\tm{x_1} \dots \tm{x_{n-1}}$ are the channels bound in \tm{G}.
-A similar equivalence was used by \citenat{lindley2015semantics} in their
+A similar equivalence was used by \textcite{lindley2015semantics} in their
 semantics for \cp.
 \begin{definition}[Maximum evaluation prefix]\label{def:cp-maximum-evaluation-prefix}
   We say that \tm{G} is an evaluation prefix of \tm{P} when there exist terms
@@ -810,10 +810,10 @@ semantics for \cp.
   action. 
   \qed
 \end{definition}
-\begin{lemma}\label{thm:cp-maximum-evaluation-prefix}
+\begin{restatable}{lemma}{thmcpmaximumevaluationprefix}\label{thm:cp-maximum-evaluation-prefix}
   Every term \tm{P} has a maximum evaluation prefix.
   \qed
-\end{lemma}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the term \tm{P}. 
   \qed
@@ -857,12 +857,12 @@ cuts.
 Next, we prove that we can push a \textnu-binder under any evaluation context
 \tm{E}, as long as \tm{E} does not use the channel name introduced by that
 \textnu-binder.
-\begin{lemma}\label{thm:cp-display-cut}
+\begin{restatable}{lemma}{thmcpdisplaycut}\label{thm:cp-display-cut}
   If $\seq[{ \tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} }]{ \Gamma }$ and
   $\notFreeIn{x}{E}$, then $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} \equiv
   \tm{\cpPlug{E}{\cpCut{x}{P}{Q}}}$. 
   \qed
-\end{lemma}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the evaluation context \tm{E}.
   \qed
@@ -877,7 +877,7 @@ links.
 The second allows us to reveal the binder introducing the channel shared by two
 actions. It is a plain equality.
 Both have similar proofs.
-\begin{lemma}\label{thm:cp-progress-link}
+\begin{restatable}{lemma}{thmcpprogresslink}\label{thm:cp-progress-link}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
   link \tm{\cpLink{x}{y}}, then either \tm{x} and \tm{y} are not bound by
   \tm{G}, or there exist \tm{E}, \tm{E'} and \tm{Q} such that
@@ -886,8 +886,8 @@ Both have similar proofs.
   \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E'}{\cpLink{x}{y}}}{Q}}}
   \).
   \qed
-\end{lemma}
-\begin{lemma}\label{thm:cp-progress-beta}
+\end{restatable}
+\begin{restatable}{lemma}{thmcpprogressbeta}\label{thm:cp-progress-beta}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} and
   \tm{P_j} act on the same bound channel \tm{x}, then there exist \tm{E},
   \tm{E_i} and \tm{E_j} such that
@@ -896,17 +896,17 @@ Both have similar proofs.
   \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
   \).
   \qed
-\end{lemma}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the evaluation prefix \tm{G}.
   \qed
 \end{proof}
 Finally, we are ready to prove progress.
-\begin{theorem}[Progress]\label{thm:cp-progress}
+\begin{restatable}[Progress]{theorem}{thmcpprogress}\label{thm:cp-progress}
   If $\seq[{ P }]{ \Gamma }$, then either $\tm{P}$ is in canonical form, or
   there exists a $\tm{P'}$ such that $\reducesto{P}{P'}$. 
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the derivation of \seq[P]{\Gamma}.
   The only interesting case is that in which \tm{P} was constructed using a cut,
@@ -938,11 +938,11 @@ reduction, and apply that reduction, we will eventually end up with a term in
 canonical form.
 Its proof is quite simple, owing to the fact that our reduction rules were all
 inspired by cut reductions from classical linear logic.
-\begin{theorem}[Termination]\label{thm:cp-termination}
+\begin{restatable}[Termination]{theorem}{thmcptermination}\label{thm:cp-termination}
   If $\seq[{ P }]{ \Gamma }$, then there are no infinite $\Longrightarrow$
   reduction sequences.
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
   Every reduction reduces a single cut to zero, one or two cuts.
   However, each of these cuts is \emph{smaller}, in the sense that the type of
@@ -959,8 +959,8 @@ In this section, we will discuss our main contribution: an extension of \cp
 which allows for races while still excluding deadlocks. 
 We have seen in \cref{sec:cp-example} how \cp excludes deadlocks, but how
 exactly does \cp exclude races?
-Let us return to our first example from \cref{sec:introduction}, to the
-interaction between John, Mary and the store.
+Let us return to our example from \cref{sec:introduction}, to the interaction
+between John, Mary and the store. 
 \[
   \begin{array}{c}
     \tm{(\piPar{%
@@ -1229,7 +1229,7 @@ them.
 \end{prooftree}
 Thus, we complete the typing derivation of our example.
 
-\section{Running clients and servers}
+\subsection{Running clients and servers}
 \label{sec:nc-running-clients-and-servers}
 Once we have a client/server interaction, how do we run it? Ideally, we would
 simply use the reduction rule closest to the one used in the \textpi-calculus. 
@@ -1339,22 +1339,22 @@ out notion of computation with processes.
 Structural congruence and reduction continue to preserve typing.
 We show this by extending the proofs of preservation given in
 \cref{sec:cp-preservation}. 
-\begin{theorem}[Preservation for $\equiv$]\label{thm:nc-preservation-equiv}
+\begin{restatable}[Preservation for $\equiv$]{theorem}{thmncpreservationequiv}\label{thm:nc-preservation-equiv}
   If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
   then $\seq[{ Q }]{\Gamma }$.
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
   As \cref{thm:cp-preservation-equiv}.
   The new cases are given in \cref{fig:nc-preservation-equiv}.
   \qed
 \end{proof}
 \input{fig-nc-preservation-equiv}
-\begin{theorem}[Preservation]\label{thm:nc-preservation}
+\begin{restatable}[Preservation]{theorem}{thmncpreservation}\label{thm:nc-preservation}
   If $\seq[{ P }]{ \Gamma }$ and \reducesto{P}{Q},
   then $\seq[{ Q }]{ \Gamma }$.
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
   As \cref{thm:cp-preservation}.
   The new cases are given in \cref{fig:nc-preservation}.
@@ -1447,17 +1447,17 @@ that \tm{E} does not use the channel name which the \textnu-binder introduces.
 However, this lemma splits up into two separate lemmas in \nodcap.
 One for the case in which the evaluation context is a cut, and one for the case
 in which it is a pool.
-\begin{lemma}\label{thm:nc-display-cut}
+\begin{restatable}{lemma}{thmncdisplaycut}\label{thm:nc-display-cut}
   If $\seq[{ \tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} }]{ \Gamma }$ and
   $\notFreeIn{x}{E}$, then $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}} \equiv
   \tm{\cpPlug{E}{\cpCut{x}{P}{Q}}}$.
   \qed
-\end{lemma}
-\begin{lemma}\label{thm:nc-display-pool}
+\end{restatable}
+\begin{restatable}{lemma}{thmncdisplaypool}\label{thm:nc-display-pool}
   If $\seq[{ \ncPool{\cpPlug{E}{P}}{Q} }]{ \Gamma }$, then
   $\tm{\ncPool{\cpPlug{E}{P}}{Q}} \equiv \tm{\cpPlug{E}{\ncPool{P}{Q}}}$. 
   \qed
-\end{lemma}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the evaluation context \tm{E}.
   \qed
@@ -1466,15 +1466,15 @@ in which it is a pool.
 in light of subtleties in \nodcap's canonical form.
 In addition, we prove a third lemma, which is used in the case for communication
 on shared channels.
-\begin{lemma}\label{thm:nc-progress-link}
+\begin{restatable}{lemma}{thmncprogresslink}\label{thm:nc-progress-link}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} is a
   link \tm{\cpLink{x}{y}}, then either \tm{x} and \tm{y} are not bound by
   \tm{G}, or there exist \tm{E}, \tm{E'} and \tm{Q} such that
   $\tm{\cpPlug{G}{P_1 \dots P_n}} \equiv
   \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E'}{\cpLink{x}{y}}}{Q}}}$.
   \qed
-\end{lemma}
-\begin{lemma}\label{thm:nc-progress-beta}
+\end{restatable}
+\begin{restatable}{lemma}{thmncprogressbeta}\label{thm:nc-progress-beta}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma }$, and some \tm{P_i} and
   \tm{P_j}, on different sides of at least one cut, act on the same bound
   channel \tm{x}, then there exist \tm{E}, \tm{E_i} and \tm{E_j} such that 
@@ -1483,8 +1483,8 @@ on shared channels.
   \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
   \).
   \qed
-\end{lemma}
-\begin{lemma}\label{thm:nc-progress-shared}
+\end{restatable}
+\begin{restatable}{lemma}{thmncprogressshared}\label{thm:nc-progress-shared}
   If $\seq[{ \cpPlug{G}{P_1 \dots P_n} }]{ \Gamma, \tmty{x}{\take[n]{A}} }$ and
   some $\tm{P_i}$ acts as a client on a shared channel \tm{x}, then there exists
   an $\tm{E}$ and $\tm{R_1}\dots\tm{R_{n-1}}$ such that
@@ -1494,17 +1494,17 @@ on shared channels.
   \]
   where $\notFreeIn{x}{E}$ and $\freeIn{x}{R_1},\dots,\freeIn{x}{R_{n-1}}$.
   \qed
-\end{lemma}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the evaluation prefix \tm{G}.
   \qed
 \end{proof}
 Finally, we are ready to prove progress for \nodcap.
-\begin{theorem}[Progress]\label{thm:nc-progress}
+\begin{restatable}[Progress]{theorem}{thmncprogress}\label{thm:nc-progress}
   If $\seq[{ P }]{ \Gamma }$, then either $\tm{P}$ is in canonical form, or
   there exists a $\tm{P'}$ such that $\reducesto{P}{P'}$. 
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
   By induction on the structure of the derivation of \seq[P]{\Gamma}.
   The only interesting case is that in which \tm{P} was constructed using a cut,
@@ -1540,14 +1540,14 @@ Finally, we are ready to prove progress for \nodcap.
 \label{sec:nc-termination}
 Communication in \nodcap remains terminating. We show this by extending the
 proof of termination given in \cref{sec:cp-termination}.
-\begin{theorem}[Termination]\label{thm:nc-termination}
+\begin{restatable}[Termination]{theorem}{thmnctermination}\label{thm:nc-termination}
   If $\seq[{ P }]{ \Gamma }$, then there are no infinite $\Longrightarrow$
   reduction sequences.
   \qed
-\end{theorem}
+\end{restatable}
 \begin{proof}
-  As \cref{thm:cp-termination}, extended with the reductions and equivalences in
-  \cref{fig:nc-preservation,fig:cp-preservation-equiv}.
+  As \cref{thm:cp-termination}. The new cases are given in
+  \cref{fig:nc-preservation,fig:nc-preservation-equiv}. 
   \qed
 \end{proof}
 
@@ -1555,11 +1555,11 @@ proof of termination given in \cref{sec:cp-termination}.
 \label{sec:nc-local-choice}
 In \cref{sec:local-choice}, we discussed the non-deterministic local choice
 operator, which is used in several extensions of \piDILL and
-\cp~\cite{atkey2016,caires2014,caires2017}.
+\cp~\parencite{atkey2016,caires2014,caires2017}.
 This operator is admissible in \nodcap.
 We can derive the non-deterministic choice \tm{P+Q} by constructing the
 following term:
-\[
+\[%
   \arraycolsep=0pt
   \tm{
   \begin{array}{lrlrl}
@@ -1600,12 +1600,562 @@ choices, and either \tm{P} or \tm{Q} will run.
 While there is a certain amount of overhead involved in this encoding, it scales
 linearly in terms of the number of processes.
 The reverse---encoding the non-determinism present in \nodcap using
-non-deterministic local choice---scales exponentially, as with the \textpi-calculus.
+non-deterministic local choice---scales exponentially, as with the
+\textpi-calculus.
 
 \section{Discussion and Future Work}\label{sec:discussion}
+We have presented \nodcap, an extension of \cp which permits non-deterministic
+communication without losing the strong connection to logic.
+We have given proofs for preservation, progress, and termination for the term
+reduction system of \nodcap.
+We have shown that we can define non-deterministic local choice in \nodcap.
+We have also presented an alternative reduction system for \cp, based on the
+work by \textcite{lindley2015semantics}, which greatly reduces the number of
+reduction rules needed for \cp and \nodcap, and more closely resembles reduction
+in the \textpi-calculus.
+
+\subsection{Name restriction and parallel composition}
+It would be worthwhile to decouple the name restriction from the parallel
+composition in \cp, as this would greatly simplify our reduction system.
+We could do this, for instance, using a two-layered environment (a variant of
+bracketing~\parencite{moortgat1996}) which groups sets of channels which are
+interdependent. We could then decompose \textsc{Cut} into \textsc{Mix} and
+\textsc{Cycle}, using different names for each end-point for clarity:
+\begin{center}
+  \(\ty{X}, \ty{Y}, \ty{Z} := \ty{\Gamma_1} ; \dots ; \ty{\Gamma_n}\)
+  \\[1\baselineskip]
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ X }$}
+    \AXC{$\seq[{ Q }]{ Y }$}
+    \NOM{Mix}
+    \BIC{$\seq[{ \piPar{P}{Q} }]{ X ; Y }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \tmty{x}{A} , \Gamma ; \tmty{y}{A^\bot}, \Delta ; X }$}
+    \NOM{Cycle}
+    \UIC{$\seq[{ \piNew{xy}{P} }]{ \Gamma, \Delta ; X }$}
+  \end{prooftree*}
+\end{center}
+A meta-environment \ty{X} is a group of environments \(\ty{\Gamma_1} ; \dots ;
+\ty{\Gamma_n}\) and guarantees that the channels in each \(\ty{\Gamma_i}\) are
+used in a single, independent process.
+This would allow us to add the above variant of \textsc{Mix} which does not
+cause the admission of \(\ty{\bot\limp\one}\) and \(\ty{A \tens B \limp A \parr
+  B}\), which in turn would allow us to unify the various constructs for
+parallel composition in \cp and \nodcap, reduce the number of reduction rules
+for servers and clients, and strengthen our correspondence to the
+\textpi-calculus. For instance, the rules for \((\tens)\) and pooling would
+become the following:
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \tmty{y}{A}, \Gamma; \tmty{x}{B}, \Delta; X }$}
+    \SYM{( \tens )}
+    \UIC{$\seq[{ x[y].P }]{ \tmty{x}{A \tens B}, \Gamma, \Delta; X }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \tmty{x}{\take[m]{A}}, \Gamma;
+        \tmty{y}{\take[n]{A}}, \Delta; X }$}
+    \NOM{Pool}
+    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{
+        \tmty{x}{\take[m+n]{A}}, \Gamma, \Delta; X }$}
+  \end{prooftree*}
+\end{center}
+
+\subsection{Cuts with leftovers}
+So far, our account of non-determinism in client/server interactions only allows
+interactions between equal numbers of clients and server interactions. A natural
+extension of this would be to investigate if we could define a special case of
+cut on a client/server interaction, such that e.g.\ the clients only consume
+part of the server resources.
+\begin{scprooftree}
+  \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n]{A}} }$}
+  \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\give[m]{A^\bot}} }$}
+  \AXC{$\ty{n} < \ty{m}$}
+  \TIC{$\seq[{ \cpCut{x}{P}{Q} }]{
+      \Gamma, \Delta, \tmty{x}{\give[m-n]{A^\bot}} }$}
+\end{scprooftree}
+Such an extension would work well together with an extension allowing clients
+and servers to provide an arbitrary number of interactions.
+
+\subsection{Recursion, variable resources, and exponentials}
+Our formalism so far has only captured servers that provide for a fixed number
+of clients.  More realistically, we would want to define servers that provide
+for arbitrary numbers of clients.  This poses two problems: how would we define
+arbitrarily-interacting stateful processes, and how would we extend the
+typing discipline of \nodcap to account for them without losing its static
+guarantees.
+
+One approach to defining server processes would be to combine \nodcap with
+structural recursion and corecursion, following the $\mu\text{CP}$ extension
+of~\textcite{lindley2016}.  Their approach can express processes which produce
+streams of \ty{A} channels. Such a process would expose a channel with the
+co-recursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is
+possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for
+any number of \ty{A}s, allowing us to satisfy the type \ty{\give[n]{A}} for an
+arbitrary $n$.
+
+We would also need to extend the typing discipline to capture arbitrary use of
+shared channels.  One approach would be to introduce resource variables and
+quantification.  Following this approach, in addition to having types
+\ty{\give[n] A} and \ty{\take[n] A} for concrete $n$, we would also have types
+\ty{\give[x] A} and \ty{\take[x] A} for resource variables $x$.  These variables
+would be introduced by quantifiers \ty{\forall x A} and \ty{\exists x A}.
+Defining terms corresponding to \ty{\forall x A}, and its relationship with
+structured recursion, presents an interesting area of further work.
+
+Our account of CP has not included the exponentials \ty{\give A} and \ty{\take
+  A}. The type \ty{\take A} denotes arbitrarily many independent instances of
+\ty{A}, while the type \ty{\give A} denotes a concrete (if unspecified) number
+of potentially-dependent instances of \ty{A}.  Existing interpretations of
+linear logic as session types have taken \ty{\take A} to denote \ty{A}-servers,
+while \ty{\give A} denotes \ty{A}-clients.  However, the analogy is imperfect:
+while we expect servers to provide arbitrarily many instances of their
+behaviour, we also expect those instances to be interdependent.
+
+With quantification over resource variables, we can give precise accounts of
+both \cp's exponentials and idealised servers and clients. \cp exponentials
+could be embedded into this framework using the definitions $\ty{\take{A}} :=
+\ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} := \ty{\exists{n}{\give[n]{A}}}$.
+We would also have types that precisely matched our intuitions for server and
+client behavior:
+an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an
+unbounded number of requests with the requests being interdependent, while a
+collection of \ty{A} clients is of type \ty{\exists{n}{\take[n] A}}, as we have
+a specific number of clients with each client being independent.
 
 \clearpage
 \printbibliography
+
+\clearpage
+\appendix
+\begin{subappendices}
+  \renewcommand{\thesection}{\Alph{section}}%
+
+  \section{Detailed proofs for \cp}
+  \thmcpdisplaycut
+  \begin{proof}
+    By induction on the structure of the evaluation context \tm{E}.
+    \begin{itemize}
+    \item
+      Case $\tm{\Box}$. By reflexivity.
+    \item
+      Case $\tm{\cpCut{y}{E}{R}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\cpCut{x}{\cpCut{y}{\cpPlug{E}{P}}{R}}{Q}} & \equiv \quad \text{by \cpEquivCutComm}\\
+          \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
+          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by \cpEquivCutComm}\\
+          \tm{\cpCut{y}{\cpCut{x}{\cpPlug{E}{P}}{Q}}{R}} & \equiv \quad \text{by the induction hypothesis}\\ 
+          \tm{\cpCut{y}{\cpPlug{E}{\cpCut{x}{P}{Q}}}{R}} &
+        \end{array}
+      \]
+    \item
+      Case $\tm{\cpCut{y}{R}{E}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\cpCut{x}{\cpCut{y}{R}{\cpPlug{E}{P}}}{Q}} & \equiv \quad \text{by \cpEquivCutAss2}\\
+          \tm{\cpCut{y}{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}} & \equiv \quad \text{by the induction hypothesis}\\
+          \tm{\cpCut{y}{R}{\cpPlug{E}{\cpCut{x}{P}{Q}}}}
+        \end{array}
+      \]
+    \end{itemize}
+    In each case, the side conditions for \cpEquivCutAss2, $\notFreeIn{x}{R}$ and
+    $\notFreeIn{y}{Q}$, can be inferred from $\notFreeIn{x}{E}$ and the fact that
+    $\tm{\cpCut{x}{\cpPlug{E}{P}}{Q}}$ is well-typed.
+    \qed
+  \end{proof}
+  \thmcpprogresslink
+  \begin{proof}
+    By induction on the structure of \tm{G}.
+    \begin{itemize}
+    \item
+      Case \tm{\Box}. Clearly \tm{x} and \tm{y} are not bound.
+    \item
+      Case \tm{\cpCut{z}{\cpPlug{G'}{P_1 \dots P_i \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_n}}}.\\
+      Case \tm{\cpCut{z}{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_i \dots P_n}}}.\\
+      We apply the induction hypothesis. There are two cases:
+      \begin{itemize}
+      \item
+        If \tm{x} and \tm{y} were not bound, they remain unbound.
+      \item
+        If \tm{x} or \tm{y} is bound deeper in \tm{G}, we prepend one of
+        \tm{\cpCut{z}{\Box}{\cpPlug{G''}{P_{m+1} \dots P_n}}},
+        \tm{\cpCut{z}{\cpPlug{G'}{P_1 \dots P_m}}{\Box}},
+        \tm{\ncPool{\Box}{\cpPlug{G''}{P_{m+1} \dots P_n}}}, or
+        \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_m}}{\Box}} to \tm{E}.
+        The desired equivalence follows by congruence.
+      \end{itemize}
+    \item
+      Case \tm{\cpCut{x}{\cpPlug{G'}{P_1 \dots P_i \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_n}}}.\\
+      Case \tm{\cpCut{y}{\cpPlug{G'}{P_1 \dots P_i \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_n}}}.\\
+      Case \tm{\cpCut{x}{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_i \dots P_n}}}.\\
+      Case \tm{\cpCut{y}{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_i \dots P_n}}}.
+      \\
+      \(\arraycolsep=0pt\begin{array}[t]{llrl}
+        \text{Let} & \; \tm{E}  &\; :=     &\; \tm{\Box} \; \text{and} \\
+        \text{let} & \; \tm{E'} &\; :=     &\; \tm{\cpPlug{G'}{P_1 \dots P_{i-1}, \Box, P_{i+1}, \dots P_m}} \\
+                   &            &\text{or} &\; \tm{\cpPlug{G''}{P_{m+1} \dots P_{i-1}, \Box, P_{i+1}, \dots P_n}}
+      \end{array}\)
+      \\[1ex]
+      By reflexivity and \cpEquivCutComm.
+    \end{itemize}
+    \qed
+  \end{proof}
+  \thmcpprogressbeta
+  \begin{proof}
+    By induction on the structure of \tm{G}.
+    \begin{itemize}
+    \item
+      Case \tm{\cpCut{x}{\cpPlug{G'}{P_1\dots P_i\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_j\dots P_n}}}. 
+      \\
+      \(\arraycolsep=0pt\begin{array}[t]{lll}
+        \text{Let}&\ \tm{E}  &\ :=\ \tm{\Box}, \\
+                  &\ \tm{E_i}&\ :=\ \tm{\cpPlug{G'}{P_1\dots P_{i-1},\Box,P_{i+1}\dots P_m}}, \\
+                  &\ \tm{E_j}&\ :=\ \tm{\cpPlug{G''}{P_{m+1}\dots P_{j-1},\Box,P_{j+1}\dots P_n}}.
+      \end{array}\)
+      \\[1ex]
+      By reflexivity.
+    \item
+      Case \tm{\cpCut{x}{\cpPlug{G'}{P_1\dots P_j\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_i\dots P_n}}}.
+      \\
+      As above.
+    \item
+      Case \tm{\cpCut{y}{\cpPlug{G'}{P_1\dots P_i\dots P_j\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_n}}}. \\
+      Case \tm{\cpCut{y}{\cpPlug{G'}{P_1\dots P_m}}{\cpPlug{G''}{P_{m+1}\dots P_i\dots P_j\dots P_n}}}.
+      \\
+      We obtain \tm{E}, \tm{E_1} and \tm{E_2} from the induction hypothesis and
+      \cref{thm:cp-preservation-equiv}, and then prepend either
+      \tm{\cpCut{y}{\Box}{\cpPlug{G''}{P_{m+1}\dots P_n}}} or
+      \tm{\cpCut{y}{\cpPlug{G'}{P_1\dots P_m}}{\Box}} to \tm{E}.
+      The desired equality follows by congruence.
+    \end{itemize}
+    The case for \tm{\Box} is excluded because $n > 1$.
+    The cases in which \tm{P_i} and \tm{P_j} are on the \emph{same} side of the
+    cut, but the cut binds \tm{x}, and the cases in which \tm{P_i} and \tm{P_j}
+    are on different sides of the cut, but the cut binds some other channel
+    \tm{y}, are excluded by the type system.
+    \qed
+  \end{proof}
+  \thmcpprogress
+  \begin{proof}
+    By induction on the structure of derivation for $\seq[{ P }]{ \Gamma }$.
+    The only interesting case is when the last rule of the derivation is
+    \textsc{Cut}---in every other case, the typing rule constructs a term in
+    which is in canonical form. 
+    \\
+    We consider the maximum evaluation prefix \tm{G} of \tm{P}, such that
+    $\tm{P} = \tm{\cpPlug{G}{P_1 \dots P_{n+1}}}$ and each \tm{P_i} is an
+    action. The prefix \tm{G} consists of $n$ cuts, and introduces $n$ channels,
+    but composes $n+1$ actions. Therefore, one of the following must be true: 
+    \begin{itemize}
+    \item
+      One of the processes is a link \tm{\cpLink{x}{y}} acting on a bound
+      channel. We have: 
+      \begin{gather*}
+        \begin{array}{ll}
+          \tm{\cpPlug{G}{P_1 \dots \cpLink{x}{y} \dots P_{n+1}}}
+          & \equiv \quad \text{by \cref{thm:cp-progress-link}}
+          \\
+          \tm{\cpPlug{E}{\cpCut{z}{\cpPlug{E'}{\cpLink{x}{y}}}{Q}}}
+          & \equiv \quad \text{by \cref{thm:cp-display-cut}}
+          \\
+          \tm{\cpPlug{E}{\cpPlug{E'}{\cpCut{z}{\cpLink{x}{y}}{Q}}}}
+        \end{array}
+      \end{gather*}
+      Where $\tm{z} = \tm{x}$ or $\tm{z} = \tm{y}$.
+      We then apply \cpRedAxCut1.
+    \item
+      Two of the processes, \tm{P_i} and \tm{P_j}, act on the same bound channel
+      \tm{x}. We have:
+      \begin{gather*}
+        \begin{array}{ll}
+          \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{n+1}}}
+          & = \quad \text{by \cref{thm:cp-progress-beta}}
+          \\
+          \tm{\cpPlug{G}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
+          & \equiv \quad \text{by \cref{thm:cp-display-cut}} 
+          \\
+          \tm{\cpPlug{G}{\cpPlug{E_i}{\cpCut{x}{P_i}{\cpPlug{E_j}{P_j}}}}}
+          & \equiv \quad \text{by \cref{thm:cp-display-cut}} 
+          \\
+          \tm{\cpPlug{G}{\cpPlug{E_i}{\cpPlug{E_j}{\cpCut{x}{P_i}{P_j}}}}} 
+        \end{array}
+      \end{gather*}
+      We then apply one of the \textbeta-reduction rules.
+    \item
+      Otherwise (at least) one of the processes acts on an external channel.
+      \\
+      No process \tm{P_i} is a link.
+      No two processes \tm{P_i} and \tm{P_j} act on the same channel \tm{x}.
+      Therefore, \tm{P} is canonical.
+    \end{itemize}
+    \qed
+  \end{proof}
+
+  \section{Detailed proofs for \nodcap}
+  \thmncdisplaycut
+  \begin{proof}
+    By induction on the structure of the evaluation context \tm{E}.
+    \begin{itemize}
+    \item
+      Case $\tm{\Box}$, $\tm{\cpCut{y}{H}{R}}$, and $\tm{\cpCut{y}{R}{H}}$. See
+      \cref{thm:cp-display-cut}.
+    \item
+      Case $\tm{\ncPool{E}{R}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\cpCut{x}{\ncPool{\cpPlug{E}{P}}{R}}{Q}}
+          & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+          \tm{\cpCut{x}{\ncPool{R}{\cpPlug{E}{P}}}{Q}}
+          & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
+          \tm{\ncPool{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}}
+          & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+          \tm{\ncPool{\cpCut{x}{\cpPlug{E}{P}}{Q}}{R}}
+          & \equiv \quad \text{by the induction hypothesis}\\
+          \tm{\ncPool{\cpPlug{E}{\cpCut{x}{P}{Q}}}{R}}
+        \end{array}
+      \]
+    \item
+      Case $\tm{\ncPool{R}{E}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\cpCut{x}{\ncPool{R}{\cpPlug{E}{P}}}{Q}}
+          & \equiv \quad \text{by} \; \ncRedKappaPool1 \\
+          \tm{\ncPool{R}{\cpCut{x}{\cpPlug{E}{P}}{Q}}}
+          & \equiv \quad \text{by the induction hypothesis}\\
+          \tm{\ncPool{R}{\cpPlug{E}{\cpCut{x}{P}{Q}}}}
+        \end{array}
+      \]
+    \end{itemize}
+    In each case, the side condition for \ncRedKappaPool1, $\notFreeIn{x}{R}$,
+    can be inferred from $\notFreeIn{x}{E}$, and the side conditions for the
+    induction hypothesis can be inferred from \cref{thm:nc-preservation-equiv}
+    and $\notFreeIn{x}{E}$.
+    \qed
+  \end{proof}
+  \thmncdisplaypool
+  \begin{proof}
+    By induction on the structure of the evaluation context \tm{E}.
+    \begin{itemize}
+    \item
+      Case $\tm{\Box}$. By reflexivity.
+    \item
+      Case $\tm{\cpCut{y}{E}{R}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\ncPool{\cpCut{y}{\cpPlug{E}{P}}{R}}{Q}}
+          & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+          \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{E}{P}}{R}}}
+          & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
+          \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{E}{P}}}{R}}
+          & \equiv \quad \text{by} \; \cpEquivCutComm \\
+          \tm{\cpCut{y}{\ncPool{\cpPlug{E}{P}}{Q}}{R}}
+          & \equiv \quad \text{by the induction hypothesis}\\
+          \tm{\cpCut{y}{\cpPlug{E}{\ncPool{P}{Q}}}{R}}
+        \end{array}
+      \]
+    \item
+      Case $\tm{\cpCut{y}{R}{E}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\ncPool{\cpCut{y}{R}{\cpPlug{E}{P}}}{Q}}
+          & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+          \tm{\ncPool{Q}{\cpCut{y}{\cpPlug{E}{P}}{R}}}
+          & \equiv \quad \text{by} \; \ncRedKappaPool2 \\
+          \tm{\cpCut{y}{\ncPool{Q}{\cpPlug{E}{P}}}{R}}
+          & \equiv \quad \text{by} \; \cpEquivCutComm \\
+          \tm{\cpCut{y}{R}{\ncPool{Q}{\cpPlug{E}{P}}}}
+          & \equiv \quad \text{by the induction hypothesis} \\
+          \tm{\cpCut{y}{R}{\cpPlug{E}{\ncPool{P}{Q}}}}
+        \end{array}
+      \]
+    \item
+      Case $\tm{\ncPool{E}{R}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\ncPool{\ncPool{\cpPlug{E}{P}}{R}}{Q}}
+          & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+          \tm{\ncPool{\ncPool{R}{\cpPlug{E}{P}}}{Q}}
+          & \equiv \quad \text{by} \; \ncEquivPoolAss2 \\
+          \tm{\ncPool{R}{\ncPool{\cpPlug{E}{P}}{Q}}}
+          & \equiv \quad \text{by} \; \ncEquivPoolComm \\
+          \tm{\ncPool{\ncPool{\cpPlug{E}{P}}{Q}}{R}}
+          & \equiv \quad \text{by the induction hypothesis} \\
+          \tm{\ncPool{\cpPlug{E}{\ncPool{P}{Q}}}{R}}
+        \end{array}
+      \]
+    \item
+      Case $\tm{\ncPool{R}{E}}$.
+      \[\!
+        \begin{array}{ll}
+          \tm{\ncPool{\ncPool{R}{\cpPlug{E}{P}}}{Q}}
+          & \equiv \quad \text{by} \; \ncEquivPoolAss2 \\
+          \tm{\ncPool{R}{\ncPool{\cpPlug{E}{P}}{Q}}}
+          & \equiv \quad \text{by the induction hypothesis} \\
+          \tm{\ncPool{R}{\cpPlug{E}{\ncPool{P}{Q}}}}
+        \end{array}
+      \]
+    \end{itemize}
+    In each case, the side conditions for \ncRedKappaPool2, $\notFreeIn{y}{Q}$,
+    can be inferred from the fact that
+    $\tm{\ncPool{Q}{\cpCut{y}{\cpPlug{E}{P}}{R}}}$ is well-typed; the side
+    conditions for \cpEquivCutAss2, $\notFreeIn{x}{R}$ and $\notFreeIn{y}{Q}$,
+    can be inferred from $\notFreeIn{x}{E}$ and the fact that
+    $\tm{\ncPool{\cpPlug{E}{P}}{Q}}$ is well-typed; and the side conditions for
+    the induction hypothesis can be inferred from the fact that
+    $\tm{\ncPool{\cpPlug{E}{P}}{Q}}$ is well-typed,
+    \cref{thm:nc-preservation-equiv} and $\notFreeIn{x}{E}$.
+    \qed
+  \end{proof}
+  \thmncprogresslink
+  \begin{proof}
+    As \cref{thm:cp-progress-link}. The two cases for
+    \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_i \dots P_m}}{\cpPlug{G''}{P_{m+1}
+          \dots P_n}}} and
+    \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1}
+          \dots P_i \dots P_n}}} are handled exactly as the cases for cuts which
+    do not bind \tm{x} or \tm{y}. 
+    \qed
+  \end{proof}
+  \thmncprogressbeta
+  \begin{proof}
+    As \cref{thm:cp-progress-link}. The two cases for
+    \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_i \dots P_j
+          \dots P_m}}{\cpPlug{G''}{P_{m+1} \dots P_n}}} and
+    \tm{\ncPool{\cpPlug{G'}{P_1 \dots P_m}}{\cpPlug{G''}{P_{m+1}
+          \dots P_i \dots P_j \dots P_n}}}
+    are handled exactly as the cases for cuts which do not bind \tm{x}. The case
+    where \tm{P_i} and \tm{P_j} are on different sides of a pool is excluded by
+    the type system.
+    \qed
+  \end{proof}
+  \thmncprogressshared
+  \begin{proof}
+    By induction on the structure of the evaluation context \tm{G}.
+    \begin{itemize}
+    \item
+      Case \tm{\Box}. By reflexivity.
+    \item
+      Case \tm{\cpCut{y}{G}{R}}. \\
+      Case \tm{\cpCut{y}{R}{G}}.
+      \\
+      By the induction hypothesis.
+    \item
+      Case \tm{\ncPool{G}{R}}. There are two cases:
+      \begin{itemize}
+      \item Case $\freeIn{x}{R}$.
+        \begin{flalign*}
+          \begin{array}{l}
+            \tm{\ncPool{\cpPlug{G}{P}}{R_{n-1}}} \\
+            \qquad \equiv \quad \text{by the induction hypothesis} \\ 
+            \tm{\ncPool{\cpPlug{E}{
+            \ncPool{P}{\ncPool{R_1}{
+            \ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
+            \qquad \equiv \quad \text{by \cref{thm:nc-display-pool}} \\
+            \tm{\cpPlug{E}{\ncPool{P}{
+            \ncPool{R_1}{\ncPool{
+            \dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
+          \end{array}
+        \end{flalign*}
+      \item Case $\notFreeIn{x}{R}$. By the induction hypothesis.
+      \end{itemize}
+    \item Case \tm{\ncPool{R}{G}}. There are two cases:
+      \begin{itemize}
+      \item Case $\freeIn{x}{R}$.
+        \begin{flalign*}
+          \begin{array}{ll}
+            \tm{\ncPool{R_{n-1}}{\cpPlug{G}{P}}} \\
+            \qquad \equiv \quad \text{by} \; \ncEquivPoolComm \\ 
+            \tm{\ncPool{\cpPlug{G}{P}}{R_{n-1}}} \\
+            \qquad \equiv \quad \text{by the induction hypothesis} \\ 
+            \tm{\ncPool{\cpPlug{E}{
+            \ncPool{P}{\ncPool{R_1}{
+            \ncPool{\dots}{R_{n-2}}\dots}}}}{R_{n-1}}} \\
+            \qquad \equiv \quad \text{by \cref{thm:nc-display-pool}} \\
+            \tm{\cpPlug{E}{\ncPool{P}{
+            \ncPool{R_1}{\ncPool{
+            \dots}{\ncPool{R_{n-2}}{R_{n-1}}}\dots}}}}
+          \end{array}
+        \end{flalign*}
+      \item Case $\notFreeIn{x}{R}$. By the induction hypothesis.
+      \end{itemize}
+    \end{itemize}
+    \qed
+  \end{proof}
+  \thmncprogress
+  \begin{proof}
+    By induction on the structure of derivation for $\seq[{ P }]{ \Gamma }$.
+    The only interesting cases are when the last rule of the derivation is
+    \textsc{Cut} or \textsc{Pool}. In every other case, the typing rule
+    constructs a term in which is in canonical form. 
+    \\
+    If the last rule in the derivation is \textsc{Cut} or \textsc{Pool}, we
+    consider the maximum evaluation prefix \tm{G} of \tm{P}, such that $\tm{P} =
+    \tm{\cpPlug{G}{P_1 \dots P_{m+n+1}}}$ and each \tm{P_i} is an action.
+    The prefix \tm{G} consists of $m$ pools, $n$ cuts, and introduces $n$
+    channels, but composes $m+n+1$ actions, at most $m+1$ of which are on the
+    same side of all cuts.
+    Therefore, one of the following must be true:
+    \begin{itemize}
+    \item
+      One of the processes is a link \tm{\cpLink{x}{y}} acting on a bound
+      channel. 
+      \\
+      We proceed as in \cref{thm:cp-progress},
+      replacing \cref{thm:cp-display-cut} and \cref{thm:cp-progress-link}
+      with \cref{thm:nc-display-cut} and \cref{thm:nc-progress-link}.
+    \item
+      Two of the processes, \tm{P_i} and \tm{P_j}, on different sides of at
+      least one cut, act on the same bound channel \tm{x}. We have:
+      \begin{gather*}
+        \begin{array}{ll}
+          \tm{\cpPlug{G}{P_1 \dots P_i \dots P_j \dots P_{m+n+1}}}
+          & \equiv \quad \text{by \cref{thm:nc-progress-beta}} \\
+          \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
+        \end{array}
+      \end{gather*}
+      There are two cases:
+      \begin{itemize}
+      \item
+        If \tm{x} is a shared channel, we have \tmty{x}{\take[n]{A}} with $n >
+        1$ in either \tm{\cpPlug{E_i}{P_i}} or \tm{\cpPlug{E_j}{P_j}}. 
+        Assume the former. 
+        We can infer $\notFreeIn{x}{E_j}$.
+        We have:
+        \begin{gather*}
+          \begin{array}{ll}
+            \tm{\cpPlug{E}{\cpCut{x}{\cpPlug{E_i}{P_i}}{\cpPlug{E_j}{P_j}}}}
+            & \equiv \quad \text{by \cref{thm:nc-display-pool}}
+            \\
+            \tm{\cpPlug{E}{\cpPlug{E_j}{\cpCut{x}{\cpPlug{E_i}{P_i}}{P_j}}}}
+            & \equiv \quad \text{by \cref{thm:nc-progress-shared}}
+            \\
+            \multicolumn{2}{l}{
+            \tm{\cpPlug{E}{\cpPlug{E_j}{\cpPlug{E_i^\prime}{\cpCut{x}{
+            \ncPool{P_i}{\ncPool{R_1}{\ncPool{\dots}{R_{n-1}} \dots }}}{P_j}}}}}}
+          \end{array}
+        \end{gather*}
+        We apply \ncRedBetaStar{n+1}.
+        Similarly if \tmty{x}{\take[n]{A}} in \tm{\cpPlug{E_j}{P_j}}.
+      \item
+        Otherwise, we can infer $\notFreeIn{y}{E_i}$ and $\notFreeIn{y}{E_j}$.
+        \\
+        We proceed as in \cref{thm:cp-progress}, including \ncRedBetaStar1 in
+        the \textbeta-reduction rules, and replacing \cref{thm:cp-display-cut}
+        and \cref{thm:cp-progress-beta} with \cref{thm:nc-display-cut} and
+        \cref{thm:nc-progress-beta}.
+      \end{itemize}
+    \item 
+      Otherwise (at least) one of the actions acts on a free variable.
+      \\
+      No process \tm{P_i} is a link acting on a bound channel.
+      No two processes \tm{P_i} and \tm{P_j} act on the same channel \tm{x}.
+      Therefore, \tm{P} is canonical.
+    \end{itemize}
+    \qed
+  \end{proof}
+\end{subappendices}
 
 \end{document}
 %%% Local Variables:
