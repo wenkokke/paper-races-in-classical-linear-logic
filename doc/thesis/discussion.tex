@@ -1,12 +1,12 @@
 \chapter{Conclusions and future work}\label{sec:discussion}
-We have presented \nodcap, an extension of \cp~\cite{wadler2012} which permits
+We have presented \nodcap, an extension of \cp~\parencite{wadler2012} which permits
 non-deterministic communication. 
 We have given proofs for preservation, progress, and termination for the term
 reduction system of \nodcap.
 We have shown that we can define non-deterministic local choice in \nodcap.
 
 We have also presented an alternative reduction system for \cp, based on the
-work by \citenat{lindley2015semantics}, which more closely resembles reduction
+work by \textcite{lindley2015semantics}, which more closely resembles reduction
 in the \textpi-calculus.
 
 \section{Mechanisation of \nodcap}
@@ -19,12 +19,12 @@ to extend this mechanisation to cover the work described in this dissertation.
 
 \section{Relation to bounded linear logic}
 We mentioned in \cref{sec:introduction} that \nodcap was inspired by
-bounded linear logic~(BLL)~\cite{girard1992}. BLL is a typed lambda calculus
+bounded linear logic~(BLL)~\parencite{girard1992}. BLL is a typed lambda calculus
 based on intuitionistic linear logic which guarantees that its programs are
 polynomial-time functions.
 It too uses resource-indexed exponentials. However, instead of interpreting
 these as client and server interactions, BLL interprets them as accesses to a
-memory cell, as is a common interpretation in linear logic~\cite{girard1987}.
+memory cell, as is a common interpretation in linear logic~\parencite{girard1987}.
 There are some superficial differences between BLL and \nodcap, e.g.\ the former
 is intuitionistic while the latter is classical, but the main difference between
 the two lies in storage versus pooling. In BLL, \ty{\take[n]{A}} denotes a memory
@@ -65,7 +65,7 @@ guarantees.
 
 One approach to defining server processes would be to combine \nodcap with
 structural recursion and corecursion, following the $\mu\text{CP}$ extension of Lindley
-and Morris~\cite{lindley2016}.  Their approach can express processes which
+and Morris~\parencite{lindley2016}.  Their approach can express processes which
 produce streams of \ty{A} channels. Such a process would expose a channel with the
 corecursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is
 possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for any

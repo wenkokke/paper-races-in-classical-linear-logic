@@ -7,6 +7,7 @@
 \input{preamble-proofs}
 \usepackage{thm-restate}
 \usepackage[title]{appendix}
+\pagestyle{fancy}
 \addbibresource{main.bib}
 \arraycolsep=1ex
 \mainmatter % start of the contributions
@@ -24,7 +25,7 @@
   Process calculi based in logic, such as \piDILL and CP, provide a foundation
   for deadlock-free concurrent programming, but exclude non-determinism and
   races.
-  We introduce \nodcap (nodcap), which extends CP with a novel account of
+  We introduce \nodcap, which extends CP with a novel account of
   non-determinism.
   Our approach draws on bounded linear logic to provide a strongly-typed
   account of standard process calculus expressions of non-determinism.
@@ -136,7 +137,7 @@ done in this paper and potential avenues for future work.
 
 \section{Non-determinism, logic, and session types}
 \label{sec:local-choice}
-Recent work, extended \piDILL and \cp with operators for non-deterministic
+Recent work extended \piDILL and \cp with operators for non-deterministic
 behaviour~\parencite{atkey2016,caires2014,caires2017}.
 These extensions all implement an operator known as non-deterministic local
 choice. (This operator is written as \tm{P+Q}, but should not be confused with
@@ -289,7 +290,7 @@ the term.
 
 \section{Classical Processes Revisited}\label{sec:cp-revisited}
 
-In this section, we introduce an extension of \cp.
+In this section, we introduce a reformulation of \cp.
 To keep the discussion simple, we will only discuss the subset which corresponds
 to multiplicative-additive linear logic~\cite[MALL]{girard1987} or rudimentary
 linear logic~\cite[RLL]{girard1992}.

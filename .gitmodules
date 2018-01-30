@@ -1,3 +1,6 @@
 [submodule "doc/twemoji"]
 	path = doc/twemoji
 	url = git@github.com:twitter/twemoji.git
+[submodule "doc/preamble"]
+	path = doc/preamble
+	url = git@github.com:wenkokke/latex-preamble.git

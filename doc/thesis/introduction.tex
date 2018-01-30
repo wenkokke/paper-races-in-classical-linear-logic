@@ -66,17 +66,17 @@ The above process does not reduce. As both John and Mary would prefer the
 exchange to be made, this interaction is desired by \emph{neither}. Thus, the
 above is an interaction we would \emph{somehow} like to exclude.
 
-Session types~\cite{honda1993} statically guarantee that concurrent
+Session types~\parencite{honda1993} statically guarantee that concurrent
 programs, such as those above, respect communication protocols.
 Session-typed calculi with logical foundations, such as
-\piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a
+\piDILL~\parencite{caires2010} and CP~\parencite{wadler2012}, obtain deadlock freedom as a
 result of a close correspondence with logic.
 The same correspondence, however, also rules out non-determinism and race
 conditions.
 
 In this dissertation, we present \nodcap (nodcap), an extension of
-CP~\cite{wadler2012} with a novel account of non-determinism and races.
-Inspired by bounded linear logic~\cite{girard1992}, we introduce a form of
+CP~\parencite{wadler2012} with a novel account of non-determinism and races.
+Inspired by bounded linear logic~\parencite{girard1992}, we introduce a form of
 shared channels, in which the type of a shared channel tracks how many times it
 is reused.
 As in the untyped $\pi$-calculus, sharing introduces the potential for
