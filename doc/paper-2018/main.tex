@@ -1623,17 +1623,8 @@ interdependent. We could then decompose \textsc{Cut} into \textsc{Mix} and
 \begin{center}
   \(\ty{X}, \ty{Y}, \ty{Z} := \ty{\Gamma_1} \hsep \dots \hsep \ty{\Gamma_n}\)
   \\[1\baselineskip]
-  \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ X }$}
-    \AXC{$\seq[{ Q }]{ Y }$}
-    \NOM{Mix}
-    \BIC{$\seq[{ \piPar{P}{Q} }]{ X \hsep Y }$}
-  \end{prooftree*}
-  \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ \tmty{x}{A} , \Gamma \hsep \tmty{y}{A^\bot}, \Delta \hsep X }$}
-    \NOM{Cycle}
-    \UIC{$\seq[{ \piNew{xy}{P} }]{ \Gamma, \Delta \hsep X }$}
-  \end{prooftree*}
+  \hccpInfMix
+  \hccpInfCycle
 \end{center}
 A hyper-environment \ty{X} is a group of environments \(\ty{\Gamma_1} \hsep \dots
 \hsep \ty{\Gamma_n}\) and guarantees that the channels in each \(\ty{\Gamma_i}\)
@@ -1646,18 +1637,14 @@ for servers and clients, and strengthen our correspondence to the
 \textpi-calculus. For instance, the rules for \((\tens)\) and pooling would
 become the following:
 \begin{center}
-  \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ \tmty{y}{A}, \Gamma; \tmty{x}{B}, \Delta; X }$}
-    \SYM{( \tens )}
-    \UIC{$\seq[{ x[y].P }]{ \tmty{x}{A \tens B}, \Gamma, \Delta; X }$}
-  \end{prooftree*}
+  \hccpInfBoundTens
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{
-        \tmty{x}{\take[m]{A}}, \Gamma;
-        \tmty{y}{\take[n]{A}}, \Delta; X }$}
+        \tmty{x}{\take[m]{A}}, \Gamma \hsep
+        \tmty{x}{\take[n]{A}}, \Delta \hsep X }$}
     \NOM{Pool}
-    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{
-        \tmty{x}{\take[m+n]{A}}, \Gamma, \Delta; X }$}
+    \UIC{$\seq[{ P }]{
+        \tmty{x}{\take[m+n]{A}}, \Gamma, \Delta \hsep X }$}
   \end{prooftree*}
 \end{center}
 
