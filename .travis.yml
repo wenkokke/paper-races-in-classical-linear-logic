@@ -11,6 +11,7 @@ cache:
   directories:
     - /tmp/texlive
     - $HOME/.texlive
+    - doc/preamble/twemoji
     - /usr/share/fonts/opentype/fira_code
     - /usr/share/fonts/opentype/fira_mono
     - /usr/share/fonts/opentype/fira_sans

@@ -40,7 +40,6 @@ ifndef TEXLIVEONFLY
 		biber         \
 		latexmk       \
 		texliveonfly  \
-		fontenc       \
 		greek-fontenc \
 		textgreek     \
 		babel         \
