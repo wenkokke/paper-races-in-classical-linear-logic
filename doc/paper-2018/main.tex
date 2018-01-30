@@ -121,7 +121,7 @@ non-determinism.
 We show that our approach is sufficient to capture practical examples of races,
 such as an online store, as well as other formal characterizations of
 non-determinism, such as non-deterministic choice.  However, \nodcap does not
-lose the metatheoretical benefits of CP: we show that it enjoys termination and
+lose the meta-theoretical benefits of CP: we show that it enjoys termination and
 deadlock-freedom.
 
 This paper proceeds as follows.
@@ -337,7 +337,7 @@ We use bound output~\parencite{sangiorgi1996}, meaning that both input and outpu
 bind a new name. 
 In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
 In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is bound in \tm{P}, while
-\tm{x} is bound in \tm{Q}.
+\tm{x} occurs in \tm{Q}.
 
 Terms in \cp are identified up to structural congruence, which states that
 parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
@@ -367,7 +367,7 @@ parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
 \end{definition}
 We do not add an axiom for \cpEquivCutAss2, as it follows from
 \cref{def:cp-equiv}.
-Throughout this dissertation, we will leave uses of the transitivity and
+Throughout this paper, we will leave uses of the transitivity and
 congruence rules implicit.
 Structural congruence is a symmetric relation.
 %
@@ -538,7 +538,7 @@ The rules for the multiplicative units ($\ty{\one}, \ty{\bot}$) follow the same
 pattern, except for the nullary instead of the binary case:
 \begin{itemize}
 \item
-  A term constructed by $(\one)$ must composes \emph{zero} independent
+  A term constructed by $(\one)$ must compose \emph{zero} independent
   processes, and thus must halt. Furthermore, it must be able to split its
   environment between zero processes, and thus its environment must be empty.
 \item
@@ -983,7 +983,7 @@ over the \emph{same} channel. However, the \text{Cut} rule of \cp requires that
 \begin{center}
   \cpInfCut
 \end{center}
-We could attempt write down a protocol for our example, stating that the store
+We could attempt to write down a protocol for our example, stating that the store
 has a pair of channels $\tm{x}, \tm{y} : \ty{\cake}$ with which it communicates
 with John and Mary, taking \cake to be the type of interactions in which cake
 \emph{may} be obtained, i.e.\ of both \sliceofcake and \nope, and state that the
@@ -1363,7 +1363,7 @@ We show this by extending the proofs of preservation given in
 
 \subsection{Canonical Forms and Progress}
 In this section, we extend the definition of canonical forms and the proof of
-progress progress given in \cref{sec:cp-progress}.
+progress given in \cref{sec:cp-progress}.
 First, we extend the definitions of actions with our actions for client and
 server creation.
 \begin{definition}[Action]\label{def:nc-action}
@@ -1562,7 +1562,7 @@ following term:
   \arraycolsep=0pt
   \tm{
   \begin{array}{lrlrl}
-    \nu x.&((  & \; \ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}} \\
+    \nu x.&((  & \; \ncCnt{x}{y}{\cpInl{y}{\cpHalt{y}}} \\
           &\mid& \; \ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}} \; )\\
           &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{}}\text{case}\;y\\
           &    & \quad
@@ -1580,7 +1580,7 @@ This term is a cut between two processes.
 \begin{itemize}
 \item
   On the left-hand side, we have a pool of two processes,
-  \tm{\ncCnt{x}{y}{\cpInr{y}{\cpHalt{y}}}} and
+  \tm{\ncCnt{x}{y}{\cpInl{y}{\cpHalt{y}}}} and
   \tm{\ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}}}.
   Each makes a choice:
   the first sends \tm{\text{inl}},
@@ -1621,23 +1621,23 @@ bracketing~\parencite{moortgat1996}) which groups sets of channels which are
 interdependent. We could then decompose \textsc{Cut} into \textsc{Mix} and
 \textsc{Cycle}, using different names for each end-point for clarity:
 \begin{center}
-  \(\ty{X}, \ty{Y}, \ty{Z} := \ty{\Gamma_1} ; \dots ; \ty{\Gamma_n}\)
+  \(\ty{X}, \ty{Y}, \ty{Z} := \ty{\Gamma_1} \hsep \dots \hsep \ty{\Gamma_n}\)
   \\[1\baselineskip]
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{ X }$}
     \AXC{$\seq[{ Q }]{ Y }$}
     \NOM{Mix}
-    \BIC{$\seq[{ \piPar{P}{Q} }]{ X ; Y }$}
+    \BIC{$\seq[{ \piPar{P}{Q} }]{ X \hsep Y }$}
   \end{prooftree*}
   \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ \tmty{x}{A} , \Gamma ; \tmty{y}{A^\bot}, \Delta ; X }$}
+    \AXC{$\seq[{ P }]{ \tmty{x}{A} , \Gamma \hsep \tmty{y}{A^\bot}, \Delta \hsep X }$}
     \NOM{Cycle}
-    \UIC{$\seq[{ \piNew{xy}{P} }]{ \Gamma, \Delta ; X }$}
+    \UIC{$\seq[{ \piNew{xy}{P} }]{ \Gamma, \Delta \hsep X }$}
   \end{prooftree*}
 \end{center}
-A meta-environment \ty{X} is a group of environments \(\ty{\Gamma_1} ; \dots ;
-\ty{\Gamma_n}\) and guarantees that the channels in each \(\ty{\Gamma_i}\) are
-used in a single, independent process.
+A hyper-environment \ty{X} is a group of environments \(\ty{\Gamma_1} \hsep \dots
+\hsep \ty{\Gamma_n}\) and guarantees that the channels in each \(\ty{\Gamma_i}\)
+are used in a single, independent process.
 This would allow us to add the above variant of \textsc{Mix} which does not
 cause the admission of \(\ty{\bot\limp\one}\) and \(\ty{A \tens B \limp A \parr
   B}\), which in turn would allow us to unify the various constructs for
