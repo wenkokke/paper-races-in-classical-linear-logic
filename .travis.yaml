@@ -1,0 +1,11 @@
+before_install:
+  - export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
+  - make setup
+
+cache:
+  directories:
+    - /tmp/texlive
+    - $HOME/.texlive
+
+script:
+  - exit 0
