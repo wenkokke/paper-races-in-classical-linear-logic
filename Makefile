@@ -16,13 +16,24 @@ _build/$(1).pdf: _build/
 	cd doc/$(1);\
 		$(TEXLIVEONFLY)                             \
 			-c latexmk                                \
-			-a "-pdflatex=lualatex                    \
+			-a "-pdflatex=pdflatex\
 			    -pdf                                  \
 				  -outdir=../../_build                  \
 	        -latexoption=-interaction=nonstopmode \
 	        -latexoption=-halt-on-error           \
 	        -jobname=$(1)"                        \
 			main.tex
+	cd doc/$(1);\
+		$(TEXLIVEONFLY)                             \
+			-c latexmk                                \
+			-a "-pdflatex=lualatex\
+			    -pdf                                  \
+				  -outdir=../../_build                  \
+	        -latexoption=-interaction=nonstopmode \
+	        -latexoption=-halt-on-error           \
+	        -jobname=$(1)"                        \
+			main.tex
+
 
 .phony: _build/$(1).pdf
 endef
