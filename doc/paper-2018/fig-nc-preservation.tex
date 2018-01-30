@@ -9,7 +9,7 @@
           \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{ \Gamma, \tmty{x}{\take[1]{A}} }$}
           \AXC{$\seq[{ Q }]{ \Delta, \tmty{z}{A^\bot} }$}
           \SYM{\give[1]{}}
-          \UIC{$\seq[{ \ncSrv{x}{z}{Q} }]{ \Delta, \tmty{x}{\give[1]{A}} }$}
+          \UIC{$\seq[{ \ncSrv{x}{z}{Q} }]{ \Delta, \tmty{x}{\give[1]{A^\bot}} }$}
           \NOM{Cut}
           \BIC{$\seq[{ \cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{Q}} }]{ \Gamma, \Delta }$}
         \end{prooftree*}
@@ -32,11 +32,11 @@
           \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[n]{A}} }$}
           \NOM{Pool}
           \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{P}}{Q} }]{ \Gamma, \Delta, \tmty{x}{\take[n+1]{A}} }$}
-          \AXC{$\seq[{ R }]{ \Theta, \tmty{z}{A^\bot}, \tmty{x}{\give[n]{A}} }$}
+          \AXC{$\seq[{ R }]{ \Theta, \tmty{z}{A^\bot}, \tmty{x}{\give[n]{A^\bot}} }$}
           \SYM{\give[1]{}}
-          \UIC{$\seq[{ \ncSrv{x'}{z}{Q} }]{ \Theta, \tmty{x'}{\give[1]{A}}, \tmty{x}{\give[n]{A}} }$}
+          \UIC{$\seq[{ \ncSrv{x'}{z}{Q} }]{ \Theta, \tmty{x'}{\give[1]{A^\bot}}, \tmty{x}{\give[n]{A^\bot}} }$}
           \NOM{Cont}
-          \UIC{$\seq[{ \ncSrv{x}{z}{Q} }]{ \Theta, \tmty{x}{\give[n+1]{A}} }$}
+          \UIC{$\seq[{ \ncSrv{x}{z}{Q} }]{ \Theta, \tmty{x}{\give[n+1]{A^\bot}} }$}
           \NOM{Cut}
           \BIC{$\seq[{ \cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{Q}}{\ncSrv{x}{z}{Q}} }]{ \Gamma, \Delta, \Theta }$}
         \end{prooftree*}
