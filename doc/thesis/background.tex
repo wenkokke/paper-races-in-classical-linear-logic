@@ -5,12 +5,12 @@
 \section{Classical Processes}
 \label{sec:cp}
 In this section, we will discuss a rudimentary subset of the typed process
-calculus \cp~\cite{wadler2012,lindley2015semantics}, which we will refer to as
+calculus \cp~\parencite{wadler2012,lindley2015semantics}, which we will refer to as
 \rcp. 
 We have chosen to discuss only a subset in order to keep the discussion of
 \nodcap in \cref{sec:main} as simple as possible.
 \rcp is the subset of \cp which corresponds to rudimentary linear
-logic~\cite[RLL]{girard1992}, also known as multiplicative-applicative linear
+logic~\parencite[RLL]{girard1992}, also known as multiplicative-applicative linear
 logic. 
 We foresee no problems in extending the proofs from \cref{sec:main} to
 cover the remaining features of \cp, polymophism and the exponentials $\ty{!A}$
@@ -28,12 +28,12 @@ termination for \rcp.
 \subsection{Terms and types}
 \label{sec:cp-terms-and-types}
 The term language for \rcp is a variant of the
-\textpi-calculus~\cite{milner1992b}.
+\textpi-calculus~\parencite{milner1992b}.
 Its terms are defined by the following grammar:
 \input{def-cp-terms}
 The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names.
 The construct \tm{\cpLink{x}{y}} links two
-channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on
+channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on
 \tm{x} to \tm{y} and vice versa.
 The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes
 two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel.
@@ -41,7 +41,7 @@ Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
 \tm{Q}.
 In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets denote
 input, square brackets denote output. 
-We use bound output~\cite{sangiorgi1996}, meaning that both input and output
+We use bound output~\parencite{sangiorgi1996}, meaning that both input and output
 bind a new name. 
 In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
 In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is only bound in \tm{P}, while
@@ -52,7 +52,7 @@ parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
 It is defined as follows:
 \input{def-cp-equiv}
 We deviate from the original presentation of \cp here, as the structural
-congruence defined by \citenat{wadler2012} does not include \cpEquivLinkComm.
+congruence defined by \textcite{wadler2012} does not include \cpEquivLinkComm.
 We include it here because it fits well with our notion of links, and it
 simplifies our reduction system and the proofs of meta-theoretical properties of
 \cp. 
@@ -146,7 +146,7 @@ pattern, except for the nullary instead of the binary case:
   process, which is not further restricted.
 \end{itemize}
 The rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and receive
-operation, such as those found in the polyadic \textpi-calculus~\cite{milner1993}. 
+operation, such as those found in the polyadic \textpi-calculus~\parencite{milner1993}. 
 \begin{center}
   \cpInfOne
   \cpInfBot
@@ -250,7 +250,7 @@ We can do this because \rcp implements a binary session type system, meaning
 that each communication has only two participants, and therefore we know that no
 other process is communicating on \tm{x}.
 
-\citenat{wadler2012} has two reduction rules which deal with links. The first of
+\textcite{wadler2012} has two reduction rules which deal with links. The first of
 these can be seen above, and the second of these deals with the case in which
 the link is flipped.
 As we consider links commutative, this rule is derivable.
@@ -339,7 +339,7 @@ form}, for its relation to the eponymous \textlambda-calculus normal form.
 As \cp has a tight correspondence with classical linear logic, so does its proof
 of progress have a tight correspondence with (part of) the procedure proof
 normalisation for classical linear logic for classical linear
-logic~\cite{girard1987}.
+logic~\parencite{girard1987}.
 \input{thm-cp-progress-1}
 If we extend the reduction system with all congruence rules---not just
 \cpRedGammaCut for reduction under cuts, but for reduction under any term
@@ -347,7 +347,7 @@ context---then we can strengthen our canonical form, and extend our proof for
 progress to the \emph{full} proof normalisation procedure.
 \input{def-cp-normal-form}
 \input{thm-cp-progress-2}
-\citenat{wadler2012} opts to leave these additional congruence rules out,
+\textcite{wadler2012} opts to leave these additional congruence rules out,
 because ``such rules do not correspond well to our notion of computation on
 processes'', and his choice is analogous to a common practice in the
 \textlambda-calculus to not allow reduction under lambdas.
@@ -370,11 +370,11 @@ inspired by cut reductions from classical linear logic.
 \section{Non-determinism, logic, and session types}
 \label{sec:local-choice}
 In recent work, we have seen the extension of \piDILL and \cp with operators for
-non-deterministic behaviour~\cite{atkey2016,caires2014,caires2017}.
+non-deterministic behaviour~\parencite{atkey2016,caires2014,caires2017}.
 These extensions all implement an operator known as non-deterministic local
 choice.
 While this operator is written as \tm{P+Q}, it should not be confused with
-input-guarded choice~\cite{milner1992b} from the \textpi-calculus.
+input-guarded choice~\parencite{milner1992b} from the \textpi-calculus.
 Essentially, non-deterministic local choice can be summarised by the following
 typing and reduction rules: 
 \begin{center}

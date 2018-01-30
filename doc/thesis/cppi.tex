@@ -15,7 +15,7 @@ These reduction rules are taken directly from the proof normalisation procedure
 of classical linear logic, and do not correspond to any reductions in the
 \textpi-calculus. 
 
-\citenat{lindley2015semantics} observed that, using a different reduction
+\textcite{lindley2015semantics} observed that, using a different reduction
 strategy, which more closely resembles that of the \textpi-calculus, we can
 ensure that the commuting conversions are always applied \emph{last}.
 That is to say, they define two separate reduction relations:
@@ -26,7 +26,7 @@ sequence of reductions is equivalent to one of the form:
   P \longrightarrow_{C} \dots \longrightarrow_{C} Q \longrightarrow_{CC} \dots \longrightarrow_{CC} R
 \]
 In this dissertation, we use a reduction strategy which follows
-\citenat{lindley2015semantics}, but drop the suffix of commutative
+\textcite{lindley2015semantics}, but drop the suffix of commutative
 conversions.
 Consequently, we can drop the commuting conversions from our reduction system,
 which therefore more tightly corresponds to that of the \textpi-calculus.
@@ -44,7 +44,7 @@ In \cref{sec:cp-canonical-forms}, we will describe what it means for a term to
 be in canonical form.
 In \cref{sec:cp-evaluation-contexts}, we will define evaluation contexts.
 In \cref{sec:cp-progress}, we will give a new proof of progress, which follows
-\citenat{lindley2015semantics}.
+\textcite{lindley2015semantics}.
 
 \section{Canonical forms}\label{sec:cp-canonical-forms}
 The reduction strategy described by \citeauthor{lindley2015semantics} applies
@@ -70,7 +70,7 @@ Intuitively, we can say that every term of the form
 \tm{\cpCut{x_1}{P_1}{\cpCut{x_2}{P_2}{\dots \cpCut{x_n}{P_{n-1}}{P_n} \dots}}} 
 where $\tm{x_1} \dots \tm{x_{n-1}}$ are the channels bound in \tm{G}.
 In fact, a similar equivalence was used by \citeauthor{lindley2015semantics}
-\cite{lindley2015semantics} in their semantics for \cp. 
+\parencite{lindley2015semantics} in their semantics for \cp. 
 \input{def-cp-maximum-evaluation-prefix}
 We can now define what it means for a term to be in canonical form. Intuitively,
 a process is in canonical form either when there is no top-level cut, or when it
@@ -111,7 +111,7 @@ In proofs throughout this dissertation, we will leave uses of
 \cpRedGammaEquiv and the congruence rules for reductions implicit. 
 \input{thm-cp-progress-3}
 The proof of progress described in this section is novel, though it takes
-inspiration from the reduction system for \cp described by \citenat{lindley2015semantics}. 
+inspiration from the reduction system for \cp described by \textcite{lindley2015semantics}. 
 The proof itself is somewhat involved. The reason for this is that we want our
 reduction strategy to match that of the \textpi-calculus as closely as possible.
 It is also for this reason that our proof of progress involves some
@@ -121,7 +121,7 @@ multiple options available.
 
 \section{Rewriting versus commuting}
 Let's have a look at the differences between the reduction strategy we have
-defined in this chapter, and the reduction strategy which \citenat{wadler2012}
+defined in this chapter, and the reduction strategy which \textcite{wadler2012}
 defines. Let's imagine the following scenario:
 \begin{quote}
   Alice, John, and Mary went on a lovely trip together.
@@ -147,7 +147,7 @@ the example below.
 \]
 In the above interaction, no \textbeta-reduction rule applies
 \emph{immediately}. This means that using the reduction strategy described by
-\citenat{wadler2012}, we apply a commuting conversion.
+\textcite{wadler2012}, we apply a commuting conversion.
 \[
   \begin{array}{cll}
     \tm{\cpCut{x}{\cpCut{y}{
@@ -217,7 +217,7 @@ rewrite using structural congruence.
 \]
 Note that the second reduction sequence is a \emph{valid} reduction sequence in
 the either reduction system---it is simply not the sequence \emph{chosen} by the
-reduction strategy described by \citenat{wadler2012}.
+reduction strategy described by \textcite{wadler2012}.
 In fact, the structural congruence is only used in a \emph{single} instance in
 the original reduction strategy for \cp---to derive the flipped version of
 \cpRedGammaCut.
