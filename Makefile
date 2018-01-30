@@ -1,6 +1,6 @@
 TEXLIVEONFLY := $(shell command -v texliveonfly 2> /dev/null)
 
-DOC := $(shell basename $(dir $(wildcard doc/*/main.tex)))
+DOC := $(foreach dir,$(dir $(wildcard doc/*/main.tex)),$(shell gbasename $(dir)))
 PDF := $(addprefix _build/,$(addsuffix .pdf,$(DOC)))
 
 all: _build/release.zip
