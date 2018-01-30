@@ -3,6 +3,11 @@ language: generic
 dist: trusty
 sudo: false
 
+addons:
+  apt:
+    packages:
+      texlive-fonts-recommended
+
 before_install:
   - export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
   - make setup

@@ -41,10 +41,12 @@ ifndef TEXLIVEONFLY
 		latexmk       \
 		texliveonfly  \
 		greek-fontenc \
-		textgreek     \
 		babel         \
 		babel-greek   \
-		babel-english
+		babel-english \
+	  cbfonts       \
+		cbfonts-fd    \
+		textgreek
 endif
 
 fira-sans:
