@@ -16,17 +16,7 @@ _build/$(1).pdf: _build/
 	cd doc/$(1);\
 		$(TEXLIVEONFLY)                             \
 			-c latexmk                                \
-			-a "-pdflatex=pdflatex\
-			    -pdf                                  \
-				  -outdir=../../_build                  \
-	        -latexoption=-interaction=nonstopmode \
-	        -latexoption=-halt-on-error           \
-	        -jobname=$(1)"                        \
-			main.tex
-	cd doc/$(1);\
-		$(TEXLIVEONFLY)                             \
-			-c latexmk                                \
-			-a "-pdflatex=lualatex\
+			-a "-pdflatex=pdflatex                    \
 			    -pdf                                  \
 				  -outdir=../../_build                  \
 	        -latexoption=-interaction=nonstopmode \
@@ -45,11 +35,28 @@ ifndef TEXLIVEONFLY
 	curl -L http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz | tar xz -C $(HOME)
 	cd $(HOME)/install-tl-*;\
 		yes i | ./install-tl --profile=$(TRAVIS_BUILD_DIR)/texlive.profile
-	tlmgr install \
-		luatex      \
-		biber       \
-		latexmk     \
-		texliveonfly
+	tlmgr install   \
+		luatex        \
+		biber         \
+		latexmk       \
+		texliveonfly  \
+		fontenc       \
+		greek-fontenc \
+		textgreek     \
+		babel         \
+		babel-greek   \
+		babel-english
 endif
 
-.phony: setup
+fira-sans:
+	wget https://github.com/carrois/Fira/archive/master.zip
+	unzip master.zip
+	sudo mkdir -p /usr/share/fonts/opentype/fira_code
+	sudo mkdir -p /usr/share/fonts/opentype/fira_mono
+	sudo mkdir -p /usr/share/fonts/opentype/fira_sans
+	sudo cp Fira-master/Fira_Code_3_2/Fonts/FiraCode_OTF_32/* /usr/share/fonts/opentype/fira_code
+	sudo cp Fira-master/Fira_Mono_3_2/Fonts/FiraMono_OTF_32/* /usr/share/fonts/opentype/fira_mono
+	sudo cp Fira-master/Fira_Sans_4_2/Fonts/FiraSans_OTF_4203/Normal/Roman/* /usr/share/fonts/opentype/fira_sans
+	sudo cp Fira-master/Fira_Sans_4_2/Fonts/FiraSans_OTF_4203/Normal/Italic/* /usr/share/fonts/opentype/fira_sans
+
+.phony: setup fira-sans

@@ -11,6 +11,9 @@ cache:
   directories:
     - /tmp/texlive
     - $HOME/.texlive
+    - /usr/share/fonts/opentype/fira_code
+    - /usr/share/fonts/opentype/fira_mono
+    - /usr/share/fonts/opentype/fira_sans
 
 script:
   - make _build/release.zip
@@ -22,3 +25,4 @@ deploy:
   file: _build/release.zip
   on:
     repo: wenkokke/nodcap
+
