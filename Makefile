@@ -16,7 +16,7 @@ _build/$(1).pdf: _build/
 	cd doc/$(1);\
 		$(TEXLIVEONFLY)                             \
 			-c latexmk                                \
-			-a "-pdflatex=xelatex                     \
+			-a "-pdflatex=pdflatex                     \
 			    -pdf                                  \
 				  -outdir=../../_build                  \
 	        -latexoption=-interaction=nonstopmode \
@@ -49,7 +49,8 @@ ifndef TEXLIVEONFLY
 		textgreek                   \
 		koma-script                 \
 		collection-fontsrecommended \
-		collection-fontsextra
+		collection-fontsextra       \
+		collection-bibtexextra
 endif
 
 fira-sans:
