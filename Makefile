@@ -16,7 +16,7 @@ _build/$(1).pdf: _build/
 	cd doc/$(1);\
 		$(TEXLIVEONFLY)                             \
 			-c latexmk                                \
-			-a "-pdflatex=pdflatex                    \
+			-a "-pdflatex=lualatex                    \
 			    -pdf                                  \
 				  -outdir=../../_build                  \
 	        -latexoption=-interaction=nonstopmode \
