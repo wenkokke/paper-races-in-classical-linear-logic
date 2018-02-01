@@ -16,9 +16,10 @@ _build/$(1).pdf: _build/
 	cd doc/$(1);\
 		$(TEXLIVEONFLY)                             \
 			-c latexmk                                \
-			-a "-pdflatex=pdflatex                     \
+			-a "-pdflatex=pdflatex                    \
+			    -f                                    \
 			    -pdf                                  \
-				  -outdir=../../_build                  \
+			    -outdir=../../_build                  \
 	        -latexoption=-interaction=nonstopmode \
 	        -latexoption=-halt-on-error           \
 	        -jobname=$(1)"                        \
@@ -44,7 +45,7 @@ ifndef TEXLIVEONFLY
 		babel                       \
 		babel-greek                 \
 		babel-english               \
-	  cbfonts                     \
+		cbfonts                     \
 		cbfonts-fd                  \
 		textgreek                   \
 		koma-script                 \
