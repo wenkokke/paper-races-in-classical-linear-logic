@@ -1,1 +1,106 @@
-../preamble/preamble-hccp.tex
+%% Depends on: preamble-typing, preamble-pi, preamble-hcp
+
+\providecommand{\hccp}{HCCP\xspace}
+
+
+%% Names of rules
+\providecommand{\hccpEquivMixComm}{\ensuremath{({\ppar}\text{-comm})}\xspace}
+\providecommand{\hccpEquivMixAssNoParen}[1]{%
+  \ensuremath{{\ppar}\text{-assoc}}\xspace}
+\providecommand{\hccpEquivMixAss}[1]{%
+  \ensuremath{(\hcpEquivMixAssNoParen{#1})}\xspace}
+\providecommand{\hccpEquivScopeExtNoParen}[1]{\ensuremath{\text{scope-ext}\xspace}}
+\providecommand{\hccpEquivScopeExt}[1]{%
+  \ensuremath{(\hccpEquivScopeExtNoParen{#1})}\xspace}
+\providecommand{\hccpEquivMixHaltNoParen}[1]{\hcpEquivMixHaltNoParen{#1}}
+\providecommand{\hccpEquivMixHalt}[1]{\hcpEquivMixHalt{#1}}
+\providecommand{\hccpEquivNewComm}{\ensuremath{(\nu\text{-comm})}\xspace}
+
+\providecommand{\hccpRedAxCut}[1]{\ensuremath{(\cpLink{}{})}\xspace}
+\providecommand{\hccpRedBetaTensParr}{\ensuremath{(\beta{\tens}{\parr})}\xspace}
+\providecommand{\hccpRedBetaOneBot}{\ensuremath{(\beta{\one}{\bot})}\xspace}
+\providecommand{\hccpRedBetaPlusWith}[1]{%
+  \ensuremath{(\beta{\plus}{\with}_{#1})}\xspace}
+\providecommand{\hccpRedKappaNuTens}{\ensuremath{(\kappa\nu\tens)}\xspace}
+\providecommand{\hccpRedKappaNuParr}{\ensuremath{(\kappa\nu\parr)}\xspace}
+\providecommand{\hccpRedKappaNuOne}{\ensuremath{(\kappa\nu\one)}\xspace}
+\providecommand{\hccpRedKappaNuBot}{\ensuremath{(\kappa\nu\bot)}\xspace}
+\providecommand{\hccpRedKappaNuPlus}[1]{\ensuremath{(\kappa\nu\plus_{#1})}\xspace}
+\providecommand{\hccpRedKappaNuWith}{\ensuremath{(\kappa\nu\with)}\xspace}
+\providecommand{\hccpRedKappaNuTop}{\ensuremath{(\kappa\nu\top)}\xspace}
+\providecommand{\hccpRedKappaMixTens}{\ensuremath{(\kappa{\ppar}\tens)}\xspace}
+\providecommand{\hccpRedKappaMixParr}{\ensuremath{(\kappa{\ppar}\parr)}\xspace}
+\providecommand{\hccpRedKappaMixOne}{\ensuremath{(\kappa{\ppar}\one)}\xspace}
+\providecommand{\hccpRedKappaMixBot}{\ensuremath{(\kappa{\ppar}\bot)}\xspace}
+\providecommand{\hccpRedKappaMixPlus}[1]{\ensuremath{(\kappa{\ppar}\plus_{#1})}\xspace}
+\providecommand{\hccpRedKappaMixWith}{\ensuremath{(\kappa{\ppar}\with)}\xspace}
+\providecommand{\hccpRedKappaMixTop}{\ensuremath{(\kappa{\ppar}\top)}\xspace}
+\providecommand{\hccpRedGammaNew}{\ensuremath{\gamma{\nu}}\xspace}
+\providecommand{\hccpRedGammaMix}{\ensuremath{\gamma{\ppar}}\xspace}
+\providecommand{\hccpRedGammaEquiv}{\ensuremath{\gamma{\equiv}}\xspace}
+
+
+%% Structural rules
+\providecommand{\hccpInfAx}{\hcpInfAx}
+\providecommand{\hccpInfCycle}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G}\hsep
+        \Gamma, \tmty{x}{A} \hsep
+        \Delta, \tmty{x}{A^\bot}
+      }$}
+    \NOM{H-Cut}
+    \UIC{$\seq[{ \piNew{x}{P} }]{
+        \mathcal{G}\hsep
+        \ty{\Gamma}, \ty{\Delta}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hccpInfMix}{\hcpInfMix}
+\providecommand{\hccpInfHalt}{\hcpInfHalt}
+
+%% Logical rules
+\providecommand{\hccpInfTens}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep \ty{\Gamma},
+        \tmty{x}{B} }$}
+    \SYM{\tens}
+    \UIC{$\seq[{ \piSend{x}{y}{P} }]{
+        \mathcal{G} \hsep \ty{\Gamma},
+        \tmty{x}{A \tens B}, \tmty{y}{A^\bot}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hccpInfBoundTens}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \ty{\Gamma}, \tmty{y}{A} \hsep
+        \ty{\Delta}, \tmty{x}{B}
+      }$}
+    \SYM{\tens}
+    \UIC{$\seq[{ \piBoundSend{x}{y}{P} }]{
+        \mathcal{G} \hsep
+        \ty{\Gamma}, \ty{\Delta}, \tmty{x}{A \tens B}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hccpInfParr}{\hcpInfParr}
+\providecommand{\hccpInfOne}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G}
+      }$}
+    \SYM{\one}
+    \UIC{$\seq[{ \piBoundSend{x}{}{P} }]{
+        \mathcal{G} \hsep
+        \tmty{x}{\one}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hccpInfBot}{\hcpInfBot}
+\providecommand{\hccpInfWith}{\hcpInfWith}
+\providecommand{\hccpInfPlus}[1]{\hcpInfPlus{#1}}
+\providecommand{\hccpInfNil}{\hcpInfNil}
+\providecommand{\hccpInfTop}{\hcpInfTop}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

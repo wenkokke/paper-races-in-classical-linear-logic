@@ -1,8 +1,10 @@
 \documentclass[UKenglish]{llncs}
 \usepackage{makeidx}
 \input{preamble}
+\input{preamble-biblatex}
 \input{preamble-emoji}
 \input{preamble-typing}
+\usepackage{cleveref}
 \usepackage{thm-restate}
 \usepackage[title]{appendix}
 \pagestyle{plain}
@@ -518,7 +520,7 @@ interdependence:
 While the rules for \ty{\tens} and \ty{\parr} introduce input and output
 operations, these are inessential---the essential distinction lies two in the
 fact that (\tens) composes two independent processes, and therefore \emph{must}
-split the environment between them, whereas (\parr) uses a single process, which
+split the environment between them, whereas ($\parr$) uses a single process, which
 then can---and must---use all the channels in the environment.
 \begin{center}
   \cpInfTens

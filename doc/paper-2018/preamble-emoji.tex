@@ -1,1 +1,27 @@
-../preamble/preamble-emoji.tex
+\usepackage{graphicx}
+\usepackage{tikz}
+
+%%% Emoji:
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{}
+\newcommand{\emoji}[2][1em]{\ensuremath{\vcenter{%
+\hbox{\includegraphics[width=#1]{#2}}}}\xspace}
+\newcommand{\twemoji}[2][1em]{\emoji[#1]{twemoji/2/assets/#2.ai}}
+\newcommand{\mary}[1][1em]{\twemoji[#1]{1f469-1f3fb}}
+\newcommand{\john}[1][1em]{\twemoji[#1]{1f466-1f3fe}}
+\newcommand{\sliceofcake}[1][1em]{\twemoji[#1]{1f370}}
+\newcommand{\doughnut}[1][1em]{\twemoji[#1]{1f369}}
+\newcommand{\cake}[1][1em]{\twemoji[#1]{1f382}}
+\newcommand{\oldcake}[1][1em]{\emoji[#1]{oldcake.ai}}
+\newcommand{\nope}[1][1em]{\twemoji[#1]{1f64c}}
+\newcommand{\money}[1][1em]{\twemoji[#1]{1f4b0}}
+\newcommand{\bill}[1][1em]{\twemoji[#1]{1f4b7}}
+\newcommand{\bank}[1][1em]{\twemoji[#1]{1f3e6}}
+\newcommand{\store}[1][1em]{\twemoji[#1]{1f3ea}}
+\newcommand{\alice}[1][1em]{\twemoji[#1]{1f467-1f3fd}}
+\newcommand{\bob}[1][1em]{\twemoji[#1]{1f474-1f3fc}}
+\newcommand{\bankjohn}{\ensuremath{\bank_{\john[0.7em]}}\xspace}
+\newcommand{\bankmary}{\ensuremath{\bank_{\mary[0.7em]}}\xspace}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

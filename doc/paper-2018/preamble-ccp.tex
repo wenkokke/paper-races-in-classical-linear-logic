@@ -1,1 +1,93 @@
-../preamble/preamble-ccp.tex
+%% Depends on: amsmath, xspace, bussproofs, rotating, preamble-typing, preamble-pi, preamble-cp
+
+\providecommand{\ccp}{PCP\xspace}
+
+%% Reduction rules
+\newcommand{\ccpEquivLinkCut}{\ensuremath{(\cpLink{}{}\text{-cycle})}\xspace}
+
+%% Functions
+\providecommand{\pr}[1]{\ensuremath{\text{pr}(#1)}}
+
+%% Structural rules
+\providecommand{\ccpInfAx}{\cpInfAx}
+\providecommand{\ccpInfCycle}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \ty{\Gamma}, \tmty{x}{A}, \tmty{y}{A^\bot}
+      }$}
+    \NOM{Cycle}
+    \UIC{$\seq[{ \piNew{x^{\ty{A}}y}{P} }]{
+        \ty{\Gamma}
+      }$}
+  \end{prooftree*}}
+\providecommand{\ccpInfMix}{\cpInfMix}
+\providecommand{\ccpInfHalt}{\cpInfHalt}
+
+%% Logical rules.
+\providecommand{\ccpInfTens}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} , \tmty{x}{B} }$}
+    \AXC{\cs{o < \pr{\Gamma}}}
+    \SYM{(\tens)}
+    \BIC{$\seq[ \piBoundSend{x}{y}{P} ]{ \Gamma , \tmty{x}{A \tens^{\cs{o}} B} }$}
+  \end{prooftree*}}
+\providecommand{\ccpInfParr}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} , \tmty{x}{B} }$}
+    \AXC{\cs{o < \pr{\Gamma}}}
+    \SYM{(\parr)}
+    \BIC{$\seq[ \piRecv{x}{y}{P} ]{ \Gamma , \tmty{x}{A \parr^{\cs{o}} B} }$}
+  \end{prooftree*}}
+\providecommand{\ccpInfOne}{%
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{(\one)}
+    \UIC{$\seq[ \cpHalt{x} ]{ \tmty{x}{\one^{\cs{o}}} }$}
+  \end{prooftree*}}
+\providecommand{\ccpInfBot}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma }$}
+    \AXC{\cs{o < \pr{\Gamma}}}
+    \SYM{(\bot)}
+    \BIC{$\seq[ \piRecv{x}{}{P} ]{ \Gamma , \tmty{x}{\bot^{\cs{o}}} }$}
+  \end{prooftree*}}
+\providecommand{\ccpInfPlus}[1]{%
+  \ifdim#1pt=1pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
+    \AXC{\cs{o < \pr{\Gamma}}}
+    \SYM{(\plus_1)}
+    \BIC{$\seq[{ \cpInl{x}{P} }]{ \Gamma , \tmty{x}{A \plus^{\cs{o}} B} }$}
+  \end{prooftree*}
+  \else%
+  \ifdim#1pt=2pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{B} }$}
+    \AXC{\cs{o < \pr{\Gamma}}}
+    \SYM{(\plus_2)}
+    \BIC{$\seq[ \cpInr{x}{P} ]{ \Gamma , \tmty{x}{A \plus^{\cs{o}} B} }$}
+  \end{prooftree*}
+  \else%
+  \fi%
+  \fi%
+}
+\providecommand{\ccpInfWith}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
+    \AXC{$\seq[ Q ]{ \Gamma , \tmty{x}{B} }$}
+    \AXC{\cs{o < \pr{\Gamma}}}
+    \SYM{(\with)}
+    \TIC{$\seq[ \cpCase{x}{P}{Q} ]{ \Gamma , \tmty{x}{A \with^{\cs{o}} B} }$}
+  \end{prooftree*}}
+\providecommand{\ccpInfNil}{%
+  (no rule for \ty{\nil})}
+\providecommand{\ccpInfTop}{%
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{(\top)}
+    \UIC{$\seq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top^{\cs{o}}} }$}
+  \end{prooftree*}}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

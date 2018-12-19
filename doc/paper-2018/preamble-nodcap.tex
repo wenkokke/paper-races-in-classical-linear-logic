@@ -1,1 +1,68 @@
-../preamble/preamble-nodcap.tex
+%% Depends on: amsmath, xspace, bussproofs, rotating, preamble-typing, preamble-cp
+
+\providecommand{\nodcap}{\ensuremath{\text{CP}_{\text{ND}}}\xspace}
+
+%% Terms
+\providecommand{\ncHalt}{\ensuremath{0}}
+\providecommand{\ncExpn}[3]{\ensuremath{#1\uparrow #2.#3}}
+\providecommand{\ncIntl}[3]{\ensuremath{#1\downarrow #2.#3}}
+\providecommand{\ncSrv}[3]{\ensuremath{{\star}{#1}(#2).#3}}
+\providecommand{\ncCnt}[3]{\ensuremath{{\star}{#1}[#2].#3}}
+\providecommand{\ncPool}[2]{\ensuremath{(\piPar{#1}{#2})}}
+\providecommand{\ncCont}[3]{\ensuremath{\cpSub{#1}{#2}{#3}}}
+
+%% Types
+\providecommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\providecommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+
+%% Reduction rule names
+\providecommand{\ncEquivPoolId}{\ensuremath{(|\text{-ident})}\xspace}
+\providecommand{\ncEquivPoolComm}{\ensuremath{(|\text{-comm})}\xspace}
+\providecommand{\ncEquivPoolAssNoParen}[1]{\ensuremath{|\text{-assoc}_#1}\xspace}
+\providecommand{\ncEquivPoolAss}[1]{\ensuremath{(\ncEquivPoolAssNoParen{#1})}\xspace}
+\providecommand{\ncEquivCutCong}{\ensuremath{(\nu\text{-cong})}\xspace}
+\providecommand{\ncRedBetaStar}[1]{\ensuremath{(\beta{\star}_{#1})}\xspace}
+\providecommand{\ncRedBetaTakeGive}[1]{\ensuremath{(\beta\take{}\give{})}\xspace}
+\providecommand{\ncRedKappaTake}{\ensuremath{(\kappa{\take[1]{}})}\xspace}
+\providecommand{\ncRedKappaGive}{\ensuremath{(\kappa{\give[1]{}})}\xspace}
+\providecommand{\ncRedKappaPool}[1]{\ensuremath{({|}\text{-extrusion}_{#1})}\xspace}
+\providecommand{\ncRedKappaPoolTens}[1]{\ensuremath{(\kappa{|}{\tens}_{#1})}\xspace}
+\providecommand{\ncRedKappaPoolParr}{\ensuremath{(\kappa{|}{\parr})}\xspace}
+\providecommand{\ncRedKappaPoolBot}{\ensuremath{(\kappa{|}{\bot})}\xspace}
+\providecommand{\ncRedKappaPoolPlus}[1]{\ensuremath{(\kappa{|}{\plus}_{#1})}\xspace}
+\providecommand{\ncRedKappaPoolWith}{\ensuremath{(\kappa{|}{\with})}\xspace}
+\providecommand{\ncRedKappaPoolTop}{\ensuremath{(\kappa{|}{\top})}\xspace}
+\providecommand{\ncRedKappaPoolTake}{\ensuremath{(\kappa{|}{\take[1]{}})}\xspace}
+\providecommand{\ncRedKappaPoolGive}{\ensuremath{(\kappa{|}{\give[1]{}})}\xspace}
+\providecommand{\ncRedGammaPool}{\ensuremath{(\gamma{|})}\xspace}
+
+%% Typing judgement
+\providecommand{\ncInfTake}[1]{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+    \SYM{(\take[1]{})}
+    \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{ \Gamma , \tmty{x}{\take[1]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfGive}[1]{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+    \SYM{(\give[1]{})}
+    \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[1]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfCont}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\give[m]{A}} , \tmty{y}{\give[n]{A}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[m+n]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfPool}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\take[m]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta , \tmty{x}{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma , \Delta , \tmty{x}{\take[m+n]{A}} }$}
+  \end{prooftree*}}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

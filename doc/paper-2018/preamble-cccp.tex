@@ -1,1 +1,126 @@
-../preamble/preamble-cccp.tex
+%% Depends on: amsmath, xspace, bussproofs, rotating, preamble-typing, preamble-pi, preamble-cp
+
+\providecommand{\cccp}{PCP\xspace}
+
+%% Functions
+\providecommand{\cmin}[2]{\ensuremath{\text{Min}_{#1}^{\ty{#2}}}}
+
+%% Structural rules
+\providecommand{\cccpInfAx}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\cseq[ Q ]{ \Delta, \tmty{y}{A^\bot} }{\varnothing}}$}
+    \NOM{Ax}
+    \UIC{$\cseq[ \cpLink{x^{\ty{A}}}{y} ]{
+        \tmty{x}{A}, \tmty{y}{A^\bot} }{\varnothing}$}
+  \end{prooftree*}}
+\providecommand{\cccpInfCycle}{%
+  \begin{prooftree*}
+    \AXC{$\cseq[{ P }]{\ty{\Gamma}, \tmty{x}{A}, \tmty{y}{B}}{\mathcal{C}}$}
+    \AXC{$\ty{\fg{A}} = \ty{\fg{B}^\bot}$}
+    \NOM{Cycle}
+    \BIC{$\cseq[{ \piNew{x^{\ty{A}}y}{P} }]{
+        \ty{\Gamma}}{\mathcal{C} \cup (\un{A}{B}) }$}
+  \end{prooftree*}}
+\providecommand{\cccpInfMix}{%
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{ \Gamma }{ \mathcal{C} }$}
+    \AXC{$\cseq[ Q ]{ \Delta }{ \mathcal{D} }$}
+    \NOM{Mix}
+    \BIC{$\cseq[ \piPar{P}{Q} ]{ \Gamma , \Delta }{ \mathcal{C} \cup \mathcal{D} }$}
+  \end{prooftree*}}
+\providecommand{\cccpInfHalt}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\cseq[P]{\Gamma}{\mathcal{C}}}$}
+    \NOM{Halt}
+    \UIC{$\cseq[{ \piHalt}]{\varnothing}{\varnothing}$}
+  \end{prooftree*}}
+
+%% Logical rules.
+\providecommand{\cccpInfTens}{%
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{\Gamma , \tmty{y}{A} , \tmty{x}{B}}{\mathcal{C}}$}
+    \SYM{(\tens)}
+    \UIC{$\cseq[ \piBoundSend{x}{y}{P} ]{
+        \Gamma , \tmty{x}{A \tens^{\cs{o}} B}
+      }{
+        \mathcal{C} \cup \cmin{o}{\Gamma}
+      }$}
+  \end{prooftree*}}
+\providecommand{\cccpInfParr}{%
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{\Gamma , \tmty{y}{A} , \tmty{x}{B}}{\mathcal{C}}$}
+    \SYM{(\parr)}
+    \UIC{$\cseq[ \piRecv{x}{y}{P} ]{
+        \Gamma , \tmty{x}{A \parr^{\cs{o}} B}
+      }{
+        \mathcal{C} \cup \cmin{o}{\Gamma}
+      }$}
+  \end{prooftree*}}
+\providecommand{\cccpInfOne}{%
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{ \Gamma }{ \mathcal{C} }$}
+    \SYM{(\one)}
+    \UIC{$\cseq[ \piBoundSend{x}{}{P} ]{
+        \Gamma , \tmty{x}{\one^{\cs{o}}}
+      }{
+        \mathcal{C} \cup \cmin{o}{\Gamma}
+      }$}
+  \end{prooftree*}}
+\providecommand{\cccpInfBot}{%
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{ \Gamma }{ \mathcal{C} }$}
+    \SYM{(\bot)}
+    \UIC{$\cseq[ \piRecv{x}{}{P} ]{
+        \Gamma , \tmty{x}{\bot^{\cs{o}}}
+      }{
+        \mathcal{C} \cup \cmin{o}{\Gamma}
+      }$}
+  \end{prooftree*}}
+\providecommand{\cccpInfPlus}[1]{%
+  \ifdim#1pt=1pt
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{ \Gamma , \tmty{x}{A} }{ \mathcal{C} }$}
+    \SYM{(\plus_1)}
+    \UIC{$\cseq[{ \cpInl{x}{P} }]{
+        \Gamma , \tmty{x}{A \plus^{\cs{o}} B}
+      }{
+        \mathcal{C} \cup \cmin{o}{\Gamma}
+      }$}
+  \end{prooftree*}
+  \else%
+  \ifdim#1pt=2pt
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{ \Gamma , \tmty{x}{B} }{ \mathcal{C} }$}
+    \SYM{(\plus_2)}
+    \UIC{$\cseq[ \cpInr{x}{P} ]{
+        \Gamma , \tmty{x}{A \plus^{\cs{o}} B}
+      }{
+        \mathcal{C} \cup \cmin{o}{\Gamma}
+      }$}
+  \end{prooftree*}
+  \else%
+  \fi%
+  \fi%
+}
+\providecommand{\cccpInfWith}{%
+  \begin{prooftree*}
+    \AXC{$\cseq[ P ]{ \Gamma , \tmty{x}{A} }{ \mathcal{C} }$}
+    \AXC{$\cseq[ Q ]{ \Gamma , \tmty{x}{B} }{ \mathcal{D} }$}
+    \SYM{(\with)}
+    \BIC{$\cseq[ \cpCase{x}{P}{Q} ]{
+        \Gamma , \tmty{x}{A \with^{\cs{o}} B}
+      }{
+        \mathcal{C} \cup \mathcal{D} \cup \cmin{o}{\Gamma}
+      }$}
+  \end{prooftree*}}
+\providecommand{\cccpInfNil}{%
+  (no rule for \ty{\nil})}
+\providecommand{\cccpInfTop}{%
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{(\top)}
+    \UIC{$\cseq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top^{\cs{o}}} }{ \varnothing }$}
+  \end{prooftree*}}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
