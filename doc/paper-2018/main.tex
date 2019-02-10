@@ -1,4 +1,5 @@
 \documentclass[UKenglish]{llncs}
+\usepackage{comment}
 \input{preamble}
 \mainmatter % start of the contributions
 \title{Races in Classical Linear Logic}
@@ -290,8 +291,8 @@ that if we wish to translate any non-deterministic process to one using
 non-deterministic local choice, we can expect a factorial growth in the size of
 the term.
 
-\section{Classical Processes Revisited}\label{sec:cp-revisited}
-
+\section{Hypersequent Classical Processes}\label{sec:cp-revisited}
+\begin{comment}
 In this section, we introduce a reformulation of \cp.
 To keep the discussion simple, we will only discuss the subset which corresponds
 to multiplicative-additive linear logic~\cite[MALL]{girard1987} or rudimentary
@@ -307,78 +308,89 @@ exclude the commutative conversions from our reduction system which leads to a
 different notion of canonical form and a reduction strategy closer to that of
 the \textpi-calculus.
 
-The term language for \cp is a variant of the
+The term language for \hcp is a variant of the
 \textpi-calculus~\parencite{milner1992b}.
-\begin{definition}[Terms]\label{def:cp-terms}
+\end{comment}
+\begin{definition}[Terms]\label{def:hcp-terms}
   \[
-    \begin{array}{lrlllrll}
+    \begin{array}{lrll}
       \tm{P}, \tm{Q}, \tm{R}
-        &  :=& \; \tm{\cpLink{x}{y}}       &\text{link}
-      & &\mid& \; \tm{\cpCut{x}{P}{Q}}     &\text{``cut''}
-      \\&\mid& \; \tm{\cpSend{x}{y}{P}{Q}} &\text{``output''}
-      & &\mid& \; \tm{\cpRecv{x}{y}{P}}    &\text{``input''}
-      \\&\mid& \; \tm{\cpHalt{x}}          &\text{halt}
-      & &\mid& \; \tm{\cpWait{x}{P}}       &\text{wait}
-      \\&\mid& \; \tm{\cpInl{x}{P}}        &\text{select left choice}
-      & &\mid& \; \tm{\cpInr{x}{P}}        &\text{select right choice}
-      \\&\mid& \; \tm{\cpCase{x}{P}{Q}}    &\text{offer binary choice}
-      & &\mid& \; \tm{\cpAbsurd{x}}        &\text{offer nullary choice}
+        & ::=& \tm{\cpLink{x}{y}}    &\text{link}
+      \\&\mid& \tm{\piHalt}          &\text{terminated process}
+      \\&\mid& \tm{\piNew{x}{P}}     &\text{name restriction, ``cut''}
+      \\&\mid& \tm{( \piPar{P}{Q} )} &\text{parallel composition, ``mix''}
+      \\&\mid& \tm{\piSend{x}{y}{P}} &\text{output}
+      \\&\mid& \tm{\piRecv{x}{y}{P}} &\text{input}
+      \\&\mid& \tm{\piSend{x}{}{P}}  &\text{halt}
+      \\&\mid& \tm{\cpWait{x}{}{P}}  &\text{wait}
+      \\&\mid& \tm{\cpInl{x}{P}}     &\text{select left choice}
+      \\&\mid& \tm{\cpInr{x}{P}}     &\text{select right choice}
+      \\&\mid& \tm{\cpCase{x}{P}{Q}} &\text{offer binary choice}
+      \\&\mid& \tm{\cpAbsurd{x}}     &\text{offer nullary choice}
     \end{array}
-  \]  
-\end{definition}
+  \]
+\end{definition}\noindent
 The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names.
 The construct \tm{\cpLink{x}{y}} links two
 channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on
 \tm{x} to \tm{y} and vice versa.
-The construct \tm{\cpCut{x}{P}{Q}} creates a new channel \tm{x}, and composes
-two processes, \tm{P} and \tm{Q}, which communicate on \tm{x}, in parallel.
-Therefore, in \tm{\cpCut{x}{P}{Q}} the name \tm{x} is bound in both \tm{P} and
-\tm{Q}.
-In \tm{\cpRecv{x}{y}{P}} and \tm{\cpSend{x}{y}{P}{Q}}, round brackets denote
+The construct $\tm{\piNew{x}{P}}$ creates a new channel $\tm{x}$, and $\tm{\piPar{P}{Q}}$ and composes two processes.
+In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote
 input, square brackets denote output. 
 We use bound output~\parencite{sangiorgi1996}, meaning that both input and output
 bind a new name. 
-In \tm{\cpRecv{x}{y}{P}} the new name \tm{y} is bound in \tm{P}.
-In \tm{\cpSend{x}{y}{P}{Q}}, the new name \tm{y} is bound in \tm{P}, while
-\tm{x} occurs in \tm{Q}.
 
 Terms in \cp are identified up to structural congruence, which states that
 parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
-\begin{definition}[Structural congruence]\label{def:cp-equiv}
-  We define the structural congruence $\equiv$ as a reflexive, transitive
-  congruence over terms which satisfies the following additional axioms:
+\begin{definition}[Structural congruence]\label{def:hcp-equiv}
+  The structural congruence $\equiv$ is the congruence closure over terms which satisfies the following additional axioms:
   \[
-    \begin{array}{llll}
-      \cpEquivLinkComm
+    \setlength{\arraycolsep}{3pt}
+    \begin{array}{llcllllcll}
+        \cpEquivLinkComm
       & \tm{\cpLink{x}{y}}
-      & \equiv \;
+      & \equiv
       & \tm{\cpLink{y}{x}}
+      &
+      &
+        \hcpEquivMixHalt1
+      & \tm{\piPar{P}{\piHalt}}
+      & \equiv
+      & \tm{P}
+      &
       \\
-      \cpEquivCutComm
-      & \tm{\cpCut{x}{P}{Q}}
-      & \equiv \;
-      & \tm{\cpCut{x}{Q}{P}}
+        \hcpEquivMixComm
+      & \tm{\piPar{P}{Q}}
+      & \equiv
+      & \tm{\piPar{Q}{P}}
+      &
+      &
+        \hcpEquivMixAss1
+      & \tm{\piPar{P}{( \piPar{Q}{R} )}}
+      & \equiv
+      & \tm{\piPar{( \piPar{P}{Q} )}{R}}
+      &
       \\
-      \cpEquivCutAss1
-      & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{R}}}
-      & \equiv \;
-      & \tm{\cpCut{y}{\cpCut{x}{P}{Q}}{R}}
-        \quad \text{if} \; \notFreeIn{x}{R} \; \text{and} \; \notFreeIn{y}{P}
+        \hcpEquivNewComm
+      & \tm{\piNew{x}{\piNew{y}{P}}}
+      & \equiv
+      & \tm{\piNew{y}{\piNew{x}{P}}}
+      &
+      &
+        \hcpEquivScopeExt1
+      & \tm{\piNew{x}{( \piPar{P}{Q} )}}
+      & \equiv
+      & \tm{\piPar{P}{\piNew{x}{Q}}}
+      & \text{if }\notFreeIn{x}{P}
     \end{array}
   \]
 \end{definition}
-We do not add an axiom for \cpEquivCutAss2, as it follows from
-\cref{def:cp-equiv}.
-Throughout this paper, we will leave uses of the transitivity and
-congruence rules implicit.
-Structural congruence is a symmetric relation.
-%
-Channels in \cp are typed using a session type system which corresponds to RLL.
+Channels in \hcp are typed using a session type system which is a conservative extension of linear logic.
 \begin{definition}[Types]\label{def:cp-types}
   \[
     \begin{array}{lrlllrll}
       \ty{A}, \ty{B}, \ty{C}
-        &  :=& \; \ty{A \tens B} &\text{independent channels}
+        & ::=& \; \ty{A \tens B} &\text{independent channels}
       & &\mid& \; \ty{\one}      &\text{unit for} \; {\tens}
       \\&\mid& \; \ty{A \parr B} &\text{interdependent channels}
       & &\mid& \; \ty{\bot}      &\text{unit for} \; {\parr}
@@ -401,261 +413,117 @@ Duality (\ty{\cdot^\bot}) is an involutive function on types.
     \setlength{\arraycolsep}{3pt}
     \begin{array}{lclclcllclclcl}
               \ty{(A \tens B)^\bot} &=& \ty{A^\bot \parr B^\bot}
-      &\qquad \ty{\one^\bot}        &=& \ty{\bot}
-      &\qquad \ty{(A \parr B)^\bot} &=& \ty{A^\bot \tens B^\bot}
-      &\qquad \ty{\bot^\bot}        &=& \ty{\one}
+      &\quad \ty{\one^\bot}        &=& \ty{\bot}
+      &\quad \ty{(A \parr B)^\bot} &=& \ty{A^\bot \tens B^\bot}
+      &\quad \ty{\bot^\bot}        &=& \ty{\one}
       \\      \ty{(A \plus B)^\bot} &=& \ty{A^\bot \with B^\bot}
-      &\qquad \ty{\nil^\bot}        &=& \ty{\top}
-      &\qquad \ty{(A \with B)^\bot} &=& \ty{A^\bot \plus B^\bot}
-      &\qquad \ty{\top^\bot}        &=& \ty{\nil}
+      &\quad \ty{\nil^\bot}        &=& \ty{\top}
+      &\quad \ty{(A \with B)^\bot} &=& \ty{A^\bot \plus B^\bot}
+      &\quad \ty{\top^\bot}        &=& \ty{\nil}
     \end{array}
   \]
 \end{definition}
 Environments associate channels with types. Names in environments must be unique, and environments \ty{\Gamma} and \ty{\Delta} can only be combined ($\ty{\Gamma}, \ty{\Delta}$) if $\text{fv}(\ty{\Gamma}) \cap \text{fv}(\ty{\Delta}) = \varnothing$. 
 \begin{definition}[Environments]\label{def:cp-environments}
-  \(
-    \ty{\Gamma}, \ty{\Delta}, \ty{\Theta} ::= \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}
-  \) 
+  $\ty{\Gamma}, \ty{\Delta}, \ty{\Theta} ::= \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}$
+\end{definition}
+A hyper-environment is a multiset of environments. While names within environments must be unique, names may be shared between multiple environments in a hyper-environment. We write $\ty{\mathcal{G} \hsep \mathcal{H}}$ to combine two hyper-environments.
+\begin{definition}[Hyper-environments]\label{def:hcp-hyper-environment}
+  $\ty{\mathcal{G}}, \ty{\mathcal{H}} ::= \ty{\emptyhypercontext} \, \mid \, \ty{\mathcal{G} \hsep \Gamma}$
 \end{definition}
 Typing judgements associate processes with collections of typed channels.
 \begin{definition}[Typing judgements]\label{def:cp-typing-judgement}
-  A typing judgement $\seq[{ P }]{\tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}}$ denotes
-  that the process \tm{P} communicates along channels $\tm{x_1}\dots\tm{x_n}$
-  following protocols $\ty{A_1}\dots\ty{A_n}$.
-  Typing judgements can be constructed using the following rules:
-  {\normalfont
-    \begin{center} \cpInfAx    \cpInfCut   \end{center}
-    \begin{center} \cpInfTens  \cpInfParr  \end{center}
-    \begin{center} \cpInfOne   \cpInfBot   \end{center}
-    \begin{center} \cpInfPlus1 \cpInfPlus2 \end{center}
-    \begin{center} \cpInfWith              \end{center}
-    \begin{center} \cpInfNil   \cpInfTop   \end{center}
-  }
+  A typing judgement $\seq[P]{\Gamma_1 \hsep \dots \hsep \Gamma_n}$ denotes that the process $\tm{P}$ consists of $n$ independent, but potentially entangled processes, each of which communicates according to its own protocol $\Gamma_i$. 
+  Typing judgements can be constructed using the inference rules below. 
+  \\[0.5\baselineskip]
+  {Structural rules}
+  \begin{center}
+    \hcpInfAx
+    \hcpInfCut
+  \end{center}
+  \begin{center}
+    \hcpInfMix
+    \hcpInfHalt
+  \end{center}
+  {Logical rules}
+  \begin{center}
+    \hcpInfBoundTens
+    \hcpInfParr
+  \end{center}
+  \begin{center}
+    \hcpInfOne
+    \hcpInfBot
+  \end{center}
+  \begin{center}
+    \hcpInfPlus1
+    \hcpInfPlus2
+  \end{center}
+  \begin{center}
+    \hcpInfWith
+  \end{center}
+  \begin{center}
+    \hcpInfNil
+    \hcpInfTop
+  \end{center}
+  Furthermore, each logical rule has the side condition that $\tm{x} \not\in \ty{\mathcal{G}}$.
 \end{definition}
 Reductions relate processes with their reduced forms.
 They are defined as follows:
-\begin{definition}[Reduction]\label{def:cp-term-reduction}
-  A reduction $\reducesto{P}{P'}$ denotes that the process \tm{P} can reduce to
-  the process \tm{P'} in a single step. Reductions can only be constructed using
-  the following rules:
-  \[
-    \begin{array}{llll}
-      \cpRedAxCut1
+\begin{definition}[Reduction]\label{def:hcp-reduction}
+  Reductions are described by the smallest relation $\Longrightarrow$ on process
+  terms closed under the rules below:
+  \begin{gather*}
+    \begin{array}{llcll}
+      \hcpRedAxCut1
       & \tm{\cpCut{x}{\cpLink{w}{x}}{P}}
-      & \Longrightarrow \;
-      & \tm{\cpSub{w}{x}{P}} 
+      & \Longrightarrow
+      & \tm{\cpSub{w}{x}{P}}
       \\
-      \cpRedBetaTensParr
-      & \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
-      & \Longrightarrow \;
-      & \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
+      \hcpRedBetaTensParr
+      & \tm{\cpCut{x}{\piSend{x}{y}{P}}{\piRecv{x}{y}{R}}}
+      & \Longrightarrow
+      & \tm{\piNew{x}{\piNew{y}{(\piPar{P}{R})}}}
       \\
-      \cpRedBetaOneBot
-      & \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
-      & \Longrightarrow \;
-      & \tm{P}
+      \hcpRedBetaOneBot
+      & \tm{\cpCut{x}{\piSend{x}{}{P}}{\piRecv{x}{}{Q}}}
+      & \Longrightarrow
+      & \tm{\piPar{P}{Q}}
       \\
-      \cpRedBetaPlusWith1
+      \hcpRedBetaPlusWith1
       & \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
-      & \Longrightarrow \;
+      & \Longrightarrow
       & \tm{\cpCut{x}{P}{Q}}
       \\
-      \cpRedBetaPlusWith2
+      \hcpRedBetaPlusWith2
       & \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
-      & \Longrightarrow \;
+      & \Longrightarrow
       & \tm{\cpCut{x}{P}{R}}
     \end{array}
-  \]
+  \end{gather*}
   \begin{center}
     \begin{prooftree*}
-      \AXC{\reducesto{P}{P^\prime}}
-      \SYM{\cpRedGammaCut}
-      \UIC{\reducesto{\cpCut{x}{P}{Q}}{\cpCut{x}{P^\prime}{Q}}}
+      \AXC{$\reducesto{P}{P^\prime}$}
+      \SYM{\hcpRedGammaNew}
+      \UIC{$\reducesto{\piNew{x}{P}}{\piNew{x}{P^\prime}}$}
     \end{prooftree*}
     \begin{prooftree*}
-      \AXC{$\tm{P}\equiv\tm{Q}$}
-      \AXC{\reducesto{Q}{Q^\prime}}
-      \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
-      \SYM{\cpRedGammaEquiv}
-      \TIC{\reducesto{P}{P^\prime}}
+      \AXC{$\reducesto{P}{P^\prime}$}
+      \SYM{\hcpRedGammaMix}
+      \UIC{$\reducesto{\piPar{P}{Q}}{\piPar{P^\prime}{Q}}$}
     \end{prooftree*}
   \end{center}
-  %
-  The relation $\Longrightarrow^\star$ is the reflexive, transitive closure of
-  $\Longrightarrow$.
+  \begin{prooftree}
+    \AXC{$\tm{P}\equiv\tm{Q}$}
+    \AXC{$\reducesto{Q}{Q^\prime}$}
+    \AXC{$\tm{Q^\prime}\equiv\tm{P^\prime}$}
+    \SYM{\hcpRedGammaEquiv}
+    \TIC{$\reducesto{P}{P^\prime}$}
+  \end{prooftree}
 \end{definition}
-We will discuss the interpretations of each connective, together with their
-typing and reduction rules, in \cref{sec:cp-multiplicatives,sec:cp-additives,sec:cp-duality}.
-
-\subsection{Multiplicatives and in- and interdependence}
-\label{sec:cp-multiplicatives}
-The multiplicatives ($\ty{\tens}, \ty{\parr}$) express independence and
-interdependence:
-\begin{itemize}
-\item
-  A channel of type \ty{A \tens B} represents a pair of channels which
-  communicate with two independent processes---that is to say, two
-  processes who share no channels.
-  A process acting on a channel of type \ty{A \tens B} will send one endpoint of
-  a fresh channel, and then split into a pair of independent processes.
-  One of these processes will be responsible for an interaction of type \ty{A}
-  over the fresh channel, while the other process continues to interact as
-  \ty{B}.
-\item
-  A channel of type \ty{A \parr B} represents a pair of interdependent channels,
-  which are used within a single process.
-  A process acting on a channel of type \ty{A \parr B} will receive a channel to
-  act on, and communicate on its channels in whatever order it pleases.
-  This means that the usage of one channel can depend on that of
-  another---e.g.\ the interaction of type \ty{B} could depend on the result of
-  the interaction of type \ty{A}, or vise versa, and if \ty{A} and \ty{B} are
-  complex types, their interactions could likewise interweave in complex ways.
-\end{itemize}
-While the rules for \ty{\tens} and \ty{\parr} introduce input and output
-operations, these are inessential---the essential distinction lies two in the
-fact that (\tens) composes two independent processes, and therefore \emph{must}
-split the environment between them, whereas ($\parr$) uses a single process, which
-then can---and must---use all the channels in the environment.
-\begin{center}
-  \cpInfTens
-  \cpInfParr
-\end{center}
-The \textbeta-reduction rule for terms introduced by $(\tens)$ and $(\parr)$
-implements the behaviour outlined above:
-\begin{center}
-  \(
-  \tm{\cpCut{x}{\cpSend{x}{y}{P}{Q}}{\cpRecv{x}{z}{R}}}
-  \Longrightarrow
-  \tm{\cpCut{y}{P}{\cpCut{x}{Q}{\cpSub{y}{z}{R}}}}
-  \)
-\end{center}
-The function \tm{\cpSub{x}{y}{P}} denotes the substitution of the name \tm{x}
-for the name \tm{y} in the term \tm{P}.
-%
-The rules for the multiplicative units ($\ty{\one}, \ty{\bot}$) follow the same
-pattern, except for the nullary instead of the binary case:
-\begin{itemize}
-\item
-  A term constructed by $(\one)$ must compose \emph{zero} independent
-  processes, and thus must halt. Furthermore, it must be able to split its
-  environment between zero processes, and thus its environment must be empty.
-\item
-  A term constructed by $(\bot)$, on the other hand, consists of a single
-  process, which is not further restricted.
-\end{itemize}
-The rules for $\ty{\one}$ and $\ty{\bot}$ introduce a nullary send and receive
-operation, such as those found in the polyadic \textpi-calculus~\parencite{milner1993}. 
-\begin{center}
-  \cpInfOne
-  \cpInfBot
-\end{center}
-The \textbeta-reduction rule for terms introduced by $(\one)$ and $(\bot)$
-implements the behaviour outlined above:
-\begin{center}
-  \(
-  \tm{\cpCut{x}{\cpHalt{x}}{\cpWait{x}{P}}}
-  \Longrightarrow
-  \tm{P}
-  \)
-\end{center}
-
-\subsection{Additives and choice}
-\label{sec:cp-additives}
-The additives ($\ty{\plus}, \ty{\with}$) express choice:
-\begin{itemize}
-\item
-  A process acting on a channel of type \ty{A \plus B} either sends the value
-  \tm{\text{inl}} to select an interaction of type \ty{A} or the value
-  \tm{\text{inr}} to select one of type \ty{B}. 
-\item
-  A process acting on a channel of type \ty{A \with B} receives such a value,
-  and then offers an interaction of either type \ty{A} or \ty{B},
-  correspondingly.
-\end{itemize}
-In essence, the additive operations implement sending and receiving of a single
-bit of information (\tm{\text{inl}} or \tm{\text{inr}}) and branching based on
-the value of that bit. 
-\begin{center}
-  \cpInfPlus1
-  \cpInfWith
-\end{center}
-The rule for constructing a process which sends \tm{\text{inr}}, $(\plus_2)$,
-has been omitted, but can be found in~\cref{def:cp-typing-judgement}.
-The \textbeta-reduction rules for terms introduced by $(\plus_1)$, $(\plus_2)$
-and $(\with)$ implement the behaviour outlined above.
-\begin{center}
-  \(
-  \begin{array}{c}
-    \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}} \Longrightarrow \tm{\cpCut{x}{P}{Q}}
-    \\
-    \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}} \Longrightarrow \tm{\cpCut{x}{P}{R}}
-  \end{array}
-  \)
-\end{center}
-%
-The rules for the additive units ($\ty{\nil}, \ty{\top}$) follow the same
-pattern, except for a nullary choice:
-\begin{itemize}
-\item
-  There is \emph{no} rule for \ty{\nil}, as a process acting on a channel of
-  that type would have to select one of \emph{zero} options, which is impossible.
-\item
-  A process acting on a channel of type \ty{\top} will wait to receive a choice
-  of \emph{zero} options. Since this will clearly never happen, we have two
-  options: either we wait forever, or we crash.
-\end{itemize}
-It may seem odd at first to include a type for the process which cannot possibly
-exist, and for the process which waits forever, but these make sensible units
-for choice.
-When offered a choice of type \ty{A \plus \nil}, one can either choose to
-interact as \ty{A}, or choose to commit to doing the impossible.
-Similarly, when offering a choice of type \ty{A \with \top}, one can safely
-implement the right branch with a process which waits forever, as no sound
-process will ever be able to select that branch anyway.
-\begin{center}
-  \cpInfNil
-  \cpInfTop
-\end{center}
-As there is no way to construct a process of type \ty{\nil}, there is no
-reduction rule for the additive units.
-
-
-\subsection{Structural rules and duality}
-\label{sec:cp-duality}
-Duality plays a crucial role in session type systems.
-In~\cref{sec:cp-additives}, we saw that duality ensures a process offering a choice
-is always matched with a process making a choice.
-In~\cref{sec:cp-multiplicatives}, we saw that it also ensures that, for instance
-a process which uses communication on \tm{x} to decide what to send on \tm{y} is
-matched with a pair of independent processes on \tm{x} and \tm{y}, which is
-crucial to deadlock freedom as it prevents circular dependencies.  
-
-Duality appears in the typing rules for two \cp term constructs.
-Forwarding, \tm{\cpLink{x}{y}}, connects two dual channels with dual endpoints,
-while composition, \tm{\cpCut{x}{P}{Q}}, composes two processes \tm{P} and
-\tm{Q} with a shared channel \tm{x}, requiring that they follow dual protocols
-on \tm{x}.
-\begin{center}
-  \cpInfAx
-  \cpInfCut
-\end{center}
-There are two reduction rules which deal with the interactions between
-forwarding and compositions. These implement the intuition that if a process is
-meant to communicate on \tm{x}, \tm{x} is forwarding to \tm{y}, and nobody else
-is listening on \tm{x}, then the process might as well start communicating on
-\tm{y}.
-\begin{center}
-  \(
-  \tm{\cpCut{x}{\cpLink{w}{x}}{P}} \Longrightarrow \tm{\cpSub{w}{x}{P}} 
-  \)
-\end{center}
-We can do this because \cp implements a \emph{binary} session type system,
-meaning that each communication has only two participants, and therefore we know
-that no other process is communicating on \tm{x}.
 
 \subsection{Example}
 \label{sec:cp-example}
-The multiplicatives are responsible for structuring communication, and
+The hypersequents are responsible for structuring communication, and
 it is this structure which rules out deadlocked interactions.
 Let us go back to our example of a deadlocked interaction from
 \cref{sec:introduction}:
@@ -668,7 +536,11 @@ Let us go back to our example of a deadlocked interaction from
     })}
   \)
 \end{center}
-If we want to translate this interaction to \cp, we run into a problem: there is
+If we want to type this interaction in \hcp, we run into a problem...
+% TODO
+
+\begin{comment}
+If we want to translate this interaction to \hcp, we run into a problem: there is
 no \emph{plain} sending construct in \cp---we only have \tm{\cpSend{x}{y}{P}{Q}},
 which requires that the remainder of the interaction is split in two independent
 processes.
@@ -702,59 +574,35 @@ The resulting process reduces, as expected:
   {\cpCut{y}{\bank}{\cpCut{x}{\cpSub{y}{z}{\john}}{\mary}}}
   \)
 \end{center}
+\end{comment}
 
 \subsection{Metatheory}
 \label{sec:cp-metatheory}
-\cp enjoys subject reduction, termination, and progress~\citep{wadler2012}.
-\begin{theorem}[Preservation for $\equiv$]\label{thm:cp-preservation-equiv}
-  If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
-  then $\seq[{ Q }]{\Gamma }$.
-  \qed
-\end{theorem}
+\hcp enjoys subject reduction, termination, and progress~\citep{kokke2018tlla}.
+\begin{lemma}[Preservation for $\equiv$]\label{lem:hcp-preservation-equiv}
+  If $\tm{P}\equiv\tm{Q}$, then $\seq[P]{\mathcal{G}}$ iff $\seq[Q]{\mathcal{G}}$.
+\end{lemma} 
 \begin{proof}
-  By induction on the structure of the equivalence. The cases for reflexivity,
-  transitivity and congruence are trivial. The two interesting cases, for
-  \cpEquivCutComm and \cpEquivCutAss1 are given in \cref{fig:cp-preservation-equiv}
-  \qed
+  By induction on the derivation of $\tm{P}\equiv\tm{Q}$.
 \end{proof}
-\input{fig-cp-preservation-equiv}
-Then, we can prove preservation.
-\begin{theorem}[Preservation]\label{thm:cp-preservation}
-  If $\seq[{ P }]{ \Gamma }$ and \reducesto{P}{Q},
-  then $\seq[{ Q }]{ \Gamma }$.
-  \qed
-\end{theorem}
+\begin{theorem}[Preservation]\label{thm:hcp-preservation}
+  If $\seq[P]{\mathcal{G}}$ and $\reducesto{P}{Q}$, then $\seq[Q]{\mathcal{G}}$.
+\end{theorem} 
 \begin{proof}
-  By induction on the structure of the reduction; see \cref{fig:cp-preservation}.
-  % 
-  The case for \cpRedGammaCut is trivial by the induction hypothesis, and the
-  case for \cpRedGammaEquiv is trivial by the induction hypothesis and
-  \cref{thm:cp-preservation-equiv}.
-  \qed
+  By induction on the derivation of $\reducesto{P}{Q}$.
 \end{proof}
-\input{fig-cp-preservation}
-
-There are several reduction strategies for \cp, all of which use non-cut terms as canonical forms.
-
-The reduction strategy described by \textcite{wadler2012} matches precisely the proof of cut-elimination for linear logic. It applies commutative conversions to bubble actions over unrelated \textnu-binders to the \textnu-binder which introduces the channel on which they act. It does this until it creates a \textbeta-redex, upon which it applies \textbeta-reduction, and continues.
-
-The reduction strategy described by \citeauthor{lindley2015semantics} creates redexes by rewriting using the structural congruence, then applies \cpRedAxCut1 or \textbeta-reduction. It does this until the process blocks on one or more external communications. Then, to convert the term to canonical form, it applies the commutative conversions to bubble one of those external communications to the front of the term.
-
-In this paper, we follow the latter strategy, but instead define canonical forms as terms which are blocked on an external communication. This allows us to exclude the commutative conversions from our reduction system, which makes our reduction system more closely resemble that of the \textpi-calculus.
-
-\begin{definition}[Actions]\label{def:cp-action}
+\begin{definition}[Actions]
   A process $\tm{P}$ acts on $\tm{x}$ whenever $\tm{x}$ is free in the outermost
-  term constructor of $\tm{P}$, e.g.\ $\tm{\cpSend{x}{y}{P}{Q}}$ acts on
-  $\tm{x}$ but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$
-  and $\tm{y}$. A process $\tm{P}$ is an action if it acts on some channel
-  $\tm{x}$.
+  term constructor of $\tm{P}$, \eg $\tm{\cpSend{x}{y}{P}{Q}}$ acts on $\tm{x}$
+  but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$.
+  A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$.
 \end{definition}
-\begin{definition}[Canonical forms]\label{def:cp-canonical-forms}
+\begin{definition}[Canonical forms]
   A process $\tm{P}$ is in canonical form if
   \[
-    \tm{P} \equiv \tm{\cpCut{x_1}{P_1}{\dots\cpCut{x_n}{P_n}{P_{n+1}}\dots}},
+  \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
   \]
-  such that: no process $\tm{P_i}$ is a cut; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$. 
+  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$.
 \end{definition}
 \begin{corollary}
   If a process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
@@ -762,28 +610,25 @@ In this paper, we follow the latter strategy, but instead define canonical forms
 \begin{proof}
   We have
   \[
-  \tm{P} \equiv \tm{\cpCut{x_1}{P_1}{\dots\cpCut{x_n}{P_n}{P_{n+1}}\dots}}
+  \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
-  such that no $\tm{P_i}$ is a cut or a link, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel. The prefix of cuts introduces $n$ channels, and $n+1$ processes. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
-  \qed
+  such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Therefore, at least $m+1$ of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
-\begin{theorem}[Progress]\label{thm:cp-progress}
+\begin{theorem}[Progress]\label{thm:hcp-progress}
   If $\seq[P]{\Gamma}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
 \end{theorem} 
 \begin{proof}
-  We consider the maximum prefix of cuts of $\tm{P}$ such that
+  We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
   \[
-    \tm{P} \equiv \tm{\cpCut{x_1}{P_1}{\dots\cpCut{x_n}{P_n}{P_{n+1}}\dots}}
+  \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
   and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
-  \qed
 \end{proof}
-\begin{theorem}[Termination]\label{thm:cp-termination}
-  If $\seq[P]{\Gamma}$, then there are no infinite $\Longrightarrow$-reduction sequences.
+\begin{theorem}[Termination]\label{thm:hcp-termination}
+  If $\seq[P]{\mathcal{G}}$, then there are no infinite $\Longrightarrow$-reduction sequences.
 \end{theorem} 
 \begin{proof}
   Every reduction reduces a single cut to zero, one or two cuts. However, each of these cuts is smaller, measured in the size of the cut formula. Furthermore, each instance of the structural congruence preserves the size of the cut. Therefore, there cannot be an infinite $\Longrightarrow$-reduction sequence.
-  \qed
 \end{proof}
 
 \section{Shared Channels and Non-Determinism}\label{sec:cpnd}
@@ -812,11 +657,9 @@ between John, Mary and the store.
   \end{array}
   \)
 \end{center}
-Races occur when more than two processes attempt to communicate simultaneously
-over the \emph{same} channel. However, the \text{Cut} rule of \cp requires that
-\emph{exactly two} processes communicate over each channel:
+Races occur when more than two processes attempt to communicate simultaneously over the \emph{same} channel. However, the \textsc{Cut} rule of \hcp requires that \emph{exactly two} processes communicate over each channel:
 \begin{center}
-  \cpInfCut
+  \hcpInfCut
 \end{center}
 We could attempt to write down a protocol for our example, stating that the store
 has a pair of channels $\tm{x}, \tm{y} : \ty{\cake}$ with which it communicates
@@ -828,31 +671,28 @@ However, this \emph{only} models interactions such as the following:
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{x}{\cake^\bot} }$}
   \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y}{\cake^\bot} }$}
+  \NOM{H-Mix}
+  \BIC{$\seq[{ (\piPar{\john}{\mary}) }]{
+      \Gamma, \tmty{x}{\cake^\bot} \hsep \Delta, \tmty{x}{\cake^\bot} }$}
   \SYM{\tens}
-  \BIC{$\seq[{ \cpSend{y}{x}{\john}{\mary} }]{
+  \UIC{$\seq[{ \cpSend{y}{x}{\john}{\mary} }]{
       \Gamma, \Delta, \tmty{y}{\cake^\bot \tens \cake^\bot} }$}
   \AXC{$\seq[{ \store }]{ \Theta, \tmty{x}{\cake}, \tmty{y}{\cake} }$}
   \SYM{\parr}
   \UIC{$\seq[{ \cpRecv{y}{x}{\store} }]{
       \Theta, \tmty{y}{\cake \parr \cake} }$}
+  \NOM{H-Mix}
+  \BIC{$\seq[{ (\piPar{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}}) }]{
+      \Gamma, \Delta, \tmty{y}{\cake^\bot \tens \cake^\bot}
+      \hsep
+      \Theta, \tmty{y}{\cake \parr \cake} }$}
   \NOM{Cut}
-  \BIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}} }]{
+  \UIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
-In this interaction, John will get whatever the store decides to send on \tm{x},
-and Mary will get whatever the store decides to send on \tm{y}. This means that
-this interactions gives the choice of who receives what \emph{to the store}.
-This is not an accurate model of our original example, where the choice of who
-receives the cake is non-deterministic and depends on factors outside of any of
-the participants' control!
-To make matters worse, the term which models our example is entirely different
-from the one we initially wrote down in the \textpi-calculus!
+In this interaction, John will get whatever the store decides to send on \tm{x}, and Mary will get whatever the store decides to send on \tm{y}. This means that this interactions gives the choice of who receives what \emph{to the store}. This is not an accurate model of our original example, where the choice of who receives the cake is non-deterministic and depends on factors outside of any of the participants' control!
 
-Modelling racy behaviour, such as that in our example, is essential
-to describing the interactions that take place in realistic concurrent systems.
-We would like to extend \cp to allow such races in a way which mirrors the way
-in which the \textpi-calculus handles non-determinism.
-Let us return to our example:
+Modelling racy behaviour, such as that in our example, is essential to describing the interactions that take place in realistic concurrent systems. We would like to extend \hcp to allow such races in a way which mirrors the way in which the \textpi-calculus handles non-determinism. Let us return to our example:
 \begin{center}
   \(
   \tm{(\piPar{%
@@ -872,54 +712,18 @@ These actions are marked with a \tm{\star} to distinguish them from ordinary
 sending and receiving. 
 To group clients, we add \emph{pooling}, another form of parallel composition.
 \begin{definition}[Terms]\label{def:nc-terms}
-  We extend \cref{def:cp-terms} with the following constructs:
+  We extend \cref{def:hcp-terms} with the following constructs:
   \[\!
     \begin{aligned}
       \tm{P}, \tm{Q}, \tm{R}
-           :=& \; \dots
+          ::=& \; \dots
       \\ \mid& \; \tm{\ncCnt{x}{y}{P}} &&\text{client creation}
       \\ \mid& \; \tm{\ncSrv{x}{y}{P}} &&\text{server interaction}
-      \\ \mid& \; \tm{\ncPool{P}{Q}}   &&\text{parallel composition of clients, ``pooling''}
     \end{aligned}
   \]
 \end{definition}
-As before, round brackets denote input, square brackets denote output.
-Note that \tm{\ncCnt{x}{y}{P}}, much like \tm{\cpSend{x}{y}{P}{Q}}, is a bound
-output: both client creation and server interaction bind a new name.
-
-In \cp, we identified terms up to the commutativity and associativity of
-parallel composition. In \nodcap, we add another form of parallel composition,
-and therefore must extend our structural congruence:
-\begin{definition}[Structural congruence]\label{def:nc-equiv}
-  We extend \cref{def:cp-equiv} with the following equivalences:
-  \[
-    \begin{array}{llll}
-      \ncEquivPoolComm
-      & \tm{\ncPool{P}{Q}}
-      & \equiv \;
-      & \tm{\ncPool{Q}{P}}
-      \\
-      \ncEquivPoolAss1
-      & \tm{\ncPool{P}{\ncPool{Q}{R}}}
-      & \equiv \;
-      & \tm{\ncPool{\ncPool{P}{Q}}{R}}
-      \\
-      \ncRedKappaPool1
-      & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}}
-      & \equiv \;
-      & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}} \quad \text{if} \; \notFreeIn{x}{P} 
-      \\
-      \ncRedKappaPool2
-      & \tm{\ncPool{P}{\cpCut{x}{Q}{R}}}
-      & \equiv \;
-      & \tm{\cpCut{x}{\ncPool{P}{Q}}{R}} \quad \text{if} \; \notFreeIn{x}{P}
-    \end{array}
-  \]
-\end{definition}
-We do not add \ncEquivPoolAss2, as follows from \cref{def:nc-equiv}.
-We add both \ncRedKappaPool1 and \ncRedKappaPool2, as \tm{\cpCut{x}{P}{Q}} and
-\tm{\ncPool{P}{Q}} are two distinct constructs, and hence the rules are not 
-mutually derivable. Structural congruence remains symmetric.
+As before, round brackets denote input, square brackets denote output. Note that $\tm{\ncCnt{x}{y}{P}}$, much like $\tm{\piSend{x}{y}{P}}$, is a bound output: both client creation and server interaction bind a new name.
+The structural congruence, which identifies certain terms, is the same as \cref{def:hcp-equiv}.
 
 In any non-deadlock interaction between a server and some clients, 
 there must be \emph{exactly} as many clients as there are server interactions.
@@ -930,13 +734,13 @@ track how many clients or server interactions they represent.
   \[
     \begin{array}{lrll}
       \ty{A}, \ty{B}, \ty{C}
-        &  :=& \; \dots
+        & ::=& \; \dots
       \\&\mid& \; \ty{\take[n]{A}} &\text{pool of} \; n \; \text{clients}
       \\&\mid& \; \ty{\give[n]{A}} &n \; \text{server interactions}
     \end{array}
   \]  
 \end{definition}
-The types \ty{\take[n]{A}} and \ty{\give[n]{A}} are dual.
+The types $\ty{\take[n]{A}}$ and $\ty{\give[n]{A}}$ are dual.
 Duality remains an involutive function.
 
 We have to add typing rules to associate our new client and server interactions
@@ -1008,20 +812,25 @@ implemented, as in the \textpi-calculus, using parallel composition.
 \begin{center}
   \ncInfTake1
   \ncInfPool
-\end{center}
+\end{center}%
 Using these rules, we can derive the left-hand side of our proof by marking John
 and Mary as clients, and pooling them together.
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
   \SYM{(\take[1]{})}
-  \UIC{$\seq[{ \ncCnt{x}{y}{\john} }]{ \Gamma, \tmty{z}{\take[1]{\cake^\bot}} }$}
+  \UIC{$\seq[{ \ncCnt{x}{y}{\john} }]{ \Gamma, \tmty{y}{\take[1]{\cake^\bot}} }$}
 
   \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
   \SYM{(\take[1]{})}
-  \UIC{$\seq[{ \ncCnt{x}{y'}{\mary} }]{ \Delta, \tmty{y'}{\take[1]{\cake^\bot}} }$}
+  \UIC{$\seq[{ \ncCnt{x'}{y'}{\mary} }]{ \Delta, \tmty{x'}{\take[1]{\cake^\bot}} }$}
 
-  \NOM{Pool}
-  \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
+  \NOM{H-Mix}
+  \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x'}{y'}{\mary}} }]{
+      \Gamma, \tmty{x}{\take[1]{\cake^\bot}} \hsep
+      \Delta, \tmty{x'}{\take[1]{\cake^\bot}} }$}
+
+  \SYM{\textsc{Cont}_{!}}
+  \UIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
       \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
 \end{prooftree}
 
@@ -1055,7 +864,7 @@ them.
   \SYM{(\give[1]{})}
   \UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x'}{z'}{\store}} }]{
       \Theta, \tmty{x}{\give[1]{\cake}}, \tmty{x'}{\give[1]{\cake}} }$}
-  \NOM{Cont}
+  \SYM{\textsc{Cont}_{?}}
   \UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}} }]{
       \Theta, \tmty{x}{\give[2]{\cake}} }$}
 \end{prooftree}
@@ -1090,8 +899,8 @@ one client in a pool of multiple clients and a server.
 \]
 Lastly, because we have added another form of parallel composition, we add
 another congruence rule, to allow for reduction inside client pools.
-\begin{definition}[Reduction]\label{def:nc-term-reduction}
-  We extend \cref{def:cp-term-reduction} with the following reductions:
+\begin{definition}[Reduction]\label{def:nc-reduction}
+  We extend \cref{def:hcp-reduction} with the following reductions:
   \[
     \begin{array}{llll}
       \ncRedBetaStar{1}
@@ -1105,20 +914,8 @@ another congruence rule, to allow for reduction inside client pools.
       & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{\cpSub{y}{z}{R}}}}
     \end{array}
   \]
-  \begin{prooftree}
-    \AXC{\reducesto{P}{P'}}
-    \SYM{\ncRedGammaPool}
-    \UIC{\reducesto{\ncPool{P}{Q}}{\ncPool{P'}{Q}}}
-  \end{prooftree}
 \end{definition}
-The rules \ncRedBetaStar1 and \ncRedBetaStar{n+1} seem like the elimination
-rules for a list-like construct. This may come as a surprise, as our client
-pools are built up like binary trees, and the typing rules for both sides are
-tree-like, with $(\take[1]{})$ and $(\give[1]{})$ playing the role of leaves,
-and \textsc{Pool} and \textsc{Cont} merging two trees with $m$ and $n$ leaves
-into one with $m+n$ leaves.
-However, the server process imposes a sequential ordering on its interactions,
-and it is because of this that we use list-like elimination rules.
+The rules \ncRedBetaStar1 and \ncRedBetaStar{n+1} seem like the elimination rules for a list-like construct. This may come as a surprise, as our client pools are built up like binary trees, and the typing rules for both sides are tree-like, with $(\take[1]{})$ and $(\give[1]{})$ playing the role of leaves, and $\textsc{Cont}_{!}$ and $\textsc{Cont}_{?}$ merging two trees with $m$ and $n$ leaves into one with $m+n$ leaves. However, the server process imposes a sequential ordering on its interactions, and it is because of this that we use list-like elimination rules.
 
 So where does the non-determinism in \nodcap come from? Let us say we have a
 term of the following form:
@@ -1168,78 +965,56 @@ out notion of computation with processes.
 \subsection{Metatheory}
 \label{sec:nc-metatheory}
 \nodcap enjoys subject reduction, termination, and progress.
-\begin{theorem}[Preservation for $\equiv$]\label{thm:nc-preservation-equiv}
-  If $\seq[{ P }]{ \Gamma }$ and $\tm{P} \equiv \tm{Q}$,
-  then $\seq[{ Q }]{\Gamma }$.
-\end{theorem}
+\begin{lemma}[Preservation for $\equiv$]\label{lem:nc-preservation-equiv}
+  If $\tm{P}\equiv\tm{Q}$ and $\seq[P]{\mathcal{G}}$, then $\seq[Q]{\mathcal{G}}$.
+\end{lemma} 
 \begin{proof}
-  As \cref{thm:cp-preservation-equiv}.
-  The new cases are given in \cref{fig:nc-preservation-equiv}.
-  \qed
+  By induction on the derivation of $\tm{P}\equiv\tm{Q}$.
 \end{proof}
-\input{fig-nc-preservation-equiv}
 \begin{theorem}[Preservation]\label{thm:nc-preservation}
-  If $\seq[{ P }]{ \Gamma }$ and \reducesto{P}{Q},
-  then $\seq[{ Q }]{ \Gamma }$.
-\end{theorem}
+  If $\seq[P]{\mathcal{G}}$ and $\reducesto{P}{Q}$, then $\seq[Q]{\mathcal{G}}$.
+\end{theorem} 
 \begin{proof}
-  As \cref{thm:cp-preservation}.
-  The new cases are given in \cref{fig:nc-preservation}.
-  \qed
+  By induction on the derivation of $\reducesto{P}{Q}$.
 \end{proof}
-\input{fig-nc-preservation}
-\begin{definition}[Actions]\label{def:nc-action}
+\begin{definition}[Actions]
   A process $\tm{P}$ acts on $\tm{x}$ whenever $\tm{x}$ is free in the outermost
-  term constructor of $\tm{P}$, e.g.\ $\tm{\cpSend{x}{y}{P}{Q}}$ acts on
-  $\tm{x}$ but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$
-  and $\tm{y}$. A process $\tm{P}$ is an action if it acts on some channel
-  $\tm{x}$.
+  term constructor of $\tm{P}$, \eg $\tm{\cpSend{x}{y}{P}{Q}}$ acts on $\tm{x}$
+  but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$.
+  A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$.
 \end{definition}
-There are some subtleties to our definition of canonical forms. The type system
-for \cp guarantees that all links directly under a non-empty evaluation context
-act on a bound channel, and that two processes acting on the same channel are
-always on opposite sides of the cut which introduces that channel.
-Not so for \nodcap.
-For instance, the client pool from our example contains two processes acting on
-the same channel, and we can add a link on two unbound shared channels to a
-client pool.
-\begin{center}
-  \(
-  \seq[{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{z}{\mary}}}]{
-    \Gamma, \tmty{x}{\take[2]{\cake}}}
-  \qquad
-  \seq[{\ncPool{\cpLink{x}{y}}{\bank}}]{
-    \Gamma, \tmty{x}{\take[2]{\money}, \tmty{y}{\give[1]{\money^\bot}}}}
-  \)
-\end{center}
-Neither of these examples can reduce, nor would they be considered canonical
-under our old definition. We refine the definition of canonical forms to include
-these examples.
 \begin{definition}[Canonical forms]
   A process $\tm{P}$ is in canonical form if
   \[
-    \tm{P} \equiv \tm{\cpCut{x_1}{P_1}{\dots\cpCut{x_n}{P_n}{P_{n+1}}\dots}},
+  \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
   \]
-  such that: no process $\tm{P_i}$ is a cut; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$.
+  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$.
 \end{definition}
-\begin{theorem}[Progress]\label{thm:nc-progress}
-  If $\seq[{ P }]{ \Gamma }$, then either $\tm{P}$ is in canonical form, or
-  there exists a $\tm{P'}$ such that $\reducesto{P}{P'}$. 
-\end{theorem}
+\begin{corollary}
+  If a process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
+\end{corollary}
 \begin{proof}
-    We consider the maximum prefix of cuts of $\tm{P}$ such that
+  We have
   \[
-    \tm{P} \equiv \tm{\cpCut{x_1}{P_1}{\dots\cpCut{x_n}{P_n}{P_{n+1}}\dots}}
+  \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
+  \]
+  such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Therefore, at least $m+1$ of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
+\end{proof}
+\begin{theorem}[Progress]\label{thm:hcp-progress}
+  If $\seq[P]{\Gamma}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
+\end{theorem} 
+\begin{proof}
+  We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
+  \[
+  \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
   and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
-  \qed
 \end{proof}
-\begin{theorem}[Termination]\label{thm:nc-termination}
-  If $\seq[{ P }]{ \Gamma }$, then there are no infinite $\Longrightarrow$-reduction sequences.
-\end{theorem}
+\begin{theorem}[Termination]\label{thm:hcp-termination}
+  If $\seq[P]{\mathcal{G}}$, then there are no infinite $\Longrightarrow$-reduction sequences.
+\end{theorem} 
 \begin{proof}
-  As \cref{thm:cp-termination}.
-  \qed
+  Every reduction reduces a single cut to zero, one or two cuts. However, each of these cuts is smaller, measured in the size of the cut formula. Furthermore, each instance of the structural congruence preserves the size of the cut. Therefore, there cannot be an infinite $\Longrightarrow$-reduction sequence.
 \end{proof}
 
 \subsection{\nodcap and non-deterministic local choice}
@@ -1309,7 +1084,7 @@ in the \textpi-calculus.
 So far, our account of non-determinism in client/server interactions only allows
 interactions between equal numbers of clients and server interactions. A natural
 extension of this would be to investigate if we could define a special case of
-cut on a client/server interaction, such that e.g.\ the clients only consume
+cut on a client/server interaction, such that, \eg the clients only consume
 part of the server resources.
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n]{A}} }$}
@@ -1358,8 +1133,8 @@ behaviour, we also expect those instances to be interdependent.
 
 With quantification over resource variables, we can give precise accounts of
 both \cp's exponentials and idealised servers and clients. \cp exponentials
-could be embedded into this framework using the definitions $\ty{\take{A}} :=
-\ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} := \ty{\exists{n}{\give[n]{A}}}$.
+could be embedded into this framework using the definitions $\ty{\take{A}} ::=
+\ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} ::= \ty{\exists{n}{\give[n]{A}}}$.
 We would also have types that precisely matched our intuitions for server and
 client behavior:
 an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an

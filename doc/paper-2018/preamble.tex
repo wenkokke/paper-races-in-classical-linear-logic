@@ -27,6 +27,7 @@
 \usepackage{xspace}
 \xspaceaddexceptions{]\}}
 \arraycolsep=1ex
+\newcommand{\eg}{e.g.,\xspace}
 
 %% Emoji
 \newcommand{\emoji}[2][1em]{\ensuremath{\vcenter{%
@@ -56,8 +57,6 @@
 \EnableBpAbbreviations
 
 \providecommand{\seq}[2][]{\ensuremath{\tm{#1}\;\vdash\;\ty{#2}}}
-\providecommand{\cseq}[3][]{\ensuremath{\seq[{#1}]{#2}\mathbin{\triangleright}\cs{#3}}}
-\providecommand{\coh}[2][]{\ensuremath{\tm{#1}\mathbin{\vDash}\ty{#2}}}
 \providecommand{\tmty}[2]{\ensuremath{\tm{#1}\colon\!\ty{#2}}}
 \providecommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
 \providecommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
@@ -70,15 +69,15 @@
 \providecommand{\nreducesto}[2]{\ensuremath{\tm{#1}\centernot\Longrightarrow\tm{#2}}}
 
 %% System names
-\providecommand{\nodcap}{\ensuremath{\text{CP}_{\text{ND}}}\xspace}
+\providecommand{\hcp}{\ensuremath{\text{HCP}^{{-}}}\xspace}
+\providecommand{\nodcap}{\ensuremath{\hcp_{\text{ND}}}\xspace}
 \providecommand{\piDILL}{\textpi DILL\xspace}
 \providecommand{\cp}{CP\xspace}
 
-%% PI - Type systems
+%% PI - Terms
 \providecommand{\ppar}{\ensuremath{\mid}}
 \providecommand{\piCalc}[0]{\textpi-calculus\xspace}
-\providecommand{\piSend}[3]{\ensuremath{#1\langle #2 \rangle.#3}}
-\providecommand{\piBoundSend}[3]{\ensuremath{#1[ #2 ].#3}}
+\providecommand{\piSend}[3]{\ensuremath{#1[ #2 ].#3}}
 \providecommand{\piRecv}[3]{\ensuremath{#1( #2 ).#3}}
 \providecommand{\piPar}[2]{\ensuremath{#1 \ppar #2}}
 \providecommand{\piNew}[2]{\ensuremath{(\nu #1)#2}}
@@ -107,11 +106,9 @@
 \providecommand{\tens}{\ensuremath{\otimes}}
 \providecommand{\one}{\ensuremath{\mathbf{1}}}
 \providecommand{\nil}{\ensuremath{\mathbf{0}}}
-\providecommand{\limp}{\ensuremath{\multimap}}
 \providecommand{\emptycontext}{\ensuremath{\,\cdot\,}}
-\providecommand{\bigtens}{\ensuremath{\scalerel*{\tens}{\sum}}}
-\providecommand{\bigparr}{\ensuremath{\scalerel*{\parr}{\sum}}}
-
+\providecommand{\hsep}{\ensuremath{\mid}}
+\providecommand{\emptyhypercontext}{\varnothing}
 
 %% CP - Reduction rule names
 \newcommand{\cpEquivLinkComm}{\ensuremath{(\cpLink{}{}\text{-comm})}\xspace}
@@ -255,28 +252,194 @@
 %% CPND - Typing judgement
 \providecommand{\ncInfTake}[1]{%
   \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{y}{A} }$}
     \SYM{(\take[1]{})}
-    \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{ \Gamma , \tmty{x}{\take[1]{A}} }$}
+    \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\take[1]{A}} }$}
   \end{prooftree*}}
 \providecommand{\ncInfGive}[1]{%
   \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{y}{A} }$}
     \SYM{(\give[1]{})}
-    \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[1]{A}} }$}
+    \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\give[1]{A}} }$}
   \end{prooftree*}}
 \providecommand{\ncInfCont}{%
   \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\give[m]{A}} , \tmty{y}{\give[n]{A}} }$}
-    \NOM{Cont}
-    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[m+n]{A}} }$}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\give[m]{A}} , \tmty{y}{\give[n]{A}} }$}
+    \SYM{\textsc{Cont}_{?}}
+    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\give[m+n]{A}} }$}
   \end{prooftree*}}
 \providecommand{\ncInfPool}{%
   \begin{prooftree*}
-    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\take[m]{A}} }$}
-    \AXC{$\seq[{ Q }]{ \Delta , \tmty{x}{\take[n]{A}} }$}
-    \NOM{Pool}
-    \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma , \Delta , \tmty{x}{\take[m+n]{A}} }$}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\take[m]{A}} \hsep
+        \Delta, \tmty{y}{\take[n]{A}} }$}
+    \SYM{\textsc{Cont}_{!}}
+    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma, \Delta, \tmty{x}{\take[m+n]{A}} }$}
+  \end{prooftree*}}
+
+%% HCP - Names of rules
+\providecommand{\hcpEquivLinkComm}{\cpEquivLinkComm}
+\providecommand{\hcpEquivCutComm}{\cpEquivCutComm}
+\providecommand{\hcpEquivCutAss}[1]{\cpEquivCutAss{#1}}
+\providecommand{\hcpEquivMixComm}{\ensuremath{({\ppar}\text{-comm})}\xspace}
+\providecommand{\hcpEquivMixAssNoParen}[1]{\ensuremath{{\ppar}\text{-assoc}}\xspace}
+\providecommand{\hcpEquivMixAss}[1]{\ensuremath{(\hcpEquivMixAssNoParen{#1})}\xspace}
+\providecommand{\hcpEquivMixHaltNoParen}[1]{\ensuremath{\text{halt}\xspace}}
+\providecommand{\hcpEquivMixHalt}[1]{\ensuremath{(\hcpEquivMixHaltNoParen{#1})}\xspace}
+\providecommand{\hcpEquivMixCut}[1]{\ensuremath{(\text{scope-ext})}\xspace}
+\providecommand{\hcpEquivMixComm}{\ensuremath{({\ppar}\text{-comm})}\xspace}
+\providecommand{\hcpEquivMixAssNoParen}[1]{\ensuremath{{\ppar}\text{-assoc}}\xspace}
+\providecommand{\hcpEquivMixAss}[1]{\ensuremath{(\hcpEquivMixAssNoParen{#1})}\xspace}
+\providecommand{\hcpEquivScopeExtNoParen}[1]{\ensuremath{\text{scope-ext}\xspace}}
+\providecommand{\hcpEquivScopeExt}[1]{\ensuremath{(\hcpEquivScopeExtNoParen{#1})}\xspace}
+\providecommand{\hcpEquivMixHaltNoParen}[1]{\hcpEquivMixHaltNoParen{#1}}
+\providecommand{\hcpEquivMixHalt}[1]{\hcpEquivMixHalt{#1}}
+\providecommand{\hcpEquivNewComm}{\ensuremath{(\nu\text{-comm})}\xspace}
+\providecommand{\hcpEquivDelay}{\ensuremath{(\text{delay})}}
+
+\providecommand{\hcpRedAxCut}[1]{%
+  \ensuremath{(\cpLink{}{})}\xspace}
+\providecommand{\hcpRedBetaTensParr}{%
+  \ensuremath{(\beta{\tens}{\parr})}\xspace}
+\providecommand{\hcpRedBetaOneBot}{%
+  \ensuremath{(\beta{\one}{\bot})}\xspace}
+\providecommand{\hcpRedBetaPlusWith}[1]{%
+  \ensuremath{(\beta{\plus}{\with}_{#1})}\xspace}
+\providecommand{\hcpRedGammaNew}{%
+  \ensuremath{(\gamma{\nu})}\xspace}
+\providecommand{\hcpRedGammaMix}{%
+  \ensuremath{(\gamma{\ppar})}\xspace}
+\providecommand{\hcpRedGammaEquiv}{%
+  \ensuremath{(\gamma{\equiv})}\xspace}
+
+%% HCP - Structural rules
+\providecommand{\hcpInfAx}{\cpInfAx}
+\providecommand{\hcpInfCut}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G}\hsep
+        \Gamma, \tmty{x}{A} \hsep
+        \Delta, \tmty{x}{A^\bot}
+      }$}
+    \NOM{Cut}
+    \UIC{$\seq[{ \piNew{x}{P} }]{
+        \mathcal{G}\hsep
+        \ty{\Gamma}, \ty{\Delta}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfMix}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{\mathcal{G} }$}
+    \AXC{$\seq[ Q ]{\mathcal{H} }$}
+    \NOM{H-Mix}
+    \BIC{$\seq[ \piPar{P}{Q} ]{
+        \mathcal{G} \hsep \mathcal{H} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfHalt}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
+    \NOM{H-Mix$_0$}
+    \UIC{$\seq[{ \piHalt }]{ \emptyhypercontext }$}
+  \end{prooftree*}}
+
+
+%% HCP - Logical rules
+\providecommand{\hcpInfBoundTens}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \ty{\Gamma}, \tmty{y}{A} \hsep
+        \ty{\Delta}, \tmty{x}{B}
+      }$}
+    \SYM{\tens}
+    \UIC{$\seq[{ \piSend{x}{y}{P} }]{
+        \mathcal{G} \hsep
+        \ty{\Gamma}, \ty{\Delta}, \tmty{x}{A \tens B}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfParr}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{%
+        \mathcal{G} \hsep
+        \Gamma , \tmty{y}{A} , \tmty{x}{B} }$}
+    \SYM{(\parr)}
+    \UIC{$\seq[ \cpRecv{x}{y}{P} ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A \parr B} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfOne}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{\mathcal{G}}$}
+    \SYM{\one}
+    \UIC{$\seq[{ \piSend{x}{}{P} }]{
+        \mathcal{G} \hsep \tmty{x}{\one}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfBot}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \mathcal{G} \hsep \Gamma }$}
+    \SYM{(\bot)}
+    \UIC{$\seq[ \cpWait{x}{P} ]{
+        \mathcal{G} \hsep \Gamma , \tmty{x}{\bot} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfPlus}[1]{%
+  \ifdim#1pt=1pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A} }$}
+    \SYM{(\plus_1)}
+    \UIC{$\seq[{ \cpInl{x}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A \plus B} }$}
+  \end{prooftree*}
+  \else%
+  \ifdim#1pt=2pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{B} }$}
+    \SYM{(\plus_2)}
+    \UIC{$\seq[ \cpInr{x}{P} ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A \plus B} }$}
+  \end{prooftree*}
+  \else%
+  \fi%
+  \fi%
+}
+\providecommand{\hcpInfWith}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \Gamma , \tmty{x}{A} }$}
+    \AXC{$\seq[ Q ]{
+        \Gamma, \tmty{x}{B} }$}
+    \SYM{(\with)}
+    \BIC{$\seq[ \cpCase{x}{P}{Q} ]{
+        \Gamma , \tmty{x}{A \with B} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfNil}{\cpInfNil}
+\providecommand{\hcpInfTop}{%
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{(\top)}
+    \UIC{$\seq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top} }$}
   \end{prooftree*}}
 
 \usepackage[hidelinks]{hyperref}
