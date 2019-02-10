@@ -1,47 +1,286 @@
+\usepackage{makeidx}
+\usepackage{lmodern,microtype}
 \usepackage[british]{babel}
 \usepackage[dvipsnames,table]{xcolor}
-\usepackage[hidelinks]{hyperref}
 
-\usepackage{lmodern}
-\usepackage{microtype}
-\usepackage{etex}
-\usepackage{etoolbox}
-\usepackage{environ}
+\usepackage[%
+  backend=biber,
+  bibencoding=utf8,
+  style=authoryear,
+  sorting=nyt,
+  sortcites=true,
+  natbib=true,
+  backref=false,
+  backrefstyle=all+,
+  hyperref=true,
+  ]{biblatex}
 
 \usepackage{enumitem}
 \usepackage{graphicx}
-\usepackage{comment}
-\usepackage{mdframed}
+\DeclareGraphicsRule{.ai}{pdf}{.ai}{}
 \usepackage{lscape}
-\usepackage{multicol}
-\usepackage{multirow}
-\usepackage{tikz}
-
-\usepackage[fleqn,leqno]{amsmath}
-\usepackage{amssymb}
-\usepackage{csquotes}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{scalerel,rotating}
+\usepackage{textgreek,textcomp,stmaryrd}
 \usepackage{centernot}
-\usepackage{textgreek}
-\usepackage{textcomp}
+\usepackage{xspace}
+\xspaceaddexceptions{]\}}
+\arraycolsep=1ex
 
-\usepackage{geometry}
-\usepackage{afterpage}
-\usepackage{lscape}
+%% Emoji
+\newcommand{\emoji}[2][1em]{\ensuremath{\vcenter{%
+\hbox{\includegraphics[width=#1]{#2}}}}\xspace}
+\newcommand{\twemoji}[2][1em]{\emoji[#1]{twemoji/2/assets/#2.ai}}
+\newcommand{\mary}[1][1em]{\twemoji[#1]{1f469-1f3fb}}
+\newcommand{\john}[1][1em]{\twemoji[#1]{1f466-1f3fe}}
+\newcommand{\sliceofcake}[1][1em]{\twemoji[#1]{1f370}}
+\newcommand{\doughnut}[1][1em]{\twemoji[#1]{1f369}}
+\newcommand{\cake}[1][1em]{\twemoji[#1]{1f382}}
+\newcommand{\nope}[1][1em]{\twemoji[#1]{1f64c}}
+\newcommand{\money}[1][1em]{\twemoji[#1]{1f4b0}}
+\newcommand{\bill}[1][1em]{\twemoji[#1]{1f4b7}}
+\newcommand{\bank}[1][1em]{\twemoji[#1]{1f3e6}}
+\newcommand{\store}[1][1em]{\twemoji[#1]{1f3ea}}
+\newcommand{\alice}[1][1em]{\twemoji[#1]{1f467-1f3fd}}
+\newcommand{\bob}[1][1em]{\twemoji[#1]{1f474-1f3fc}}
 
-\newcommand*{\wen}[1]{%
-\mdframed\textcolor{MidnightBlue}{\bf Wen: #1}\endmdframed}
+%% Terms, types, and constraints
+\definecolor{tmcolor}{HTML}{C02F1D}
+\definecolor{tycolor}{HTML}{1496BB}
+\providecommand{\tm}[1]{\textcolor{Red}{\ensuremath{\normalfont#1}}}
+\providecommand{\ty}[1]{\textcolor{NavyBlue}{\ensuremath{\normalfont#1}}}
 
-%% Check if a counter exists
-\makeatletter
-\newcommand*\ifcounter[1]{%
-  \ifcsname c@#1\endcsname
-    \expandafter\@firstoftwo
-  \else
-    \expandafter\@secondoftwo
-  \fi
-}
-\makeatother
+%% Proof trees
+\usepackage{bussproofs}
+\EnableBpAbbreviations
 
-%%% Local Variables:
-%%% TeX-master: "main"
-%%% End:
+\providecommand{\seq}[2][]{\ensuremath{\tm{#1}\;\vdash\;\ty{#2}}}
+\providecommand{\cseq}[3][]{\ensuremath{\seq[{#1}]{#2}\mathbin{\triangleright}\cs{#3}}}
+\providecommand{\coh}[2][]{\ensuremath{\tm{#1}\mathbin{\vDash}\ty{#2}}}
+\providecommand{\tmty}[2]{\ensuremath{\tm{#1}\colon\!\ty{#2}}}
+\providecommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
+\providecommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
+\newenvironment{prooftree*}{\leavevmode\hbox\bgroup}{\DisplayProof\egroup}
+\providecommand{\hole}{\ensuremath{\square}}
+\providecommand{\fv}[1]{\ensuremath{\text{fv}(#1)}}
+\providecommand{\freeIn}[2]{\tm{#1}\in\tm{#2}}
+\providecommand{\notFreeIn}[2]{\tm{#1}\not\in\tm{#2}}
+\providecommand{\reducesto}[3][]{\ensuremath{\tm{#2}\overset{#1}{\Longrightarrow}\tm{#3}}}
+\providecommand{\nreducesto}[2]{\ensuremath{\tm{#1}\centernot\Longrightarrow\tm{#2}}}
+
+%% System names
+\providecommand{\nodcap}{\ensuremath{\text{CP}_{\text{ND}}}\xspace}
+\providecommand{\piDILL}{\textpi DILL\xspace}
+\providecommand{\cp}{CP\xspace}
+
+%% PI - Type systems
+\providecommand{\ppar}{\ensuremath{\mid}}
+\providecommand{\piCalc}[0]{\textpi-calculus\xspace}
+\providecommand{\piSend}[3]{\ensuremath{#1\langle #2 \rangle.#3}}
+\providecommand{\piBoundSend}[3]{\ensuremath{#1[ #2 ].#3}}
+\providecommand{\piRecv}[3]{\ensuremath{#1( #2 ).#3}}
+\providecommand{\piPar}[2]{\ensuremath{#1 \ppar #2}}
+\providecommand{\piNew}[2]{\ensuremath{(\nu #1)#2}}
+\providecommand{\piRepl}[1]{\ensuremath{!#1}}
+\providecommand{\piHalt}[0]{\ensuremath{0}}
+\providecommand{\piSub}[3]{\ensuremath{#3\{#1/#2\}}}
+
+%% CP - Terms
+\providecommand{\cpLink}[2]{\ensuremath{#1{\leftrightarrow}#2}}
+\providecommand{\cpCut}[3]{\ensuremath{\piNew{#1}({\piPar{#2}{#3}})}}
+\providecommand{\cpSend}[4]{\ensuremath{#1[#2].(\piPar{#3}{#4})}}
+\providecommand{\cpRecv}[3]{\ensuremath{#1(#2).#3}}
+\providecommand{\cpWait}[2]{\ensuremath{#1().#2}}
+\providecommand{\cpHalt}[1]{\ensuremath{#1[].0}}
+\providecommand{\cpInl}[2]{\ensuremath{#1\triangleleft\texttt{inl}.#2}}
+\providecommand{\cpInr}[2]{\ensuremath{#1\triangleleft\texttt{inr}.#2}}
+\providecommand{\cpCase}[3]{\ensuremath{#1\triangleright\{\texttt{inl}:#2;\texttt{inr}:#3\}}}
+\providecommand{\cpAbsurd}[1]{\ensuremath{#1\triangleright\{\}}}
+\providecommand{\cpSub}[3]{\ensuremath{\piSub{#1}{#2}{#3}}}
+\providecommand{\cpPlug}[2]{\ensuremath{{#1}[{#2}]}}
+
+%% CP - Types
+\providecommand{\parr}{\mathbin{\bindnasrepma}}
+\providecommand{\with}{\mathbin{\binampersand}}
+\providecommand{\plus}{\ensuremath{\oplus}}
+\providecommand{\tens}{\ensuremath{\otimes}}
+\providecommand{\one}{\ensuremath{\mathbf{1}}}
+\providecommand{\nil}{\ensuremath{\mathbf{0}}}
+\providecommand{\limp}{\ensuremath{\multimap}}
+\providecommand{\emptycontext}{\ensuremath{\,\cdot\,}}
+\providecommand{\bigtens}{\ensuremath{\scalerel*{\tens}{\sum}}}
+\providecommand{\bigparr}{\ensuremath{\scalerel*{\parr}{\sum}}}
+
+
+%% CP - Reduction rule names
+\newcommand{\cpEquivLinkComm}{\ensuremath{(\cpLink{}{}\text{-comm})}\xspace}
+\newcommand{\cpEquivCutComm}{\ensuremath{(\nu\text{-comm})}\xspace}
+\newcommand{\cpEquivCutAssNoParen}[1]{\ensuremath{\nu\text{-assoc}\xspace}}
+\newcommand{\cpEquivCutAss}[1]{\ensuremath{(\cpEquivCutAssNoParen{#1})}\xspace}
+\newcommand{\cpRedAxCut}[1]{\ensuremath{(\cpLink{}{})}\xspace}
+\newcommand{\cpRedBetaTensParr}{\ensuremath{(\beta{\tens}{\parr})}\xspace}
+\newcommand{\cpRedBetaOneBot}{\ensuremath{(\beta{\one}{\bot})}\xspace}
+\newcommand{\cpRedBetaPlusWith}[1]{\ensuremath{(\beta{\plus}{\with}_{#1})}\xspace}
+\newcommand{\cpRedKappaTens}[1]{\ensuremath{(\kappa{\tens}_{#1})}\xspace}
+\newcommand{\cpRedKappaParr}{\ensuremath{(\kappa{\parr})}\xspace}
+\newcommand{\cpRedKappaBot}{\ensuremath{(\kappa{\bot})}\xspace}
+\newcommand{\cpRedKappaPlus}[1]{\ensuremath{(\kappa{\plus}_{#1})}\xspace}
+\newcommand{\cpRedKappaWith}{\ensuremath{(\kappa{\with})}\xspace}
+\newcommand{\cpRedKappaTop}{\ensuremath{(\kappa{\top})}\xspace}
+\newcommand{\cpRedGammaCut}{\ensuremath{(\gamma\nu)}\xspace}
+\newcommand{\cpRedGammaEquiv}{\ensuremath{(\gamma{\equiv})}\xspace}
+
+%% CP - Structural rules
+\providecommand{\cpInfAx}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
+    \NOM{Ax}
+    \UIC{$\seq[ \cpLink{x}{y} ]{ \tmty{x}{A}, \tmty{y}{A^\bot} }$}
+  \end{prooftree*}}
+\providecommand{\cpInfCut}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma, \tmty{x}{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta, \tmty{x}{A^\bot} }$}
+    \NOM{Cut}
+    \BIC{$\seq[ \cpCut{x}{P}{Q} ]{ \Gamma, \Delta }$}
+  \end{prooftree*}}
+\providecommand{\cpInfMix}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma }$}
+    \AXC{$\seq[ Q ]{ \Delta }$}
+    \NOM{Mix}
+    \BIC{$\seq[ \piPar{P}{Q} ]{ \Gamma , \Delta }$}
+  \end{prooftree*}}
+\providecommand{\cpInfHalt}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
+    \NOM{Halt}
+    \UIC{$\seq[{ \piHalt }]{}$}
+  \end{prooftree*}}
+
+%% CP - Logical rules
+\providecommand{\cpInfTens}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} }$}
+    \AXC{$\seq[ Q ]{ \Delta , \tmty{x}{B} }$}
+    \SYM{(\tens)}
+    \BIC{$\seq[ \cpSend{x}{y}{P}{Q} ]{ \Gamma , \Delta , \tmty{x}{A \tens B} }$}
+  \end{prooftree*}}
+\providecommand{\cpInfParr}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} , \tmty{x}{B} }$}
+    \SYM{(\parr)}
+    \UIC{$\seq[ \cpRecv{x}{y}{P} ]{ \Gamma , \tmty{x}{A \parr B} }$}
+  \end{prooftree*}}
+\providecommand{\cpInfOne}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\seq[ P ]{ \Gamma }}$}
+    \SYM{(\one)}
+    \UIC{$\seq[ \cpHalt{x} ]{ \tmty{x}{\one} }$}
+  \end{prooftree*}}
+\providecommand{\cpInfBot}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma }$}
+    \SYM{(\bot)}
+    \UIC{$\seq[ \cpWait{x}{P} ]{ \Gamma , \tmty{x}{\bot} }$}
+  \end{prooftree*}}
+\providecommand{\cpInfPlus}[1]{%
+  \ifdim#1pt=1pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
+    \SYM{(\plus_1)}
+    \UIC{$\seq[{ \cpInl{x}{P} }]{ \Gamma , \tmty{x}{A \plus B} }$}
+  \end{prooftree*}
+  \else%
+  \ifdim#1pt=2pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{B} }$}
+    \SYM{(\plus_2)}
+    \UIC{$\seq[ \cpInr{x}{P} ]{ \Gamma , \tmty{x}{A \plus B} }$}
+  \end{prooftree*}
+  \else%
+  \fi%
+  \fi}
+\providecommand{\cpInfWith}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
+    \AXC{$\seq[ Q ]{ \Gamma , \tmty{x}{B} }$}
+    \SYM{(\with)}
+    \BIC{$\seq[ \cpCase{x}{P}{Q} ]{ \Gamma , \tmty{x}{A \with B} }$}
+  \end{prooftree*}}
+\providecommand{\cpInfNil}{%
+  (no rule for \ty{\nil})}
+\providecommand{\cpInfTop}{%
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{(\top)}
+    \UIC{$\seq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top} }$}
+  \end{prooftree*}}
+
+%% CPND - Terms
+\providecommand{\ncHalt}{\ensuremath{0}}
+\providecommand{\ncExpn}[3]{\ensuremath{#1\uparrow #2.#3}}
+\providecommand{\ncIntl}[3]{\ensuremath{#1\downarrow #2.#3}}
+\providecommand{\ncSrv}[3]{\ensuremath{{\star}{#1}(#2).#3}}
+\providecommand{\ncCnt}[3]{\ensuremath{{\star}{#1}[#2].#3}}
+\providecommand{\ncPool}[2]{\ensuremath{(\piPar{#1}{#2})}}
+\providecommand{\ncCont}[3]{\ensuremath{\cpSub{#1}{#2}{#3}}}
+
+%% CPND - Types
+\providecommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\providecommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+
+%% CPND - Reduction rule names
+\providecommand{\ncEquivPoolId}{\ensuremath{(|\text{-ident})}\xspace}
+\providecommand{\ncEquivPoolComm}{\ensuremath{(|\text{-comm})}\xspace}
+\providecommand{\ncEquivPoolAssNoParen}[1]{\ensuremath{|\text{-assoc}_#1}\xspace}
+\providecommand{\ncEquivPoolAss}[1]{\ensuremath{(\ncEquivPoolAssNoParen{#1})}\xspace}
+\providecommand{\ncEquivCutCong}{\ensuremath{(\nu\text{-cong})}\xspace}
+\providecommand{\ncRedBetaStar}[1]{\ensuremath{(\beta{\star}_{#1})}\xspace}
+\providecommand{\ncRedBetaTakeGive}[1]{\ensuremath{(\beta\take{}\give{})}\xspace}
+\providecommand{\ncRedKappaTake}{\ensuremath{(\kappa{\take[1]{}})}\xspace}
+\providecommand{\ncRedKappaGive}{\ensuremath{(\kappa{\give[1]{}})}\xspace}
+\providecommand{\ncRedKappaPool}[1]{\ensuremath{({|}\text{-extrusion}_{#1})}\xspace}
+\providecommand{\ncRedKappaPoolTens}[1]{\ensuremath{(\kappa{|}{\tens}_{#1})}\xspace}
+\providecommand{\ncRedKappaPoolParr}{\ensuremath{(\kappa{|}{\parr})}\xspace}
+\providecommand{\ncRedKappaPoolBot}{\ensuremath{(\kappa{|}{\bot})}\xspace}
+\providecommand{\ncRedKappaPoolPlus}[1]{\ensuremath{(\kappa{|}{\plus}_{#1})}\xspace}
+\providecommand{\ncRedKappaPoolWith}{\ensuremath{(\kappa{|}{\with})}\xspace}
+\providecommand{\ncRedKappaPoolTop}{\ensuremath{(\kappa{|}{\top})}\xspace}
+\providecommand{\ncRedKappaPoolTake}{\ensuremath{(\kappa{|}{\take[1]{}})}\xspace}
+\providecommand{\ncRedKappaPoolGive}{\ensuremath{(\kappa{|}{\give[1]{}})}\xspace}
+\providecommand{\ncRedGammaPool}{\ensuremath{(\gamma{|})}\xspace}
+
+%% CPND - Typing judgement
+\providecommand{\ncInfTake}[1]{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+    \SYM{(\take[1]{})}
+    \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{ \Gamma , \tmty{x}{\take[1]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfGive}[1]{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{y}{A} }$}
+    \SYM{(\give[1]{})}
+    \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[1]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfCont}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\give[m]{A}} , \tmty{y}{\give[n]{A}} }$}
+    \NOM{Cont}
+    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{ \Gamma , \tmty{x}{\give[m+n]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfPool}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{ \Gamma , \tmty{x}{\take[m]{A}} }$}
+    \AXC{$\seq[{ Q }]{ \Delta , \tmty{x}{\take[n]{A}} }$}
+    \NOM{Pool}
+    \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma , \Delta , \tmty{x}{\take[m+n]{A}} }$}
+  \end{prooftree*}}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+
+\pagestyle{plain}
+\addbibresource{main.bib}
