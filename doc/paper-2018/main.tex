@@ -352,11 +352,10 @@ parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
       & \equiv
       & \tm{\cpLink{y}{x}}
       &
-      &
-        \hcpEquivMixHalt1
-      & \tm{\piPar{P}{\piHalt}}
+        \hcpEquivNewComm
+      & \tm{\piNew{x}{\piNew{y}{P}}}
       & \equiv
-      & \tm{P}
+      & \tm{\piNew{y}{\piNew{x}{P}}}
       &
       \\
         \hcpEquivMixComm
@@ -364,18 +363,16 @@ parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
       & \equiv
       & \tm{\piPar{Q}{P}}
       &
-      &
         \hcpEquivMixAss1
       & \tm{\piPar{P}{( \piPar{Q}{R} )}}
       & \equiv
       & \tm{\piPar{( \piPar{P}{Q} )}{R}}
       &
       \\
-        \hcpEquivNewComm
-      & \tm{\piNew{x}{\piNew{y}{P}}}
+        \hcpEquivMixHalt1
+      & \tm{\piPar{P}{\piHalt}}
       & \equiv
-      & \tm{\piNew{y}{\piNew{x}{P}}}
-      &
+      & \tm{P}
       &
         \hcpEquivScopeExt1
       & \tm{\piNew{x}{( \piPar{P}{Q} )}}
