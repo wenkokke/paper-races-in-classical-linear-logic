@@ -9,7 +9,6 @@
 \institute{University of Edinburgh, Edinburgh, UK,\\
 \email{wen.kokke@ed.ac.uk}}
 \begin{document}
-
 \maketitle % typeset the title of the contribution
 
 \begin{abstract}
@@ -292,25 +291,11 @@ non-deterministic local choice, we can expect a factorial growth in the size of
 the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
-\begin{comment}
-In this section, we introduce a reformulation of \cp.
-To keep the discussion simple, we will only discuss the subset which corresponds
-to multiplicative-additive linear logic~\cite[MALL]{girard1987} or rudimentary
-linear logic~\cite[RLL]{girard1992}.
-We foresee no problems in extending the proofs from \cref{sec:cpnd} to
-cover the remaining features of \cp, polymophism and the exponentials $\ty{!A}$
-and $\ty{?A}$. 
+In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. \dhcp is a reformulation of \cp which addresses one of its fundamental shortcomings: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
 
-We deviate from the original presentation of \cp~\parencite{wadler2012} in two ways:
-we include the commutativity of links in our structural congruence, as done by
-\textcite{paykin2016}; and, inspired by \textcite{lindley2015semantics}, we
-exclude the commutative conversions from our reduction system which leads to a 
-different notion of canonical form and a reduction strategy closer to that of
-the \textpi-calculus.
+There are two versions of \dhcp: a version with delayed actions, introduced in \textcite{kokke2019pacmpl}; and a version without delayed actions, introduced in \textcite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter.
 
-The term language for \hcp is a variant of the
-\textpi-calculus~\parencite{milner1992b}.
-\end{comment}
+The term language for \hcp is a variant of the \textpi-calculus~\parencite{milner1992b}.
 \begin{definition}[Terms]\label{def:hcp-terms}
   \[
     \begin{array}{lrll}
@@ -330,18 +315,9 @@ The term language for \hcp is a variant of the
     \end{array}
   \]
 \end{definition}\noindent
-The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names.
-The construct \tm{\cpLink{x}{y}} links two
-channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on
-\tm{x} to \tm{y} and vice versa.
-The construct $\tm{\piNew{x}{P}}$ creates a new channel $\tm{x}$, and $\tm{\piPar{P}{Q}}$ and composes two processes.
-In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote
-input, square brackets denote output. 
-We use bound output~\parencite{sangiorgi1996}, meaning that both input and output
-bind a new name. 
+The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names. The construct \tm{\cpLink{x}{y}} links two channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{P}}$ creates a new channel $\tm{x}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\parencite{sangiorgi1996}, meaning that both input and output bind a new name. 
 
-Terms in \cp are identified up to structural congruence, which states that
-parallel compositions \tm{\cpCut{x}{P}{Q}} are associative and commutative.
+Terms in \hcp are identified up to structural congruence.
 \begin{definition}[Structural congruence]\label{def:hcp-equiv}
   The structural congruence $\equiv$ is the congruence closure over terms which satisfies the following additional axioms:
   \[
@@ -398,13 +374,7 @@ Channels in \hcp are typed using a session type system which is a conservative e
     \end{array}
   \]  
 \end{definition}
-Duality plays a crucial role in both linear logic and session types.
-In \cp, the two endpoints of a channel are assigned dual types.
-This ensures that, for instance, whenever a process \emph{sends} across a
-channel, the process on the other end of that channel is waiting to
-\emph{receive}.
-Each type \ty{A} has a dual, written \ty{A^\bot}.
-Duality (\ty{\cdot^\bot}) is an involutive function on types.
+Duality plays a crucial role in both linear logic and session types. In \hcp, the two endpoints of a channel are assigned dual types. This ensures that, for instance, whenever a process \emph{sends} across a channel, the process on the other end of that channel is waiting to \emph{receive}. Each type \ty{A} has a dual, written \ty{A^\bot}. Duality (\ty{\cdot^\bot}) is an involutive function on types.
 \begin{definition}[Duality]\label{def:cp-negation}
   \[
     \setlength{\arraycolsep}{3pt}
@@ -424,14 +394,13 @@ Environments associate channels with types. Names in environments must be unique
 \begin{definition}[Environments]\label{def:cp-environments}
   $\ty{\Gamma}, \ty{\Delta}, \ty{\Theta} ::= \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}$
 \end{definition}
-A hyper-environment is a multiset of environments. While names within environments must be unique, names may be shared between multiple environments in a hyper-environment. We write $\ty{\mathcal{G} \hsep \mathcal{H}}$ to combine two hyper-environments.
+\hcp registers parallelism using hyper-environments. A hyper-environment is a multiset of environments. While names within environments must be unique, names may be shared between multiple environments in a hyper-environment. We write $\ty{\mathcal{G} \hsep \mathcal{H}}$ to combine two hyper-environments.
 \begin{definition}[Hyper-environments]\label{def:hcp-hyper-environment}
   $\ty{\mathcal{G}}, \ty{\mathcal{H}} ::= \ty{\emptyhypercontext} \, \mid \, \ty{\mathcal{G} \hsep \Gamma}$
 \end{definition}
 Typing judgements associate processes with collections of typed channels.
 \begin{definition}[Typing judgements]\label{def:cp-typing-judgement}
-  A typing judgement $\seq[P]{\Gamma_1 \hsep \dots \hsep \Gamma_n}$ denotes that the process $\tm{P}$ consists of $n$ independent, but potentially entangled processes, each of which communicates according to its own protocol $\Gamma_i$. 
-  Typing judgements can be constructed using the inference rules below. 
+  A typing judgement $\seq[P]{\Gamma_1 \hsep \dots \hsep \Gamma_n}$ denotes that the process $\tm{P}$ consists of $n$ independent, but potentially entangled processes, each of which communicates according to its own protocol $\Gamma_i$. Typing judgements can be constructed using the inference rules below. 
   \\[0.5\baselineskip]
   {Structural rules}
   \begin{center}
@@ -465,7 +434,6 @@ Typing judgements associate processes with collections of typed channels.
   Furthermore, each logical rule has the side condition that $\tm{x} \not\in \ty{\mathcal{G}}$.
 \end{definition}
 Reductions relate processes with their reduced forms.
-They are defined as follows:
 \begin{definition}[Reduction]\label{def:hcp-reduction}
   Reductions are described by the smallest relation $\Longrightarrow$ on process
   terms closed under the rules below:
@@ -519,59 +487,37 @@ They are defined as follows:
 \end{definition}
 
 \subsection{Example}
-\label{sec:cp-example}
-The hypersequents are responsible for structuring communication, and
-it is this structure which rules out deadlocked interactions.
-Let us go back to our example of a deadlocked interaction from
-\cref{sec:introduction}:
+\label{sec:hcp-example}
+\hcp uses hyper-sequents to structure communication, and it is this structure which rules out deadlocked interactions. Let us go back to our example of a deadlocked interaction from \cref{sec:introduction}. If we want to type this interaction in \hcp, we run into a problem: to communicate on $\tm{x}$, we need to add name restrictions on $\tm{x}$ and $\tm{y}$, \eg
 \begin{center}
   \(
-  \tm{(\piPar{%
-      \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}
-    }{%
-      \piRecv{y}{w}{\piSend{x}{\bill}{\mary}}
-    })}
+  \tm{\piNew{x}{\piNew{y}{(
+        \piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}})}}}.
   \)
 \end{center}
-If we want to type this interaction in \hcp, we run into a problem...
-% TODO
-
-\begin{comment}
-If we want to translate this interaction to \hcp, we run into a problem: there is
-no \emph{plain} sending construct in \cp---we only have \tm{\cpSend{x}{y}{P}{Q}},
-which requires that the remainder of the interaction is split in two independent
-processes.
-This enforces a certain structure on the program. Either John will already have
-to have the cake in his hands, or Mary will already have to have the bill in
-the bank.
-We model the second scenario below, assuming \john, \mary and \bank are
-processes modelling John, Mary, and Mary's bank, and \cake and \money are the
-types of two channels which give access to a slice of cake and appropriate
-payment.
+However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed, and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none.
 \begin{prooftree}
-  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\money^\bot}, \tmty{x}{\cake}}$}
-  \SYM{\parr}
-  \UIC{$\seq[{ \cpRecv{x}{y}{\john} }]{
-      \Gamma, \tmty{x}{\money^\bot \parr \cake} }$}
-  \AXC{$\seq[{ \bank }]{ \Delta, \tmty{z}{\money} }$}
-  \AXC{$\seq[{ \mary }]{ \Theta, \tmty{x}{\cake^\bot} }$}
+  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
   \SYM{\tens}
-  \BIC{$\seq[{ \cpSend{x}{z}{\bank}{\mary} }]{
-      \Delta, \tmty{x}{\money \tens \cake^\bot} }$}
-  \NOM{Cut}
+  \UIC{$\seq[{ \piSend{y}{\sliceofcake}{\john} }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{y}{\cake}}$}
+  \SYM{\parr}
+  \UIC{$\seq[{ \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}} }]{ \Gamma, \tmty{x}{\money^\bot}, \tmty{y}{\cake}}$}
+  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{\bill}{\money}, \tmty{w}{\cake^\bot} }$}
+  \SYM{\tens}
+  \UIC{$\seq[{ \piSend{x}{\bill}{\mary} }]{ \Delta, \tmty{x}{\money}, \tmty{w}{\cake^\bot} }$}
+  \SYM{\parr}
+  \UIC{$\seq[{ \piRecv{y}{w}{\piSend{x}{\bill}{\mary}} }]{ \Delta, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
+  \NOM{H-Mix}
   \BIC{$\seq[{
-      \cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}} }]{
-      \Gamma, \Delta, \Theta }$}
+      (\piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}}) }]{
+      \Gamma, \tmty{x}{\money^\bot}, \tmty{y}{\cake} \hsep
+      \Delta, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
+  \NOM{Cut}
+  \UIC{$\seq[{
+      \piNew{y}{(\piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}})}
+    }]{
+      \Gamma, \Delta, \tmty{x}{\money^\bot}, \tmty{y}{\cake}, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
 \end{prooftree}
-The resulting process reduces, as expected:
-\begin{center}
-  \(
-  \reducesto
-  {\cpCut{x}{\cpRecv{x}{y}{\john}}{\cpSend{x}{z}{\bank}{\mary}}}
-  {\cpCut{y}{\bank}{\cpCut{x}{\cpSub{y}{z}{\john}}{\mary}}}
-  \)
-\end{center}
-\end{comment}
 
 \subsection{Metatheory}
 \label{sec:cp-metatheory}
@@ -590,7 +536,7 @@ The resulting process reduces, as expected:
 \end{proof}
 \begin{definition}[Actions]
   A process $\tm{P}$ acts on $\tm{x}$ whenever $\tm{x}$ is free in the outermost
-  term constructor of $\tm{P}$, \eg $\tm{\cpSend{x}{y}{P}{Q}}$ acts on $\tm{x}$
+  term constructor of $\tm{P}$, \eg $\tm{\piSend{x}{y}{P}}$ acts on $\tm{x}$
   but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$.
   A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$.
 \end{definition}
@@ -629,12 +575,7 @@ The resulting process reduces, as expected:
 \end{proof}
 
 \section{Shared Channels and Non-Determinism}\label{sec:cpnd}
-In this section, we will discuss our main contribution: an extension of \cp
-which allows for races while still excluding deadlocks. 
-We have seen in \cref{sec:cp-example} how \cp excludes deadlocks, but how
-exactly does \cp exclude races?
-Let us return to our example from \cref{sec:introduction}, to the interaction
-between John, Mary and the store. 
+In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example from \cref{sec:introduction}, to the interaction between John, Mary and the store. 
 \begin{center}
   \(
   \begin{array}{c}
