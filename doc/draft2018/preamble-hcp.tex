@@ -1,0 +1,141 @@
+%% Depends on: xspace, amsmath, bussproofs, rotating, preamble-typing, preamble-cp
+
+\providecommand{\hcp}{HCP\xspace}
+\providecommand{\hsep}{\ensuremath{\mid}}
+\providecommand{\emptyhypercontext}{\varnothing}
+
+
+%% Names of rules
+\providecommand{\hcpEquivLinkComm}{\cpEquivLinkComm}
+\providecommand{\hcpEquivCutComm}{\cpEquivCutComm}
+\providecommand{\hcpEquivCutAss}[1]{\cpEquivCutAss{#1}}
+\providecommand{\hcpEquivMixComm}{\ensuremath{({\ppar}\text{-comm})}\xspace}
+\providecommand{\hcpEquivMixAssNoParen}[1]{\ensuremath{{\ppar}\text{-assoc}}\xspace}
+\providecommand{\hcpEquivMixAss}[1]{\ensuremath{(\hcpEquivMixAssNoParen{#1})}\xspace}
+\providecommand{\hcpEquivMixHaltNoParen}[1]{\ensuremath{\text{halt}\xspace}}
+\providecommand{\hcpEquivMixHalt}[1]{\ensuremath{(\hccpEquivMixHaltNoParen{#1})}\xspace}
+\providecommand{\hcpEquivMixCut}[1]{\ensuremath{(\text{scope-ext})}\xspace}
+\providecommand{\hcpRedGammaMix}{\ensuremath{\gamma{\ppar}}\xspace}
+
+
+%% Structural rules
+\providecommand{\hcpInfAx}{\cpInfAx}
+\providecommand{\hcpInfCut}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{%
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{A} }$}
+    \AXC{$\seq[ Q ]{%
+        \mathcal{H} \hsep
+        \Delta, \tmty{x}{A^\bot} }$}
+    \NOM{Cut}
+    \BIC{$\seq[ \cpCut{x}{P}{Q} ]{%
+        \mathcal{G} \hsep
+        \mathcal{H} \hsep
+        \Gamma, \Delta }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfMix}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{\mathcal{G} }$}
+    \AXC{$\seq[ Q ]{\mathcal{H} }$}
+    \NOM{H-Mix}
+    \BIC{$\seq[ \piPar{P}{Q} ]{
+        \mathcal{G} \hsep \mathcal{H} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfHalt}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
+    \NOM{H-Halt}
+    \UIC{$\seq[{ \piHalt }]{ \emptyhypercontext }$}
+  \end{prooftree*}}
+
+
+%% Logical rules
+\providecommand{\hcpInfTens}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{%
+        \mathcal{G} \hsep
+        \Gamma , \tmty{y}{A} }$}
+    \AXC{$\seq[ Q ]{%
+        \mathcal{H} \hsep
+        \Delta , \tmty{x}{B} }$}
+    \SYM{(\tens)}
+    \BIC{$\seq[ \cpSend{x}{y}{P}{Q} ]{%
+        \mathcal{G} \hsep \mathcal{H} \hsep
+        \Gamma , \Delta , \tmty{x}{A \tens B} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfParr}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{%
+        \mathcal{G} \hsep
+        \Gamma , \tmty{y}{A} , \tmty{x}{B} }$}
+    \SYM{(\parr)}
+    \UIC{$\seq[ \cpRecv{x}{y}{P} ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A \parr B} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfOne}{%
+  \begin{prooftree*}
+    \AXC{$\vphantom{\seq[ P ]{\mathcal{G}}}$}
+    \SYM{(\one)}
+    \UIC{$\seq[ \cpHalt{x} ]{ \tmty{x}{\one} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfBot}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \mathcal{G} \hsep \Gamma }$}
+    \SYM{(\bot)}
+    \UIC{$\seq[ \cpWait{x}{P} ]{
+        \mathcal{G} \hsep \Gamma , \tmty{x}{\bot} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfPlus}[1]{%
+  \ifdim#1pt=1pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A} }$}
+    \SYM{(\plus_1)}
+    \UIC{$\seq[{ \cpInl{x}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A \plus B} }$}
+  \end{prooftree*}
+  \else%
+  \ifdim#1pt=2pt
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{B} }$}
+    \SYM{(\plus_2)}
+    \UIC{$\seq[ \cpInr{x}{P} ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A \plus B} }$}
+  \end{prooftree*}
+  \else%
+  \fi%
+  \fi%
+}
+\providecommand{\hcpInfWith}{%
+  \begin{prooftree*}
+    \AXC{$\seq[ P ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A} }$}
+    \AXC{$\seq[ Q ]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{B} }$}
+    \SYM{(\with)}
+    \BIC{$\seq[ \cpCase{x}{P}{Q} ]{
+        \mathcal{G} \hsep
+        \Gamma , \tmty{x}{A \with B} }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfNil}{%
+  (no rule for \ty{\nil})}
+\providecommand{\hcpInfTop}{%
+  \begin{prooftree*}
+    \AXC{}
+    \SYM{(\top)}
+    \UIC{$\seq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top} }$}
+  \end{prooftree*}}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

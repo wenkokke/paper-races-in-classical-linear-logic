@@ -1,0 +1,105 @@
+\begin{figure*}[h!tb]
+  \centering
+  \begin{tabular}{ll}
+    \ncEquivPoolComm
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[m]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma, \Delta, \take[m+n]{A} }$}
+      \end{prooftree*}
+    \\[20pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[n]{A}} }$}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[m]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{Q}{P} }]{ \Gamma, \Delta, \tmty{x}{\take[m+n]{A}} }$}
+      \end{prooftree*}
+    \\[25pt]
+    \ncEquivPoolAss1
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[l]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[m]{A}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{\take[n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{Q}{R} }]{ \Delta, \Theta, \tmty{x}{\take[m+n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{\ncPool{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[l+m+n]{A}} }$}
+      \end{prooftree*}
+    \\[20pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[l]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[m]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma, \Delta, \tmty{x}{\take[l+m]{A}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{\take[n]{A}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{\ncPool{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[l+m+n]{A}} }$}
+      \end{prooftree*}
+    \\[5pt]
+    or
+    \\[5pt]
+    \ncEquivPoolAss1
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[k]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[l]{A}}, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{y}{\take[n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{Q}{R} }]{ \Delta, \Theta, \tmty{x}{\take[l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{\ncPool{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*}
+    \\[20pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[k]{A}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\take[l]{A}}, \tmty{y}{\take[m]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma, \Delta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{\take[n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{\ncPool{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta, \tmty{x}{\take[k+l]{A}}, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*}
+    \\[20pt]
+    \ncRedKappaPool1
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A}, \tmty{y}{\take[n]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{Q}{R} }]{ \Gamma, \Delta, \Theta, \tmty{y}{\take[n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{\cpCut{x}{Q}{R}} }]{ \Gamma, \Delta, \Theta, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*}
+    \\[20pt]
+    $\equiv$
+    &
+      \begin{prooftree*}
+        \AXC{$\seq[{ P }]{ \Gamma, \tmty{y}{\take[m]{B}} }$}
+        \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{A}, \tmty{y}{\take[n]{B}} }$}
+        \NOM{Pool}
+        \BIC{$\seq[{ \ncPool{P}{Q} }]{ \Gamma, \Delta, \tmty{x}{A}, \tmty{y}{\take[m+n]{B}} }$}
+        \AXC{$\seq[{ R }]{ \Theta, \tmty{x}{A^\bot} }$}
+        \NOM{Cut}
+        \BIC{$\seq[{ \cpCut{x}{\ncPool{P}{Q}}{R} }]{ \Gamma, \Delta, \Theta, \tmty{y}{\take[m+n]{B}} }$}
+      \end{prooftree*} 
+    \\[20pt]
+    \ncRedKappaPool2
+    &
+      (as above)
+  \end{tabular}
+  \caption{Type preservation for the structural congruence of \nodcap}
+  \label{fig:nc-preservation-equiv}
+\end{figure*}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:

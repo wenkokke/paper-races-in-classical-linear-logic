@@ -1,0 +1,47 @@
+\usepackage[british]{babel}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{etex}
+\usepackage{etoolbox}
+\usepackage{environ}
+
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{mdframed}
+\usepackage{lscape}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{tikz}
+
+\usepackage[fleqn,leqno]{amsmath}
+\usepackage{amssymb}
+\usepackage{csquotes}
+\usepackage{centernot}
+\usepackage{textgreek}
+\usepackage{textcomp}
+
+\usepackage{geometry}
+\usepackage{afterpage}
+\usepackage{lscape}
+
+\newcommand*{\wen}[1]{%
+\mdframed\textcolor{MidnightBlue}{\bf Wen: #1}\endmdframed}
+
+%% Check if a counter exists
+\makeatletter
+\newcommand*\ifcounter[1]{%
+  \ifcsname c@#1\endcsname
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+}
+\makeatother
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% End:
