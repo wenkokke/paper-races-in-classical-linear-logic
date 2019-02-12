@@ -12,19 +12,13 @@
 \maketitle % typeset the title of the contribution
 
 \begin{abstract}
-  Process calculi based in logic, such as \piDILL and CP, provide a foundation
-  for deadlock-free concurrent programming, but exclude non-determinism and
-  races.
-  We introduce \nodcap, which extends CP with a novel account of
-  non-determinism.
-  Our approach draws on bounded linear logic to provide a strongly-typed
-  account of standard process calculus expressions of non-determinism.
-  We show that our extension is expressive enough to capture many uses of
-  non-determinism in untyped calculi, such as non-deterministic choice, while
-  preserving CP's meta-theoretic properties, including deadlock freedom.  
+  Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races.
+  \dhcp is a reformulation of \cp which addresses one of its fundamental shortcomings: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
+
+  We introduce \nodcap, which extends \dhcp with a novel account of non-determinism.
+  Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \dhcp's meta-theoretic properties, including deadlock freedom.  
 \end{abstract}
 
-%% Introduction
 \section{Introduction}\label{sec:introduction}
 
 Consider the following scenario:
@@ -129,8 +123,7 @@ In \cref{sec:cpnd}, we introduce \nodcap.
 Finally, in \cref{sec:discussion}, we conclude with a discussion of the work
 done in this paper and potential avenues for future work.
 
-\section{Non-determinism, logic, and session types}
-\label{sec:local-choice}
+\section{Non-determinism, logic, and session types}\label{sec:local-choice}
 Recent work extended \piDILL and \cp with operators for non-deterministic
 behaviour~\parencite{atkey2016,caires2014,caires2017}.
 These extensions all implement an operator known as non-deterministic local
@@ -315,7 +308,7 @@ The term language for \hcp is a variant of the \textpi-calculus~\parencite{milne
     \end{array}
   \]
 \end{definition}\noindent
-The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names. The construct \tm{\cpLink{x}{y}} links two channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{P}}$ creates a new channel $\tm{x}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\parencite{sangiorgi1996}, meaning that both input and output bind a new name. 
+The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} channel names. The construct \tm{\cpLink{x}{y}} links two channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{P}}$ creates a new channel $\tm{x}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\parencite{sangiorgi1996}, meaning that both input and output bind a new name. 
 
 Terms in \hcp are identified up to structural congruence.
 \begin{definition}[Structural congruence]\label{def:hcp-equiv}
@@ -540,7 +533,7 @@ However, there is no typing derivation for this term. We illustrate this with th
   but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$.
   A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$.
 \end{definition}
-\begin{definition}[Canonical forms]
+\begin{definition}[Canonical forms]\label{def:hcp-canonical-forms}
   A process $\tm{P}$ is in canonical form if
   \[
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
@@ -640,15 +633,7 @@ Modelling racy behaviour, such as that in our example, is essential to describin
     })}
   \)
 \end{center}
-In this interaction, we see that the channel \tm{x} is only used only as a way to
-connect the various clients, John and Mary, to the store.
-The \emph{real} communication, sending the slice of cake and disappointment,
-takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}.
-Inspired by this, we add two new constructs to the term language of \cp for
-sending and receiving on a \emph{shared} channel.
-These actions are marked with a \tm{\star} to distinguish them from ordinary
-sending and receiving. 
-To group clients, we add \emph{pooling}, another form of parallel composition.
+In this interaction, we see that the channel \tm{x} is only used only as a way to connect the various clients, John and Mary, to the store. The \emph{real} communication, sending the slice of cake and disappointment, takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}. Inspired by this, we add two new constructs to the term language of \hcp for sending and receiving on a \emph{shared} channel. These actions are marked with a \tm{\star} to distinguish them from ordinary sending and receiving. 
 \begin{definition}[Terms]\label{def:nc-terms}
   We extend \cref{def:hcp-terms} with the following constructs:
   \[\!
@@ -699,33 +684,7 @@ To determine the new typing rules, we essentially answer the question
         \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
-Ideally, we would still like the composition of the client pool and the server
-to be a cut. This seems reasonable, as the left-hand side of the term above has
-two clients, and the right-hand side has two server interactions, so \tm{x} is
-used at type \ty{\take[2]{\cake^\bot}} on the left, and as \ty{\give[2]{\cake}}
-on the right.
-\begin{prooftree}
-  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
-  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
-  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
-  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
-  \noLine\BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
-      \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
-
-  \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
-  \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
-  \noLine\UIC{$\seq[{ \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}} }]{
-      \Theta, \tmty{x}{\give[2]{\cake}} }$}
-
-  \NOM{Cut}
-  \BIC{$\seq[{
-      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}{
-        \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
-      \Gamma, \Delta, \Theta }$}
-\end{prooftree}
-We will define the typing judgement, and then discuss servers and clients, the
-two sides of the above cut, describe the rules we add, and show how they allow
-us to complete our proof.
+The constructs $\tm{\ncCnt{x}{y}{P}}$ and $\tm{\ncSrv{x}{y}{P}}$ introduce a single client or server action, respectively---hence, channels of type $\ty{\take[1]{}}$ and $\ty{\give[1]{}}$. However, when we cut, we want to cut on both interactions simultaneously. We need rules for the \emph{contraction} of shared channel names.
 \begin{definition}[Typing judgements]\label{def:nc-typing-judgement}
   We extend \cref{def:cp-typing-judgement} with the following rules:
   {\normalfont
@@ -735,24 +694,14 @@ us to complete our proof.
 \end{definition}
 
 \subsection{Clients and pooling}\label{sec:clients-and-pooling}
-A client pool represents a number of independent processes, each wanting to
-interact with the server. Examples of such a pool include John and Mary from our
-example, customers for online stores in general, and any number of processes
-which interact with a single, centralised server.
+A client pool represents a number of independent processes, each wanting to interact with the same server. Examples of such a pool include John and Mary from our example, customers for online stores in general, and any number of processes which interact with a single, centralised server.
 
-We introduce two new rules: one to construct clients, and one to pool them
-together. The first rule, $(\take[1]{})$, interacts over a channel as a client.
-It does this by receiving a channel \tm{y} over a \emph{shared} channel \tm{x}.
-The channel \tm{y} is the channel across which the actual interaction will
-eventually take place. 
-The second rule, \textsc{Pool}, allows us to pool together clients. This is
-implemented, as in the \textpi-calculus, using parallel composition.
+We introduce two new rules: one to construct clients, and one to pool them together. The first rule, $(\take[1]{})$, interacts over a channel as a client. It does this by receiving a channel $\tm{y}$ over a \emph{shared} channel $\tm{x}$. The channel $\tm{y}$ is the channel across which the actual interaction will eventually take place. The second rule, $\textsc{Cont}_{!}$, allows us to contract shared channel names with the same type. When used together with \textsc{H-Mix}, this allows us to pool clients together.
 \begin{center}
   \ncInfTake1
   \ncInfPool
 \end{center}%
-Using these rules, we can derive the left-hand side of our proof by marking John
-and Mary as clients, and pooling them together.
+Using these rules, we can derive the left-hand side of our proof by marking John and Mary as clients, and pooling them together.
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
   \SYM{(\take[1]{})}
@@ -772,28 +721,15 @@ and Mary as clients, and pooling them together.
       \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
 \end{prooftree}
 
-\subsection{Servers and contraction}\label{sec:servers-and-contraction}
-Dual to a pool of clients is a server. Our interpretation of a server is a
-process which offers up some number of interdependent interactions of the same
-type. Examples include the store from our example, which gives out slices of
-cake and disappointment, online stores in general, and any central server which
-interacts with some number of client processes.
+\subsection{Servers and sequencing}\label{sec:servers-and-sequencing}
+Dual to a pool of $n$ clients in parallel is a server with $n$ actions in sequence. Our interpretation of a server is a process which offers up some number of interdependent interactions of the same type. Examples include the store from our example, which gives out slices of cake and disappointment, online stores in general, and any central server which interacts with some number of client processes.
 
-We introduce two new rules to construct servers. The first rule, $(\give[1]{})$,
-marks a interaction over some channel as a server interaction. It does this by
-sending a channel \tm{y} over a \emph{shared} channel \tm{x}. The channel \tm{y}
-is the channel across which the actual interaction will take place.
-The second rule, \textsc{Cont}, short for contraction, allows us to merge two
-servers into a single server. This allows us to construct a server which has
-multiple interactions of the same type, across the same shared
-channel.
+We introduce two new rules to construct servers. The first rule, $(\give[1]{})$, marks a interaction over some channel as a server interaction. It does this by sending a channel $\tm{y}$ over a \emph{shared} channel $\tm{x}$. The channel $\tm{y}$ is the channel across which the actual interaction will take place. The second rule, $\textsc{Cont}_{?}$, allows us to merge two (possibly interleaved) sequences of server interactions. This allows us to construct a server which has multiple interactions of the same type, across the same shared channel.
 \begin{center}
   \ncInfGive1
   \ncInfCont
 \end{center}
-Using these rules, we can derive the right-hand side of our proof, by marking
-each of the store's interactions as server interactions, and then contracting
-them.
+Using these rules, we can derive the right-hand side of our proof, by marking each of the store's interactions as server interactions, and then contracting them.
 \begin{prooftree}
   \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
   \SYM{(\give[1]{})}
@@ -808,74 +744,32 @@ them.
 \end{prooftree}
 Thus, we complete the typing derivation of our example.
 
-\subsection{Running clients and servers}
-\label{sec:nc-running-clients-and-servers}
-Once we have a client/server interaction, how do we run it? Ideally, we would
-simply use the reduction rule closest to the one used in the \textpi-calculus. 
-\[
-  \reducesto
-  {\tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}}
-  {\tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}}
-\]
-However, our case is complicated by the fact that in \tm{\cpCut{x}{P}{Q}} the
-name restriction is an inseparable part of the composition, and therefore has to
-be part of our reduction rule. 
-Because of this, the above reduction can only apply in the singleton case.
-If the client pool contains more than one client, such as in the term below,
-then there is no way to isolate a single client together with the server,
-because \tm{x} occurs in both \tm{\ncCnt{x}{y}{P}} and \tm{\ncCnt{x}{z}{Q}}.
-\[
-  \tm{\cpCut{x}{\ncPool{\ncCnt{x}{y}{P}}{\ncCnt{x}{z}{Q}}}{\ncSrv{x}{w}{R}}}
-  \centernot\Longrightarrow
-\]
-Therefore, we add a second reduction rule, which handles communication between a
-one client in a pool of multiple clients and a server.
-\[
-  \reducesto
-  {\tm{\cpCut{x}{\ncPool{P}{\ncCnt{x}{y}{Q}}}{\ncSrv{x}{z}{R}}}}
-  {\tm{\cpCut{x}{P}{\cpCut{y}{Q}{\cpSub{y}{z}{R}}}}}
-\]
-Lastly, because we have added another form of parallel composition, we add
-another congruence rule, to allow for reduction inside client pools.
+\subsection{Running clients and servers}\label{sec:nc-running-clients-and-servers}
+Finally, we need to extend the reduction rules to allow for the reduction of client and server processes. The reduction rule we add is a variant of the reduction rule for $\tens$ and $\parr$, $\cpRedBetaTensParr$.
 \begin{definition}[Reduction]\label{def:nc-reduction}
-  We extend \cref{def:hcp-reduction} with the following reductions:
+  We extend \cref{def:hcp-reduction} with the following reduction:
   \[
     \begin{array}{llll}
-      \ncRedBetaStar{1}
-      & \tm{\cpCut{x}{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{R}}}
+      \ncRedBetaStar{}
+      & \tm{\piNew{x}{(\piPar{(\piPar{\ncCnt{x}{y}{P}}{\ncSrv{x}{z}{Q}})}{R})}}
       & \Longrightarrow \;
-      & \tm{\cpCut{y}{P}{\cpSub{y}{z}{R}}}
-      \\
-      \ncRedBetaStar{n+1}
-      & \tm{\cpCut{x}{\ncPool{P}{\ncCnt{x}{y}{Q}}}{\ncSrv{x}{z}{R}}}
-      & \Longrightarrow \;
-      & \tm{\cpCut{x}{P}{\cpCut{y}{Q}{\cpSub{y}{z}{R}}}}
+      & \tm{\piNew{x}{(\piPar{\piNew{y}{(\piPar{P}{\cpSub{y}{z}{Q}})}}{R})}}
     \end{array}
   \]
 \end{definition}
-The rules \ncRedBetaStar1 and \ncRedBetaStar{n+1} seem like the elimination rules for a list-like construct. This may come as a surprise, as our client pools are built up like binary trees, and the typing rules for both sides are tree-like, with $(\take[1]{})$ and $(\give[1]{})$ playing the role of leaves, and $\textsc{Cont}_{!}$ and $\textsc{Cont}_{?}$ merging two trees with $m$ and $n$ leaves into one with $m+n$ leaves. However, the server process imposes a sequential ordering on its interactions, and it is because of this that we use list-like elimination rules.
+The difference between $\ncRedBetaStar{}$ and $\cpRedBetaTensParr$ is that the former allows reduction to happen in the presence of an unrelated process $\tm{R}$, which is passed along unchanged. This is necessary, as there may be other clients waiting to interact with the server on the shared channel $\tm{x}$, which cannot be moved out of scope of the name restriction $\piNew{x}{}$. When there is no unrelated process $\tm{R}$, \ie when there is only a single client, we can rewrite by $\hcpEquivMixHalt1$ before and after applying $\ncRedBetaStar{}$.
 
-So where does the non-determinism in \nodcap come from? Let us say we have a
-term of the following form:
+So where does the non-determinism in \nodcap come from? Let us say we have a term of the following form:
 \[
   \tm{
     \cpCut{x}
     {\ncPool{\ncCnt{x}{y_1}{P_1}}{\dots \mid \ncCnt{x}{y_n}{P_n}}}
-    {\ncSrv{x}{y}{Q}}
+    {\ncSrv{x}{y_1}{\dots\ncSrv{x}{y_n}{Q}}}
   }
 \]
-Because pooling is commutative and associative, we can rewrite this term to
-bring any client in the pool to the front, before applying \ncRedBetaStar{n+1}.
-Thus, like in the \textpi-calculus, the non-determinism is introduced by the
-structural congruence.
+As parallel composition is commutative and associative, we can rewrite this term to pair any client in the pool with the server before applying $\ncRedBetaStar{}$. Thus, like in the \textpi-calculus, the non-determinism is introduced by the structural congruence.
 
-Does this mean that, for an arbitrary client pool \tm{P} in
-\tm{\cpCut{x}{P}{\ncSrv{x}{z}{Q}}}, every client in that pool is competing for
-the server interaction on \tm{x}?
-Not necessarily, as some portion of the clients can be blocked on an external
-communication. For instance, in the term below, clients
-$\tm{\ncCnt{x}{y_{n+1}}{P_{n+1}}} \dots \tm{\ncCnt{x}{y_m}{P_m}}$ are blocked
-on a communication on the external channel \tm{a}.
+Does this mean that, for an arbitrary client pool $\tm{P}$ in $\tm{\cpCut{x}{P}{\ncSrv{x}{z}{Q}}}$, every client in that pool is competing for the server interaction on $\tm{x}$? Not necessarily, as some portion of the clients can be blocked on an external communication. For instance, in the term below, clients $\tm{\ncCnt{x}{y_{n+1}}{P_{n+1}}} \dots \tm{\ncCnt{x}{y_m}{P_m}}$ are blocked on a communication on the external channel $\tm{a}$:
 \[
   \arraycolsep=0pt
   \tm{
@@ -885,10 +779,7 @@ on a communication on the external channel \tm{a}.
           &\mid&\; \ncSrv{x}{y_1}{\dots\ncSrv{x}{y_m}{Q}}\;)
   \end{array}}
 \]
-If we reduce this term, then only the clients
-$\tm{\ncCnt{x}{y_1}{P_1}} \dots \tm{\ncCnt{x}{y_n}{P_n}}$
-will be assigned server interactions, and we end up with the following canonical
-form term. 
+If we reduce this term, then only the clients $\tm{\ncCnt{x}{y_1}{P_1}} \dots \tm{\ncCnt{x}{y_n}{P_n}}$ will be assigned server interactions, and we end up with the following canonical form:
 \[
   \arraycolsep=0pt
   \tm{
@@ -897,8 +788,10 @@ form term.
           &\mid&\; \ncSrv{x}{y_{n+1}}{\dots\ncSrv{x}{y_m}{Q}}\;)
   \end{array}}
 \]
-This matches the reduction behaviour of the \textpi-calculus, and it fits with
-out notion of computation with processes.
+This matches our intuition and the behaviour of the \textpi-calculus.
+
+\paragraph{Alternative syntax.}
+If we choose to reuse the terms $\tm{\piSend{x}{y}{P}}$ and $\tm{\piRecv{x}{y}{P}}$ for shared channels, we could replace $\cpRedBetaTensParr$ with $\ncRedBetaStar{}$, using the latter rule for both cases.
 
 \subsection{Metatheory}
 \label{sec:nc-metatheory}
@@ -916,18 +809,16 @@ out notion of computation with processes.
   By induction on the derivation of $\reducesto{P}{Q}$.
 \end{proof}
 \begin{definition}[Actions]
-  A process $\tm{P}$ acts on $\tm{x}$ whenever $\tm{x}$ is free in the outermost
-  term constructor of $\tm{P}$, \eg $\tm{\cpSend{x}{y}{P}{Q}}$ acts on $\tm{x}$
-  but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$.
-  A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$.
+  A process $\tm{P}$ acts on $\tm{x}$ whenever $\tm{x}$ is free in the outermost term constructor of $\tm{P}$, \eg $\tm{\ncSrv{x}{y}{P}}$ acts on $\tm{x}$ but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$. A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$. Two actions are dual when they introduce dual type constructors, \eg $\tm{\piSend{x}{y}{P}}$ is dual to $\tm{\piRecv{x}{z}{Q}}$, but $\tm{\cpLink{x}{y}}$ is not dual to any action.
 \end{definition}
-\begin{definition}[Canonical forms]
+\begin{definition}[Canonical forms]\label{def:nc-canonical-forms}
   A process $\tm{P}$ is in canonical form if
   \[
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
   \]
-  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$.
+  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$ with dual actions.
 \end{definition}
+The new definition of canonical forms is slightly more precise than \cref{def:hcp-canonical-forms}: we added the phrase ``with dual channels''. With the addition of shared channels, it has become possible to have a process which cannot reduce, but in which two processes are waiting to act on the same channel, \eg in $\tm{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}$.
 \begin{corollary}
   If a process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
 \end{corollary}
@@ -936,7 +827,7 @@ out notion of computation with processes.
   \[
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
-  such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Therefore, at least $m+1$ of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
+  such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel with dual actions. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Each application of $\textsc{Cont}_{!}$ requires an application of mix, so there are at most $m$ clients acting on the same channel. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
 \begin{theorem}[Progress]\label{thm:hcp-progress}
   If $\seq[P]{\Gamma}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
@@ -946,7 +837,7 @@ out notion of computation with processes.
   \[
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
-  and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
+  and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$ with dual actions, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
 \end{proof}
 \begin{theorem}[Termination]\label{thm:hcp-termination}
   If $\seq[P]{\mathcal{G}}$, then there are no infinite $\Longrightarrow$-reduction sequences.
@@ -955,14 +846,8 @@ out notion of computation with processes.
   Every reduction reduces a single cut to zero, one or two cuts. However, each of these cuts is smaller, measured in the size of the cut formula. Furthermore, each instance of the structural congruence preserves the size of the cut. Therefore, there cannot be an infinite $\Longrightarrow$-reduction sequence.
 \end{proof}
 
-\subsection{\nodcap and non-deterministic local choice}
-\label{sec:nc-local-choice}
-In \cref{sec:local-choice}, we discussed the non-deterministic local choice
-operator, which is used in several extensions of \piDILL and
-\cp~\parencite{atkey2016,caires2014,caires2017}.
-This operator is admissible in \nodcap.
-We can derive the non-deterministic choice \tm{P+Q} by constructing the
-following term:
+\subsection{\nodcap and non-deterministic local choice}\label{sec:nc-local-choice}
+In \cref{sec:local-choice}, we discussed the non-deterministic local choice operator, which is used in several extensions of \piDILL and \cp~\parencite{atkey2016,caires2014,caires2017}. This operator is admissible in \nodcap. We can derive the non-deterministic choice \tm{P+Q} by constructing the following term:
 \[%
   \arraycolsep=0pt
   \tm{
@@ -984,28 +869,13 @@ following term:
 This term is a cut between two processes.
 \begin{itemize}
 \item
-  On the left-hand side, we have a pool of two processes,
-  \tm{\ncCnt{x}{y}{\cpInl{y}{\cpHalt{y}}}} and
-  \tm{\ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}}}.
-  Each makes a choice:
-  the first sends \tm{\text{inl}},
-  and the second sends \tm{\text{inr}}. 
+  On the left-hand side, we have a pool of two processes, \tm{\ncCnt{x}{y}{\cpInl{y}{\cpHalt{y}}}} and \tm{\ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}}}. Each makes a choice: the first sends \tm{\text{inl}}, and the second sends \tm{\text{inr}}. 
 \item
-  On the right-hand side, we have a server with both \tm{P} and \tm{Q}. This
-  server has two channels on which a choice is offered, \tm{y} and \tm{z}.
-  The choice on \tm{y} selects between \tm{P} and \tm{Q}.
-  The choice on \tm{z} does not affect the outcome of the process at all.
-  Instead, it is discarded.
+  On the right-hand side, we have a server with both \tm{P} and \tm{Q}. This server has two channels on which a choice is offered, \tm{y} and \tm{z}. The choice on \tm{y} selects between \tm{P} and \tm{Q}. The choice on \tm{z} does not affect the outcome of the process at all. Instead, it is discarded.
 \end{itemize}
-When these clients and the server are put together, the choices offered by the
-server will be non-deterministically lined up with the clients which make
-choices, and either \tm{P} or \tm{Q} will run.
+When these clients and the server are put together, the choices offered by the server will be non-deterministically lined up with the clients which make choices, and either \tm{P} or \tm{Q} will run.
 
-While there is a certain amount of overhead involved in this encoding, it scales
-linearly in terms of the number of processes.
-The reverse---encoding the non-determinism present in \nodcap using
-non-deterministic local choice---scales exponentially, as with the
-\textpi-calculus.
+While there is a certain amount of overhead involved in this encoding, it scales linearly in terms of the number of processes. The reverse---encoding the non-determinism present in \nodcap using non-deterministic local choice---scales exponentially, see, \eg the examples in \cref{sec:local-choice}.
 
 \section{Discussion and Future Work}\label{sec:discussion}
 We have presented \nodcap, an extension of \cp which permits non-deterministic
@@ -1035,50 +905,15 @@ Such an extension would work well together with an extension allowing clients
 and servers to provide an arbitrary number of interactions.
 
 \subsection{Recursion, variable resources, and exponentials}
-Our formalism so far has only captured servers that provide for a fixed number
-of clients.  More realistically, we would want to define servers that provide
-for arbitrary numbers of clients.  This poses two problems: how would we define
-arbitrarily-interacting stateful processes, and how would we extend the
-typing discipline of \nodcap to account for them without losing its static
-guarantees.
+Our formalism so far has only captured servers that provide for a fixed number of clients.  More realistically, we would want to define servers that provide for arbitrary numbers of clients.  This poses two problems: how would we define arbitrarily-interacting stateful processes, and how would we extend the typing discipline of \nodcap to account for them without losing its static guarantees.
 
-One approach to defining server processes would be to combine \nodcap with
-structural recursion and corecursion, following the $\mu\text{CP}$ extension
-of~\textcite{lindley2016}.  Their approach can express processes which produce
-streams of \ty{A} channels. Such a process would expose a channel with the
-co-recursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is
-possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for
-any number of \ty{A}s, allowing us to satisfy the type \ty{\give[n]{A}} for an
-arbitrary $n$.
+One approach to defining server processes would be to combine \nodcap with structural recursion and corecursion, following the $\mu\text{CP}$ extension of~\textcite{lindley2016}.  Their approach can express processes which produce streams of \ty{A} channels. Such a process would expose a channel with the co-recursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for any number of \ty{A}s, allowing us to satisfy the type \ty{\give[n]{A}} for an arbitrary $n$.
 
-We would also need to extend the typing discipline to capture arbitrary use of
-shared channels.  One approach would be to introduce resource variables and
-quantification.  Following this approach, in addition to having types
-\ty{\give[n] A} and \ty{\take[n] A} for concrete $n$, we would also have types
-\ty{\give[x] A} and \ty{\take[x] A} for resource variables $x$.  These variables
-would be introduced by quantifiers \ty{\forall x A} and \ty{\exists x A}.
-Defining terms corresponding to \ty{\forall x A}, and its relationship with
-structured recursion, presents an interesting area of further work.
+We would also need to extend the typing discipline to capture arbitrary use of shared channels.  One approach would be to introduce resource variables and quantification.  Following this approach, in addition to having types \ty{\give[n] A} and \ty{\take[n] A} for concrete $n$, we would also have types \ty{\give[x] A} and \ty{\take[x] A} for resource variables $x$.  These variables would be introduced by quantifiers \ty{\forall x A} and \ty{\exists x A}. Defining terms corresponding to \ty{\forall x A}, and its relationship with structured recursion, presents an interesting area of further work.
 
-Our account of CP has not included the exponentials \ty{\give A} and \ty{\take
-  A}. The type \ty{\take A} denotes arbitrarily many independent instances of
-\ty{A}, while the type \ty{\give A} denotes a concrete (if unspecified) number
-of potentially-dependent instances of \ty{A}.  Existing interpretations of
-linear logic as session types have taken \ty{\take A} to denote \ty{A}-servers,
-while \ty{\give A} denotes \ty{A}-clients.  However, the analogy is imperfect:
-while we expect servers to provide arbitrarily many instances of their
-behaviour, we also expect those instances to be interdependent.
+Our account of \hcp did not include the exponentials \ty{\give A} and \ty{\take A}. The type \ty{\take A} denotes arbitrarily many independent instances of \ty{A}, while the type \ty{\give A} denotes a concrete (if unspecified) number of potentially-dependent instances of \ty{A}.  Existing interpretations of linear logic as session types have taken \ty{\take A} to denote \ty{A}-servers, while \ty{\give A} denotes \ty{A}-clients.  However, the analogy is imperfect: while we expect servers to provide arbitrarily many instances of their behaviour, we also expect those instances to be interdependent.
 
-With quantification over resource variables, we can give precise accounts of
-both \cp's exponentials and idealised servers and clients. \cp exponentials
-could be embedded into this framework using the definitions $\ty{\take{A}} ::=
-\ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} ::= \ty{\exists{n}{\give[n]{A}}}$.
-We would also have types that precisely matched our intuitions for server and
-client behavior:
-an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an
-unbounded number of requests with the requests being interdependent, while a
-collection of \ty{A} clients is of type \ty{\exists{n}{\take[n] A}}, as we have
-a specific number of clients with each client being independent.
+With quantification over resource variables, we can give precise accounts of both \cp's exponentials and idealised servers and clients. \cp exponentials could be embedded into this framework using the definitions $\ty{\take{A}} ::= \ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} ::= \ty{\exists{n}{\give[n]{A}}}$. We would also have types that precisely matched our intuitions for server and client behavior: an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an unbounded number of requests with the requests being interdependent, while a collection of \ty{A} clients is of type \ty{\exists{n}{\take[n] A}}, as we have a specific number of clients with each client being independent.
 
 \clearpage
 \printbibliography
