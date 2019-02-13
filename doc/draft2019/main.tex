@@ -878,15 +878,9 @@ When these clients and the server are put together, the choices offered by the s
 While there is a certain amount of overhead involved in this encoding, it scales linearly in terms of the number of processes. The reverse---encoding the non-determinism present in \nodcap using non-deterministic local choice---scales exponentially, see, \eg the examples in \cref{sec:local-choice}.
 
 \section{Discussion and Future Work}\label{sec:discussion}
-We have presented \nodcap, an extension of \cp which permits non-deterministic
-communication without losing the strong connection to logic.
-We have given proofs for preservation, progress, and termination for the term
-reduction system of \nodcap.
+We have presented \nodcap, an extension of \hcp which permits non-deterministic communication without losing the strong connection to logic.
+We have given proofs for preservation, progress, and termination for the term reduction system of \nodcap.
 We have shown that we can define non-deterministic local choice in \nodcap.
-We have also presented an alternative reduction system for \cp, based on the
-work by \textcite{lindley2015semantics}, which greatly reduces the number of
-reduction rules needed for \cp and \nodcap, and more closely resembles reduction
-in the \textpi-calculus.
 
 \subsection{Cuts with leftovers}
 So far, our account of non-determinism in client/server interactions only allows
