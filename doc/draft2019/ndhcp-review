@@ -14,14 +14,6 @@ p4
 
 Add a sentence to explain why you base the development on HCP^{-} rather than HCP.
 
-p10
-
-Consider rejigging the discussion. It's slightly clumsy to give an
-outline example and the complete rules, and then to copy the rules
-again and fill in the two halves of the outline example.  Possibly
-remove the stuff that appears before Section 4.1 and instead pushing
-some of it to after Section 4.2.
-
 p15
 
 Discussion of \all x and \exists x, culminating in:

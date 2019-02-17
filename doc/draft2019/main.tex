@@ -685,13 +685,6 @@ To determine the new typing rules, we essentially answer the question
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 The constructs $\tm{\ncCnt{x}{y}{P}}$ and $\tm{\ncSrv{x}{y}{P}}$ introduce a single client or server action, respectively---hence, channels of type $\ty{\take[1]{}}$ and $\ty{\give[1]{}}$. However, when we cut, we want to cut on both interactions simultaneously. We need rules for the \emph{contraction} of shared channel names.
-\begin{definition}[Typing judgements]\label{def:nc-typing-judgement}
-  We extend \cref{def:cp-typing-judgement} with the following rules:
-  {\normalfont
-    \begin{center} \ncInfTake1 \ncInfGive1 \end{center}
-    \begin{center} \ncInfPool  \ncInfCont  \end{center}
-  }
-\end{definition}
 
 \subsection{Clients and pooling}\label{sec:clients-and-pooling}
 A client pool represents a number of independent processes, each wanting to interact with the same server. Examples of such a pool include John and Mary from our example, customers for online stores in general, and any number of processes which interact with a single, centralised server.
@@ -743,6 +736,14 @@ Using these rules, we can derive the right-hand side of our proof, by marking ea
       \Theta, \tmty{x}{\give[2]{\cake}} }$}
 \end{prooftree}
 Thus, we complete the typing derivation of our example.
+
+\begin{definition}[Typing judgements]\label{def:nc-typing-judgement}
+  We extend \cref{def:cp-typing-judgement} with the following rules:
+  {\normalfont
+    \begin{center} \ncInfTake1 \ncInfGive1 \end{center}
+    \begin{center} \ncInfPool  \ncInfCont  \end{center}
+  }
+\end{definition}
 
 \subsection{Running clients and servers}\label{sec:nc-running-clients-and-servers}
 Finally, we need to extend the reduction rules to allow for the reduction of client and server processes. The reduction rule we add is a variant of the reduction rule for $\tens$ and $\parr$, $\cpRedBetaTensParr$.
