@@ -22,20 +22,6 @@ again and fill in the two halves of the outline example.  Possibly
 remove the stuff that appears before Section 4.1 and instead pushing
 some of it to after Section 4.2.
 
-p14
-
-I think cuts with leftovers are redundant. You can get essentially the
-same effect by writing
-
-    P |- \Gamma, x : !_{n+m} A
-    Q |- \Delta, x : ?_n A^\bot
-    R |- x : ?_m A^\bot, y : !_m A
-    ------------------------------------------------
-    (\nu x)(P | Q | R) |- \Gamma, \Delta, y : !_m A
-
-where R has the obvious definition. Note that my formulation has !_m A
-leftovers where yours had ?_m A^\bot leftovers.
-
 p15
 
 Discussion of \all x and \exists x, culminating in:
