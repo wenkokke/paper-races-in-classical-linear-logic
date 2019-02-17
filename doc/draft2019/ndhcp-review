@@ -1,0 +1,47 @@
+The thing that excited me most about Garret's contribution to this work was the link to bounded linear logic. That doesn't appear here. What happened to it? Can you say anything about the connection to bounded linear logic? Currently, the paper introduces the rules for !_n and ?_n by fiat. Are they hacks, or can they be connected to related ideas in logic?
+
+The opening example is beguiling (as ever), but I fear most readers will be disappointed by the end of the paper. From the discussion at the beginning, readers may expect that what you describe will help them build software for an online bakery.  But in fact it will only work if they want to build a bakery that sells exactly n slices of cake where n is known at typechecking time. That is far too restrictive for practical use! Your work is only of value as a stepping stone to something of more general use.
+
+I think in order for this paper to be accepted, you need to do two things. First, you need to signal in the title, abstract, and introduction that this is only a stepping stone. (As a first step, preface the title with "Toward".) Second, I would say you need a slightly more compelling story about exactly what the next step might be.
+
+One question that occurs to me is what would happen if you kept exactly the same rules but dropped the subscripts on '!' and '?'? The subscripts ensure that there are enough reads to match writes, and vice versa, so I guess the meta-property you lose is progress. Would that be a complete disaster? Perhaps mismatch of number of reads and writes on a shared channel could be treated as an error outside the scope of the type system, similar to array indices that are out of bounds?
+
+p2
+
+Move the first three paragraphs on Section 3 to the introduction.
+
+p4
+
+Add a sentence to explain why you base the development on HCP^{-} rather than HCP.
+
+p10
+
+Consider rejigging the discussion. It's slightly clumsy to give an
+outline example and the complete rules, and then to copy the rules
+again and fill in the two halves of the outline example.  Possibly
+remove the stuff that appears before Section 4.1 and instead pushing
+some of it to after Section 4.2.
+
+p14
+
+I think cuts with leftovers are redundant. You can get essentially the
+same effect by writing
+
+    P |- \Gamma, x : !_{n+m} A
+    Q |- \Delta, x : ?_n A^\bot
+    R |- x : ?_m A^\bot, y : !_m A
+    ------------------------------------------------
+    (\nu x)(P | Q | R) |- \Gamma, \Delta, y : !_m A
+
+where R has the obvious definition. Note that my formulation has !_m A
+leftovers where yours had ?_m A^\bot leftovers.
+
+p15
+
+Discussion of \all x and \exists x, culminating in:
+
+  !A = \all n. !_n A
+  ?A = \exists n. ?_n A
+
+I find it hard to see how this would work. Can you give even
+one concrete example of how this might play out?

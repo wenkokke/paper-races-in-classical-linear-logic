@@ -1,9 +1,9 @@
-\documentclass[UKenglish]{llncs}
+\documentclass[envcountsame,envcountsect,UKenglish]{llncs}
 \usepackage{comment}
 \input{preamble}
 \mainmatter % start of the contributions
-\title{Races in Classical Linear Logic}
-\titlerunning{Races in Classical Linear Logic} 
+\title{Towards Races in Linear Logic}
+\titlerunning{Towards Races in Linear Logic} 
 \author{Wen Kokke \and J.\ Garrett Morris \and Philip Wadler}
 \tocauthor{Wen Kokke, J.\ Garrett Morris, and Philip Wadler}
 \institute{University of Edinburgh, Edinburgh, UK,\\
@@ -13,7 +13,7 @@
 
 \begin{abstract}
   Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races.
-  \dhcp is a reformulation of \cp which addresses one of its fundamental shortcomings: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
+  \dhcp is a reformulation of \cp which addresses a fundamental shortcoming: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
 
   We introduce \nodcap, which extends \dhcp with a novel account of non-determinism.
   Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \dhcp's meta-theoretic properties, including deadlock freedom.  
@@ -90,7 +90,7 @@ amount of money.
 \end{center}
 The above process does not reduce. As both John and Mary would prefer the
 exchange to be made, this interaction is desired by \emph{neither}. Thus, the
-above is an interaction we would \emph{somehow} like to exclude.
+above is an interaction we would like to exclude.
 
 Session types~\parencite{honda1993} statically guarantee that concurrent
 programs, such as those above, respect communication protocols.
@@ -284,7 +284,7 @@ non-deterministic local choice, we can expect a factorial growth in the size of
 the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
-In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. \dhcp is a reformulation of \cp which addresses one of its fundamental shortcomings: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
+In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. \dhcp is a reformulation of \cp which addresses a fundamental shortcoming: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
 
 There are two versions of \dhcp: a version with delayed actions, introduced in \textcite{kokke2019pacmpl}; and a version without delayed actions, introduced in \textcite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter.
 
@@ -488,7 +488,7 @@ Reductions relate processes with their reduced forms.
         \piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}})}}}.
   \)
 \end{center}
-However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed, and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none.
+However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed, and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none. Furthermore, the two occurrences of $\tm{x}$ appearing in the same environment make it ill-formed.
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
   \SYM{\tens}
@@ -509,11 +509,11 @@ However, there is no typing derivation for this term. We illustrate this with th
   \UIC{$\seq[{
       \piNew{y}{(\piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}})}
     }]{
-      \Gamma, \Delta, \tmty{x}{\money^\bot}, \tmty{y}{\cake}, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
+      \Gamma, \Delta, \tmty{x}{\money^\bot}, \tmty{x}{\money} }$}
 \end{prooftree}
 
 \subsection{Metatheory}
-\label{sec:cp-metatheory}
+\label{sec:hcp-metatheory}
 \hcp enjoys subject reduction, termination, and progress~\citep{kokke2018tlla}.
 \begin{lemma}[Preservation for $\equiv$]\label{lem:hcp-preservation-equiv}
   If $\tm{P}\equiv\tm{Q}$, then $\seq[P]{\mathcal{G}}$ iff $\seq[Q]{\mathcal{G}}$.
@@ -663,7 +663,7 @@ track how many clients or server interactions they represent.
     \end{array}
   \]  
 \end{definition}
-The types $\ty{\take[n]{A}}$ and $\ty{\give[n]{A}}$ are dual.
+The types $\ty{\take[n]{A}}$ and $\ty{\give[n]{A^{\bot}}}$ are dual.
 Duality remains an involutive function.
 
 We have to add typing rules to associate our new client and server interactions
@@ -818,7 +818,7 @@ If we choose to reuse the terms $\tm{\piSend{x}{y}{P}}$ and $\tm{\piRecv{x}{y}{P
   \]
   such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$ with dual actions.
 \end{definition}
-The new definition of canonical forms is slightly more precise than \cref{def:hcp-canonical-forms}: we added the phrase ``with dual channels''. With the addition of shared channels, it has become possible to have a process which cannot reduce, but in which two processes are waiting to act on the same channel, \eg in $\tm{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}$.
+The new definition of canonical forms is slightly more precise than \cref{def:hcp-canonical-forms}: we added the phrase ``with dual actions''. With the addition of shared channels, it has become possible to have a process which cannot reduce, but in which two processes are waiting to act on the same channel, \eg in $\tm{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}$.
 \begin{corollary}
   If a process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
 \end{corollary}
@@ -827,7 +827,7 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
   \[
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
-  such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel with dual actions. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Each application of $\textsc{Cont}_{!}$ requires an application of mix, so there are at most $m$ clients acting on the same channel. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
+  such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel with dual actions. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Each application of $\textsc{Cont}_{!}$ requires an application of mix, so there are at most $m$ clients acting on the same bound channel. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
 \begin{theorem}[Progress]\label{thm:hcp-progress}
   If $\seq[P]{\Gamma}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
@@ -857,10 +857,10 @@ In \cref{sec:local-choice}, we discussed the non-deterministic local choice oper
           &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{}}\text{case}\;y\\
           &    & \quad
                  \begin{array}{rl}
-                   \{ & \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
+                   \{ & \texttt{inl}: \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
                            \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{P}}
                    \\
-                    ; & \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
+                    ; & \texttt{inr}: \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
                            \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{Q}} \; \})
                  \end{array}
   \end{array}
