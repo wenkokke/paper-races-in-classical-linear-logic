@@ -877,26 +877,42 @@ When these clients and the server are put together, the choices offered by the s
 
 While there is a certain amount of overhead involved in this encoding, it scales linearly in terms of the number of processes. The reverse---encoding the non-determinism present in \nodcap using non-deterministic local choice---scales exponentially, see, \eg the examples in \cref{sec:local-choice}.
 
+
+\section{Cuts with leftovers}
+So far, our account of a non-determinism in client/server interactions only allows for interactions between equal numbers of clients and servers. A natural question is whether or not we can deal with the scenario in which there are more client than server interactions or vice versa, \ie whether or not the following rule, and its dual with leftovers of type $\ty{\give[m]{A^\bot}}$, are derivable:
+\begin{prooftree}
+  \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n+m]{A}} }$}
+  \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\give[n]{A^\bot}} }$}
+  \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta, \tmty{x}{\take[m]{A}} }$}
+\end{prooftree}
+As it turns out these rules are easily derivable using a link. For instance, we can derive the rule for the case in which there are more clients than servers as follows:
+\begin{prooftree}
+  \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n+m]{A}} }$}
+  \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\give[n]{A^\bot}} }$}
+  \AXC{$\seq[{ \cpLink{x}{w} }]{
+      \tmty{x'}{\give[m]{A^{\bot}}}, \tmty{w}{\take[m]{A}} }$}
+  \NOM{H-Mix}
+  \BIC{$\seq[{ (\piPar{Q}{\cpLink{x}{w}}) }]{
+      \Delta, \tmty{x}{\give[n]{A^\bot}} \hsep
+      \tmty{x'}{\give[m]{A^{\bot}}}, \tmty{w}{\take[m]{A}} }$}
+  \SYM{\textsc{Cont}_{!}}
+  \UIC{$\seq[{ {(\piPar{Q}{\cpLink{x}{w}})} }]{
+      \Delta, \tmty{x}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
+  \NOM{H-Mix}
+  \BIC{$\seq[{ (\piPar{P}{Q}) }]{
+      \Gamma, \tmty{x}{\take[n+m]{A}} \hsep
+      \Delta, \tmty{x}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
+  \NOM{Cut}
+  \UIC{$\seq[{ \piNew{x}{(\piPar{P}{Q})} }]{
+      \Gamma, \Delta, \tmty{w}{\take[m]{A}} }$}
+\end{prooftree}
+
+
+
 \section{Discussion and Future Work}\label{sec:discussion}
 We have presented \nodcap, an extension of \hcp which permits non-deterministic communication without losing the strong connection to logic.
 We have given proofs for preservation, progress, and termination for the term reduction system of \nodcap.
 We have shown that we can define non-deterministic local choice in \nodcap.
-
-\subsection{Cuts with leftovers}
-So far, our account of non-determinism in client/server interactions only allows
-interactions between equal numbers of clients and server interactions. A natural
-extension of this would be to investigate if we could define a special case of
-cut on a client/server interaction, such that, \eg the clients only consume
-part of the server resources.
-\begin{prooftree}
-  \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n]{A}} }$}
-  \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\give[m]{A^\bot}} }$}
-  \AXC{$\ty{n} < \ty{m}$}
-  \TIC{$\seq[{ \cpCut{x}{P}{Q} }]{
-      \Gamma, \Delta, \tmty{x}{\give[m-n]{A^\bot}} }$}
-\end{prooftree}
-Such an extension would work well together with an extension allowing clients
-and servers to provide an arbitrary number of interactions.
 
 \subsection{Recursion, variable resources, and exponentials}
 Our formalism so far has only captured servers that provide for a fixed number of clients.  More realistically, we would want to define servers that provide for arbitrary numbers of clients.  This poses two problems: how would we define arbitrarily-interacting stateful processes, and how would we extend the typing discipline of \nodcap to account for them without losing its static guarantees.
