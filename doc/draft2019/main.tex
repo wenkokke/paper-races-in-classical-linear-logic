@@ -12,35 +12,18 @@
 \maketitle % typeset the title of the contribution
 
 \begin{abstract}
-  Process calculi based in logic, such as \piDILL and CP, provide a
-  foundation for deadlock-free concurrent programming, but exclude
-  non-determinism and races.
-  \dhcp is a reformulation of CP which addresses a fundamental
-  shortcoming: the fundamental operator for parallel composition
-  from the \pi-calculus does not correspond to any rule
-  of linear logic, and therefore not to any term construct in CP.
+  Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races. \dhcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
 
-  We introduce \nodcap, which extends \dhcp with a novel account of non-determinism.
-  Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \dhcp's meta-theoretic properties, including deadlock freedom.  
+  We introduce \nodcap, which extends \dhcp with a novel account of non-determinism. Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \dhcp's meta-theoretic properties, including deadlock freedom.  
 \end{abstract}
 
 \section{Introduction}\label{sec:introduction}
 
 Consider the following scenario:
 \begin{quote}
-  John and Mary are working from home one morning when they each get a craving
-  for a slice of cake. Being denizens of the web, they quickly find the nearest
-  store which does home deliveries.
-  Unfortunately for them, they both order their cake at the \emph{same} store,
-  which has only one slice left. After that, all it can deliver is
-  disappointment.
+  John and Mary are working from home one morning when they each get a craving for a slice of cake. Being denizens of the web, they quickly find the nearest store which does home deliveries. Unfortunately for them, they both order their cake at the \emph{same} store, which has only one slice left. After that, all it can deliver is disappointment.
 \end{quote}
-This is an example of a \emph{race condition}. We can model this scenario in the
-\textpi-calculus, where \john, \mary and \store are processes modelling John,
-Mary and the store, and \sliceofcake and \nope are channels giving access to a
-slice of cake and disappointment, respectively.
-This process has two possible outcomes: either John gets the cake, and Mary gets
-disappointment, or vice versa. 
+This is an example of a \emph{race condition}. We can model this scenario in the \textpi-calculus, where \john, \mary and \store are processes modelling John, Mary and the store, and \sliceofcake and \nope are channels giving access to a slice of cake and disappointment, respectively. This process has two possible outcomes: either John gets the cake, and Mary gets disappointment, or vice versa. 
 \begin{center}
   \(
   \begin{array}{c}
@@ -62,24 +45,13 @@ disappointment, or vice versa.
   \end{array}
   \)
 \end{center}
-While John or Mary may not like all of the outcomes, it is the store which is
-responsible for implementing the online delivery service, and the store is happy
-with either outcome. Thus, the above is an interaction we would like to be able to
-model.
+While John or Mary may not like all of the outcomes, it is the store which is responsible for implementing the online delivery service, and the store is happy with either outcome. Thus, the above is an interaction we would like to be able to model.
 
-Now consider another scenario, which takes place \emph{after} John has already
-bought the cake:
+Now consider another scenario, which takes place \emph{after} John has already bought the cake:
 \begin{quote}
-  Mary is \emph{really} disappointed when she finds out the cake has sold out.
-  John, always looking to make some money, offers to sell the slice to her for a
-  profit. Mary agrees to engage in a little bit of back-alley cake resale, but
-  sadly there is no trust between the two.
-  John demands payment first.
-  Mary would rather get her slice of cake before she gives John the money.
+  Mary is \emph{really} disappointed when she finds out the cake has sold out. John, always looking to make some money, offers to sell the slice to her for a profit. Mary agrees to engage in a little bit of back-alley cake resale, but sadly there is no trust between the two. John demands payment first. Mary would rather get her slice of cake before she gives John the money.
 \end{quote}
-This is an example of a \emph{deadlock}. We can also model this scenario in the
-\textpi-calculus, where \bill\ is a channel giving access to some adequate
-amount of money. 
+This is an example of a \emph{deadlock}. We can also model this scenario in the \textpi-calculus, where \bill\ is a channel giving access to some adequate amount of money. 
 \begin{center}
   \(
   \begin{array}{c}
@@ -93,69 +65,22 @@ amount of money.
   \end{array}  
   \)
 \end{center}
-The above process does not reduce. As both John and Mary would prefer the
-exchange to be made, this interaction is desired by \emph{neither}. Thus, the
-above is an interaction we would like to exclude.
+The above process does not reduce. As both John and Mary would prefer the exchange to be made, this interaction is desired by \emph{neither}. Thus, the above is an interaction we would like to exclude.
 
-Session types~\parencite{honda1993} statically guarantee that concurrent
-programs, such as those above, respect communication protocols.
-Session-typed calculi with logical foundations, such as
-\piDILL~\parencite{caires2010} and CP~\parencite{wadler2012}, obtain deadlock freedom as a
-result of a close correspondence with logic.
-These systems, however, also rule out non-determinism and race conditions. In
-this paper, we demonstrate that logic-inspired type systems need not rule out
-races.
+Session types~\parencite{honda1993} statically guarantee that concurrent programs, such as those above, respect communication protocols. Session-typed calculi with logical foundations, such as \piDILL~\parencite{caires2010} and CP~\parencite{wadler2012}, obtain deadlock freedom as a result of a close correspondence with logic. These systems, however, also rule out non-determinism and race conditions. In this paper, we demonstrate that logic-inspired type systems need not rule out races.
 
-We present \nodcap (nodcap), an extension of CP with a novel account of
-non-determinism and races.
-Inspired by bounded linear logic~\parencite{girard1992}, we introduce a form of
-shared channels in which the type of a shared channel tracks how many times it
-is reused.
-As in the untyped $\pi$-calculus, sharing introduces the potential for
-non-determinism.
-We show that our approach is sufficient to capture practical examples of races,
-such as an online store, as well as other formal characterizations of
-non-determinism, such as non-deterministic choice.  However, \nodcap does not
-lose the meta-theoretical benefits of CP: we show that it enjoys termination and
-deadlock-freedom.
+We present \nodcap, an extension of CP with a novel account of non-determinism and races. Inspired by bounded linear logic~\parencite{girard1992}, we introduce a form of shared channels in which the type of a shared channel tracks how many times it is reused. As in the untyped \textpi-calculus, sharing introduces the potential for non-determinism. We show that our approach is sufficient to capture practical examples of races, such as an online store, as well as other formal characterizations of non-determinism, such as non-deterministic choice.  However, \nodcap does not lose the meta-theoretical benefits of CP: we show that it enjoys termination and deadlock-freedom.
 
-An important limitation of our work is that types
-in \nodcap explicitly count the potential races on a channel.  It
-works fine when there are two or three races, but not $n$ for an
-arbitary $n$.  The latter case is obviously important, and we see the
-main value of our work as a stepping stone to this more general case.
+An important limitation of our work is that types in \nodcap explicitly count the potential races on a channel.  It works fine when there are two or three races, but not $n$ for an arbitary $n$.  The latter case is obviously important, and we see the main value of our work as a stepping stone to this more general case.
 
-\nodcp is based on \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}.
-\dhcp is a reformulation of CP which addresses a fundamental
-shortcoming: the fundamental operator for parallel composition
-from the \pi-calculus does not correspond to any rule
-of linear logic, and therefore not to any term construct in CP.
+\nodcap is based on \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}. \dhcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
 
-There are two versions of \dhcp: a version with delayed actions,
-introduced in \textcite{kokke2019pacmpl}; and a version without
-delayed actions, introduced in \textcite{kokke2018tlla}, referred to
-as \hcp. In this work, we will base ourselves on the latter.
-\textbf{[TODO: Wen to add a sentence to explain why this work is based on
-the latter rather than the former, and whether the work would adapt
-easily to the former.]}
+There are two versions of \dhcp: a version with delayed actions, introduced in \textcite{kokke2019pacmpl}; and a version without delayed actions, introduced in \textcite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter, as the former does not yet have reduction semantics.
 
-This paper proceeds as follows.
-In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in
-logic-inspired session-typed process calculi.
-In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and
-preservation.
-In \cref{sec:cpnd}, we introduce \nodcap.
-Finally, in \cref{sec:discussion}, we conclude with a discussion of the work
-done in this paper and potential avenues for future work.
+This paper proceeds as follows. In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in logic-inspired session-typed process calculi. In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and preservation. In \cref{sec:cpnd}, we introduce \nodcap. Finally, in \cref{sec:discussion}, we conclude with a discussion of the work done in this paper and potential avenues for future work.
 
 \section{Non-determinism, logic, and session types}\label{sec:local-choice}
-Recent work extended \piDILL and \cp with operators for non-deterministic
-behaviour~\parencite{atkey2016,caires2014,caires2017}.
-These extensions all implement an operator known as non-deterministic local
-choice. (This operator is written as \tm{P+Q}, but should not be confused with
-input-guarded choice from the \textpi-calculus~\parencite{milner1992b}.)
-Non-deterministic local choice can be summarised by the following typing and
-reduction rules:
+Recent work extended \piDILL and \cp with operators for non-deterministic behaviour~\parencite{atkey2016,caires2014,caires2017}. These extensions all implement an operator known as non-deterministic local choice. (This operator is written as \tm{P+Q}, but should not be confused with input-guarded choice from the \textpi-calculus~\parencite{milner1992b}.) Non-deterministic local choice can be summarised by the following typing and reduction rules:
 \begin{center}
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{ \Gamma }$}
@@ -170,10 +95,7 @@ reduction rules:
   \end{array}
   \)
 \end{center}
-Local choice introduces non-determinism explicitly, by listing all possible
-choices. This is unlike the \textpi-calculus, where non-determinism arises due
-to multiple processes communicating on shared channels. We can easily implement
-local choice in the \textpi-calculus, using a nullary communication:
+Local choice introduces non-determinism explicitly, by listing all possible choices. This is unlike the \textpi-calculus, where non-determinism arises due to multiple processes communicating on shared channels. We can easily implement local choice in the \textpi-calculus, using a nullary communication:
 \begin{center}
   \(
   \begin{array}{c}
@@ -189,17 +111,13 @@ local choice in the \textpi-calculus, using a nullary communication:
   \end{array}
   \)
 \end{center}
-In this implementation, the process \tm{\piSend{x}{}{0}} will ``unlock'' either
-\tm{P} or \tm{Q}, leaving the other process deadlocked. Or we could use
-input-guarded choice:
+In this implementation, the process \tm{\piSend{x}{}{0}} will ``unlock'' either \tm{P} or \tm{Q}, leaving the other process deadlocked. Or we could use input-guarded choice:
 \begin{center}
   \(
   \tm{( \piPar{\piSend{x}{}{\piHalt}}{( \piRecv{x}{}{P} + \piRecv{x}{}{Q} )} )}
   \)
 \end{center}
-However, there are many non-deterministic processes in the \textpi-calculus
-that are awkward to encode using non-deterministic local choice.
-Let us recall our example:
+However, there are many non-deterministic processes in the \textpi-calculus that are awkward to encode using non-deterministic local choice. Let us recall our example:
 \begin{center}
   \(
   \begin{array}{c}
@@ -221,9 +139,7 @@ Let us recall our example:
   \end{array}
   \)
 \end{center}
-This non-deterministic interaction involves communication. If we wanted to write
-down a process which exhibited the same behaviour using non-deterministic local
-choice, we would have to write the following process:
+This non-deterministic interaction involves communication. If we wanted to write down a process which exhibited the same behaviour using non-deterministic local choice, we would have to write the following process:
 \begin{center}
   \(
   \begin{array}{c}
@@ -251,24 +167,13 @@ choice, we would have to write the following process:
   \end{array}
   \)
 \end{center}
-In essence, instead of modelling a non-deterministic interaction, we are
-enumerating the resulting deterministic interactions.
-This means non-deterministic local choice cannot model non-determinism in the
-way the \textpi-calculus does.
+In essence, instead of modelling a non-deterministic interaction, we are enumerating the resulting deterministic interactions. This means non-deterministic local choice cannot model non-determinism in the way the \textpi-calculus does.
 %
-Enumerating all possible outcomes becomes worse the more processes are involved
-in an interaction. Imagine a scenario the following scenario:
+Enumerating all possible outcomes becomes worse the more processes are involved in an interaction. Imagine a scenario the following scenario:
 \begin{quote}
-  Three customers, Alice, John and Mary, have a craving for cake. Should cake be
-  sold out, however, well... a doughnut will do. They prepare to order their
-  goods via an online store. Unfortunately, they all decide to use the
-  same \emph{shockingly} under-stocked store, which has only one slice of cake,
-  and a single doughnut. After that, all it can deliver is disappointment.
+  Three customers, Alice, John and Mary, have a craving for cake. Should cake be sold out, however, well... a doughnut will do. They prepare to order their goods via an online store. Unfortunately, they all decide to use the same \emph{shockingly} under-stocked store, which has only one slice of cake, and a single doughnut. After that, all it can deliver is disappointment.
 \end{quote}
-We can model this scenario in the \textpi-calculus, where \alice, \john,
-\mary, and \store are four processes modelling Alice, John, Mary and the store,
-and \sliceofcake, \doughnut, and \nope are three channels giving access to a
-slice of cake, a so-so doughnut, and disappointment, respectively.
+We can model this scenario in the \textpi-calculus, where \alice, \john, \mary, and \store are four processes modelling Alice, John, Mary and the store, and \sliceofcake, \doughnut, and \nope are three channels giving access to a slice of cake, a so-so doughnut, and disappointment, respectively.
 \begin{center}
   \makebox[\textwidth][c]{\ensuremath{
       \begin{array}{c}
@@ -301,16 +206,11 @@ slice of cake, a so-so doughnut, and disappointment, respectively.
       \end{array}
     }}
 \end{center}
-With the addition of one process, modelling Alice, we have increased the number
-of possible outcomes enormously! In general, the number of outcomes for these
-types of scenarios is $n!$, where $n$ is the number of processes. This means
-that if we wish to translate any non-deterministic process to one using
-non-deterministic local choice, we can expect a factorial growth in the size of
-the term.
+With the addition of one process, modelling Alice, we have increased the number of possible outcomes enormously! In general, the number of outcomes for these types of scenarios is $n!$, where $n$ is the number of processes. This means that if we wish to translate any non-deterministic process to one using non-deterministic local choice, we can expect a factorial growth in the size of the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
 In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
-
+%
 The term language for \hcp is a variant of the \textpi-calculus~\parencite{milner1992b}.
 \begin{definition}[Terms]\label{def:hcp-terms}
   \[
@@ -568,9 +468,9 @@ However, there is no typing derivation for this term. We illustrate this with th
 \end{corollary}
 \begin{proof}
   We have
-  \[
+  \(
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
-  \]
+  \)
   such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Therefore, at least $m+1$ of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
 \begin{theorem}[Progress]\label{thm:hcp-progress}
@@ -578,9 +478,9 @@ However, there is no typing derivation for this term. We illustrate this with th
 \end{theorem} 
 \begin{proof}
   We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
-  \[
+  \(
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
-  \]
+  \)
   and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
 \end{proof}
 \begin{theorem}[Termination]\label{thm:hcp-termination}
@@ -848,9 +748,9 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
 \end{corollary}
 \begin{proof}
   We have
-  \[
+  \(
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
-  \]
+  \)
   such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel with dual actions. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Each application of $\textsc{Cont}_{!}$ requires an application of mix, so there are at most $m$ clients acting on the same bound channel. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
 \begin{theorem}[Progress]\label{thm:hcp-progress}
@@ -858,9 +758,9 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
 \end{theorem} 
 \begin{proof}
   We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
-  \[
+  \(
   \tm{P} \equiv \tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
-  \]
+  \)
   and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$ with dual actions, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
 \end{proof}
 \begin{theorem}[Termination]\label{thm:hcp-termination}
