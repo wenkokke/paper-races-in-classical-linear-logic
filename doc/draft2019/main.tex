@@ -12,8 +12,13 @@
 \maketitle % typeset the title of the contribution
 
 \begin{abstract}
-  Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races.
-  \dhcp is a reformulation of \cp which addresses a fundamental shortcoming: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
+  Process calculi based in logic, such as \piDILL and CP, provide a
+  foundation for deadlock-free concurrent programming, but exclude
+  non-determinism and races.
+  \dhcp is a reformulation of CP which addresses a fundamental
+  shortcoming: the fundamental operator for parallel composition
+  from the \pi-calculus does not correspond to any rule
+  of linear logic, and therefore not to any term construct in CP.
 
   We introduce \nodcap, which extends \dhcp with a novel account of non-determinism.
   Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \dhcp's meta-theoretic properties, including deadlock freedom.  
@@ -113,6 +118,26 @@ such as an online store, as well as other formal characterizations of
 non-determinism, such as non-deterministic choice.  However, \nodcap does not
 lose the meta-theoretical benefits of CP: we show that it enjoys termination and
 deadlock-freedom.
+
+An important limitation of our work is that types
+in \nodcap explicitly count the potential races on a channel.  It
+works fine when there are two or three races, but not $n$ for an
+arbitary $n$.  The latter case is obviously important, and we see the
+main value of our work as a stepping stone to this more general case.
+
+\nodcp is based on \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}.
+\dhcp is a reformulation of CP which addresses a fundamental
+shortcoming: the fundamental operator for parallel composition
+from the \pi-calculus does not correspond to any rule
+of linear logic, and therefore not to any term construct in CP.
+
+There are two versions of \dhcp: a version with delayed actions,
+introduced in \textcite{kokke2019pacmpl}; and a version without
+delayed actions, introduced in \textcite{kokke2018tlla}, referred to
+as \hcp. In this work, we will base ourselves on the latter.
+\textbf{[TODO: Wen to add a sentence to explain why this work is based on
+the latter rather than the former, and whether the work would adapt
+easily to the former.]}
 
 This paper proceeds as follows.
 In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in
@@ -284,9 +309,7 @@ non-deterministic local choice, we can expect a factorial growth in the size of
 the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
-In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. \dhcp is a reformulation of \cp which addresses a fundamental shortcoming: the fact that the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in \cp.
-
-There are two versions of \dhcp: a version with delayed actions, introduced in \textcite{kokke2019pacmpl}; and a version without delayed actions, introduced in \textcite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter.
+In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
 
 The term language for \hcp is a variant of the \textpi-calculus~\parencite{milner1992b}.
 \begin{definition}[Terms]\label{def:hcp-terms}
