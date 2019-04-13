@@ -21,9 +21,9 @@
 
 Consider the following scenario:
 \begin{quote}
-  John and Mary are working from home one morning when they each get a craving for a slice of cake. Being denizens of the web, they quickly find the nearest store which does home deliveries. Unfortunately for them, they both order their cake at the \emph{same} store, which has only one slice left. After that, all it can deliver is disappointment.
+  Ami and Val are working from home one morning when they each get a craving for a slice of cake. Being denizens of the web, they quickly find the nearest store which does home deliveries. Unfortunately for them, they both order their cake at the \emph{same} store, which has only one slice left. After that, all it can deliver is disappointment.
 \end{quote}
-This is an example of a \emph{race condition}. We can model this scenario in the \textpi-calculus, where \john, \mary and \store are processes modelling John, Mary and the store, and \sliceofcake and \nope are channels giving access to a slice of cake and disappointment, respectively. This process has two possible outcomes: either John gets the cake, and Mary gets disappointment, or vice versa. 
+This is an example of a \emph{race condition}. We can model this scenario in the \textpi-calculus, where \john, \mary and \store are processes modelling Ami, Val and the store, and \sliceofcake and \nope are channels giving access to a slice of cake and disappointment, respectively. This process has two possible outcomes: either Ami gets the cake, and Val gets disappointment, or vice versa. 
 \begin{center}
   \(
   \begin{array}{c}
@@ -45,11 +45,11 @@ This is an example of a \emph{race condition}. We can model this scenario in the
   \end{array}
   \)
 \end{center}
-While John or Mary may not like all of the outcomes, it is the store which is responsible for implementing the online delivery service, and the store is happy with either outcome. Thus, the above is an interaction we would like to be able to model.
+While Ami or Val may not like all of the outcomes, it is the store which is responsible for implementing the online delivery service, and the store is happy with either outcome. Thus, the above is an interaction we would like to be able to model.
 
-Now consider another scenario, which takes place \emph{after} John has already bought the cake:
+Now consider another scenario, which takes place \emph{after} Ami has already bought the cake:
 \begin{quote}
-  Mary is \emph{really} disappointed when she finds out the cake has sold out. John, always looking to make some money, offers to sell the slice to her for a profit. Mary agrees to engage in a little bit of back-alley cake resale, but sadly there is no trust between the two. John demands payment first. Mary would rather get her slice of cake before she gives John the money.
+  Val is \emph{really} disappointed when she finds out the cake has sold out. Ami, always looking to make some money, offers to sell the slice to her for a profit. Val agrees to engage in a little bit of back-alley cake resale, but sadly there is no trust between the two. Ami demands payment first. Val would rather get her slice of cake before she gives Ami the money.
 \end{quote}
 This is an example of a \emph{deadlock}. We can also model this scenario in the \textpi-calculus, where \bill\ is a channel giving access to some adequate amount of money. 
 \begin{center}
@@ -65,7 +65,7 @@ This is an example of a \emph{deadlock}. We can also model this scenario in the 
   \end{array}  
   \)
 \end{center}
-The above process does not reduce. As both John and Mary would prefer the exchange to be made, this interaction is desired by \emph{neither}. Thus, the above is an interaction we would like to exclude.
+The above process does not reduce. As both Ami and Val would prefer the exchange to be made, this interaction is desired by \emph{neither}. Thus, the above is an interaction we would like to exclude.
 
 Session types~\parencite{honda1993} statically guarantee that concurrent programs, such as those above, respect communication protocols. Session-typed calculi with logical foundations, such as \piDILL~\parencite{caires2010} and CP~\parencite{wadler2012}, obtain deadlock freedom as a result of a close correspondence with logic. These systems, however, also rule out non-determinism and race conditions. In this paper, we demonstrate that logic-inspired type systems need not rule out races.
 
@@ -169,11 +169,11 @@ This non-deterministic interaction involves communication. If we wanted to write
 \end{center}
 In essence, instead of modelling a non-deterministic interaction, we are enumerating the resulting deterministic interactions. This means non-deterministic local choice cannot model non-determinism in the way the \textpi-calculus does.
 %
-Enumerating all possible outcomes becomes worse the more processes are involved in an interaction. Imagine a scenario the following scenario:
+Enumerating all possible outcomes becomes worse the more processes are involved in an interaction. Imagine the following scenario:
 \begin{quote}
-  Three customers, Alice, John and Mary, have a craving for cake. Should cake be sold out, however, well... a doughnut will do. They prepare to order their goods via an online store. Unfortunately, they all decide to use the same \emph{shockingly} under-stocked store, which has only one slice of cake, and a single doughnut. After that, all it can deliver is disappointment.
+  Three customers, Gil, Ami and Val, have a craving for cake. Should cake be sold out, however, well... a doughnut will do. They prepare to order their goods via an online store. Unfortunately, they all decide to use the same \emph{shockingly} under-stocked store, which has only one slice of cake, and a single doughnut. After that, all it can deliver is disappointment.
 \end{quote}
-We can model this scenario in the \textpi-calculus, where \alice, \john, \mary, and \store are four processes modelling Alice, John, Mary and the store, and \sliceofcake, \doughnut, and \nope are three channels giving access to a slice of cake, a so-so doughnut, and disappointment, respectively.
+We can model this scenario in the \textpi-calculus, where \alice, \john, \mary, and \store are four processes modelling Gil, Ami, Val, and the store, and \sliceofcake, \doughnut, and \nope are three channels giving access to a slice of cake, a so-so doughnut, and disappointment, respectively.
 \begin{center}
   \makebox[\textwidth][c]{\ensuremath{
       \begin{array}{c}
@@ -206,7 +206,7 @@ We can model this scenario in the \textpi-calculus, where \alice, \john, \mary, 
       \end{array}
     }}
 \end{center}
-With the addition of one process, modelling Alice, we have increased the number of possible outcomes enormously! In general, the number of outcomes for these types of scenarios is $n!$, where $n$ is the number of processes. This means that if we wish to translate any non-deterministic process to one using non-deterministic local choice, we can expect a factorial growth in the size of the term.
+With the addition of one process, modelling Gil, we have increased the number of possible outcomes enormously! In general, the number of outcomes for these types of scenarios is $n!$, where $n$ is the number of processes. This means that if we wish to translate any non-deterministic process to one using non-deterministic local choice, we can expect a factorial growth in the size of the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
 In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
@@ -306,7 +306,7 @@ Duality plays a crucial role in both linear logic and session types. In \hcp, th
     \end{array}
   \]
 \end{definition}
-Environments associate channels with types. Names in environments must be unique, and environments \ty{\Gamma} and \ty{\Delta} can only be combined ($\ty{\Gamma}, \ty{\Delta}$) if $\text{fv}(\ty{\Gamma}) \cap \text{fv}(\ty{\Delta}) = \varnothing$. 
+Environments associate channels with types. Names in environments must be unique, and environments \ty{\Gamma} and \ty{\Delta} can only be combined ($\ty{\Gamma}, \ty{\Delta}$) if $\text{cn}(\ty{\Gamma}) \cap \text{cn}(\ty{\Delta}) = \varnothing$, where $\text{cn}{(\ty{\Gamma})}$ denotes the set of channel names in $\ty{\Gamma}$. 
 \begin{definition}[Environments]\label{def:cp-environments}
   $\ty{\Gamma}, \ty{\Delta}, \ty{\Theta} ::= \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}$
 \end{definition}
@@ -411,7 +411,7 @@ Reductions relate processes with their reduced forms.
         \piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}})}}}.
   \)
 \end{center}
-However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed, and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none. Furthermore, the two occurrences of $\tm{x}$ appearing in the same environment make it ill-formed.
+However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none. Furthermore, the two occurrences of $\tm{x}$ appearing in the same environment make it ill-formed.
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
   \SYM{\tens}
@@ -463,9 +463,9 @@ However, there is no typing derivation for this term. We illustrate this with th
   \]
   such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$.
 \end{definition}
-\begin{corollary}
-  If a process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
-\end{corollary}
+\begin{lemma}
+  If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
+\end{lemma}
 \begin{proof}
   We have
   \(
@@ -491,7 +491,7 @@ However, there is no typing derivation for this term. We illustrate this with th
 \end{proof}
 
 \section{Shared Channels and Non-Determinism}\label{sec:cpnd}
-In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example from \cref{sec:introduction}, to the interaction between John, Mary and the store. 
+In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example from \cref{sec:introduction}, to the interaction between Ami, Val and the store. 
 \begin{center}
   \(
   \begin{array}{c}
@@ -517,9 +517,9 @@ Races occur when more than two processes attempt to communicate simultaneously o
 \end{center}
 We could attempt to write down a protocol for our example, stating that the store
 has a pair of channels $\tm{x}, \tm{y} : \ty{\cake}$ with which it communicates
-with John and Mary, taking \cake to be the type of interactions in which cake
+with Ami and Val, taking \cake to be the type of interactions in which cake
 \emph{may} be obtained, i.e.\ of both \sliceofcake and \nope, and state that the
-store communicates with John \emph{and} Mary over a channel of type \ty{\cake
+store communicates with Ami \emph{and} Val over a channel of type \ty{\cake
   \parr \cake}.
 However, this \emph{only} models interactions such as the following:
 \begin{prooftree}
@@ -544,7 +544,7 @@ However, this \emph{only} models interactions such as the following:
   \UIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
-In this interaction, John will get whatever the store decides to send on \tm{x}, and Mary will get whatever the store decides to send on \tm{y}. This means that this interactions gives the choice of who receives what \emph{to the store}. This is not an accurate model of our original example, where the choice of who receives the cake is non-deterministic and depends on factors outside of any of the participants' control!
+In this interaction, Ami will get whatever the store decides to send on \tm{x}, and Val will get whatever the store decides to send on \tm{y}. This means that this interactions gives the choice of who receives what \emph{to the store}. This is not an accurate model of our original example, where the choice of who receives the cake is non-deterministic and depends on factors outside of any of the participants' control!
 
 Modelling racy behaviour, such as that in our example, is essential to describing the interactions that take place in realistic concurrent systems. We would like to extend \hcp to allow such races in a way which mirrors the way in which the \textpi-calculus handles non-determinism. Let us return to our example:
 \begin{center}
@@ -556,7 +556,7 @@ Modelling racy behaviour, such as that in our example, is essential to describin
     })}
   \)
 \end{center}
-In this interaction, we see that the channel \tm{x} is only used only as a way to connect the various clients, John and Mary, to the store. The \emph{real} communication, sending the slice of cake and disappointment, takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}. Inspired by this, we add two new constructs to the term language of \hcp for sending and receiving on a \emph{shared} channel. These actions are marked with a \tm{\star} to distinguish them from ordinary sending and receiving. 
+In this interaction, we see that the channel \tm{x} is only used as a way to connect the various clients, Ami and Val, to the store. The \emph{real} communication, sending the slice of cake and disappointment, takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}. Inspired by this, we add two new constructs to the term language of \hcp for sending and receiving on a \emph{shared} channel. These actions are marked with a \tm{\star} to distinguish them from ordinary sending and receiving. 
 \begin{definition}[Terms]\label{def:nc-terms}
   We extend \cref{def:hcp-terms} with the following constructs:
   \[\!
@@ -610,14 +610,14 @@ To determine the new typing rules, we essentially answer the question
 The constructs $\tm{\ncCnt{x}{y}{P}}$ and $\tm{\ncSrv{x}{y}{P}}$ introduce a single client or server action, respectively---hence, channels of type $\ty{\take[1]{}}$ and $\ty{\give[1]{}}$. However, when we cut, we want to cut on both interactions simultaneously. We need rules for the \emph{contraction} of shared channel names.
 
 \subsection{Clients and pooling}\label{sec:clients-and-pooling}
-A client pool represents a number of independent processes, each wanting to interact with the same server. Examples of such a pool include John and Mary from our example, customers for online stores in general, and any number of processes which interact with a single, centralised server.
+A client pool represents a number of independent processes, each wanting to interact with the same server. Examples of such a pool include Ami and Val from our example, customers for online stores in general, and any number of processes which interact with a single, centralised server.
 
 We introduce two new rules: one to construct clients, and one to pool them together. The first rule, $(\take[1]{})$, interacts over a channel as a client. It does this by receiving a channel $\tm{y}$ over a \emph{shared} channel $\tm{x}$. The channel $\tm{y}$ is the channel across which the actual interaction will eventually take place. The second rule, $\textsc{Cont}_{!}$, allows us to contract shared channel names with the same type. When used together with \textsc{H-Mix}, this allows us to pool clients together.
 \begin{center}
   \ncInfTake1
   \ncInfPool
 \end{center}%
-Using these rules, we can derive the left-hand side of our proof by marking John and Mary as clients, and pooling them together.
+Using these rules, we can derive the left-hand side of our proof by marking Ami and Val as clients, and pooling them together.
 \begin{prooftree}
   \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
   \SYM{(\take[1]{})}
@@ -638,7 +638,7 @@ Using these rules, we can derive the left-hand side of our proof by marking John
 \end{prooftree}
 
 \subsection{Servers and sequencing}\label{sec:servers-and-sequencing}
-Dual to a pool of $n$ clients in parallel is a server with $n$ actions in sequence. Our interpretation of a server is a process which offers up some number of interdependent interactions of the same type. Examples include the store from our example, which gives out slices of cake and disappointment, online stores in general, and any central server which interacts with some number of client processes.
+Dual to a pool of $n$ clients in parallel is a server with $n$ actions in sequence. Our interpretation of a server is a process which offers some number of interdependent interactions of the same type. Examples include the store from our example, which gives out slices of cake and disappointment, online stores in general, and any central server which interacts with some number of client processes.
 
 We introduce two new rules to construct servers. The first rule, $(\give[1]{})$, marks a interaction over some channel as a server interaction. It does this by sending a channel $\tm{y}$ over a \emph{shared} channel $\tm{x}$. The channel $\tm{y}$ is the channel across which the actual interaction will take place. The second rule, $\textsc{Cont}_{?}$, allows us to merge two (possibly interleaved) sequences of server interactions. This allows us to construct a server which has multiple interactions of the same type, across the same shared channel.
 \begin{center}
@@ -743,9 +743,9 @@ If we choose to reuse the terms $\tm{\piSend{x}{y}{P}}$ and $\tm{\piRecv{x}{y}{P
   such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$ with dual actions.
 \end{definition}
 The new definition of canonical forms is slightly more precise than \cref{def:hcp-canonical-forms}: we added the phrase ``with dual actions''. With the addition of shared channels, it has become possible to have a process which cannot reduce, but in which two processes are waiting to act on the same channel, \eg in $\tm{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}$.
-\begin{corollary}
-  If a process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
-\end{corollary}
+\begin{lemma}
+  If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
+\end{lemma}
 \begin{proof}
   We have
   \(
@@ -778,7 +778,7 @@ In \cref{sec:local-choice}, we discussed the non-deterministic local choice oper
   \begin{array}{lrlrl}
     \nu x.&((  & \; \ncCnt{x}{y}{\cpInl{y}{\cpHalt{y}}} \\
           &\mid& \; \ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}} \; )\\
-          &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{}}\text{case}\;y\\
+          &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{y\:{\triangleright}}}\\
           &    & \quad
                  \begin{array}{rl}
                    \{ & \texttt{inl}: \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
@@ -803,13 +803,13 @@ While there is a certain amount of overhead involved in this encoding, it scales
 
 
 \section{Cuts with leftovers}
-So far, our account of a non-determinism in client/server interactions only allows for interactions between equal numbers of clients and servers. A natural question is whether or not we can deal with the scenario in which there are more client than server interactions or vice versa, \ie whether or not the following rule, and its dual with leftovers of type $\ty{\give[m]{A^\bot}}$, are derivable:
+So far, our account of a non-determinism in client/server interactions only allows for interactions between equal numbers of clients and server interactions. A natural question is whether or not we can deal with the scenario in which there are more client than server interactions or vice versa, \ie whether or not the following rule, and its dual with leftovers of type $\ty{\give[m]{A^\bot}}$, are derivable:
 \begin{prooftree}
-  \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n+m]{A}} }$}
-  \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\give[n]{A^\bot}} }$}
-  \BIC{$\seq[{ \cpCut{x}{P}{Q} }]{ \Gamma, \Delta, \tmty{x}{\take[m]{A}} }$}
+  \AXC{$\seq{ \Gamma, \ty{\take[n+m]{A}} }$}
+  \AXC{$\seq{ \Delta, \ty{\give[n]{A^\bot}} }$}
+  \BIC{$\seq{ \Gamma, \Delta, \ty{\take[m]{A}} }$}
 \end{prooftree}
-As it turns out these rules are easily derivable using a link. For instance, we can derive the rule for the case in which there are more clients than servers as follows:
+These rules are derivable using a link. For instance, we can derive the rule for the case in which there are more clients than servers as follows:
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n+m]{A}} }$}
   \AXC{$\seq[{ Q }]{ \Delta, \tmty{x}{\give[n]{A^\bot}} }$}
@@ -823,11 +823,11 @@ As it turns out these rules are easily derivable using a link. For instance, we 
   \UIC{$\seq[{ {(\piPar{Q}{\cpLink{x}{w}})} }]{
       \Delta, \tmty{x}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
   \NOM{H-Mix}
-  \BIC{$\seq[{ (\piPar{P}{Q}) }]{
+  \BIC{$\seq[{ (\piPar{P}{(\piPar{Q}{\cpLink{x}{w}})}) }]{
       \Gamma, \tmty{x}{\take[n+m]{A}} \hsep
       \Delta, \tmty{x}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
   \NOM{Cut}
-  \UIC{$\seq[{ \piNew{x}{(\piPar{P}{Q})} }]{
+  \UIC{$\seq[{ \piNew{x}{(\piPar{P}{(\piPar{Q}{\cpLink{x}{w}})})} }]{
       \Gamma, \Delta, \tmty{w}{\take[m]{A}} }$}
 \end{prooftree}
 
