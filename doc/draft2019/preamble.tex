@@ -3,19 +3,6 @@
 \usepackage[british]{babel}
 \usepackage[dvipsnames,table]{xcolor}
 
-\usepackage[%
-  backend=biber,
-  bibencoding=utf8,
-  style=numeric,
-  sorting=nyt,
-  sortcites=true,
-  natbib=true,
-  backref=false,
-  backrefstyle=all+,
-  hyperref=true,
-]{biblatex}
-\addbibresource{main.bib}
-
 \usepackage{enumitem}
 \usepackage{graphicx}
 \DeclareGraphicsRule{.ai}{pdf}{.ai}{}
@@ -28,9 +15,7 @@
 \usepackage{xspace}
 \xspaceaddexceptions{]\}}
 \arraycolsep=1ex
-\newcommand{\ie}{i.e.,\xspace}
-\newcommand{\eg}{e.g.,\xspace}
-
+\usepackage[all]{foreign}
 
 %% Names
 \newcommand{\Ami}{Ami\xspace}
@@ -457,5 +442,6 @@
 
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
-
-%\pagestyle{plain}
+\usepackage{doi}
+\usepackage[strings]{underscore}
+\usepackage{upgreek}

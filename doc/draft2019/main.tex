@@ -1,13 +1,21 @@
 \documentclass[envcountsame,envcountsect,UKenglish]{llncs}
 
 \input{preamble}
+
 \mainmatter % start of the contributions
 \title{Towards Races in Linear Logic}
 \titlerunning{Towards Races in Linear Logic} 
-\author{Wen Kokke \and J.\ Garrett Morris \and Philip Wadler}
+\author{%
+  Wen Kokke\inst{1} \and
+  J.\ Garrett Morris\inst{2} \and
+  Philip Wadler\inst{1}}
+\authorrunning{W. Kokke et al.}
 \tocauthor{Wen Kokke, J.\ Garrett Morris, and Philip Wadler}
-\institute{University of Edinburgh, Edinburgh, UK,\\
-\email{wen.kokke@ed.ac.uk}}
+\institute{%
+  University of Edinburgh, Edinburgh, UK,\\
+  \email{wen.kokke@ed.ac.uk}, \email{wadler@inf.ed.ac.uk} \and
+  University of Kansas, Lawrence, KS, USA,\\
+  \email{garrett@ku.edu}}
 \begin{document}
 \maketitle % typeset the title of the contribution
 
@@ -67,20 +75,20 @@ This is an example of a \emph{deadlock}. We can also model this scenario in the 
 \end{center}
 The above process does not reduce. As both \Ami and \Boe would prefer the exchange to be made, this interaction is desired by \emph{neither}. Thus, the above is an interaction we would like to exclude.
 
-Session types~\parencite{honda1993} statically guarantee that concurrent programs, such as those above, respect communication protocols. Session-typed calculi with logical foundations, such as \piDILL~\parencite{caires2010} and CP~\parencite{wadler2012}, obtain deadlock freedom as a result of a close correspondence with logic. These systems, however, also rule out non-determinism and race conditions. In this paper, we demonstrate that logic-inspired type systems need not rule out races.
+Session types~\cite{honda1993} statically guarantee that concurrent programs, such as those above, respect communication protocols. Session-typed calculi with logical foundations, such as \piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a result of a close correspondence with logic. These systems, however, also rule out non-determinism and race conditions. In this paper, we demonstrate that logic-inspired type systems need not rule out races.
 
-We present \nodcap, an extension of CP with a novel account of non-determinism and races. Inspired by bounded linear logic~\parencite{girard1992}, we introduce a form of shared channels in which the type of a shared channel tracks how many times it is reused. As in the untyped \textpi-calculus, sharing introduces the potential for non-determinism. We show that our approach is sufficient to capture practical examples of races, such as an online store, as well as other formal characterizations of non-determinism, such as non-deterministic choice.  However, \nodcap does not lose the meta-theoretical benefits of CP: we show that it enjoys termination and deadlock-freedom.
+We present \nodcap, an extension of CP with a novel account of non-determinism and races. Inspired by bounded linear logic~\cite{girard1992}, we introduce a form of shared channels in which the type of a shared channel tracks how many times it is reused. As in the untyped \textpi-calculus, sharing introduces the potential for non-determinism. We show that our approach is sufficient to capture practical examples of races, such as an online store, as well as other formal characterizations of non-determinism, such as non-deterministic choice.  However, \nodcap does not lose the meta-theoretical benefits of CP: we show that it enjoys termination and deadlock-freedom.
 
 An important limitation of our work is that types in \nodcap explicitly count the potential races on a channel.  It works fine when there are two or three races, but not $n$ for an arbitary $n$.  The latter case is obviously important, and we see the main value of our work as a stepping stone to this more general case.
 
-\nodcap is based on \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}. \dhcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
+\nodcap is based on \dhcp~\cite{kokke2018tlla,kokke2019pacmpl}. \dhcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
 
-There are two versions of \dhcp: a version with delayed actions, introduced in \textcite{kokke2019pacmpl}; and a version without delayed actions, introduced in \textcite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter, as the former does not yet have reduction semantics.
+There are two versions of \dhcp: a version with delayed actions, introduced by Kokke \etal~\cite{kokke2019pacmpl}; and a version without delayed actions, introduced by Kokke \etal~\cite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter, as the former does not yet have reduction semantics.
 
 This paper proceeds as follows. In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in logic-inspired session-typed process calculi. In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and preservation. In \cref{sec:cpnd}, we introduce \nodcap. In \cref{sec:leftovers}, we discuss cuts with leftovers. Finally, in \cref{sec:conclusion}, we conclude with a discussion of the work done in this paper and potential avenues for future work.
 
 \section{Non-determinism, logic, and session types}\label{sec:local-choice}
-Recent work extended \piDILL and \cp with operators for non-deterministic behaviour~\parencite{atkey2016,caires2014,caires2017}. These extensions all implement an operator known as non-deterministic local choice. (This operator is written as \tm{P+Q}, but should not be confused with input-guarded choice from the \textpi-calculus~\parencite{milner1992b}.) Non-deterministic local choice can be summarised by the following typing and reduction rules:
+Recent work extended \piDILL and \cp with operators for non-deterministic behaviour~\cite{atkey2016,caires2014,caires2017}. These extensions all implement an operator known as non-deterministic local choice. (This operator is written as \tm{P+Q}, but should not be confused with input-guarded choice from the \textpi-calculus~\cite{milner1992b}.) Non-deterministic local choice can be summarised by the following typing and reduction rules:
 \begin{center}
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{ \Gamma }$}
@@ -203,9 +211,9 @@ We can model this scenario in the \textpi-calculus, where \ami, \boe, \cat, and 
 With the addition of one process, modelling \Cat, we have increased the number of possible outcomes enormously! In general, the number of outcomes for these types of scenarios is $n!$, where $n$ is the number of processes. This means that if we wish to translate any non-deterministic process to one using non-deterministic local choice, we can expect a factorial growth in the size of the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
-In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
+In this section, we introduce \dhcp~\cite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
 %
-The term language for \hcp is a variant of the \textpi-calculus~\parencite{milner1992b}.
+The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992b}.
 \begin{definition}[Terms]\label{def:hcp-terms}
   \[
     \begin{array}{lrll}
@@ -225,7 +233,7 @@ The term language for \hcp is a variant of the \textpi-calculus~\parencite{milne
     \end{array}
   \]
 \end{definition}\noindent
-The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} channel names. The construct \tm{\cpLink{x}{y}} links two channels~\parencite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{P}}$ creates a new channel $\tm{x}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\parencite{sangiorgi1996}, meaning that both input and output bind a new name. 
+The variables \tm{x}, \tm{y}, \tm{z} and \tm{w} range over channel names. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} channel names. The construct \tm{\cpLink{x}{y}} links two channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{P}}$ creates a new channel $\tm{x}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name. 
 
 Terms in \hcp are identified up to structural congruence.
 \begin{definition}[Structural congruence]\label{def:hcp-equiv}
@@ -431,7 +439,7 @@ However, there is no typing derivation for this term. We illustrate this with th
 
 \subsection{Metatheory}
 \label{sec:hcp-metatheory}
-\hcp enjoys subject reduction, termination, and progress~\citep{kokke2018tlla}.
+\hcp enjoys subject reduction, termination, and progress~\cite{kokke2018tlla}.
 \begin{lemma}[Preservation for $\equiv$]\label{lem:hcp-preservation-equiv}
   If $\tm{P}\equiv\tm{Q}$, then $\seq[P]{\mathcal{G}}$ iff $\seq[Q]{\mathcal{G}}$.
 \end{lemma} 
@@ -771,7 +779,7 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
 \end{proof}
 
 \subsection{\nodcap and non-deterministic local choice}\label{sec:nc-local-choice}
-In \cref{sec:local-choice}, we discussed the non-deterministic local choice operator, which is used in several extensions of \piDILL and \cp~\parencite{atkey2016,caires2014,caires2017}. This operator is admissible in \nodcap. We can derive the non-deterministic choice \tm{P+Q} by constructing the following term:
+In \cref{sec:local-choice}, we discussed the non-deterministic local choice operator, which is used in several extensions of \piDILL and \cp~\cite{atkey2016,caires2014,caires2017}. This operator is admissible in \nodcap. We can derive the non-deterministic choice \tm{P+Q} by constructing the following term:
 \[%
   \arraycolsep=0pt
   \tm{
@@ -839,8 +847,8 @@ These rules are derivable using a link. For instance, we can derive the rule for
 \end{prooftree}
 
 \section{Relation to Manifest Sharing}
-In \cref{sec:local-choice}, we mentioned related work which extends \piDILL and \cp with non-deterministic local choice~\parencite{atkey2016,caires2014,caires2017}, and contrasted these approaches with ours.
-In this section, we will contranst our work with the more recent work on manifest sharing~\parencite{balzer2017}.
+In \cref{sec:local-choice}, we mentioned related work which extends \piDILL and \cp with non-deterministic local choice~\cite{atkey2016,caires2014,caires2017}, and contrasted these approaches with ours.
+In this section, we will contranst our work with the more recent work on manifest sharing~\cite{balzer2017}.
 
 Manifest sharing extends the session-typed language \SILL with two connectives, $\ty{\acquire{A}}$ and $\ty{\release{A}}$, which represent the places in a protocol where a shared resource is aquired and released, respectively. In the resulting languages, \SILLS, we can define a type for, \eg shared queues (using the notation for types introduced in this paper):
 \[
@@ -854,9 +862,9 @@ Manifest sharing extends the session-typed language \SILL with two connectives, 
 The type $\ty{\queue{A}}$ types a shared channel which, after we aqcuire exclusive access, gives us the choice between enqueuing a value ($\ty{A^\bot}$) and releasing the queue, or dequeuing a value if there is any ($\ty{A \plus \bot}$) and releasing the queue.
 
 The language \SILLS is much more expressive than \nodcap, as it has support for both shared channels and recursion.
-In fact, \textcite{balzer2018} show that \SILLS is expressive enough to embed the untyped asynchronous \textpi-calculus. This expressiveness comes with a cost, as \SILLS processes are not guaranteed to be deadlock free, though recent work addresses this issue~\parencite{balzer2019}.
+In fact, Balzer \etal~\cite{balzer2018} show that \SILLS is expressive enough to embed the untyped asynchronous \textpi-calculus. This expressiveness comes with a cost, as \SILLS processes are not guaranteed to be deadlock free, though recent work addresses this issue~\cite{balzer2019}.
 
-Despite the difference in expressiveness, there are some similarities between \nodcap and \SILLS. In the former, shared channels represent (length-indexed) streams of interactions of the same type. In the latter, it is necessary for type preservation that shared channels are always released at the same type at which they were acquired, meaning that shared channels also represent (possibly infinite) streams of interactions of the same type. In fact, in \nodcap, the type for (finite) queues could be written as $\ty{\take[n]{(A^\bot \with (A \plus \bot))}}$.
+Despite the difference in expressiveness, there are some similarities between \nodcap and \SILLS. In the former, shared channels represent (length-indexed) streams of interactions of the same type. In the latter, it is necessary for type preservation that shared channels are always released at the same type at which they were acquired, meaning that shared channels also represent (possibly infinite) streams of interactions of the same type. In fact, in \nodcap, the type for queues (with $n$ interactions) could be written as $\ty{\take[n]{(A^\bot \with (A \plus \bot))}}$.
 
 One key difference between \nodcap and \SILLS is that in the latter, a client obtains exclusive access to the shared channel, whereas in the former, the process implementing the shared channel is free to intersperse the various interactions.
   
@@ -865,9 +873,10 @@ We presented \nodcap, an extension of \hcp which permits non-deterministic commu
 We gave proofs for preservation, progress, and termination for the term reduction system of \nodcap.
 We showed that we can define non-deterministic local choice in \nodcap.
 
+\subsection{Recursion, variable resources, and exponentials}
 Our formalism so far has only captured servers that provide for a fixed number of clients.  More realistically, we would want to define servers that provide for arbitrary numbers of clients.  This poses two problems: how would we define arbitrarily-interacting stateful processes, and how would we extend the typing discipline of \nodcap to account for them without losing its static guarantees.
 
-One approach to defining server processes would be to combine \nodcap with structural recursion and corecursion, following the $\mu\text{CP}$ extension of~\textcite{lindley2016}.  Their approach can express processes which produce streams of \ty{A} channels. Such a process would expose a channel with the co-recursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for any number of \ty{A}s, allowing us to satisfy the type \ty{\give[n]{A}} for an arbitrary $n$.
+One approach to defining server processes would be to combine \nodcap with structural recursion and corecursion, following the $\mu\text{CP}$ extension of Lindley and Morris~\cite{lindley2016}.  Their approach can express processes which produce streams of \ty{A} channels. Such a process would expose a channel with the co-recursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for any number of \ty{A}s, allowing us to satisfy the type \ty{\give[n]{A}} for an arbitrary $n$.
 
 We would also need to extend the typing discipline to capture arbitrary use of shared channels.  One approach would be to introduce resource variables and quantification.  Following this approach, in addition to having types \ty{\give[n] A} and \ty{\take[n] A} for concrete $n$, we would also have types \ty{\give[x] A} and \ty{\take[x] A} for resource variables $x$.  These variables would be introduced by quantifiers \ty{\forall x A} and \ty{\exists x A}. Defining terms corresponding to \ty{\forall x A}, and its relationship with structured recursion, presents an interesting area of further work.
 
@@ -875,7 +884,8 @@ Our account of \hcp did not include the exponentials \ty{\give A} and \ty{\take 
 
 With quantification over resource variables, we can give precise accounts of both \cp's exponentials and idealised servers and clients. \cp exponentials could be embedded into this framework using the definitions $\ty{\take{A}} ::= \ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} ::= \ty{\exists{n}{\give[n]{A}}}$. We would also have types that precisely matched our intuitions for server and client behavior: an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an unbounded number of requests with the requests being interdependent, while a collection of \ty{A} clients is of type \ty{\exists{n}{\take[n] A}}, as we have a specific number of clients with each client being independent.
 
-\printbibliography
+\bibliographystyle{splncs04}
+\bibliography{main}
 
 \end{document}
 %%% Local Variables:
