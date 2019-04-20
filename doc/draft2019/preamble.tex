@@ -13,7 +13,8 @@
   backref=false,
   backrefstyle=all+,
   hyperref=true,
-  ]{biblatex}
+]{biblatex}
+\addbibresource{main.bib}
 
 \usepackage{enumitem}
 \usepackage{graphicx}
@@ -30,12 +31,19 @@
 \newcommand{\ie}{i.e.,\xspace}
 \newcommand{\eg}{e.g.,\xspace}
 
+
+%% Names
+\newcommand{\Ami}{Ami\xspace}
+\newcommand{\Boe}{Bo\'{e}\xspace}
+\newcommand{\Cat}{Cat\xspace}
+
 %% Emoji
 \newcommand{\emoji}[2][1em]{\ensuremath{\vcenter{%
 \hbox{\includegraphics[width=#1]{#2}}}}\xspace}
 \newcommand{\twemoji}[2][1em]{\emoji[#1]{twemoji/2/assets/#2.ai}}
-\newcommand{\mary}[1][1em]{\twemoji[#1]{1f469-1f3fd}}%{1f469-1f3fb}}
-\newcommand{\john}[1][1em]{\twemoji[#1]{1f9d1-1f3fd}}%{1f466-1f3fe}}
+\newcommand{\ami}[1][1em]{\twemoji[#1]{1f9d1-1f3fd}}%{1f466-1f3fe}}
+\newcommand{\boe}[1][1em]{\twemoji[#1]{1f469-1f3fd}}%{1f469-1f3fb}}
+\newcommand{\cat}[1][1em]{\twemoji[#1]{1f467-1f3fd}}
 \newcommand{\sliceofcake}[1][1em]{\twemoji[#1]{1f370}}
 \newcommand{\doughnut}[1][1em]{\twemoji[#1]{1f369}}
 \newcommand{\cake}[1][1em]{\twemoji[#1]{1f382}}
@@ -44,7 +52,6 @@
 \newcommand{\bill}[1][1em]{\twemoji[#1]{1f4b7}}
 \newcommand{\bank}[1][1em]{\twemoji[#1]{1f3e6}}
 \newcommand{\store}[1][1em]{\twemoji[#1]{1f3ea}}
-\newcommand{\alice}[1][1em]{\twemoji[#1]{1f467-1f3fd}}
 \newcommand{\bob}[1][1em]{\twemoji[#1]{1f474-1f3fc}}
 
 %% Terms, types, and constraints
@@ -73,6 +80,8 @@
 \providecommand{\hcp}{\ensuremath{\text{HCP}^{-}}\xspace}
 \providecommand{\nodcap}{\ensuremath{\hcp_{\text{ND}}}\xspace}
 \providecommand{\piDILL}{\textpi DILL\xspace}
+\providecommand{\SILL}{$\text{SILL}$\xspace}
+\providecommand{\SILLS}{$\text{\SILL}_{S}$\xspace}
 \providecommand{\cp}{CP\xspace}
 
 %% PI - Terms
@@ -101,6 +110,9 @@
 \providecommand{\cpPlug}[2]{\ensuremath{{#1}[{#2}]}}
 
 %% CP - Types
+\newcommand*{\queue}[1]{\ensuremath{\text{queue} \; #1}}%
+\newcommand*{\acquire}[1]{\ensuremath{{\uparrow^{S}_{L}}#1}}%
+\newcommand*{\release}[1]{\ensuremath{{\downarrow^{S}_{L}}#1}}%
 \providecommand{\parr}{\mathbin{\bindnasrepma}}
 \providecommand{\with}{\mathbin{\binampersand}}
 \providecommand{\plus}{\ensuremath{\oplus}}
@@ -446,5 +458,4 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
 
-\pagestyle{plain}
-\addbibresource{main.bib}
+%\pagestyle{plain}

@@ -1,5 +1,5 @@
 \documentclass[envcountsame,envcountsect,UKenglish]{llncs}
-\usepackage{comment}
+
 \input{preamble}
 \mainmatter % start of the contributions
 \title{Towards Races in Linear Logic}
@@ -21,51 +21,51 @@
 
 Consider the following scenario:
 \begin{quote}
-  Ami and Val are working from home one morning when they each get a craving for a slice of cake. Being denizens of the web, they quickly find the nearest store which does home deliveries. Unfortunately for them, they both order their cake at the \emph{same} store, which has only one slice left. After that, all it can deliver is disappointment.
+  \Ami and \Boe are working from home one morning when they each get a craving for a slice of cake. Being denizens of the web, they quickly find the nearest store which does home deliveries. Unfortunately for them, they both order their cake at the \emph{same} store, which has only one slice left. After that, all it can deliver is disappointment.
 \end{quote}
-This is an example of a \emph{race condition}. We can model this scenario in the \textpi-calculus, where \john, \mary and \store are processes modelling Ami, Val and the store, and \sliceofcake and \nope are channels giving access to a slice of cake and disappointment, respectively. This process has two possible outcomes: either Ami gets the cake, and Val gets disappointment, or vice versa. 
+This is an example of a \emph{race condition}. We can model this scenario in the \textpi-calculus, where \ami, \boe and \store are processes modelling \Ami, \Boe and the store, and \sliceofcake and \nope are channels giving access to a slice of cake and disappointment, respectively. This process has two possible outcomes: either \Ami gets the cake, and \Boe gets disappointment, or vice versa. 
 \begin{center}
   \(
   \begin{array}{c}
     \tm{(\piPar{%
     \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
     }{%
-    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
     })}
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
     \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{%
-    \piSub{\nope}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\ami}}{%
+    \piSub{\nope}{z}{\boe}}})}
     \quad
     \text{or}
     \quad
-    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{%
-    \piSub{\sliceofcake}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\ami}}{%
+    \piSub{\sliceofcake}{z}{\boe}}})}
   \end{array}
   \)
 \end{center}
-While Ami or Val may not like all of the outcomes, it is the store which is responsible for implementing the online delivery service, and the store is happy with either outcome. Thus, the above is an interaction we would like to be able to model.
+While \Ami or \Boe may not like all of the outcomes, it is the store which is responsible for implementing the online delivery service, and the store is happy with either outcome. Thus, the above is an interaction we would like to be able to model.
 
-Now consider another scenario, which takes place \emph{after} Ami has already bought the cake:
+Now consider another scenario, which takes place \emph{after} \Ami has already bought the cake:
 \begin{quote}
-  Val is \emph{really} disappointed when she finds out the cake has sold out. Ami, always looking to make some money, offers to sell the slice to her for a profit. Val agrees to engage in a little bit of back-alley cake resale, but sadly there is no trust between the two. Ami demands payment first. Val would rather get her slice of cake before she gives Ami the money.
+  \Boe is \emph{really} disappointed when she finds out the cake has sold out. \Ami, always looking to make some money, offers to sell the slice to her for a profit. \Boe agrees to engage in a little bit of back-alley cake resale, but sadly there is no trust between the two. \Ami demands payment first. \Boe would rather get her slice of cake before she gives \Ami the money.
 \end{quote}
 This is an example of a \emph{deadlock}. We can also model this scenario in the \textpi-calculus, where \bill\ is a channel giving access to some adequate amount of money. 
 \begin{center}
   \(
   \begin{array}{c}
     \tm{(\piPar{%
-    \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}
+    \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\ami}}
     }{%
-    \piRecv{y}{w}{\piSend{x}{\bill}{\mary}}
+    \piRecv{y}{w}{\piSend{x}{\bill}{\boe}}
     })}
     \quad
     \centernot\Longrightarrow^{\star}
   \end{array}  
   \)
 \end{center}
-The above process does not reduce. As both Ami and Val would prefer the exchange to be made, this interaction is desired by \emph{neither}. Thus, the above is an interaction we would like to exclude.
+The above process does not reduce. As both \Ami and \Boe would prefer the exchange to be made, this interaction is desired by \emph{neither}. Thus, the above is an interaction we would like to exclude.
 
 Session types~\parencite{honda1993} statically guarantee that concurrent programs, such as those above, respect communication protocols. Session-typed calculi with logical foundations, such as \piDILL~\parencite{caires2010} and CP~\parencite{wadler2012}, obtain deadlock freedom as a result of a close correspondence with logic. These systems, however, also rule out non-determinism and race conditions. In this paper, we demonstrate that logic-inspired type systems need not rule out races.
 
@@ -77,7 +77,7 @@ An important limitation of our work is that types in \nodcap explicitly count th
 
 There are two versions of \dhcp: a version with delayed actions, introduced in \textcite{kokke2019pacmpl}; and a version without delayed actions, introduced in \textcite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter, as the former does not yet have reduction semantics.
 
-This paper proceeds as follows. In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in logic-inspired session-typed process calculi. In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and preservation. In \cref{sec:cpnd}, we introduce \nodcap. Finally, in \cref{sec:discussion}, we conclude with a discussion of the work done in this paper and potential avenues for future work.
+This paper proceeds as follows. In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in logic-inspired session-typed process calculi. In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and preservation. In \cref{sec:cpnd}, we introduce \nodcap. In \cref{sec:leftovers}, we discuss cuts with leftovers. Finally, in \cref{sec:conclusion}, we conclude with a discussion of the work done in this paper and potential avenues for future work.
 
 \section{Non-determinism, logic, and session types}\label{sec:local-choice}
 Recent work extended \piDILL and \cp with operators for non-deterministic behaviour~\parencite{atkey2016,caires2014,caires2017}. These extensions all implement an operator known as non-deterministic local choice. (This operator is written as \tm{P+Q}, but should not be confused with input-guarded choice from the \textpi-calculus~\parencite{milner1992b}.) Non-deterministic local choice can be summarised by the following typing and reduction rules:
@@ -124,18 +124,18 @@ However, there are many non-deterministic processes in the \textpi-calculus that
     \tm{(\piPar{%
     \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
     }{%
-    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
     })}
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
     \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{
-    \piSub{\nope}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\ami}}{
+    \piSub{\nope}{z}{\boe}}})}
     \quad
     \text{or}
     \quad
-    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{
-    \sliceofcake}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\ami}}{\piSub{
+    \sliceofcake}{z}{\boe}}})}
   \end{array}
   \)
 \end{center}
@@ -147,23 +147,23 @@ This non-deterministic interaction involves communication. If we wanted to write
     (\piPar{%
     \piSend{x}{\sliceofcake}{\piSend{y}{\nope}{\store}}
     }{%
-    \piPar{\piRecv{x}{z}{\john}}{\piRecv{y}{w}{\mary}}
+    \piPar{\piRecv{x}{z}{\ami}}{\piRecv{y}{w}{\boe}}
     })
     +
     (\piPar{%
     \piSend{y}{\sliceofcake}{\piSend{x}{\nope}{\store}}
     }{%
-    \piPar{\piRecv{x}{z}{\john}}{\piRecv{y}{w}{\mary}}
+    \piPar{\piRecv{x}{z}{\ami}}{\piRecv{y}{w}{\boe}}
     })
     }
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
     \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\ami}}{\piSub{\nope}{z}{\boe}}})}
     \quad
     \text{or}
     \quad
-    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\ami}}{\piSub{\sliceofcake}{z}{\boe}}})}
   \end{array}
   \)
 \end{center}
@@ -171,42 +171,36 @@ In essence, instead of modelling a non-deterministic interaction, we are enumera
 %
 Enumerating all possible outcomes becomes worse the more processes are involved in an interaction. Imagine the following scenario:
 \begin{quote}
-  Three customers, Gil, Ami and Val, have a craving for cake. Should cake be sold out, however, well... a doughnut will do. They prepare to order their goods via an online store. Unfortunately, they all decide to use the same \emph{shockingly} under-stocked store, which has only one slice of cake, and a single doughnut. After that, all it can deliver is disappointment.
+  Three customers, \Ami, \Boe, and \Cat, have a craving for cake. Should cake be sold out, however, well... a doughnut will do. They prepare to order their goods via an online store. Unfortunately, they all decide to use the same \emph{shockingly} under-stocked store, which has only one slice of cake, and a single doughnut. After that, all it can deliver is disappointment.
 \end{quote}
-We can model this scenario in the \textpi-calculus, where \alice, \john, \mary, and \store are four processes modelling Gil, Ami, Val, and the store, and \sliceofcake, \doughnut, and \nope are three channels giving access to a slice of cake, a so-so doughnut, and disappointment, respectively.
+We can model this scenario in the \textpi-calculus, where \ami, \boe, \cat, and \store are four processes modelling \Ami, \Boe, \Cat, and the store, and \sliceofcake, \doughnut, and \nope are three channels giving access to a slice of cake, a so-so doughnut, and disappointment, respectively.
 \begin{center}
   \makebox[\textwidth][c]{\ensuremath{
-      \begin{array}{c}
-        \tm{(\piPar{%
-        \piSend{x}{\sliceofcake}{\piSend{x}{\doughnut}{\piSend{x}{\nope}{\store}}}
-        }{%
-        \piPar{\piRecv{x}{y}{\alice}}{\piPar{\piRecv{x}{z}{\john}}{\piRecv{x}{w}{\mary}}
-        })}}
-        \\[1ex]
-        \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
-        \\[1ex]
-        \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
-        \;
-        \text{or}
-        \;
-        \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
-        \\[1ex]
-        \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\nope}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
-        \;
-        \text{or}
-        \;
-        \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\nope}{w}{\mary}}}})}
-        \\[1ex]
-        \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\sliceofcake}{z}{\john}}{\piSub{\doughnut}{w}{\mary}}}})}
-        \;
-        \text{or}
-        \;
-        \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\alice}}{\piPar{\piSub{\doughnut}{z}{\john}}{\piSub{\sliceofcake}{w}{\mary}}}})}
-        \\[1ex]
-      \end{array}
-    }}
+    \begin{array}{c}
+      \tm{(\piPar{%
+      \piSend{x}{\sliceofcake}{\piSend{x}{\doughnut}{\piSend{x}{\nope}{\store}}}
+      }{%
+      \piPar{\piRecv{x}{y}{\ami}}{\piPar{\piRecv{x}{z}{\boe}}{\piRecv{x}{w}{\cat}}
+      })}}
+      \\[1ex]
+      \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
+      \\[1ex]
+      \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\ami}}{\piPar{\piSub{\doughnut}{z}{\boe}}{\piSub{\nope}{w}{\cat}}}})}
+      \;\text{or}\;
+      \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\ami}}{\piPar{\piSub{\nope}{z}{\boe}}{\piSub{\doughnut}{w}{\cat}}}})}
+      \\[1ex]
+      \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\ami}}{\piPar{\piSub{\nope}{z}{\boe}}{\piSub{\sliceofcake}{w}{\cat}}}})}
+      \;\text{or}\;
+      \tm{(\piPar{\store}{\piPar{\piSub{\doughnut}{y}{\ami}}{\piPar{\piSub{\sliceofcake}{z}{\boe}}{\piSub{\nope}{w}{\cat}}}})}
+      \\[1ex]
+      \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\ami}}{\piPar{\piSub{\sliceofcake}{z}{\boe}}{\piSub{\doughnut}{w}{\cat}}}})}
+      \;\text{or}\;
+      \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\ami}}{\piPar{\piSub{\doughnut}{z}{\boe}}{\piSub{\sliceofcake}{w}{\cat}}}})}
+      \\[1ex]
+    \end{array}
+  }}
 \end{center}
-With the addition of one process, modelling Gil, we have increased the number of possible outcomes enormously! In general, the number of outcomes for these types of scenarios is $n!$, where $n$ is the number of processes. This means that if we wish to translate any non-deterministic process to one using non-deterministic local choice, we can expect a factorial growth in the size of the term.
+With the addition of one process, modelling \Cat, we have increased the number of possible outcomes enormously! In general, the number of outcomes for these types of scenarios is $n!$, where $n$ is the number of processes. This means that if we wish to translate any non-deterministic process to one using non-deterministic local choice, we can expect a factorial growth in the size of the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
 In this section, we introduce \dhcp~\parencite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
@@ -408,29 +402,29 @@ Reductions relate processes with their reduced forms.
 \begin{center}
   \(
   \tm{\piNew{x}{\piNew{y}{(
-        \piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}})}}}.
+        \piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\ami}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\boe}}})}}}.
   \)
 \end{center}
 However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none. Furthermore, the two occurrences of $\tm{x}$ appearing in the same environment make it ill-formed.
 \begin{prooftree}
-  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
+  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
   \SYM{\tens}
-  \UIC{$\seq[{ \piSend{y}{\sliceofcake}{\john} }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{y}{\cake}}$}
+  \UIC{$\seq[{ \piSend{y}{\sliceofcake}{\ami} }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{y}{\cake}}$}
   \SYM{\parr}
-  \UIC{$\seq[{ \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}} }]{ \Gamma, \tmty{x}{\money^\bot}, \tmty{y}{\cake}}$}
-  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{\bill}{\money}, \tmty{w}{\cake^\bot} }$}
+  \UIC{$\seq[{ \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\ami}} }]{ \Gamma, \tmty{x}{\money^\bot}, \tmty{y}{\cake}}$}
+  \AXC{$\seq[{ \boe }]{ \Delta, \tmty{\bill}{\money}, \tmty{w}{\cake^\bot} }$}
   \SYM{\tens}
-  \UIC{$\seq[{ \piSend{x}{\bill}{\mary} }]{ \Delta, \tmty{x}{\money}, \tmty{w}{\cake^\bot} }$}
+  \UIC{$\seq[{ \piSend{x}{\bill}{\boe} }]{ \Delta, \tmty{x}{\money}, \tmty{w}{\cake^\bot} }$}
   \SYM{\parr}
-  \UIC{$\seq[{ \piRecv{y}{w}{\piSend{x}{\bill}{\mary}} }]{ \Delta, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
+  \UIC{$\seq[{ \piRecv{y}{w}{\piSend{x}{\bill}{\boe}} }]{ \Delta, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
   \NOM{H-Mix}
   \BIC{$\seq[{
-      (\piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}}) }]{
+      (\piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\ami}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\boe}}}) }]{
       \Gamma, \tmty{x}{\money^\bot}, \tmty{y}{\cake} \hsep
       \Delta, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
   \NOM{Cut}
   \UIC{$\seq[{
-      \piNew{y}{(\piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\john}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\mary}}})}
+      \piNew{y}{(\piPar{\piRecv{x}{z}{\piSend{y}{\sliceofcake}{\ami}}}{\piRecv{y}{w}{\piSend{x}{\bill}{\boe}}})}
     }]{
       \Gamma, \Delta, \tmty{x}{\money^\bot}, \tmty{x}{\money} }$}
 \end{prooftree}
@@ -464,7 +458,10 @@ However, there is no typing derivation for this term. We illustrate this with th
   such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$.
 \end{definition}
 \begin{lemma}
-  If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
+  If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on
+  an external communication, \ie
+  $\tm{P}\equiv\tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1\mid\dots\mid P_{n+m+1})}}}$
+  such that at least one process $\tm{P_i}$ acts on a free name.
 \end{lemma}
 \begin{proof}
   We have
@@ -491,23 +488,23 @@ However, there is no typing derivation for this term. We illustrate this with th
 \end{proof}
 
 \section{Shared Channels and Non-Determinism}\label{sec:cpnd}
-In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example from \cref{sec:introduction}, to the interaction between Ami, Val and the store. 
+In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example from \cref{sec:introduction}, to the interaction between \Ami, \Boe and the store. 
 \begin{center}
   \(
   \begin{array}{c}
     \tm{(\piPar{%
     \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
     }{%
-    \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+    \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
     })}
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
     \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\john}}{\piSub{\nope}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\ami}}{\piSub{\nope}{z}{\boe}}})}
     \quad
     \text{or}
     \quad
-    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\john}}{\piSub{\sliceofcake}{z}{\mary}}})}
+    \tm{(\piPar{\store}{\piPar{\piSub{\nope}{y}{\ami}}{\piSub{\sliceofcake}{z}{\boe}}})}
   \end{array}
   \)
 \end{center}
@@ -517,34 +514,34 @@ Races occur when more than two processes attempt to communicate simultaneously o
 \end{center}
 We could attempt to write down a protocol for our example, stating that the store
 has a pair of channels $\tm{x}, \tm{y} : \ty{\cake}$ with which it communicates
-with Ami and Val, taking \cake to be the type of interactions in which cake
+with \Ami and \Boe, taking \cake to be the type of interactions in which cake
 \emph{may} be obtained, i.e.\ of both \sliceofcake and \nope, and state that the
-store communicates with Ami \emph{and} Val over a channel of type \ty{\cake
+store communicates with \Ami \emph{and} \Boe over a channel of type \ty{\cake
   \parr \cake}.
 However, this \emph{only} models interactions such as the following:
 \begin{prooftree}
-  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{x}{\cake^\bot} }$}
-  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y}{\cake^\bot} }$}
+  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{x}{\cake^\bot} }$}
+  \AXC{$\seq[{ \boe }]{ \Delta, \tmty{y}{\cake^\bot} }$}
   \NOM{H-Mix}
-  \BIC{$\seq[{ (\piPar{\john}{\mary}) }]{
+  \BIC{$\seq[{ (\piPar{\ami}{\boe}) }]{
       \Gamma, \tmty{x}{\cake^\bot} \hsep \Delta, \tmty{x}{\cake^\bot} }$}
   \SYM{\tens}
-  \UIC{$\seq[{ \cpSend{y}{x}{\john}{\mary} }]{
+  \UIC{$\seq[{ \cpSend{y}{x}{\ami}{\boe} }]{
       \Gamma, \Delta, \tmty{y}{\cake^\bot \tens \cake^\bot} }$}
   \AXC{$\seq[{ \store }]{ \Theta, \tmty{x}{\cake}, \tmty{y}{\cake} }$}
   \SYM{\parr}
   \UIC{$\seq[{ \cpRecv{y}{x}{\store} }]{
       \Theta, \tmty{y}{\cake \parr \cake} }$}
   \NOM{H-Mix}
-  \BIC{$\seq[{ (\piPar{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}}) }]{
+  \BIC{$\seq[{ (\piPar{\cpSend{y}{x}{\ami}{\boe}}{\cpRecv{y}{x}{\store}}) }]{
       \Gamma, \Delta, \tmty{y}{\cake^\bot \tens \cake^\bot}
       \hsep
       \Theta, \tmty{y}{\cake \parr \cake} }$}
   \NOM{Cut}
-  \UIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\john}{\mary}}{\cpRecv{y}{x}{\store}} }]{
+  \UIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\ami}{\boe}}{\cpRecv{y}{x}{\store}} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
-In this interaction, Ami will get whatever the store decides to send on \tm{x}, and Val will get whatever the store decides to send on \tm{y}. This means that this interactions gives the choice of who receives what \emph{to the store}. This is not an accurate model of our original example, where the choice of who receives the cake is non-deterministic and depends on factors outside of any of the participants' control!
+In this interaction, \Ami will get whatever the store decides to send on \tm{x}, and \Boe will get whatever the store decides to send on \tm{y}. This means that this interactions gives the choice of who receives what \emph{to the store}. This is not an accurate model of our original example, where the choice of who receives the cake is non-deterministic and depends on factors outside of any of the participants' control!
 
 Modelling racy behaviour, such as that in our example, is essential to describing the interactions that take place in realistic concurrent systems. We would like to extend \hcp to allow such races in a way which mirrors the way in which the \textpi-calculus handles non-determinism. Let us return to our example:
 \begin{center}
@@ -552,11 +549,11 @@ Modelling racy behaviour, such as that in our example, is essential to describin
   \tm{(\piPar{%
       \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
     }{%
-      \piPar{\piRecv{x}{y}{\john}}{\piRecv{x}{z}{\mary}}
+      \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
     })}
   \)
 \end{center}
-In this interaction, we see that the channel \tm{x} is only used as a way to connect the various clients, Ami and Val, to the store. The \emph{real} communication, sending the slice of cake and disappointment, takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}. Inspired by this, we add two new constructs to the term language of \hcp for sending and receiving on a \emph{shared} channel. These actions are marked with a \tm{\star} to distinguish them from ordinary sending and receiving. 
+In this interaction, we see that the channel \tm{x} is only used as a way to connect the various clients, \Ami and \Boe, to the store. The \emph{real} communication, sending the slice of cake and disappointment, takes places on the channels \tm{\sliceofcake}, \tm{\nope}, \tm{y} and \tm{z}. Inspired by this, we add two new constructs to the term language of \hcp for sending and receiving on a \emph{shared} channel. These actions are marked with a \tm{\star} to distinguish them from ordinary sending and receiving. 
 \begin{definition}[Terms]\label{def:nc-terms}
   We extend \cref{def:hcp-terms} with the following constructs:
   \[\!
@@ -596,44 +593,44 @@ definition for the typing judgement.
 To determine the new typing rules, we essentially answer the question
 ``What typing constructs do we need to complete the following proof?''
 \begin{prooftree}
-  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
   \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
-  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \AXC{$\seq[{ \boe }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
   \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
   \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
   \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
   \noLine\TIC{$\seq[{
-      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}{
+      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\ami}}{\ncCnt{x}{y'}{\boe}}}{
         \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 The constructs $\tm{\ncCnt{x}{y}{P}}$ and $\tm{\ncSrv{x}{y}{P}}$ introduce a single client or server action, respectively---hence, channels of type $\ty{\take[1]{}}$ and $\ty{\give[1]{}}$. However, when we cut, we want to cut on both interactions simultaneously. We need rules for the \emph{contraction} of shared channel names.
 
 \subsection{Clients and pooling}\label{sec:clients-and-pooling}
-A client pool represents a number of independent processes, each wanting to interact with the same server. Examples of such a pool include Ami and Val from our example, customers for online stores in general, and any number of processes which interact with a single, centralised server.
+A client pool represents a number of independent processes, each wanting to interact with the same server. Examples of such a pool include \Ami and \Boe from our example, customers for online stores in general, and any number of processes which interact with a single, centralised server.
 
 We introduce two new rules: one to construct clients, and one to pool them together. The first rule, $(\take[1]{})$, interacts over a channel as a client. It does this by receiving a channel $\tm{y}$ over a \emph{shared} channel $\tm{x}$. The channel $\tm{y}$ is the channel across which the actual interaction will eventually take place. The second rule, $\textsc{Cont}_{!}$, allows us to contract shared channel names with the same type. When used together with \textsc{H-Mix}, this allows us to pool clients together.
 \begin{center}
   \ncInfTake1
   \ncInfPool
 \end{center}%
-Using these rules, we can derive the left-hand side of our proof by marking Ami and Val as clients, and pooling them together.
+Using these rules, we can derive the left-hand side of our proof by marking \Ami and \Boe as clients, and pooling them together.
 \begin{prooftree}
-  \AXC{$\seq[{ \john }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
   \SYM{(\take[1]{})}
-  \UIC{$\seq[{ \ncCnt{x}{y}{\john} }]{ \Gamma, \tmty{y}{\take[1]{\cake^\bot}} }$}
+  \UIC{$\seq[{ \ncCnt{x}{y}{\ami} }]{ \Gamma, \tmty{y}{\take[1]{\cake^\bot}} }$}
 
-  \AXC{$\seq[{ \mary }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
+  \AXC{$\seq[{ \boe }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
   \SYM{(\take[1]{})}
-  \UIC{$\seq[{ \ncCnt{x'}{y'}{\mary} }]{ \Delta, \tmty{x'}{\take[1]{\cake^\bot}} }$}
+  \UIC{$\seq[{ \ncCnt{x'}{y'}{\boe} }]{ \Delta, \tmty{x'}{\take[1]{\cake^\bot}} }$}
 
   \NOM{H-Mix}
-  \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x'}{y'}{\mary}} }]{
+  \BIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\ami}}{\ncCnt{x'}{y'}{\boe}} }]{
       \Gamma, \tmty{x}{\take[1]{\cake^\bot}} \hsep
       \Delta, \tmty{x'}{\take[1]{\cake^\bot}} }$}
 
   \SYM{\textsc{Cont}_{!}}
-  \UIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}} }]{
+  \UIC{$\seq[{ \ncPool{\ncCnt{x}{y}{\ami}}{\ncCnt{x}{y'}{\boe}} }]{
       \Gamma, \Delta, \tmty{x}{\take[2]{\cake^\bot}} }$}
 \end{prooftree}
 
@@ -742,9 +739,12 @@ If we choose to reuse the terms $\tm{\piSend{x}{y}{P}}$ and $\tm{\piRecv{x}{y}{P
   \]
   such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$ with dual actions.
 \end{definition}
-The new definition of canonical forms is slightly more precise than \cref{def:hcp-canonical-forms}: we added the phrase ``with dual actions''. With the addition of shared channels, it has become possible to have a process which cannot reduce, but in which two processes are waiting to act on the same channel, \eg in $\tm{\ncPool{\ncCnt{x}{y}{\john}}{\ncCnt{x}{y'}{\mary}}}$.
+The new definition of canonical forms is slightly more precise than \cref{def:hcp-canonical-forms}: we added the phrase ``with dual actions''. With the addition of shared channels, it has become possible to have a process which cannot reduce, but in which two processes are waiting to act on the same channel, \eg in $\tm{\ncPool{\ncCnt{x}{y}{\ami}}{\ncCnt{x}{y'}{\boe}}}$.
 \begin{lemma}
-  If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on an external communication.
+  If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on
+  an external communication, \ie
+  $\tm{P}\equiv\tm{\piNew{x_1}{\dots\piNew{x_n}{(P_1\mid\dots\mid P_{n+m+1})}}}$
+  such that at least one process $\tm{P_i}$ acts on a free name.
 \end{lemma}
 \begin{proof}
   We have
@@ -753,7 +753,7 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
   \)
   such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel with dual actions. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Each application of $\textsc{Cont}_{!}$ requires an application of mix, so there are at most $m$ clients acting on the same bound channel. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
-\begin{theorem}[Progress]\label{thm:hcp-progress}
+\begin{theorem}[Progress]\label{thm:nodcap-progress}
   If $\seq[P]{\Gamma}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
 \end{theorem} 
 \begin{proof}
@@ -763,7 +763,7 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
   \)
   and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$ with dual actions, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
 \end{proof}
-\begin{theorem}[Termination]\label{thm:hcp-termination}
+\begin{theorem}[Termination]\label{thm:nodcap-termination}
   If $\seq[P]{\mathcal{G}}$, then there are no infinite $\Longrightarrow$-reduction sequences.
 \end{theorem} 
 \begin{proof}
@@ -802,13 +802,20 @@ When these clients and the server are put together, the choices offered by the s
 While there is a certain amount of overhead involved in this encoding, it scales linearly in terms of the number of processes. The reverse---encoding the non-determinism present in \nodcap using non-deterministic local choice---scales exponentially, see, \eg the examples in \cref{sec:local-choice}.
 
 
-\section{Cuts with leftovers}
-So far, our account of a non-determinism in client/server interactions only allows for interactions between equal numbers of clients and server interactions. A natural question is whether or not we can deal with the scenario in which there are more client than server interactions or vice versa, \ie whether or not the following rule, and its dual with leftovers of type $\ty{\give[m]{A^\bot}}$, are derivable:
-\begin{prooftree}
-  \AXC{$\seq{ \Gamma, \ty{\take[n+m]{A}} }$}
-  \AXC{$\seq{ \Delta, \ty{\give[n]{A^\bot}} }$}
-  \BIC{$\seq{ \Gamma, \Delta, \ty{\take[m]{A}} }$}
-\end{prooftree}
+\section{Cuts with leftovers}\label{sec:leftovers}
+So far, our account of a non-determinism in client/server interactions only allows for interactions between equal numbers of clients and server interactions. A natural question is whether or not we can deal with the scenario in which there are more client than server interactions or vice versa, \ie whether or not the following rules are derivable:
+\begin{center}
+  \begin{prooftree*}
+    \AXC{$\seq{ \Gamma, \ty{\take[n+m]{A}} }$}
+    \AXC{$\seq{ \Delta, \ty{\give[n]{A^\bot}} }$}
+    \BIC{$\seq{ \Gamma, \Delta, \ty{\take[m]{A}} }$}
+  \end{prooftree*}
+  \begin{prooftree*}
+    \AXC{$\seq{ \Gamma, \ty{\take[n]{A}} }$}
+    \AXC{$\seq{ \Delta, \ty{\give[n+m]{A^\bot}} }$}
+    \BIC{$\seq{ \Gamma, \Delta, \ty{\give[m]{A^\bot}} }$}
+  \end{prooftree*}
+\end{center}
 These rules are derivable using a link. For instance, we can derive the rule for the case in which there are more clients than servers as follows:
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n+m]{A}} }$}
@@ -831,14 +838,33 @@ These rules are derivable using a link. For instance, we can derive the rule for
       \Gamma, \Delta, \tmty{w}{\take[m]{A}} }$}
 \end{prooftree}
 
+\section{Relation to Manifest Sharing}
+In \cref{sec:local-choice}, we mentioned related work which extends \piDILL and \cp with non-deterministic local choice~\parencite{atkey2016,caires2014,caires2017}, and contrasted these approaches with ours.
+In this section, we will contranst our work with the more recent work on manifest sharing~\parencite{balzer2017}.
 
+Manifest sharing extends the session-typed language \SILL with two connectives, $\ty{\acquire{A}}$ and $\ty{\release{A}}$, which represent the places in a protocol where a shared resource is aquired and released, respectively. In the resulting languages, \SILLS, we can define a type for, \eg shared queues (using the notation for types introduced in this paper):
+\[
+  \ty{\queue{A}} ::=
+  \ty{\acquire{
+      (\; A^\bot \parr \release{(\queue{A})} \;)
+      \with
+      (\; (A \plus \bot) \parr \release{(\queue{A})} \;)
+    }}
+\]
+The type $\ty{\queue{A}}$ types a shared channel which, after we aqcuire exclusive access, gives us the choice between enqueuing a value ($\ty{A^\bot}$) and releasing the queue, or dequeuing a value if there is any ($\ty{A \plus \bot}$) and releasing the queue.
 
-\section{Discussion and Future Work}\label{sec:discussion}
-We have presented \nodcap, an extension of \hcp which permits non-deterministic communication without losing the strong connection to logic.
-We have given proofs for preservation, progress, and termination for the term reduction system of \nodcap.
-We have shown that we can define non-deterministic local choice in \nodcap.
+The language \SILLS is much more expressive than \nodcap, as it has support for both shared channels and recursion.
+In fact, \textcite{balzer2018} show that \SILLS is expressive enough to embed the untyped asynchronous \textpi-calculus. This expressiveness comes with a cost, as \SILLS processes are not guaranteed to be deadlock free, though recent work addresses this issue~\parencite{balzer2019}.
 
-\subsection{Recursion, variable resources, and exponentials}
+Despite the difference in expressiveness, there are some similarities between \nodcap and \SILLS. In the former, shared channels represent (length-indexed) streams of interactions of the same type. In the latter, it is necessary for type preservation that shared channels are always released at the same type at which they were acquired, meaning that shared channels also represent (possibly infinite) streams of interactions of the same type. In fact, in \nodcap, the type for (finite) queues could be written as $\ty{\take[n]{(A^\bot \with (A \plus \bot))}}$.
+
+One key difference between \nodcap and \SILLS is that in the latter, a client obtains exclusive access to the shared channel, whereas in the former, the process implementing the shared channel is free to intersperse the various interactions.
+  
+\section{Discussion and Future Work}\label{sec:conclusion}
+We presented \nodcap, an extension of \hcp which permits non-deterministic communication without losing the strong connection to logic.
+We gave proofs for preservation, progress, and termination for the term reduction system of \nodcap.
+We showed that we can define non-deterministic local choice in \nodcap.
+
 Our formalism so far has only captured servers that provide for a fixed number of clients.  More realistically, we would want to define servers that provide for arbitrary numbers of clients.  This poses two problems: how would we define arbitrarily-interacting stateful processes, and how would we extend the typing discipline of \nodcap to account for them without losing its static guarantees.
 
 One approach to defining server processes would be to combine \nodcap with structural recursion and corecursion, following the $\mu\text{CP}$ extension of~\textcite{lindley2016}.  Their approach can express processes which produce streams of \ty{A} channels. Such a process would expose a channel with the co-recursive type \ty{\nu X. A \parr (1 \plus X)}.  Given such a process, it is possible to produce a channel of type \ty{A \parr A \parr \cdots \parr A} for any number of \ty{A}s, allowing us to satisfy the type \ty{\give[n]{A}} for an arbitrary $n$.
@@ -849,7 +875,6 @@ Our account of \hcp did not include the exponentials \ty{\give A} and \ty{\take 
 
 With quantification over resource variables, we can give precise accounts of both \cp's exponentials and idealised servers and clients. \cp exponentials could be embedded into this framework using the definitions $\ty{\take{A}} ::= \ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} ::= \ty{\exists{n}{\give[n]{A}}}$. We would also have types that precisely matched our intuitions for server and client behavior: an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an unbounded number of requests with the requests being interdependent, while a collection of \ty{A} clients is of type \ty{\exists{n}{\take[n] A}}, as we have a specific number of clients with each client being independent.
 
-\clearpage
 \printbibliography
 
 \end{document}
