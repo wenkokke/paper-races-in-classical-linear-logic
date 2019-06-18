@@ -1,0 +1,385 @@
+\documentclass[multi=page,crop]{standalone}
+\input{preamble}
+\begin{document}
+\begin{page}
+  \(
+  \renewcommand*{\arraystretch}{3}
+  \begin{array}{c}
+    \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
+    \NOM{Ax}
+    \UIC{$\seq[ \cpLink{x}{y} ]{ \tmty{x}{A}, \tmty{y}{A^\bot} }$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\ty{\Gamma}, \tmty{x}{A}}$}
+    \AXC{$\seq[Q]{\ty{\Delta}, \tmty{y}{A^\bot}}$}
+    \NOM{Cut}
+    \BIC{$\seq[\piNew{xy}{(\piPar{P}{Q})}]
+      {\ty{\Gamma}, \ty{\Delta}}$}
+    \DisplayProof
+    \\
+    \AXC{$\seq[P]{\ty{\Gamma}, \tmty{y}{A}}$}
+    \AXC{$\seq[Q]{\ty{\Delta}, \tmty{x}{B}}$}
+    \SYM{(\tens)}
+    \BIC{$\seq[\piSend{x}{y}{(\piPar{P}{Q})}]
+      {\ty{\Gamma}, \ty{\Delta}, \tmty{x}{A \tens B}}$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\Gamma , \tmty{y}{A} , \tmty{x}{B}}$}
+    \SYM{(\parr)}
+    \UIC{$\seq[\piRecv{x}{y}{P}]{\Gamma , \tmty{x}{A \parr B}}$}
+    \DisplayProof
+    \\
+    \AXC{$\vphantom{\seq[P]{\Gamma}}$}
+    \SYM{(\one)}
+    \UIC{$\seq[\piSend{x}{}{\piHalt}]{\tmty{x}{\one}}$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\Gamma}$}
+    \SYM{(\bot)}
+    \UIC{$\seq[\piRecv{x}{}{P}]{\Gamma , \tmty{x}{\bot}}$}
+    \DisplayProof
+    \\
+    \AXC{$\seq[P]{\Gamma , \tmty{x}{A}}$}
+    \SYM{(\plus_1)}
+    \UIC{$\seq[{\cpInl{x}{P}}]{\Gamma , \tmty{x}{A \plus B}}$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\Gamma , \tmty{x}{B}}$}
+    \SYM{(\plus_2)}
+    \UIC{$\seq[{\cpInr{x}{P}}]{\Gamma , \tmty{x}{A \plus B}}$}
+    \DisplayProof
+    \\
+    \AXC{$\seq[P]{\Gamma , \tmty{x}{A}}$}
+    \AXC{$\seq[Q]{\Gamma , \tmty{x}{B}}$}
+    \SYM{(\with)}
+    \BIC{$\seq[\cpCase{x}{P}{Q}]{\Gamma , \tmty{x}{A \with B}}$}
+    \DisplayProof
+  \end{array}
+  \)
+\end{page}
+\clearpage
+\begin{page}
+  \(
+  \begin{array}{lcl}
+    \tm{P}, \tm{Q} & ::=  & \tm{\piNew{xy}{(\piPar{P}{Q})}}    \\
+                   & \mid & \tm{\piSend{x}{y}{(\piPar{P}{Q})}} \\
+                   & \mid & \tm{\piRecv{x}{y}{P}}              \\
+                   & \mid & \dots
+  \end{array}
+  \)
+\end{page}
+\clearpage
+\begin{page}
+  \(
+  \tm{\piNew{xy}{(
+    \piPar
+    {\quad(
+      \piPar
+      {\piSend{x}{y}{\ami}}
+      {\piSend{x}{z}{\boe}}
+    )\quad}
+  {\quad
+    \piRecv{y}{\cake}{\piRecv{y}{\nope}{\store}}
+  \quad}
+  )}}
+  \)
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]{\ty{\Gamma}, \tmty{x}{A}}$}
+    \AXC{$\seq[Q]{\ty{\Delta}, \tmty{y}{A^\bot}}$}
+    \NOM{Cut}
+    \BIC{$\seq[\piNew{xy}{(\piPar{P}{Q})}]
+      {\ty{\Gamma}, \ty{\Delta}}$}
+  \end{prooftree*}%
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]{\ty{\Gamma}, \tmty{y}{A}}$}
+    \AXC{$\seq[Q]{\ty{\Delta}, \tmty{x}{B}}$}
+    \SYM{(\tens)}
+    \BIC{$\seq[\piSend{x}{y}{(\piPar{P}{Q})}]
+      {\ty{\Gamma}, \ty{\Delta}, \tmty{x}{A \tens B}}$}
+  \end{prooftree*}%
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]{\ty{\Gamma}}$}
+    \AXC{$\seq[Q]{\ty{\Delta}}$}
+    \NOM{Mix}
+    \BIC{$\seq[\piPar{P}{Q}]
+      {\ty{\Gamma}, \ty{\Delta}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\Gamma}, \tmty{x}{A}, \tmty{y}{A^\bot}}$}
+    \NOM{Cut}
+    \UIC{$\seq[\piNew{xy}{P}]
+      {\ty{\Gamma}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\Gamma}, \tmty{y}{A}, \tmty{x}{B}}$}
+    \SYM{(\tens)}
+    \UIC{$\seq[\piSend{x}{y}{P}]
+      {\ty{\Gamma}, \tmty{x}{A \tens B}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \(
+  \ty{\mathcal{G}}, \ty{\mathcal{H}}
+  \quad{::=}\quad
+  \ty{\varnothing}
+  \quad{\mid}\quad
+  \ty{\Gamma} \mid \ty{\mathcal{G}}
+  \)
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]{\ty{\mathcal{G}}}$}
+    \AXC{$\seq[Q]{\ty{\mathcal{H}}}$}
+    \NOM{H-Mix}
+    \BIC{$\seq[\piPar{P}{Q}]
+      {\ty{\mathcal{G}}\mid\ty{\mathcal{H}}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \tmty{x}{A} \mid \ty{\Delta}, \tmty{y}{A^\bot}}$}
+    \NOM{Cut}
+    \UIC{$\seq[\piNew{xy}{P}]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \ty{\Delta}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\Gamma}, \tmty{y}{A} \mid \ty{\Delta}, \tmty{x}{B}}$}
+    \SYM{(\tens)}
+    \UIC{$\seq[\piSend{x}{y}{P}]
+      {\ty{\Gamma}, \ty{\Delta}, \tmty{x}{A \tens B}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \(
+  \renewcommand*{\arraystretch}{3}
+  \begin{array}{c}
+    \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
+    \NOM{Ax}
+    \UIC{$\seq[ \cpLink{x}{y} ]{ \tmty{x}{A}, \tmty{y}{A^\bot} }$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \tmty{x}{A} \mid \ty{\Delta}, \tmty{y}{A^\bot}}$}
+    \NOM{Cut}
+    \UIC{$\seq[\piNew{xy}{P}]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \ty{\Delta}}$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\ty{\mathcal{G}}}$}
+    \AXC{$\seq[Q]{\ty{\mathcal{H}}}$}
+    \NOM{H-Mix}
+    \BIC{$\seq[\piPar{P}{Q}]
+      {\ty{\mathcal{G}}\mid\ty{\mathcal{H}}}$}
+    \DisplayProof
+    \\
+    \AXC{$\seq[P]
+      {\ty{\Gamma}, \tmty{y}{A} \mid \ty{\Delta}, \tmty{x}{B}}$}
+    \SYM{(\tens)}
+    \UIC{$\seq[\piSend{x}{y}{P}]
+      {\ty{\Gamma}, \ty{\Delta}, \tmty{x}{A \tens B}}$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\Gamma , \tmty{y}{A} , \tmty{x}{B}}$}
+    \SYM{(\parr)}
+    \UIC{$\seq[\piRecv{x}{y}{P}]{\Gamma , \tmty{x}{A \parr B}}$}
+    \DisplayProof
+    \\
+    \AXC{$\vphantom{\seq[P]{\Gamma}}$}
+    \SYM{(\one)}
+    \UIC{$\seq[\piSend{x}{}{\piHalt}]{\tmty{x}{\one}}$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\Gamma}$}
+    \SYM{(\bot)}
+    \UIC{$\seq[\piRecv{x}{}{P}]{\Gamma , \tmty{x}{\bot}}$}
+    \DisplayProof
+    \\
+    \AXC{$\seq[P]{\Gamma , \tmty{x}{A}}$}
+    \SYM{(\plus_1)}
+    \UIC{$\seq[{\cpInl{x}{P}}]{\Gamma , \tmty{x}{A \plus B}}$}
+    \DisplayProof
+    \quad
+    \AXC{$\seq[P]{\Gamma , \tmty{x}{B}}$}
+    \SYM{(\plus_2)}
+    \UIC{$\seq[{\cpInr{x}{P}}]{\Gamma , \tmty{x}{A \plus B}}$}
+    \DisplayProof
+    \\
+    \AXC{$\seq[P]{\Gamma , \tmty{x}{A}}$}
+    \AXC{$\seq[Q]{\Gamma , \tmty{x}{B}}$}
+    \SYM{(\with)}
+    \BIC{$\seq[\cpCase{x}{P}{Q}]{\Gamma , \tmty{x}{A \with B}}$}
+    \DisplayProof
+  \end{array}
+  \)
+\end{page}
+\clearpage
+\begin{page}
+  \(
+  \begin{array}{lcl}
+    \tm{P}, \tm{Q} & ::=  & \tm{\piNew{xy}{P}}    \\
+                   & \mid & \tm{\piPar{P}{Q}}     \\
+                   & \mid & \tm{\piSend{x}{y}{P}} \\
+                   & \mid & \tm{\piRecv{x}{y}{P}} \\
+                   & \mid & \dots
+  \end{array}
+  \)
+\end{page}
+\clearpage
+\begin{page}
+  \(
+  \ty{A}, \ty{B}, \ty{C}
+  \quad{::=}\quad
+  \ty{\take[n]{A}}
+  \quad{\mid}\quad
+  \ty{\give[n]{A}}
+  \quad{\mid}\quad
+  \dots
+  \)
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\Gamma}, \tmty{y}{A}}$}
+    \SYM{(\take[1]{})}
+    \UIC{$\seq[\ndCnt{x}{y}{P}]
+      {\ty{\Gamma}, \tmty{x}{\take[1]{A}}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\Gamma}, \tmty{y}{A}}$}
+    \SYM{(\give[1]{})}
+    \UIC{$\seq[\ndSrv{x}{y}{P}]
+      {\ty{\Gamma}, \tmty{x}{\give[1]{A}}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \tmty{x}{\take[n]{A}} \mid \ty{\Delta}, \tmty{x'}{\take[m]{A}}}$}
+    \NOM{Cont$_{\take{}}$}
+    \UIC{$\seq[P\{x/x'\}]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \ty{\Delta}, \tmty{x}{\take[n+m]{A}}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[P]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \tmty{x}{\give[n]{A}}, \tmty{x'}{\give[m]{A}}}$}
+    \NOM{Cont$_{\give{}}$}
+    \UIC{$\seq[P\{x/x'\}]
+      {\ty{\mathcal{G}} \mid \ty{\Gamma}, \tmty{x}{\give[n+m]{A}}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[\ami]
+      {\ty{\Gamma}, \tmty{z}{\present}}$}
+    \SYM{(\take[1]{})}
+    \UIC{$\seq[\ndCnt{x}{z}{\ami}]
+      {\ty{\Gamma}, \tmty{x}{\take[1]{\present}}}$}
+    \AXC{$\seq[\boe]
+      {\ty{\Delta}, \tmty{w}{\present}}$}
+    \SYM{(\take[1]{})}
+    \UIC{$\seq[\ndCnt{x'}{w}{\boe}]
+      {\ty{\Delta}, \tmty{x'}{\take[1]{\present}}}$}
+    \NOM{H-Mix}
+    \BIC{$\seq[\piPar{\ndCnt{x}{z}{\ami}}{\ndCnt{x'}{w}{\boe}}]
+      {\ty{\Gamma}, \tmty{x}{\take[1]{\present}}
+        \mid \ty{\Delta}, \tmty{x'}{\take[1]{\present}}}$}
+    \NOM{Cont$_{\take{}}$}
+    \UIC{$\seq[\piPar{\ndCnt{x}{z}{\ami}}{\ndCnt{x}{w}{\boe}}]
+      {\ty{\Gamma}, \ty{\Delta}, \tmty{x}{\take[2]{\present}}}$}
+
+    \AXC{$\seq[\store]
+      {\ty{\Theta}, \tmty{\cake}{\present}, \tmty{\nope}{\present}}$}
+    \SYM{(\give[1]{})}
+    \UIC{$\seq[\ndSrv{y'}{\nope}{\store}]
+      {\ty{\Theta}, \tmty{\cake}{\present}, \tmty{y'}{\give[1]{\present}}}$}
+    \SYM{(\give[1]{})} 
+    \UIC{$\seq[\ndSrv{y}{\cake}{\ndSrv{y'}{\nope}{\store}}]
+      {\ty{\Theta}, \tmty{y}{\give[1]{\present}}, \tmty{y'}{\give[1]{\present}}}$}
+    \NOM{Cont$_{\give{}}$}
+    \UIC{$\seq[\ndSrv{y}{\cake}{\ndSrv{y}{\nope}{\store}}]
+      {\ty{\Theta}, \tmty{y}{\give[2]{\present}}}$}
+
+    \NOM{H-Mix}
+    \BIC{$\seq[\piPar
+      {\piPar{\ndCnt{x}{z}{\ami}}{\ndCnt{x}{w}{\boe}}}
+      {\ndSrv{y}{\cake}{\ndSrv{y}{\nope}{\store}}}]
+      {\ty{\Gamma}, \ty{\Delta}, \tmty{x}{\take[2]{\present}}
+        \mid \ty{\Theta}, \tmty{y}{\give[2]{\present}}}$}
+    \NOM{Cut}
+    \UIC{$\seq[\piNew{xy}{(\piPar
+      {\piPar{\ndCnt{x}{z}{\ami}}{\ndCnt{x}{w}{\boe}}}
+      {\ndSrv{y}{\cake}{\ndSrv{y}{\nope}{\store}}})}]
+      {\ty{\Gamma}, \ty{\Delta}, \ty{\Theta}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[\ami]
+      {\ty{\Gamma}, \tmty{y}{\present}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[\boe]
+      {\ty{\Delta}, \tmty{z}{\present}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \begin{prooftree*}
+    \AXC{$\seq[\store]
+      {\ty{\Theta}, \tmty{\cake}{\present}, \tmty{\nope}{\present}}$}
+  \end{prooftree*}
+\end{page}
+\clearpage
+\begin{page}
+  \(
+  \begin{array}{l}
+    \tm{P + Q}\longrightarrow\tm{P} \\
+    \tm{P + Q}\longrightarrow\tm{Q}
+  \end{array}
+  \)
+\end{page}
+\end{document}
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% fill-column: 80
+%%% End:

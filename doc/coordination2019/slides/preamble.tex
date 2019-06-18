@@ -1,0 +1,69 @@
+\usepackage{xcolor}
+\usepackage{alphabeta}
+\usepackage[greek,english]{babel}
+\usepackage{bussproofs}
+\usepackage{textgreek}
+\usepackage{authblk}
+\usepackage{hyperref}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+
+% bussproofs
+\EnableBpAbbreviations
+\newenvironment{prooftree*}{\leavevmode\hbox\bgroup}{\DisplayProof\egroup}
+\newcommand{\NOM}[1]{\RightLabel{\textsc{#1}}}
+\newcommand{\SYM}[1]{\RightLabel{\ensuremath{#1}}}
+\newcommand{\tm}[1]{\textcolor{red}{#1}}
+\newcommand{\ty}[1]{\textcolor{blue}{#1}}
+%\let\tm\relax%
+%\let\ty\relax%
+\newcommand{\tmty}[2]{\ensuremath{\tm{#1}:\ty{#2}}}
+\newcommand{\seq}[2][]{\ensuremath{\tm{#1}\vdash#2}}
+
+% pi calculus syntax
+\newcommand*{\piSend}[3]{#1[#2].#3}
+\newcommand*{\piRecv}[3]{#1(#2).#3}
+\newcommand*{\piPar}[2]{#1 \mid #2}
+\newcommand*{\piNew}[2]{(\nu #1)#2}
+\newcommand*{\piRepl}[1]{!#1}
+\newcommand*{\piHalt}[0]{0}
+\newcommand*{\piSub}[3]{#3\{#1/#2\}}
+\newcommand*{\cpLink}[2]{#1{\leftrightarrow}#2}
+\newcommand*{\cpInl}[2]{\ensuremath{#1\triangleleft\texttt{inl}.#2}}
+\newcommand*{\cpInr}[2]{\ensuremath{#1\triangleleft\texttt{inr}.#2}}
+\newcommand*{\cpCase}[3]{\ensuremath{#1\triangleright\{\texttt{inl}:#2;\texttt{inr}:#3\}}}
+\newcommand*{\ndCnt}[3]{{\star}\piSend{#1}{#2}{#3}}
+\newcommand*{\ndSrv}[3]{{\star}\piRecv{#1}{#2}{#3}}
+
+
+% linear logic syntax
+\newcommand*{\parr}{\ensuremath{\mathbin{\rotatebox[origin=c]{180}{\&}}}}
+\newcommand*{\with}{\ensuremath{\mathbin{\text{\&}}}}
+\newcommand*{\plus}{\ensuremath{\oplus}}
+\newcommand*{\tens}{\ensuremath{\otimes}}
+\newcommand*{\one}{\ensuremath{\mathbf{1}}}
+\newcommand*{\nil}{\ensuremath{\mathbf{0}}}
+\newcommand*{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\newcommand*{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+
+% system names
+\newcommand*{\cpnd}[0]{\ensuremath{\text{CP}_{\text{ND}}}}
+\newcommand*{\pidill}[0]{\ensuremath{\pi\text{DILL}}}
+
+% emoji
+\newcommand{\emoji}[2][1em]{%
+\ensuremath{\vcenter{\hbox{%
+\includegraphics[width=#1]{#2.pdf}}}}}
+\newcommand{\ami}[1][1em]{\emoji[#1]{ami}}
+\newcommand{\boe}[1][1em]{\emoji[#1]{boe}}
+\newcommand{\cake}[1][1em]{\emoji[#1]{cake}}
+\newcommand{\nope}[1][1em]{\emoji[#1]{nope}}
+\newcommand{\store}[1][1em]{\emoji[#1]{store}}
+\newcommand{\present}[1][1em]{\emoji[#1]{present}}
+
+%%% Local Variables:
+%%% TeX-master: "main"
+%%% fill-column: 80
+%%% End:
+
+
