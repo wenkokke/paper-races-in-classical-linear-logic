@@ -417,14 +417,14 @@ Reductions relate processes with their reduced forms.
 However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none. Furthermore, the two occurrences of $\tm{x}$ appearing in the same environment make it ill-formed.
 \begin{prooftree}
   \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
-  \SYM{\tens}
+  \SYM{(\tens)}
   \UIC{$\seq[{ \piSend{y}{\sliceofcake}{\ami} }]{ \Gamma, \tmty{z}{\money^\bot}, \tmty{y}{\cake}}$}
-  \SYM{\parr}
+  \SYM{(\parr)}
   \UIC{$\seq[{ \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\ami}} }]{ \Gamma, \tmty{x}{\money^\bot}, \tmty{y}{\cake}}$}
   \AXC{$\seq[{ \boe }]{ \Delta, \tmty{\bill}{\money}, \tmty{w}{\cake^\bot} }$}
-  \SYM{\tens}
+  \SYM{(\tens)}
   \UIC{$\seq[{ \piSend{x}{\bill}{\boe} }]{ \Delta, \tmty{x}{\money}, \tmty{w}{\cake^\bot} }$}
-  \SYM{\parr}
+  \SYM{(\parr)}
   \UIC{$\seq[{ \piRecv{y}{w}{\piSend{x}{\bill}{\boe}} }]{ \Delta, \tmty{x}{\money}, \tmty{y}{\cake^\bot} }$}
   \NOM{H-Mix}
   \BIC{$\seq[{
@@ -534,11 +534,11 @@ However, this \emph{only} models interactions such as the following:
   \NOM{H-Mix}
   \BIC{$\seq[{ (\piPar{\ami}{\boe}) }]{
       \Gamma, \tmty{x}{\cake^\bot} \hsep \Delta, \tmty{x}{\cake^\bot} }$}
-  \SYM{\tens}
+  \SYM{(\tens)}
   \UIC{$\seq[{ \cpSend{y}{x}{\ami}{\boe} }]{
       \Gamma, \Delta, \tmty{y}{\cake^\bot \tens \cake^\bot} }$}
   \AXC{$\seq[{ \store }]{ \Theta, \tmty{x}{\cake}, \tmty{y}{\cake} }$}
-  \SYM{\parr}
+  \SYM{(\parr)}
   \UIC{$\seq[{ \cpRecv{y}{x}{\store} }]{
       \Theta, \tmty{y}{\cake \parr \cake} }$}
   \NOM{H-Mix}
