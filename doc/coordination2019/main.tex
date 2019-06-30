@@ -359,29 +359,29 @@ Reductions relate processes with their reduced forms.
   \begin{gather*}
     \begin{array}{llcll}
       \hcpRedAxCut1
-      & \tm{\cpCut{x}{\cpLink{w}{x}}{P}}
+      & \tm{\piNew{x}{(\piPar{\cpLink{w}{x}}{P})}}
       & \Longrightarrow
       & \tm{\cpSub{w}{x}{P}}
       \\
       \hcpRedBetaTensParr
-      & \tm{\cpCut{x}{\piSend{x}{y}{P}}{\piRecv{x}{y}{R}}}
+      & \tm{\piNew{x}{(\piPar{\piSend{x}{y}{P}}{\piRecv{x}{y}{R}})}}
       & \Longrightarrow
       & \tm{\piNew{x}{\piNew{y}{(\piPar{P}{R})}}}
       \\
       \hcpRedBetaOneBot
-      & \tm{\cpCut{x}{\piSend{x}{}{P}}{\piRecv{x}{}{Q}}}
+      & \tm{\piNew{x}{(\piPar{\piSend{x}{}{P}}{\piRecv{x}{}{Q}})}}
       & \Longrightarrow
       & \tm{\piPar{P}{Q}}
       \\
       \hcpRedBetaPlusWith1
-      & \tm{\cpCut{x}{\cpInl{x}{P}}{\cpCase{x}{Q}{R}}}
+      & \tm{\piNew{x}{(\piPar{\cpInl{x}{P}}{\cpCase{x}{Q}{R}})}}
       & \Longrightarrow
-      & \tm{\cpCut{x}{P}{Q}}
+      & \tm{\piNew{x}{(\piPar{P}{Q})}}
       \\
       \hcpRedBetaPlusWith2
-      & \tm{\cpCut{x}{\cpInr{x}{P}}{\cpCase{x}{Q}{R}}}
+      & \tm{\piNew{x}{(\piPar{\cpInr{x}{P}}{\cpCase{x}{Q}{R}})}}
       & \Longrightarrow
-      & \tm{\cpCut{x}{P}{R}}
+      & \tm{\piNew{x}{(\piPar{P}{R})}}
     \end{array}
   \end{gather*}
   \begin{center}
@@ -547,7 +547,7 @@ However, this \emph{only} models interactions such as the following:
       \hsep
       \Theta, \tmty{y}{\cake \parr \cake} }$}
   \NOM{Cut}
-  \UIC{$\seq[{ \cpCut{y}{\cpSend{y}{x}{\ami}{\boe}}{\cpRecv{y}{x}{\store}} }]{
+  \UIC{$\seq[{ \piNew{y}{(\piPar{\cpSend{y}{x}{\ami}{\boe}}{\cpRecv{y}{x}{\store}})} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 In this interaction, \Ami will get whatever the store decides to send on \tm{x}, and \Boe will get whatever the store decides to send on \tm{y}. This means that this interactions gives the choice of who receives what \emph{to the store}. This is not an accurate model of our original example, where the choice of who receives the cake is non-deterministic and depends on factors outside of any of the participants' control!
@@ -609,8 +609,8 @@ To determine the new typing rules, we essentially answer the question
   \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
   \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
   \noLine\TIC{$\seq[{
-      \cpCut{x}{\ncPool{\ncCnt{x}{y}{\ami}}{\ncCnt{x}{y'}{\boe}}}{
-        \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}} }]{
+      \piNew{x}{(\piPar{\ncPool{\ncCnt{x}{y}{\ami}}{\ncCnt{x}{y'}{\boe}}}{
+        \ncSrv{x}{z}{\ncSrv{x}{z'}{\store}}})} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 The constructs $\tm{\ncCnt{x}{y}{P}}$ and $\tm{\ncSrv{x}{y}{P}}$ introduce a single client or server action, respectively---hence, channels of type $\ty{\take[1]{}}$ and $\ty{\give[1]{}}$. However, when we cut, we want to cut on both interactions simultaneously. We need rules for the \emph{contraction} of shared channel names.
@@ -692,14 +692,14 @@ The difference between $\ncRedBetaStar{}$ and $\cpRedBetaTensParr$ is that the f
 So where does the non-determinism in \nodcap come from? Let us say we have a term of the following form:
 \[
   \tm{
-    \cpCut{x}
+    \piNew{x}{(
     {\ncPool{\ncCnt{x}{y_1}{P_1}}{\dots \mid \ncCnt{x}{y_n}{P_n}}}
-    {\ncSrv{x}{y_1}{\dots\ncSrv{x}{y_n}{Q}}}
+    {\ncSrv{x}{y_1}{\dots\ncSrv{x}{y_n}{Q}}})}
   }
 \]
 As parallel composition is commutative and associative, we can rewrite this term to pair any client in the pool with the server before applying $\ncRedBetaStar{}$. Thus, like in the \textpi-calculus, the non-determinism is introduced by the structural congruence.
 
-Does this mean that, for an arbitrary client pool $\tm{P}$ in $\tm{\cpCut{x}{P}{\ncSrv{x}{z}{Q}}}$, every client in that pool is competing for the server interaction on $\tm{x}$? Not necessarily, as some portion of the clients can be blocked on an external communication. For instance, in the term below, clients $\tm{\ncCnt{x}{y_{n+1}}{P_{n+1}}} \dots \tm{\ncCnt{x}{y_m}{P_m}}$ are blocked on a communication on the external channel $\tm{a}$:
+Does this mean that, for an arbitrary client pool $\tm{P}$ in $\tm{\piNew{x}{(\piPar{P}{\ncSrv{x}{z}{Q}})}}$, every client in that pool is competing for the server interaction on $\tm{x}$? Not necessarily, as some portion of the clients can be blocked on an external communication. For instance, in the term below, clients $\tm{\ncCnt{x}{y_{n+1}}{P_{n+1}}} \dots \tm{\ncCnt{x}{y_m}{P_m}}$ are blocked on a communication on the external channel $\tm{a}$:
 \[
   \arraycolsep=0pt
   \tm{
@@ -790,11 +790,11 @@ In \cref{sec:local-choice}, we discussed the non-deterministic local choice oper
           &\mid& \; \ncSrv{x}{y}{\ncSrv{x}{z}{y\:{\triangleright}}}\\
           &    & \quad
                  \begin{array}{rl}
-                   \{ & \texttt{inl}: \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
-                           \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{P}}
+                   \{ & \texttt{inl}: \; \piNew{w}{(\piPar{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
+                           \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{P}})}
                    \\
-                    ; & \texttt{inr}: \; \cpCut{w}{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
-                           \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{Q}} \; \})
+                    ; & \texttt{inr}: \; \piNew{w}{(\piPar{\cpCase{z}{\cpWait{z}{\cpHalt{w}}}{
+                           \cpWait{z}{\cpHalt{w}}}}{\cpWait{w}{Q}})} \; \})
                  \end{array}
   \end{array}
   }
