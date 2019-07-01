@@ -74,7 +74,7 @@
 \providecommand{\piSend}[3]{\ensuremath{#1[ #2 ].#3}}
 \providecommand{\piRecv}[3]{\ensuremath{#1( #2 ).#3}}
 \providecommand{\piPar}[2]{\ensuremath{#1 \ppar #2}}
-\providecommand{\piNew}[2]{\ensuremath{(\nu #1)#2}}
+\providecommand{\piNew}[3]{\ensuremath{(\nu #1#2)#3}}
 \providecommand{\piRepl}[1]{\ensuremath{!#1}}
 \providecommand{\piHalt}[0]{\ensuremath{0}}
 \providecommand{\piSub}[3]{\ensuremath{#3\{#1/#2\}}}
@@ -267,9 +267,9 @@
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{
         \mathcal{G} \hsep
-        \Gamma, \tmty{x}{\give[m]{A}} , \tmty{y}{\give[n]{A}} }$}
+        \Gamma, \tmty{x}{\give[m]{A}} , \tmty{x'}{\give[n]{A}} }$}
     \SYM{\textsc{Cont}_{?}}
-    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{
+    \UIC{$\seq[{ \cpSub{x}{x'}{P} }]{
         \mathcal{G} \hsep
         \Gamma, \tmty{x}{\give[m+n]{A}} }$}
   \end{prooftree*}}
@@ -278,9 +278,9 @@
     \AXC{$\seq[{ P }]{
         \mathcal{G} \hsep
         \Gamma, \tmty{x}{\take[m]{A}} \hsep
-        \Delta, \tmty{y}{\take[n]{A}} }$}
+        \Delta, \tmty{x'}{\take[n]{A}} }$}
     \SYM{\textsc{Cont}_{!}}
-    \UIC{$\seq[{ \cpSub{x}{y}{P} }]{
+    \UIC{$\seq[{ \cpSub{x}{x'}{P} }]{
         \mathcal{G} \hsep
         \Gamma, \Delta, \tmty{x}{\take[m+n]{A}} }$}
   \end{prooftree*}}
@@ -327,10 +327,10 @@
     \AXC{$\seq[{ P }]{
         \mathcal{G}\hsep
         \Gamma, \tmty{x}{A} \hsep
-        \Delta, \tmty{x}{A^\bot}
+        \Delta, \tmty{y}{A^\bot}
       }$}
     \NOM{Cut}
-    \UIC{$\seq[{ \piNew{x}{P} }]{
+    \UIC{$\seq[{ \piNew{x}{y}{P} }]{
         \mathcal{G}\hsep
         \ty{\Gamma}, \ty{\Delta}
       }$}
