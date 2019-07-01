@@ -37,16 +37,20 @@ This is an example of a \emph{race condition}. We can model this scenario in the
 \begin{center}
   \(
   \begin{array}{c}
-    \tm{(\piPar{%
-    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
-    }{%
-    \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
-    })}
+    \tm{(\piPar%
+    {\piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}}
+    {\piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}}
+    )}
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
     \\[1ex]
-    \tm{(\piPar{\store}{\piPar{\piSub{\sliceofcake}{y}{\ami}}{%
-    \piSub{\nope}{z}{\boe}}})}
+    \tm{(\piPar%
+    {\piPar
+    {\piSub{\sliceofcake}{y}{\ami}}
+    {\piSub{\nope}{z}{\boe}}
+    }
+    {\store}
+    )}
     \quad
     \text{or}
     \quad
@@ -215,7 +219,7 @@ With the addition of one process, modelling \Cat, we have increased the number o
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
 In this section, we introduce \dhcp~\cite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
 %
-The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992b}.
+The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992b}. In HCP, processes ($\tm{P}$, $\tm{Q}$, $\tm{R}$) communicate using names ($\tm{x}$, $\tm{y}$, $\tm{z}$, \dots). Each name is one of the two endpoints of a bidirectional communication channel~\cite{vasconcelos2012}. A channel is formed by connecting two endpoints using name restriction. This is in contrast to~\cref{sec:introduction,sec:local-choice}, where we used names to represent channels.
 \begin{definition}[Terms]\label{def:hcp-terms}
   \[
     \begin{array}{lrll}
@@ -235,7 +239,7 @@ The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992
     \end{array}
   \]
 \end{definition}\noindent
-The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel names. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} channel names. The construct $\tm{\cpLink{x}{y}}$ links two channels~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{y}{P}}$ creates a new channel with endpoints $\tm{x}$ and $\tm{y}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name. 
+The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel endpoints. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} endpoints, \ie those which are not connected to another endpoint. The construct $\tm{\cpLink{x}{y}}$ links two endpoints~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{y}{P}}$ creates a new channel by connecting endpoints $\tm{x}$ and $\tm{y}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name. 
 
 Terms in \hcp are identified up to structural congruence.
 \begin{definition}[Structural congruence]\label{def:hcp-equiv}
