@@ -407,7 +407,7 @@ Reductions relate processes with their reduced forms.
 
 \subsection{Example}
 \label{sec:hcp-example}
-\hcp uses hyper-sequents to structure communication, and it is this structure which rules out deadlocked interactions. Let us go back to our example of a deadlocked interaction from \cref{sec:introduction}. If we want to type this interaction in \hcp, we run into a problem: to communicate on $\tm{x}$, we need to add name restrictions on $\tm{x}$ and $\tm{y}$, \eg,
+\hcp uses hyper-sequents to structure communication, and it is this structure which rules out deadlocked interactions. Let us go back to our example of a deadlocked interaction from \cref{sec:introduction}. If we want to type this interaction in \hcp, we run into a problem: to connect $\tm{x}$ and $\tm{y}$, and $\tm{z}$ and $\tm{w}$, such that we get a deadlock, we need to construct the following term:
 \begin{center}
   \(
   \tm{\piNew{x}{y}{\piNew{z}{w}{(\piPar
@@ -415,7 +415,7 @@ Reductions relate processes with their reduced forms.
         {\piRecv{w}{v}{\piSend{y}{\bill}{\boe}}})}}}.
   \)
 \end{center}
-However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none. Furthermore, the two occurrences of $\tm{x}$ appearing in the same environment make it ill-formed.
+However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none:
 \begin{prooftree}
   \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{u}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
   \SYM{(\tens)}
