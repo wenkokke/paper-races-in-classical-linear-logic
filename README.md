@@ -7,3 +7,5 @@ will be free of races and deadlocks. What sets Nodcap apart from CP is that it
 allows non-determinism, and as such permits programs with races, but it does
 this without losing its strong ties to classical linear logic or the guarantee
 not to deadlock. 
+
+The directory src/cpnd1 contains a formalisation of Non-deterministic CP in Agda, implementing a cut-elimination proof, showing preservation, progress, and termination.
