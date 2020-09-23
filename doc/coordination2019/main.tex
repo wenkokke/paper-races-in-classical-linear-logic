@@ -1,4 +1,5 @@
 \documentclass{lmcs}
+\pdfoutput=1
 
 \keywords{\textpi-calculus, linear logic, session types, non-determinism, deadlock freedom}
 
@@ -62,8 +63,8 @@
 \providecommand{\reducesto}[3][]{\ensuremath{\tm{#2}\overset{#1}{\Longrightarrow}\tm{#3}}}
 
 %% System names
-\providecommand{\dhcp}{\ensuremath{\text{HCP}}\xspace}
-\providecommand{\hcp}{\ensuremath{\text{HCP}^{-}}\xspace}
+\providecommand{\dhcp}{\ensuremath{\text{DHCP}}\xspace}
+\providecommand{\hcp}{\ensuremath{\text{HCP}}\xspace}
 \providecommand{\nodcap}{\ensuremath{\hcp_{\text{ND}}}\xspace}
 \providecommand{\piDILL}{\textpi DILL\xspace}
 \providecommand{\SILL}{$\text{SILL}$\xspace}
@@ -74,6 +75,7 @@
 \providecommand{\ppar}{\ensuremath{\mid}}
 \providecommand{\piCalc}[0]{\textpi-calculus\xspace}
 \providecommand{\piSend}[3]{\ensuremath{#1[ #2 ].#3}}
+\providecommand{\piUSend}[3]{\ensuremath{#1\langle #2 \rangle.#3}}
 \providecommand{\piRecv}[3]{\ensuremath{#1( #2 ).#3}}
 \providecommand{\piPar}[2]{\ensuremath{#1 \ppar #2}}
 \providecommand{\piNew}[3]{\ensuremath{(\nu #1#2)#3}}
@@ -436,6 +438,7 @@
 \Crefname{lem}{Lemma}{Lemmas}
 \crefname{defi}{definition}{definitions}
 \Crefname{defi}{Definition}{Definitions}
+\newtheorem*{remark}{Remark}
 \usepackage{doi}
 \usepackage[strings]{underscore}
 \usepackage{upgreek}
@@ -457,9 +460,9 @@
 \email{wadler@inf.ed.ac.uk}
 
 \begin{abstract}
-  \noindent Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races. \dhcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
+  \noindent Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races. \hcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
 
-  We introduce \nodcap, which extends \dhcp with a novel account of non-determinism. Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \dhcp's meta-theoretic properties, including deadlock freedom.  
+  We introduce \nodcap, which extends \hcp with a novel account of non-determinism. Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \hcp's meta-theoretic properties, including deadlock freedom.  
 \end{abstract}
 
 \maketitle
@@ -476,7 +479,7 @@ This is an example of a \emph{race condition}. We can model this scenario in the
   \begin{array}{c}
     \tm{(\piPar%
     {\piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}}
-    {\piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}}
+    {\piUSend{x}{\sliceofcake}{\piUSend{x}{\nope}{\store}}}
     )}
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
@@ -507,9 +510,9 @@ This is an example of a \emph{deadlock}. We can also model this scenario in the 
   \(
   \begin{array}{c}
     \tm{(\piPar{%
-    \piRecv{x}{z}{\piSend{y}{\sliceofcake}{\ami}}
+    \piRecv{x}{z}{\piUSend{y}{\sliceofcake}{\ami}}
     }{%
-    \piRecv{y}{w}{\piSend{x}{\bill}{\boe}}
+    \piRecv{y}{w}{\piUSend{x}{\bill}{\boe}}
     })}
     \quad
     \centernot\Longrightarrow^{\star}
@@ -520,15 +523,18 @@ The above process does not reduce. As both \Ami and \Boe would prefer the exchan
 
 Session types~\cite{honda1993} statically guarantee that concurrent programs, such as those above, respect communication protocols. Session-typed calculi with logical foundations, such as \piDILL~\cite{caires2010} and CP~\cite{wadler2012}, obtain deadlock freedom as a result of a close correspondence with logic. These systems, however, also rule out non-determinism and race conditions. In this paper, we demonstrate that logic-inspired type systems need not rule out races.
 
-We present \nodcap, an extension of CP with a novel account of non-determinism and races. Inspired by bounded linear logic~\cite{girard1992}, we introduce a form of shared channels in which the type of a shared channel tracks how many times it is reused. As in the untyped \textpi-calculus, sharing introduces the potential for non-determinism. We show that our approach is sufficient to capture practical examples of races, such as an online store, as well as other formal characterizations of non-determinism, such as non-deterministic choice.  However, \nodcap does not lose the meta-theoretical benefits of CP: we show that it enjoys termination and deadlock-freedom.
+We present \nodcap, an extension of \hcp with a novel account of non-determinism and races. Inspired by bounded linear logic~\cite{girard1992}, we introduce a form of shared channels in which the type of a shared channel tracks how many times it is reused. As in the untyped \textpi-calculus, sharing introduces the potential for non-determinism. We show that our approach is sufficient to capture practical examples of races, such as an online store, as well as other formal characterizations of non-determinism, such as non-deterministic choice.  However, \nodcap does not lose the meta-theoretical benefits of \hcp: we show that it enjoys termination and deadlock-freedom.
 
 An important limitation of our work is that types in \nodcap explicitly count the potential races on a channel.  It works fine when there are two or three races, but not $n$ for an arbitary $n$.  The latter case is obviously important, and we see the main value of our work as a stepping stone to this more general case.
 
-\nodcap is based on \dhcp~\cite{kokke2018tlla,kokke2019pacmpl}. \dhcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
-
-There are two versions of \dhcp: a version with delayed actions, introduced by Kokke, Montesi, and Peressotti~\cite{kokke2019pacmpl}; and a version without delayed actions, introduced by Kokke, Montesi, and Peressotti~\cite{kokke2018tlla}, referred to as \hcp. In this work, we will base ourselves on the latter, as the former does not yet have reduction semantics.
+\nodcap is based on \hcp~\cite{kokke2018tlla,kokke2019pacmpl}. \hcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
 
 This paper proceeds as follows. In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in logic-inspired session-typed process calculi. In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and preservation. In \cref{sec:cpnd}, we introduce \nodcap. In \cref{sec:leftovers}, we discuss cuts with leftovers. Finally, in \cref{sec:conclusion}, we conclude with a discussion of the work done in this paper and potential avenues for future work.
+
+\begin{remark}[Variants of \hcp]
+  There are two variants of \hcp: a~version with delayed actions, introduced by Kokke, Montesi, and Peressotti~\cite{kokke2019pacmpl}, and a version without delayed actions, introduced by Kokke, Montesi, and Peressotti~\cite{kokke2018tlla}.
+  Delayed actions are not an essential part of HCP, but significantly complicate the theory. Therefore, we base our work on the variant without delayed actions. For typographical simplicity, we will refer to the system without delayed actions as \hcp, instead of $\hcp^{-}$. Should we need to refer to the system with delayed actions, we will use \dhcp.
+\end{remark}
 
 \section{Non-determinism, Logic, and Session Types}\label{sec:local-choice}
 Recent work extended \piDILL and \cp with operators for non-deterministic behaviour~\cite{atkey2016,caires2014,caires2017}. These extensions all implement an operator known as non-deterministic local choice. (This operator is written as \tm{P+Q}, but should not be confused with input-guarded choice from the \textpi-calculus~\cite{milner1992b}.) Non-deterministic local choice can be summarised by the following typing and reduction rules:
@@ -550,7 +556,7 @@ Local choice introduces non-determinism explicitly, by listing all possible choi
 \begin{center}
   \(
   \begin{array}{c}
-    \tm{( \piPar{\piPar{\piSend{x}{}{\piHalt}}{\piRecv{x}{}{P}}}{\piRecv{x}{}{Q}} )}
+    \tm{( \piPar{\piPar{\piUSend{x}{}{\piHalt}}{\piRecv{x}{}{P}}}{\piRecv{x}{}{Q}} )}
     \\[1ex]
     \rotatebox[origin=c]{270}{$\Longrightarrow^{\star}$}
     \\[1ex]
@@ -562,10 +568,10 @@ Local choice introduces non-determinism explicitly, by listing all possible choi
   \end{array}
   \)
 \end{center}
-In this implementation, the process \tm{\piSend{x}{}{0}} will ``unlock'' either \tm{P} or \tm{Q}, leaving the other process deadlocked. Or we could use input-guarded choice:
+In this implementation, the process \tm{\piUSend{x}{}{0}} will ``unlock'' either \tm{P} or \tm{Q}, leaving the other process deadlocked. Or we could use input-guarded choice:
 \begin{center}
   \(
-  \tm{( \piPar{\piSend{x}{}{\piHalt}}{( \piRecv{x}{}{P} + \piRecv{x}{}{Q} )} )}
+  \tm{( \piPar{\piUSend{x}{}{\piHalt}}{( \piRecv{x}{}{P} + \piRecv{x}{}{Q} )} )}
   \)
 \end{center}
 However, there are many non-deterministic processes in the \textpi-calculus that are awkward to encode using non-deterministic local choice. Let us recall our example:
@@ -573,7 +579,7 @@ However, there are many non-deterministic processes in the \textpi-calculus that
   \(
   \begin{array}{c}
     \tm{(\piPar{%
-    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    \piUSend{x}{\sliceofcake}{\piUSend{x}{\nope}{\store}}
     }{%
     \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
     })}
@@ -596,13 +602,13 @@ This non-deterministic interaction involves communication. If we wanted to write
   \begin{array}{c}
     \tm{
     (\piPar{%
-    \piSend{x}{\sliceofcake}{\piSend{y}{\nope}{\store}}
+    \piUSend{x}{\sliceofcake}{\piUSend{y}{\nope}{\store}}
     }{%
     \piPar{\piRecv{x}{z}{\ami}}{\piRecv{y}{w}{\boe}}
     })
     +
     (\piPar{%
-    \piSend{y}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    \piUSend{y}{\sliceofcake}{\piUSend{x}{\nope}{\store}}
     }{%
     \piPar{\piRecv{x}{z}{\ami}}{\piRecv{y}{w}{\boe}}
     })
@@ -629,7 +635,7 @@ We can model this scenario in the \textpi-calculus, where \ami, \boe, \cat, and 
   \makebox[\textwidth][c]{\ensuremath{
     \begin{array}{c}
       \tm{(\piPar{%
-      \piSend{x}{\sliceofcake}{\piSend{x}{\doughnut}{\piSend{x}{\nope}{\store}}}
+      \piUSend{x}{\sliceofcake}{\piUSend{x}{\doughnut}{\piUSend{x}{\nope}{\store}}}
       }{%
       \piPar{\piRecv{x}{y}{\ami}}{\piPar{\piRecv{x}{z}{\boe}}{\piRecv{x}{w}{\cat}}
       })}}
@@ -654,7 +660,7 @@ We can model this scenario in the \textpi-calculus, where \ami, \boe, \cat, and 
 With the addition of one process, modelling \Cat, we have increased the number of possible outcomes enormously! In general, the number of outcomes for these types of scenarios is $n!$, where $n$ is the number of processes. This means that if we wish to translate any non-deterministic process to one using non-deterministic local choice, we can expect a factorial growth in the size of the term.
 
 \section{Hypersequent Classical Processes}\label{sec:cp-revisited}
-In this section, we introduce \dhcp~\cite{kokke2018tlla,kokke2019pacmpl}, the basis for our calculus \nodcap. 
+In this section, we introduce \hcp~\cite{kokke2018tlla}, the basis for our calculus \nodcap. 
 %
 The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992b}. In HCP, processes ($\tm{P}$, $\tm{Q}$, $\tm{R}$) communicate using names ($\tm{x}$, $\tm{y}$, $\tm{z}$, \dots). Each name is one of the two endpoints of a bidirectional communication channel~\cite{vasconcelos2012}. A channel is formed by connecting two endpoints using name restriction. This is in contrast to~\cref{sec:introduction,sec:local-choice}, where we used names to represent channels.
 \begin{defi}[Terms]\label{def:hcp-terms}
@@ -676,7 +682,10 @@ The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992
     \end{array}
   \]
 \end{defi}\noindent
-The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel endpoints. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} endpoints, \ie those which are not connected to another endpoint. The construct $\tm{\cpLink{x}{y}}$ links two endpoints~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{y}{P}}$ creates a new channel by connecting endpoints $\tm{x}$ and $\tm{y}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name. 
+The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel endpoints. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} endpoints, \ie those which are not connected to another endpoint. The construct $\tm{\cpLink{x}{y}}$ links two endpoints~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{y}{P}}$ creates a new channel by connecting endpoints $\tm{x}$ and $\tm{y}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name. We define unbound output in terms of bound output and link~\cite{lindley2015semantics}:
+\[
+  \tm{\piUSend{x}{y}{P}} ::= \tm{\cpSend{x}{z}{\cpLink{y}{z}}{P}}
+\]
 
 Terms in \hcp are identified up to structural congruence.
 \begin{defi}[Structural congruence]\label{def:hcp-equiv}
@@ -1332,7 +1341,6 @@ Our account of \hcp did not include the exponentials \ty{\give A} and \ty{\take 
 
 With quantification over resource variables, we can give precise accounts of both \cp's exponentials and idealised servers and clients. \cp exponentials could be embedded into this framework using the definitions $\ty{\take{A}} ::= \ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} ::= \ty{\exists{n}{\give[n]{A}}}$. We would also have types that precisely matched our intuitions for server and client behavior: an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an unbounded number of requests with the requests being interdependent, while a collection of \ty{A} clients is of type \ty{\exists{n}{\take[n] A}}, as we have a specific number of clients with each client being independent.
 
-\bibliographystyle{splncs04}
 \bibliography{main}
 
 \end{document}
