@@ -108,221 +108,13 @@
 \providecommand{\hsep}{\ensuremath{\parallel}}
 \providecommand{\emptyhypercontext}{\varnothing}
 
-%% CP - Reduction rule names
-\newcommand{\cpEquivLinkComm}{\ensuremath{(\cpLink{}{}\text{-comm})}\xspace}
-\newcommand{\cpEquivCutComm}{\ensuremath{(\nu\text{-comm})}\xspace}
-\newcommand{\cpEquivCutAssNoParen}[1]{\ensuremath{\nu\text{-assoc}\xspace}}
-\newcommand{\cpEquivCutAss}[1]{\ensuremath{(\cpEquivCutAssNoParen{#1})}\xspace}
-\newcommand{\cpRedAxCut}[1]{\ensuremath{(\cpLink{}{})}\xspace}
-\newcommand{\cpRedBetaTensParr}{\ensuremath{(\beta{\tens}{\parr})}\xspace}
-\newcommand{\cpRedBetaOneBot}{\ensuremath{(\beta{\one}{\bot})}\xspace}
-\newcommand{\cpRedBetaPlusWith}[1]{\ensuremath{(\beta{\plus}{\with}_{#1})}\xspace}
-\newcommand{\cpRedKappaTens}[1]{\ensuremath{(\kappa{\tens}_{#1})}\xspace}
-\newcommand{\cpRedKappaParr}{\ensuremath{(\kappa{\parr})}\xspace}
-\newcommand{\cpRedKappaBot}{\ensuremath{(\kappa{\bot})}\xspace}
-\newcommand{\cpRedKappaPlus}[1]{\ensuremath{(\kappa{\plus}_{#1})}\xspace}
-\newcommand{\cpRedKappaWith}{\ensuremath{(\kappa{\with})}\xspace}
-\newcommand{\cpRedKappaTop}{\ensuremath{(\kappa{\top})}\xspace}
-\newcommand{\cpRedGammaCut}{\ensuremath{(\gamma\nu)}\xspace}
-\newcommand{\cpRedGammaEquiv}{\ensuremath{(\gamma{\equiv})}\xspace}
-
-%% CP - Structural rules
-\providecommand{\cpInfAx}{%
+%% HCP - Structural rules
+\providecommand{\hcpInfAx}{%
   \begin{prooftree*}
     \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
     \NOM{Ax}
     \UIC{$\seq[ \cpLink{x}{y} ]{ \tmty{x}{A}, \tmty{y}{A^\bot} }$}
   \end{prooftree*}}
-\providecommand{\cpInfCut}{%
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma, \tmty{x}{A} }$}
-    \AXC{$\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }$}
-    \NOM{Cut}
-    \BIC{$\seq[ \cpCut{xy}{P}{Q} ]{ \Gamma, \Delta }$}
-  \end{prooftree*}}
-\providecommand{\cpInfMix}{%
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma }$}
-    \AXC{$\seq[ Q ]{ \Delta }$}
-    \NOM{Mix}
-    \BIC{$\seq[ \piPar{P}{Q} ]{ \Gamma , \Delta }$}
-  \end{prooftree*}}
-\providecommand{\cpInfHalt}{%
-  \begin{prooftree*}
-    \AXC{$\vphantom{\seq[ Q ]{ \Delta, \tmty{y}{A^\bot} }}$}
-    \NOM{Halt}
-    \UIC{$\seq[{ \piHalt }]{}$}
-  \end{prooftree*}}
-
-%% CP - Logical rules
-\providecommand{\cpInfTens}{%
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} }$}
-    \AXC{$\seq[ Q ]{ \Delta , \tmty{x}{B} }$}
-    \SYM{(\tens)}
-    \BIC{$\seq[ \cpSend{x}{y}{P}{Q} ]{ \Gamma , \Delta , \tmty{x}{A \tens B} }$}
-  \end{prooftree*}}
-\providecommand{\cpInfParr}{%
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma , \tmty{y}{A} , \tmty{x}{B} }$}
-    \SYM{(\parr)}
-    \UIC{$\seq[ \cpRecv{x}{y}{P} ]{ \Gamma , \tmty{x}{A \parr B} }$}
-  \end{prooftree*}}
-\providecommand{\cpInfOne}{%
-  \begin{prooftree*}
-    \AXC{$\vphantom{\seq[ P ]{ \Gamma }}$}
-    \SYM{(\one)}
-    \UIC{$\seq[ \cpHalt{x} ]{ \tmty{x}{\one} }$}
-  \end{prooftree*}}
-\providecommand{\cpInfBot}{%
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma }$}
-    \SYM{(\bot)}
-    \UIC{$\seq[ \cpWait{x}{P} ]{ \Gamma , \tmty{x}{\bot} }$}
-  \end{prooftree*}}
-\providecommand{\cpInfPlus}[1]{%
-  \ifdim#1pt=1pt
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
-    \SYM{(\plus_1)}
-    \UIC{$\seq[{ \cpInl{x}{P} }]{ \Gamma , \tmty{x}{A \plus B} }$}
-  \end{prooftree*}
-  \else%
-  \ifdim#1pt=2pt
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{B} }$}
-    \SYM{(\plus_2)}
-    \UIC{$\seq[ \cpInr{x}{P} ]{ \Gamma , \tmty{x}{A \plus B} }$}
-  \end{prooftree*}
-  \else%
-  \fi%
-  \fi}
-\providecommand{\cpInfWith}{%
-  \begin{prooftree*}
-    \AXC{$\seq[ P ]{ \Gamma , \tmty{x}{A} }$}
-    \AXC{$\seq[ Q ]{ \Gamma , \tmty{x}{B} }$}
-    \SYM{(\with)}
-    \BIC{$\seq[ \cpCase{x}{P}{Q} ]{ \Gamma , \tmty{x}{A \with B} }$}
-  \end{prooftree*}}
-\providecommand{\cpInfNil}{%
-  (no rule for \ty{\nil})}
-\providecommand{\cpInfTop}{%
-  \begin{prooftree*}
-    \AXC{}
-    \SYM{(\top)}
-    \UIC{$\seq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top} }$}
-  \end{prooftree*}}
-
-%% CPND - Terms
-\providecommand{\ncHalt}{\ensuremath{0}}
-\providecommand{\ncExpn}[3]{\ensuremath{#1\uparrow #2.#3}}
-\providecommand{\ncIntl}[3]{\ensuremath{#1\downarrow #2.#3}}
-\providecommand{\ncSrv}[3]{\ensuremath{{\star}{#1}(#2).#3}}
-\providecommand{\ncCnt}[3]{\ensuremath{{\star}{#1}[#2].#3}}
-\providecommand{\ncPool}[2]{\ensuremath{(\piPar{#1}{#2})}}
-\providecommand{\ncCont}[3]{\ensuremath{\cpSub{#1}{#2}{#3}}}
-
-%% CPND - Types
-\providecommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
-\providecommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
-
-%% CPND - Reduction rule names
-\providecommand{\ncEquivPoolId}{\ensuremath{(|\text{-ident})}\xspace}
-\providecommand{\ncEquivPoolComm}{\ensuremath{(|\text{-comm})}\xspace}
-\providecommand{\ncEquivPoolAssNoParen}[1]{\ensuremath{|\text{-assoc}_#1}\xspace}
-\providecommand{\ncEquivPoolAss}[1]{\ensuremath{(\ncEquivPoolAssNoParen{#1})}\xspace}
-\providecommand{\ncEquivCutCong}{\ensuremath{(\nu\text{-cong})}\xspace}
-\providecommand{\ncRedBetaStar}[1]{\ensuremath{(\beta{\star}_{#1})}\xspace}
-\providecommand{\ncRedBetaTakeGive}[1]{\ensuremath{(\beta\take{}\give{})}\xspace}
-\providecommand{\ncRedKappaTake}{\ensuremath{(\kappa{\take[1]{}})}\xspace}
-\providecommand{\ncRedKappaGive}{\ensuremath{(\kappa{\give[1]{}})}\xspace}
-\providecommand{\ncRedKappaPool}[1]{\ensuremath{({|}\text{-extrusion}_{#1})}\xspace}
-\providecommand{\ncRedKappaPoolTens}[1]{\ensuremath{(\kappa{|}{\tens}_{#1})}\xspace}
-\providecommand{\ncRedKappaPoolParr}{\ensuremath{(\kappa{|}{\parr})}\xspace}
-\providecommand{\ncRedKappaPoolBot}{\ensuremath{(\kappa{|}{\bot})}\xspace}
-\providecommand{\ncRedKappaPoolPlus}[1]{\ensuremath{(\kappa{|}{\plus}_{#1})}\xspace}
-\providecommand{\ncRedKappaPoolWith}{\ensuremath{(\kappa{|}{\with})}\xspace}
-\providecommand{\ncRedKappaPoolTop}{\ensuremath{(\kappa{|}{\top})}\xspace}
-\providecommand{\ncRedKappaPoolTake}{\ensuremath{(\kappa{|}{\take[1]{}})}\xspace}
-\providecommand{\ncRedKappaPoolGive}{\ensuremath{(\kappa{|}{\give[1]{}})}\xspace}
-\providecommand{\ncRedGammaPool}{\ensuremath{(\gamma{|})}\xspace}
-
-%% CPND - Typing judgement
-\providecommand{\ncInfTake}[1]{%
-  \begin{prooftree*}
-    \AXC{$\seq[{ P }]{
-        \Gamma, \tmty{y}{A} }$}
-    \SYM{(\take[1]{})}
-    \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{
-        \Gamma, \tmty{x}{\take[1]{A}} }$}
-  \end{prooftree*}}
-\providecommand{\ncInfGive}[1]{%
-  \begin{prooftree*}
-    \AXC{$\seq[{ P }]{
-        \Gamma, \tmty{y}{A} }$}
-    \SYM{(\give[1]{})}
-    \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{
-        \Gamma, \tmty{x}{\give[1]{A}} }$}
-  \end{prooftree*}}
-\providecommand{\ncInfCont}{%
-  \begin{prooftree*}
-    \AXC{$\seq[{ P }]{
-        \mathcal{G} \hsep
-        \Gamma, \tmty{x}{\give[m]{A}} , \tmty{x'}{\give[n]{A}} }$}
-    \SYM{\textsc{Cont}_{?}}
-    \UIC{$\seq[{ \cpSub{x}{x'}{P} }]{
-        \mathcal{G} \hsep
-        \Gamma, \tmty{x}{\give[m+n]{A}} }$}
-  \end{prooftree*}}
-\providecommand{\ncInfPool}{%
-  \begin{prooftree*}
-    \AXC{$\seq[{ P }]{
-        \mathcal{G} \hsep
-        \Gamma, \tmty{x}{\take[m]{A}} \hsep
-        \Delta, \tmty{x'}{\take[n]{A}} }$}
-    \SYM{\textsc{Cont}_{!}}
-    \UIC{$\seq[{ \cpSub{x}{x'}{P} }]{
-        \mathcal{G} \hsep
-        \Gamma, \Delta, \tmty{x}{\take[m+n]{A}} }$}
-  \end{prooftree*}}
-
-%% HCP - Names of rules
-\providecommand{\hcpEquivLinkComm}{\cpEquivLinkComm}
-\providecommand{\hcpEquivCutComm}{\cpEquivCutComm}
-\providecommand{\hcpEquivCutAss}[1]{\cpEquivCutAss{#1}}
-\providecommand{\hcpEquivMixComm}{\ensuremath{({\ppar}\text{-comm})}\xspace}
-\providecommand{\hcpEquivMixAssNoParen}[1]{\ensuremath{{\ppar}\text{-assoc}}\xspace}
-\providecommand{\hcpEquivMixAss}[1]{\ensuremath{(\hcpEquivMixAssNoParen{#1})}\xspace}
-\providecommand{\hcpEquivMixHaltNoParen}[1]{\ensuremath{\text{halt}\xspace}}
-\providecommand{\hcpEquivMixHalt}[1]{\ensuremath{(\hcpEquivMixHaltNoParen{#1})}\xspace}
-\providecommand{\hcpEquivMixCut}[1]{\ensuremath{(\text{scope-ext})}\xspace}
-\providecommand{\hcpEquivMixComm}{\ensuremath{({\ppar}\text{-comm})}\xspace}
-\providecommand{\hcpEquivMixAssNoParen}[1]{\ensuremath{{\ppar}\text{-assoc}}\xspace}
-\providecommand{\hcpEquivMixAss}[1]{\ensuremath{(\hcpEquivMixAssNoParen{#1})}\xspace}
-\providecommand{\hcpEquivScopeExtNoParen}[1]{\ensuremath{\text{scope-ext}\xspace}}
-\providecommand{\hcpEquivScopeExt}[1]{\ensuremath{(\hcpEquivScopeExtNoParen{#1})}\xspace}
-\providecommand{\hcpEquivMixHaltNoParen}[1]{\hcpEquivMixHaltNoParen{#1}}
-\providecommand{\hcpEquivMixHalt}[1]{\hcpEquivMixHalt{#1}}
-\providecommand{\hcpEquivNewComm}{\ensuremath{(\nu\text{-comm})}\xspace}
-\providecommand{\hcpEquivDelay}{\ensuremath{(\text{delay})}}
-
-\providecommand{\hcpRedAxCut}[1]{%
-  \ensuremath{(\cpLink{}{})}\xspace}
-\providecommand{\hcpRedBetaTensParr}{%
-  \ensuremath{(\beta{\tens}{\parr})}\xspace}
-\providecommand{\hcpRedBetaOneBot}{%
-  \ensuremath{(\beta{\one}{\bot})}\xspace}
-\providecommand{\hcpRedBetaPlusWith}[1]{%
-  \ensuremath{(\beta{\plus}{\with}_{#1})}\xspace}
-\providecommand{\hcpRedGammaNew}{%
-  \ensuremath{(\gamma{\nu})}\xspace}
-\providecommand{\hcpRedGammaMix}{%
-  \ensuremath{(\gamma{\ppar})}\xspace}
-\providecommand{\hcpRedGammaEquiv}{%
-  \ensuremath{(\gamma{\equiv})}\xspace}
-
-%% HCP - Structural rules
-\providecommand{\hcpInfAx}{\cpInfAx}
 \providecommand{\hcpInfCut}{%
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{
@@ -365,10 +157,10 @@
 \providecommand{\hcpInfUnboundTens}{%
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{
-        \ty{\Gamma}, , \tmty{x}{B}
+        \ty{\Gamma}, \tmty{x}{B}
       }$}
-    \UIC{$\seq[{ \piUSend{x}{w}{P} }]{
-        \ty{\Gamma}, \tmty{x}{A \tens B}, \tmty{w}{A^\bot}
+    \UIC{$\seq[{ \piUSend{x}{y}{P} }]{
+        \ty{\Gamma}, \tmty{x}{A \tens B}, \tmty{y}{A^\bot}
       }$}
   \end{prooftree*}}
 \providecommand{\hcpInfParr}{%
@@ -427,13 +219,87 @@
     \BIC{$\seq[ \cpCase{x}{P}{Q} ]{
         \Gamma , \tmty{x}{A \with B} }$}
   \end{prooftree*}}
-\providecommand{\hcpInfNil}{\cpInfNil}
 \providecommand{\hcpInfTop}{%
   \begin{prooftree*}
     \AXC{}
     \SYM{(\top)}
     \UIC{$\seq[ \cpAbsurd{x} ]{ \Gamma, \tmty{x}{\top} }$}
   \end{prooftree*}}
+\providecommand{\hcpInfNil}{%
+  (no rule for \ty{\nil})}
+
+%% CPND - Terms
+\providecommand{\ncHalt}{\ensuremath{0}}
+\providecommand{\ncExpn}[3]{\ensuremath{#1\uparrow #2.#3}}
+\providecommand{\ncIntl}[3]{\ensuremath{#1\downarrow #2.#3}}
+\providecommand{\ncSrv}[3]{\ensuremath{{\star}{#1}(#2).#3}}
+\providecommand{\ncCnt}[3]{\ensuremath{{\star}{#1}[#2].#3}}
+\providecommand{\ncPool}[2]{\ensuremath{(\piPar{#1}{#2})}}
+\providecommand{\ncCont}[3]{\ensuremath{\cpSub{#1}{#2}{#3}}}
+
+%% CPND - Types
+\providecommand{\give}[2][]{\ensuremath{{ ? }_{#1}{#2}}}
+\providecommand{\take}[2][]{\ensuremath{{ ! }_{#1}{#2}}}
+
+%% CPND - Reduction rule names
+\providecommand{\ncRedBetaStar}[1]{\textsc{E-Request}\xspace}
+
+%% CPND - Typing judgement
+\providecommand{\ncInfTake}[1]{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \Gamma, \tmty{y}{A} }$}
+    \SYM{(\take[1]{})}
+    \UIC{$\seq[{ \ncCnt{x}{y}{P} }]{
+        \Gamma, \tmty{x}{\take[1]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfGive}[1]{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \Gamma, \tmty{y}{A} }$}
+    \SYM{(\give[1]{})}
+    \UIC{$\seq[{ \ncSrv{x}{y}{P} }]{
+        \Gamma, \tmty{x}{\give[1]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfCont}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\give[m]{A}} , \tmty{x'}{\give[n]{A}} }$}
+    \SYM{\textsc{Cont}_{?}}
+    \UIC{$\seq[{ \cpSub{x}{x'}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\give[m+n]{A}} }$}
+  \end{prooftree*}}
+\providecommand{\ncInfPool}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \mathcal{G} \hsep
+        \Gamma, \tmty{x}{\take[m]{A}} \hsep
+        \Delta, \tmty{x'}{\take[n]{A}} }$}
+    \SYM{\textsc{Cont}_{!}}
+    \UIC{$\seq[{ \cpSub{x}{x'}{P} }]{
+        \mathcal{G} \hsep
+        \Gamma, \Delta, \tmty{x}{\take[m+n]{A}} }$}
+  \end{prooftree*}}
+
+%% HCP - Names of rules
+\providecommand{\hcpEquivLinkComm}{\textsc{SC-LinkSwap}\xspace}
+\providecommand{\hcpEquivMixAss}{\textsc{SC-ParAssoc}\xspace}
+\providecommand{\hcpEquivMixComm}{\textsc{SC-ParComm}\xspace}
+\providecommand{\hcpEquivMixHalt}{\textsc{SC-ParNil}\xspace}
+\providecommand{\hcpEquivScopeExt}{\textsc{SC-ResExt}\xspace}
+\providecommand{\hcpEquivNewHalt}{\textsc{SC-ResNil}\xspace}
+\providecommand{\hcpEquivNewComm}{\textsc{SC-ResComm}\xspace}
+
+\providecommand{\hcpRedAxCut}[1]{\textsc{E-Link}\xspace}%
+\providecommand{\hcpRedBetaTensParr}{\textsc{E-Send}\xspace}%
+\providecommand{\hcpRedBetaOneBot}{\textsc{E-Close}\xspace}%
+\providecommand{\hcpRedBetaPlusWith}[1]{\textsc{E-Sel}\textsubscript{#1}\xspace}%
+\providecommand{\hcpRedGammaNew}{\textsc{E-LiftRes}\xspace}%
+\providecommand{\hcpRedGammaMix}{\textsc{E-LiftPar}\xspace}%
+\providecommand{\hcpRedGammaEquiv}{\textsc{E-LiftSC}\xspace}%
+
 
 \usepackage{hyperref}
 \usepackage{cleveref}
@@ -687,7 +553,7 @@ The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992
     \end{array}
   \]
 \end{defi}\noindent
-The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel endpoints. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} endpoints, \ie those which are not connected to another endpoint. The construct $\tm{\cpLink{x}{y}}$ links two endpoints~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{x'}{P}}$ creates a new channel by connecting endpoints $\tm{x}$ and $\tm{x'}$. By convention, we name dual endpoints using primes, \eg $\tm{x}$ and $\tm{x'}$. However, nothing \emph{inherently} links these names. The construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name.
+The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel endpoints. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} endpoints, \ie those which are not connected to another endpoint. The construct $\tm{\cpLink{x}{y}}$ links two endpoints~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{x'}{P}}$ creates a new channel by connecting endpoints $\tm{x}$ and $\tm{x'}$. By convention, we name dual endpoints using primes, \eg $\tm{x}$ and $\tm{x'}$. However, the primes are merely a naming convention, and do not denote co-names, \eg $\tm{x}$ and $\tm{x'}$ are not inherently dual, only under a $\nu$-binder $\tm{\piNew{x}{x'}{}}$. The construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name.
 
 Terms in \hcp are identified up to structural congruence.
 \begin{defi}[Structural congruence]\label{def:hcp-equiv}
@@ -695,34 +561,31 @@ Terms in \hcp are identified up to structural congruence.
   \[
     \setlength{\arraycolsep}{3pt}
     \begin{array}{llcllllcll}
-        \cpEquivLinkComm
+        \hcpEquivLinkComm
       & \tm{\cpLink{x}{y}}
       & \equiv
       & \tm{\cpLink{y}{x}}
-      \\
-        \hcpEquivNewComm
-      & \tm{\piNew{x}{x'}{\piNew{y}{y'}{P}}}
-      & \equiv
-      & \tm{\piNew{y}{y'}{\piNew{x}{x'}{P}}}
-      &
-      \\
-        \hcpEquivMixComm
+      \\ \hcpEquivMixComm
       & \tm{\piPar{P}{Q}}
       & \equiv
       & \tm{\piPar{Q}{P}}
-      \\
-        \hcpEquivMixAss1
+      \\ \hcpEquivMixAss
       & \tm{\piPar{P}{( \piPar{Q}{R} )}}
       & \equiv
       & \tm{\piPar{( \piPar{P}{Q} )}{R}}
-      &
-      \\
-        \hcpEquivMixHalt1
+      \\ \hcpEquivMixHalt
       & \tm{\piPar{P}{\piHalt}}
       & \equiv
       & \tm{P}
-      \\
-        \hcpEquivScopeExt1
+      \\ \hcpEquivNewHalt
+      & \tm{\piNew{x}{x'}{\piHalt}}
+      & \equiv
+      & \tm{\piHalt}
+      \\ \hcpEquivNewComm
+      & \tm{\piNew{x}{x'}{\piNew{y}{y'}{P}}}
+      & \equiv
+      & \tm{\piNew{y}{y'}{\piNew{x}{x'}{P}}}
+      \\ \hcpEquivScopeExt
       & \tm{\piNew{x}{x'}{( \piPar{P}{Q} )}}
       & \equiv
       & \tm{\piPar{P}{\piNew{x}{x'}{Q}}}
@@ -730,6 +593,7 @@ Terms in \hcp are identified up to structural congruence.
     \end{array}
   \]
 \end{defi}
+
 Channels in \hcp are typed using a session type system which is a conservative extension of linear logic.
 \begin{defi}[Types]\label{def:cp-types}
   \[
@@ -746,6 +610,7 @@ Channels in \hcp are typed using a session type system which is a conservative e
     \end{array}
   \]  
 \end{defi}
+
 Duality plays a crucial role in both linear logic and session types. In \hcp, the two endpoints of a channel are assigned dual types. This ensures that, for instance, whenever a process \emph{sends} across a channel, the process on the other end of that channel is waiting to \emph{receive}. Each type \ty{A} has a dual, written \ty{A^\bot}. Duality (\ty{\cdot^\bot}) is an involutive function on types.
 \begin{defi}[Duality]\label{def:cp-negation}
   \[
@@ -762,14 +627,17 @@ Duality plays a crucial role in both linear logic and session types. In \hcp, th
     \end{array}
   \]
 \end{defi}
+
 Environments associate channels with types. Names in environments must be unique, and environments \ty{\Gamma} and \ty{\Delta} can only be combined ($\ty{\Gamma}, \ty{\Delta}$) if $\text{cn}(\ty{\Gamma}) \cap \text{cn}(\ty{\Delta}) = \varnothing$, where $\text{cn}{(\ty{\Gamma})}$ denotes the set of channel names in $\ty{\Gamma}$. 
 \begin{defi}[Environments]\label{def:cp-environments}
   $\ty{\Gamma}, \ty{\Delta}, \ty{\Theta} ::= \tmty{x_1}{A_1}\dots\tmty{x_n}{A_n}$
 \end{defi}
+
 \hcp registers parallelism using hyper-environments. A hyper-environment is a multiset of environments. While names within environments must be unique, names may be shared between multiple environments in a hyper-environment. We write $\ty{\mathcal{G} \hsep \mathcal{H}}$ to combine two hyper-environments.
 \begin{defi}[Hyper-environments]\label{def:hcp-hyper-environment}
   $\ty{\mathcal{G}}, \ty{\mathcal{H}} ::= \; \ty{\emptyhypercontext} \; \mid \; \ty{\mathcal{G} \hsep \Gamma}$
 \end{defi}
+
 Typing judgements associate processes with collections of typed channels.
 \begin{defi}[Typing judgements]\label{def:cp-typing-judgement}
   A typing judgement $\seq[P]{\Gamma_1 \hsep \dots \hsep \Gamma_n}$ denotes that the process $\tm{P}$ consists of $n$ independent, but potentially entangled processes, each of which communicates according to its own protocol $\Gamma_i$. Typing judgements can be constructed using the inference rules below. 
@@ -804,6 +672,7 @@ Typing judgements associate processes with collections of typed channels.
     \hcpInfTop
   \end{center}
 \end{defi}
+
 Reductions relate processes with their reduced forms.
 \begin{defi}[Reduction]\label{def:hcp-reduction}
   Reductions are described by the smallest relation $\Longrightarrow$ on process
@@ -857,25 +726,23 @@ Reductions relate processes with their reduced forms.
     \TIC{$\reducesto{P}{P^\prime}$}
   \end{prooftree}
 \end{defi}
-\begin{defi}[Unbound output]
+
 We define unbound output in terms of bound output and link~\cite{lindley2015semantics}:
 \[
   \begin{array}{c}
-    \tm{\piUSend{x}{w}{P}} \triangleq \tm{\cpSend{x}{z}{\cpLink{w}{z}}{P}}
+    \tm{\piUSend{x}{y}{P}} \triangleq \tm{\cpSend{x}{z}{\cpLink{y}{z}}{P}}
     \\
     \\
     \hcpInfUnboundTens
     \qquad
     \begin{array}{l}
-      \tm{\piNew{x}{x'}{(\piPar{\piUSend{x}{w}{P}}{\piRecv{x'}{y}{Q}})}}
+      \tm{\piNew{x}{x'}{(\piPar{\piUSend{x}{y}{P}}{\piRecv{x'}{y'}{Q}})}}
       \\
-      \qquad\Longrightarrow
-      \tm{\piNew{x}{x'}{(\piPar{P}{\cpSub{w}{y}{Q}})}}
+      \qquad\qquad\Longrightarrow
+      \tm{\piNew{x}{x'}{(\piPar{P}{\cpSub{y}{y'}{Q}})}}
     \end{array}
   \end{array}
 \]
-\end{defi}
-
 
 \subsection{Example}
 \label{sec:hcp-example}
@@ -897,11 +764,11 @@ However, there is no typing derivation for this term. We can construct a typing 
   \vdash
   \setlength{\arraycolsep}{0pt}
   \begin{array}{lclcllclcllcl}
-       \tm{x}            &\; : &\; \ty{\money^\bot} & \ty{\parr} & \ty{A},
-    &\;\tm{y}            &\; : &\; \ty{\cake} & \ty{\tens} & \ty{B},
+       \tm{x}            &\; : &\; \ty{\money^\bot} & \ty{\parr} & \ty{\bot},
+    &\;\tm{y}            &\; : &\; \ty{\cake} & \ty{\tens} & \ty{\one},
     &\;\tm{\sliceofcake} &\; : &\; \ty{\cake^\bot} \hsep
-    \\ \tm{x'}           &\; : &\; \ty{\money} & \ty{\tens} & \ty{A^\bot},
-    &\;\tm{y'}           &\; : &\; \ty{\cake^\bot} & \ty{\parr} & \ty{B},
+    \\ \tm{x'}           &\; : &\; \ty{\money} & \ty{\tens} & \ty{\one},
+    &\;\tm{y'}           &\; : &\; \ty{\cake^\bot} & \ty{\parr} & \ty{\bot},
     &\;\tm{\bill}        &\; : &\; \ty{\money^\bot}
   \end{array}
 \]
@@ -948,7 +815,7 @@ However, there is no typing derivation for this term. We can construct a typing 
   such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the endpoints of the same channel. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Therefore, at least $m+1$ of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
 \begin{thm}[Progress]\label{thm:hcp-progress}
-  If $\seq[P]{\Gamma}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
+  If $\seq[P]{\mathcal{G}}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
 \end{thm} 
 \begin{proof}
   We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
@@ -963,6 +830,34 @@ However, there is no typing derivation for this term. We can construct a typing 
 \begin{proof}
   Every reduction reduces a single cut to zero, one or two cuts. However, each of these cuts is smaller, measured in the size of the cut formula. Furthermore, each instance of the structural congruence preserves the size of the cut. Therefore, there cannot be an infinite $\Longrightarrow$-reduction sequence.
 \end{proof}
+
+\subsection{Erratum for HCP}\label{sec:erratum}
+ The typing rules for HCP presented here are more restrictive than those in earlier publications~\cite{kokke2018tlla}. Progress does not hold for the earlier version. For instance, the following process is stuck, yet typeable:
+ \begin{prooftree}
+   \AXC{}
+   \UIC{$\seq[\piHalt]{\emptyhypercontext}$}
+   \UIC{$\seq[\piSend{y}{}{\piHalt}]{\tmty{y}{\one}}$}
+   \UIC{$\seq[\piSend{x}{}{\piSend{y}{}{\piHalt}}]{\tmty{x}{\one}\hsep\tmty{y}{\one}}$}
+
+   \AXC{}
+   \UIC{$\seq[\cpLink{x}{z}]{\tmty{x}{\bot},\tmty{z}{\one}}$}
+   \UIC{$\seq[\piRecv{y}{}{\cpLink{x}{z}}]{\tmty{x}{\bot},\tmty{y}{\bot},\tmty{z}{\one}}$}
+
+   \BIC{$\seq%
+     [\piSend{x}{}{\piSend{y}{}{\piHalt}}\ppar\piRecv{y}{}{\cpLink{x}{z}}]
+     {\tmty{x}{\one}\hsep\tmty{y}{\one}\hsep\tmty{x}{\bot},\tmty{y}{\bot},\tmty{z}{\one}}$}
+
+   \UIC{$\seq%
+     [(\nu{y})({\piSend{x}{}{\piSend{y}{}{\piHalt}}\ppar\piRecv{y}{}{\cpLink{x}{z}}})]
+     {\tmty{x}{\one}\hsep\tmty{x}{\bot},\tmty{z}{\one}}$}
+
+   \UIC{$\seq%
+     [(\nu{x})(\nu{y})({\piSend{x}{}{\piSend{y}{}{\piHalt}}\ppar\piRecv{y}{}{\cpLink{x}{z}}})]
+     {\tmty{z}{\one}}$}
+ \end{prooftree}
+ The earlier typing rules failed to guarantee a crucial property: each typing environment should correspond to one top-level action. The rules presented in this paper fixes the problem by disallowing hyper-environments in logical rules.
+
+ The move from channel names to endpoint names is not essential to the fix, but significantly streamlines the presentation. Otherwise, the type system must guarantee that each channel name occurs at most twice in the hypersequent, and if twice, then with dual types. Using endpoint names, it is sufficient to require that all names be distinct.
 
 \section{Shared Channels and Non-determinism}\label{sec:cpnd}
 In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example from \cref{sec:introduction}, to the interaction between \Ami, \Boe and the store. 
@@ -1143,7 +1038,7 @@ Thus, we complete the typing derivation of our example.
 \end{defi}
 
 \subsection{Running Clients and Servers}\label{sec:nc-running-clients-and-servers}
-Finally, we need to extend the reduction rules to allow for the reduction of client and server processes. The reduction rule we add is a variant of the reduction rule for $\tens$ and $\parr$, $\cpRedBetaTensParr$.
+Finally, we need to extend the reduction rules to allow for the reduction of client and server processes. The reduction rule we add is a variant of $\hcpRedBetaTensParr$.
 \begin{defi}[Reduction]\label{def:nc-reduction}
   We extend \cref{def:hcp-reduction} as follows:
   \[
@@ -1155,7 +1050,7 @@ Finally, we need to extend the reduction rules to allow for the reduction of cli
     \end{array}
   \]
 \end{defi}
-The difference between $\ncRedBetaStar{}$ and $\cpRedBetaTensParr$ is that the former allows reduction to happen in the presence of an unrelated process $\tm{R}$, which is passed along unchanged. This is necessary, as there may be other clients waiting to interact with the server on the shared channel $\tm{x}$, which cannot be moved out of scope of the name restriction $\piNew{x}{}$. When there is no unrelated process $\tm{R}$, \ie, when there is only a single client, we can rewrite by $\hcpEquivMixHalt1$ before and after applying $\ncRedBetaStar{}$.
+The difference between $\ncRedBetaStar{}$ and $\hcpRedBetaTensParr$ is that the former allows reduction to happen in the presence of an unrelated process $\tm{R}$, which is passed along unchanged. This is necessary, as there may be other clients waiting to interact with the server on the shared channel $\tm{x}$, which cannot be moved out of scope of the name restriction $\piNew{x}{}$. When there is no unrelated process $\tm{R}$, \ie, when there is only a single client, we can rewrite by $\hcpEquivMixHalt$ before and after applying $\ncRedBetaStar{}$.
 
 So where does the non-determinism in \nodcap come from? Let us say we have a term of the following form:
 \[
@@ -1188,10 +1083,32 @@ If we reduce this term, then only the clients $\tm{\ncCnt{x}{z_1}{P_1}} \dots \t
     &\mid&\; \ncSrv{x'}{y'_{n+1}}{\dots\ncSrv{x'}{y'_m}{Q}}\;)
   \end{array}}
 \]
-This matches our intuition and the behaviour of the \textpi-calculus.
+This matches our intuition and the behaviour of the \textpi-calculus. For instance, we can now encode our example, where \Ami and \Boe both send a request for cake to the store, and the store sends back either a cake or nothing:
+\[
+  \tm{\piNew{x}{x'}{}
+    \left(
+      \begin{array}{l}
+        \ncCnt{x}{x}{\piRecv{x}{y}{\ami}}\ppar
+        \\
+        \ncCnt{x}{x}{\piRecv{x}{z}{\boe}}\ppar
+        \\
+        \ncSrv{x'}{x'_1}{\piUSend{x'_1}{\sliceofcake}{\ncSrv{x'}{x'_2}{\piUSend{x'_2}{\nope}{\store}}}}
+      \end{array}
+    \right)
+  }
+  \Longrightarrow^\star
+  \begin{array}{c}
+    \tm{(\cpSub{\sliceofcake}{y}{\ami}\ppar\cpSub{\nope}{z}{\boe}\ppar\store)}
+    \\
+    \text{or}
+    \\
+    \tm{(\cpSub{\nope}{y}{\ami}\ppar\cpSub{\sliceofcake}{z}{\boe}\ppar\store)}
+  \end{array}
+\]
+The encoding presented above is slightly more complex than necessary: after the store receives a request as $\tm{x'_1}$, it could simply perform the cake interaction over that channel, and similarly for $\tm{x'_2}$. However, we include these actions for clarity.
 
 \paragraph{Alternative syntax.}
-If we choose to reuse the terms $\tm{\piSend{x}{y}{P}}$ and $\tm{\piRecv{x}{y}{P}}$ for shared channels, we could replace $\cpRedBetaTensParr$ with $\ncRedBetaStar{}$, using the latter rule for both cases.
+If we choose to reuse the terms $\tm{\piSend{x}{y}{P}}$ and $\tm{\piRecv{x}{y}{P}}$ for shared channels, we could replace $\hcpRedBetaTensParr$ with $\ncRedBetaStar{}$, using the latter rule for both cases.
 
 \subsection{Metatheory}
 \label{sec:nc-metatheory}
@@ -1209,16 +1126,15 @@ If we choose to reuse the terms $\tm{\piSend{x}{y}{P}}$ and $\tm{\piRecv{x}{y}{P
   By induction on the derivation of $\reducesto{P}{Q}$.
 \end{proof}
 \begin{defi}[Actions]
-  A process $\tm{P}$ acts on $\tm{x}$ whenever $\tm{x}$ is free in the outermost term constructor of $\tm{P}$, \eg, $\tm{\ncSrv{x}{y}{P}}$ acts on $\tm{x}$ but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$. A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$. Two actions are dual when they introduce dual type constructors, \eg, $\tm{\piSend{x}{y}{P}}$ is dual to $\tm{\piRecv{x}{z}{Q}}$, but $\tm{\cpLink{x}{y}}$ is not dual to any action.
+  A process $\tm{P}$ acts on $\tm{x}$ whenever $\tm{x}$ is free in the outermost term constructor of $\tm{P}$, \eg, $\tm{\ncSrv{x}{y}{P}}$ acts on $\tm{x}$ but not on $\tm{y}$, and $\tm{\cpLink{x}{y}}$ acts on both $\tm{x}$ and $\tm{y}$. A process $\tm{P}$ is an action if it acts on some channel $\tm{x}$.% Two actions are dual when they introduce dual type constructors, \eg, $\tm{\piSend{x}{y}{P}}$ is dual to $\tm{\piRecv{x'}{y'}{Q}}$, but $\tm{\cpLink{x}{y}}$ is not dual to any action.
 \end{defi}
 \begin{defi}[Canonical forms]\label{def:nc-canonical-forms}
   A process $\tm{P}$ is in canonical form if
   \[
-  \tm{P} \equiv \tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
+  \tm{P} \equiv \tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
   \]
-  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel $\tm{x_i}$ with dual actions.
+  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$ or $\tm{x'_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on dual endpoints $\tm{x_i}$ and $\tm{x'_i}$ of the same channel.
 \end{defi}
-The new definition of canonical forms is slightly more precise than \cref{def:hcp-canonical-forms}: we added the phrase ``with dual actions''. With the addition of shared channels, it has become possible to have a process which cannot reduce, but in which two processes are waiting to act on the same channel, \eg, in $\tm{\ncPool{\ncCnt{x}{y}{\ami}}{\ncCnt{x}{y'}{\boe}}}$.
 \begin{lem}
   If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on
   an external communication, \ie,
@@ -1233,7 +1149,7 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
   such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel with dual actions. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Each application of $\textsc{Cont}_{!}$ requires an application of mix, so there are at most $m$ clients acting on the same bound channel. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
 \begin{thm}[Progress]\label{thm:nodcap-progress}
-  If $\seq[P]{\Gamma}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
+  If $\seq[P]{\mathcal{G}}$, then either $\tm{P}$ is in canonical form, or there exists a process $\tm{Q}$ such that $\tm{P}\Longrightarrow\tm{Q}$.
 \end{thm} 
 \begin{proof}
   We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
@@ -1338,14 +1254,10 @@ In fact, Balzer, Pfenning, and Toninho~\cite{balzer2018} show that \SILLS is exp
 
 Despite the difference in expressiveness, there are some similarities between \nodcap and \SILLS. In the former, shared channels represent (length-indexed) streams of interactions of the same type. In the latter, it is necessary for type preservation that shared channels are always released at the same type at which they were acquired, meaning that shared channels also represent (possibly infinite) streams of interactions of the same type. In fact, in \nodcap, the type for queues (with $n$ interactions) can be written as $\ty{\take[n]{(A^\bot \with (A \plus \bot))}}$.
 
-One key difference between \nodcap and \SILLS is that in \SILLS a server must
-finish interacting with one client before interacting with another, whereas in
-\nodcap the server may interact with multiple clients simultaneously.
+One key difference between \nodcap and \SILLS is that in \SILLS a server must finish interacting with one client before interacting with another, whereas in \nodcap the server may interact with multiple clients simultaneously.
 
 \section{Discussion and Future Work}\label{sec:conclusion}
-We presented \nodcap, an extension of \hcp which permits non-deterministic communication without losing the strong connection to logic.
-We gave proofs for preservation, progress, and termination for the term reduction system of \nodcap.
-We showed that we can define non-deterministic local choice in \nodcap.
+We presented \nodcap, an extension of \hcp which permits non-deterministic communication without losing the strong connection to logic. We gave proofs for preservation, progress, and termination for the term reduction system of \nodcap. We showed that we can define non-deterministic local choice in \nodcap.
 
 Our formalism so far has only captured servers that provide for a fixed number of clients.  More realistically, we would want to define servers that provide for arbitrary numbers of clients.  This poses two problems: how would we define arbitrarily-interacting stateful processes, and how would we extend the typing discipline of \nodcap to account for them without losing its static guarantees.
 
