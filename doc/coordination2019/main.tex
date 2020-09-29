@@ -400,7 +400,7 @@ An important limitation of our work is that types in \nodcap explicitly count th
 
 \nodcap is based on \hcp~\cite{kokke2018tlla,kokke2019pacmpl}. \hcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
 
-This paper proceeds as follows. In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in logic-inspired session-typed process calculi. In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and preservation. In \cref{sec:cpnd}, we introduce \nodcap. In \cref{sec:leftovers}, we discuss cuts with leftovers. Finally, in \cref{sec:conclusion}, we conclude with a discussion of the work done in this paper and potential avenues for future work.
+This paper proceeds as follows. In \cref{sec:local-choice}, we discuss recent approaches to non-determinism in logic-inspired session-typed process calculi. In \cref{sec:cp-revisited}, we introduce a variant of \cp and prove progress and preservation. In \cref{sec:cpnd}, we introduce \nodcap.  In \cref{sec:leftovers}, we discuss cuts with leftovers. In \cref{sec:manifest}, we discuss the relation to manifest sharing~\cite{balzer2017}. Finally, in \cref{sec:conclusion}, we conclude with a discussion of the work done in this paper and potential avenues for future work.
 
 \begin{remark}[Variants of \hcp]
   There are two variants of \hcp: a~version with delayed actions, introduced by Kokke, Montesi, and Peressotti~\cite{kokke2019pacmpl}, and a version without delayed actions, introduced by Kokke, Montesi, and Peressotti~\cite{kokke2018tlla}.
@@ -673,6 +673,9 @@ Typing judgements associate processes with collections of typed channels.
   \end{center}
 \end{defi}
 
+\paragraph{Alternative syntax.}
+In $(\one)$, the only well-typed continuation $\tm{P}$ is the terminated process $\tm{\piHalt}$. We could use an alternative formulation of the rule, which combines $(\one)$ and $\textsc{H-Mix}_0$. However, as $\textsc{H-Mix}_0$ is used on its own, and not just in combination with $(\one)$, we chose the present formulation to avoid having multiple different representations of the terminated process in the language.
+
 Reductions relate processes with their reduced forms.
 \begin{defi}[Reduction]\label{def:hcp-reduction}
   Reductions are described by the smallest relation $\Longrightarrow$ on process
@@ -860,7 +863,7 @@ However, there is no typing derivation for this term. We can construct a typing 
  The move from channel names to endpoint names is not essential to the fix, but significantly streamlines the presentation. Otherwise, the type system must guarantee that each channel name occurs at most twice in the hypersequent, and if twice, then with dual types. Using endpoint names, it is sufficient to require that all names be distinct.
 
 \section{Shared Channels and Non-determinism}\label{sec:cpnd}
-In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example from \cref{sec:introduction}, to the interaction between \Ami, \Boe and the store. 
+In this section, we will discuss our main contribution: an extension of \hcp which allows for races while still excluding deadlocks. We have seen in \cref{sec:hcp-example} how \hcp excludes deadlocks, but how exactly does \hcp exclude races? Let us return to our example in \textpi-calculus from \cref{sec:introduction}, to the interaction between \Ami, \Boe and the store. 
 \begin{center}
   \(
   \begin{array}{c}
@@ -955,7 +958,7 @@ track how many clients or server interactions they represent.
     \end{array}
   \]  
 \end{defi}
-The types $\ty{\take[n]{A}}$ and $\ty{\give[n]{A^{\bot}}}$ are dual.
+The types $\ty{\take[n]{A}}$ and $\ty{\give[n]{A^{\bot}}}$ are dual. (The subscripts must be identical, \ie $\ty{\take[n]{A}}$ is not dual to $\ty{\give[m]{A^{\bot}}}$ if ${n}\neq{m}$.)
 Duality remains an involutive function.
 
 We have to add typing rules to associate our new client and server interactions
@@ -1234,7 +1237,7 @@ These rules are derivable using a link. For instance, we can derive the rule for
       \Gamma, \Delta, \tmty{w}{\take[m]{A}} }$}
 \end{prooftree}
 
-\section{Relation to Manifest Sharing}
+\section{Relation to Manifest Sharing}\label{sec:manifest}
 In \cref{sec:local-choice}, we mentioned related work which extends \piDILL and \cp with non-deterministic local choice~\cite{atkey2016,caires2014,caires2017}, and contrasted these approaches with ours.
 In this section, we will contrast our work with the more recent work on manifest sharing~\cite{balzer2017}.
 
