@@ -4,9 +4,6 @@
 \keywords{\textpi-calculus, linear logic, session types, non-determinism, deadlock freedom}
 
 \usepackage[british]{babel}
-%\usepackage[dvipsnames,table]{xcolor}
-
-%\usepackage{enumitem}
 \usepackage{graphicx}
 \DeclareGraphicsRule{.ai}{pdf}{.ai}{}
 \usepackage{lscape}
@@ -72,7 +69,7 @@
 \providecommand{\cp}{CP\xspace}
 
 %% PI - Terms
-\providecommand{\ppar}{\ensuremath{\mid}}
+\providecommand{\ppar}{\ensuremath{\parallel}}
 \providecommand{\piCalc}[0]{\textpi-calculus\xspace}
 \providecommand{\piSend}[3]{\ensuremath{#1[ #2 ].#3}}
 \providecommand{\piUSend}[3]{\ensuremath{#1\langle #2 \rangle.#3}}
@@ -108,7 +105,7 @@
 \providecommand{\one}{\ensuremath{\mathbf{1}}}
 \providecommand{\nil}{\ensuremath{\mathbf{0}}}
 \providecommand{\emptycontext}{\ensuremath{\,\cdot\,}}
-\providecommand{\hsep}{\ensuremath{\mid}}
+\providecommand{\hsep}{\ensuremath{\parallel}}
 \providecommand{\emptyhypercontext}{\varnothing}
 
 %% CP - Reduction rule names
@@ -331,10 +328,10 @@
     \AXC{$\seq[{ P }]{
         \mathcal{G}\hsep
         \Gamma, \tmty{x}{A} \hsep
-        \Delta, \tmty{y}{A^\bot}
+        \Delta, \tmty{x'}{A^\bot}
       }$}
     \NOM{Cut}
-    \UIC{$\seq[{ \piNew{x}{y}{P} }]{
+    \UIC{$\seq[{ \piNew{x}{x'}{P} }]{
         \mathcal{G}\hsep
         \ty{\Gamma}, \ty{\Delta}
       }$}
@@ -354,16 +351,24 @@
     \UIC{$\seq[{ \piHalt }]{ \emptyhypercontext }$}
   \end{prooftree*}}
 
-
 %% HCP - Logical rules
 \providecommand{\hcpInfBoundTens}{%
   \begin{prooftree*}
     \AXC{$\seq[{ P }]{
-        \ty{\Delta}, \tmty{x}{B}
+        \ty{\Gamma}, \tmty{y}{A} \hsep \ty{\Delta}, \tmty{x}{B}
       }$}
     \SYM{\tens}
     \UIC{$\seq[{ \piSend{x}{y}{P} }]{
         \ty{\Gamma}, \ty{\Delta}, \tmty{x}{A \tens B}
+      }$}
+  \end{prooftree*}}
+\providecommand{\hcpInfUnboundTens}{%
+  \begin{prooftree*}
+    \AXC{$\seq[{ P }]{
+        \ty{\Gamma}, , \tmty{x}{B}
+      }$}
+    \UIC{$\seq[{ \piUSend{x}{w}{P} }]{
+        \ty{\Gamma}, \tmty{x}{A \tens B}, \tmty{w}{A^\bot}
       }$}
   \end{prooftree*}}
 \providecommand{\hcpInfParr}{%
@@ -460,7 +465,7 @@
 \email{wadler@inf.ed.ac.uk}
 
 \begin{abstract}
-  \noindent Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races. \hcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
+  Process calculi based in logic, such as \piDILL and CP, provide a foundation for deadlock-free concurrent programming, but exclude non-determinism and races. \hcp is a reformulation of CP which addresses a fundamental shortcoming: the fundamental operator for parallel composition from the \textpi-calculus does not correspond to any rule of linear logic, and therefore not to any term construct in CP.
 
   We introduce \nodcap, which extends \hcp with a novel account of non-determinism. Our approach draws on bounded linear logic to provide a strongly-typed account of standard process calculus expressions of non-determinism. We show that our extension is expressive enough to capture many uses of non-determinism in untyped calculi, such as non-deterministic choice, while preserving \hcp's meta-theoretic properties, including deadlock freedom.  
 \end{abstract}
@@ -669,7 +674,7 @@ The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992
       \tm{P}, \tm{Q}, \tm{R}
         & ::=& \tm{\cpLink{x}{y}}    &\text{link}
       \\&\mid& \tm{\piHalt}          &\text{terminated process}
-      \\&\mid& \tm{\piNew{x}{y}{P}}  &\text{name restriction, ``cut''}
+      \\&\mid& \tm{\piNew{x}{x'}{P}}  &\text{name restriction, ``cut''}
       \\&\mid& \tm{( \piPar{P}{Q} )} &\text{parallel composition, ``mix''}
       \\&\mid& \tm{\piSend{x}{y}{P}} &\text{output}
       \\&\mid& \tm{\piRecv{x}{y}{P}} &\text{input}
@@ -682,10 +687,7 @@ The term language for \hcp is a variant of the \textpi-calculus~\cite{milner1992
     \end{array}
   \]
 \end{defi}\noindent
-The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel endpoints. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} endpoints, \ie those which are not connected to another endpoint. The construct $\tm{\cpLink{x}{y}}$ links two endpoints~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{y}{P}}$ creates a new channel by connecting endpoints $\tm{x}$ and $\tm{y}$, and the construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name. We define unbound output in terms of bound output and link~\cite{lindley2015semantics}:
-\[
-  \tm{\piUSend{x}{y}{P}} ::= \tm{\cpSend{x}{z}{\cpLink{y}{z}}{P}}
-\]
+The variables $\tm{x}$, $\tm{y}$, $\tm{z}$, $\tm{u}$, $\tm{v}$, and $\tm{w}$ range over channel endpoints. Occasionally, we use $\tm{a}$, $\tm{b}$, and $\tm{c}$ to range over \emph{free} endpoints, \ie those which are not connected to another endpoint. The construct $\tm{\cpLink{x}{y}}$ links two endpoints~\cite{sangiorgi1996,boreale1998}, forwarding messages received on \tm{x} to \tm{y} and vice versa. The construct $\tm{\piNew{x}{x'}{P}}$ creates a new channel by connecting endpoints $\tm{x}$ and $\tm{x'}$. By convention, we name dual endpoints using primes, \eg $\tm{x}$ and $\tm{x'}$. However, nothing \emph{inherently} links these names. The construct $\tm{\piPar{P}{Q}}$ and composes two processes. In \tm{\piRecv{x}{y}{P}} and \tm{\piSend{x}{y}{P}}, round brackets denote input, square brackets denote output. We use bound output~\cite{sangiorgi1996}, meaning that both input and output bind a new name.
 
 Terms in \hcp are identified up to structural congruence.
 \begin{defi}[Structural congruence]\label{def:hcp-equiv}
@@ -699,9 +701,9 @@ Terms in \hcp are identified up to structural congruence.
       & \tm{\cpLink{y}{x}}
       \\
         \hcpEquivNewComm
-      & \tm{\piNew{x}{y}{\piNew{z}{w}{P}}}
+      & \tm{\piNew{x}{x'}{\piNew{y}{y'}{P}}}
       & \equiv
-      & \tm{\piNew{z}{w}{\piNew{x}{y}{P}}}
+      & \tm{\piNew{y}{y'}{\piNew{x}{x'}{P}}}
       &
       \\
         \hcpEquivMixComm
@@ -721,10 +723,10 @@ Terms in \hcp are identified up to structural congruence.
       & \tm{P}
       \\
         \hcpEquivScopeExt1
-      & \tm{\piNew{x}{y}{( \piPar{P}{Q} )}}
+      & \tm{\piNew{x}{x'}{( \piPar{P}{Q} )}}
       & \equiv
-      & \tm{\piPar{P}{\piNew{x}{y}{Q}}}
-      & \text{if }\tm{x},\tm{y}\not\in\tm{P}
+      & \tm{\piPar{P}{\piNew{x}{x'}{Q}}}
+      & \text{if }\tm{x},\tm{x'}\not\in\tm{P}
     \end{array}
   \]
 \end{defi}
@@ -809,29 +811,29 @@ Reductions relate processes with their reduced forms.
   \begin{gather*}
     \begin{array}{llcll}
       \hcpRedAxCut1
-      & \tm{\piNew{x}{y}{(\piPar{\cpLink{w}{x}}{P})}}
+      & \tm{\piNew{x}{x'}{(\piPar{\cpLink{w}{x}}{P})}}
       & \Longrightarrow
-      & \tm{\cpSub{w}{y}{P}}
+      & \tm{\cpSub{w}{x'}{P}}
       \\
       \hcpRedBetaTensParr
-      & \tm{\piNew{x}{y}{(\piPar{\piSend{x}{z}{P}}{\piRecv{x}{w}{R}})}}
+      & \tm{\piNew{x}{x'}{(\piPar{\piSend{x}{y}{P}}{\piRecv{x'}{y'}{R}})}}
       & \Longrightarrow
-      & \tm{\piNew{x}{y}{\piNew{z}{w}{(\piPar{P}{R})}}}
+      & \tm{\piNew{x}{x'}{\piNew{y}{y'}{(\piPar{P}{R})}}}
       \\
       \hcpRedBetaOneBot
-      & \tm{\piNew{x}{y}{(\piPar{\piSend{x}{}{P}}{\piRecv{y}{}{Q}})}}
+      & \tm{\piNew{x}{x'}{(\piPar{\piSend{x}{}{P}}{\piRecv{x'}{}{Q}})}}
       & \Longrightarrow
       & \tm{\piPar{P}{Q}}
       \\
       \hcpRedBetaPlusWith1
-      & \tm{\piNew{x}{y}{(\piPar{\cpInl{x}{P}}{\cpCase{y}{Q}{R}})}}
+      & \tm{\piNew{x}{x'}{(\piPar{\cpInl{x}{P}}{\cpCase{x'}{Q}{R}})}}
       & \Longrightarrow
-      & \tm{\piNew{x}{y}{(\piPar{P}{Q})}}
+      & \tm{\piNew{x}{x'}{(\piPar{P}{Q})}}
       \\
       \hcpRedBetaPlusWith2
-      & \tm{\piNew{x}{y}{(\piPar{\cpInr{x}{P}}{\cpCase{y}{Q}{R}})}}
+      & \tm{\piNew{x}{x'}{(\piPar{\cpInr{x}{P}}{\cpCase{x'}{Q}{R}})}}
       & \Longrightarrow
-      & \tm{\piNew{x}{y}{(\piPar{P}{R})}}
+      & \tm{\piNew{x}{x'}{(\piPar{P}{R})}}
     \end{array}
   \end{gather*}
   \vspace*{0.5\baselineskip}
@@ -839,7 +841,7 @@ Reductions relate processes with their reduced forms.
     \begin{prooftree*}
       \AXC{$\reducesto{P}{P^\prime}$}
       \SYM{\hcpRedGammaNew}
-      \UIC{$\reducesto{\piNew{x}{y}{P}}{\piNew{x}{y}{P^\prime}}$}
+      \UIC{$\reducesto{\piNew{x}{x'}{P}}{\piNew{x}{x'}{P^\prime}}$}
     \end{prooftree*}
     \begin{prooftree*}
       \AXC{$\reducesto{P}{P^\prime}$}
@@ -855,40 +857,54 @@ Reductions relate processes with their reduced forms.
     \TIC{$\reducesto{P}{P^\prime}$}
   \end{prooftree}
 \end{defi}
+\begin{defi}[Unbound output]
+We define unbound output in terms of bound output and link~\cite{lindley2015semantics}:
+\[
+  \begin{array}{c}
+    \tm{\piUSend{x}{w}{P}} \triangleq \tm{\cpSend{x}{z}{\cpLink{w}{z}}{P}}
+    \\
+    \\
+    \hcpInfUnboundTens
+    \qquad
+    \begin{array}{l}
+      \tm{\piNew{x}{x'}{(\piPar{\piUSend{x}{w}{P}}{\piRecv{x'}{y}{Q}})}}
+      \\
+      \qquad\Longrightarrow
+      \tm{\piNew{x}{x'}{(\piPar{P}{\cpSub{w}{y}{Q}})}}
+    \end{array}
+  \end{array}
+\]
+\end{defi}
+
 
 \subsection{Example}
 \label{sec:hcp-example}
 \hcp uses hyper-sequents to structure communication, and it is this structure which rules out deadlocked interactions. Let us go back to our example of a deadlocked interaction from \cref{sec:introduction}. If we want to type this interaction in \hcp, we run into a problem: to connect $\tm{x}$ and $\tm{y}$, and $\tm{z}$ and $\tm{w}$, such that we get a deadlock, we need to construct the following term:
 \begin{center}
   \(
-  \tm{\piNew{x}{y}{\piNew{z}{w}{(\piPar
-        {\piRecv{x}{u}{\piSend{z}{\sliceofcake}{\ami}}}
-        {\piRecv{w}{v}{\piSend{y}{\bill}{\boe}}})}}}.
+  \tm{\piNew{x}{x'}{\piNew{y}{y'}{(\piPar
+        {\piRecv{x}{u}{\piUSend{y}{\sliceofcake}{\ami}}}
+        {\piRecv{y'}{v}{\piUSend{x'}{\bill}{\boe}}})}}}.
   \)
 \end{center}
-However, there is no typing derivation for this term. We illustrate this with the partial typing derivation below. In this derivation, there is no way to proceed and type the final name restriction. The \textsc{Cut} rule needs a hypersequent separator to eliminate, so that it only ever links up two independent processes, but the bottom-most sequent has none:
-\begin{prooftree}
-  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{u}{\money^\bot}, \tmty{\sliceofcake}{\cake}}$}
-  \SYM{(\tens)}
-  \UIC{$\seq[{ \piSend{y}{\sliceofcake}{\ami} }]{ \Gamma, \tmty{u}{\money^\bot}, \tmty{y}{\cake}}$}
-  \SYM{(\parr)}
-  \UIC{$\seq[{ \piRecv{x}{u}{\piSend{y}{\sliceofcake}{\ami}} }]{ \Gamma, \tmty{x}{\money^\bot}, \tmty{y}{\cake}}$}
-  \AXC{$\seq[{ \boe }]{ \Delta, \tmty{\bill}{\money}, \tmty{v}{\cake^\bot} }$}
-  \SYM{(\tens)}
-  \UIC{$\seq[{ \piSend{y}{\bill}{\boe} }]{ \Delta, \tmty{y}{\money}, \tmty{v}{\cake^\bot} }$}
-  \SYM{(\parr)}
-  \UIC{$\seq[{ \piRecv{w}{v}{\piSend{y}{\bill}{\boe}} }]{ \Delta, \tmty{y}{\money}, \tmty{w}{\cake^\bot} }$}
-  \NOM{H-Mix}
-  \BIC{$\seq[{
-      (\piPar{\piRecv{x}{u}{\piSend{y}{\sliceofcake}{\ami}}}{\piRecv{w}{v}{\piSend{y}{\bill}{\boe}}}) }]{
-      \Gamma, \tmty{x}{\money^\bot}, \tmty{z}{\cake} \hsep
-      \Delta, \tmty{y}{\money}, \tmty{w}{\cake^\bot} }$}
-  \NOM{Cut}
-  \UIC{$\seq[{
-      \piNew{z}{w}{(\piPar{\piRecv{x}{u}{\piSend{z}{\sliceofcake}{\ami}}}{\piRecv{w}{v}{\piSend{y}{\bill}{\boe}}})}
-    }]{
-      \Gamma, \Delta, \tmty{x}{\money^\bot}, \tmty{y}{\money} }$}
-\end{prooftree}
+However, there is no typing derivation for this term. We can construct a typing derivation down to the sequent below, but we cannot introduce \emph{both} name restrictions: the \textsc{Cut} rule eliminates a hypersequent separator, which ensures that it only ever connects two independent processes, but the sequent below only has \emph{one}.
+\[
+  \tm{
+    \piRecv{x}{z}{\piUSend{y}{\sliceofcake}{\ami}}
+    \ppar
+    \piRecv{y'}{w}{\piUSend{x'}{\bill}{\boe}}
+  }
+  \vdash
+  \setlength{\arraycolsep}{0pt}
+  \begin{array}{lclcllclcllcl}
+       \tm{x}            &\; : &\; \ty{\money^\bot} & \ty{\parr} & \ty{A},
+    &\;\tm{y}            &\; : &\; \ty{\cake} & \ty{\tens} & \ty{B},
+    &\;\tm{\sliceofcake} &\; : &\; \ty{\cake^\bot} \hsep
+    \\ \tm{x'}           &\; : &\; \ty{\money} & \ty{\tens} & \ty{A^\bot},
+    &\;\tm{y'}           &\; : &\; \ty{\cake^\bot} & \ty{\parr} & \ty{B},
+    &\;\tm{\bill}        &\; : &\; \ty{\money^\bot}
+  \end{array}
+\]
 
 \subsection{Metatheory}
 \label{sec:hcp-metatheory}
@@ -914,20 +930,20 @@ However, there is no typing derivation for this term. We illustrate this with th
 \begin{defi}[Canonical forms]\label{def:hcp-canonical-forms}
   A process $\tm{P}$ is in canonical form if
   \[
-  \tm{P} \equiv \tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
+  \tm{P} \equiv \tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1 \mid \dots \mid P_{n+m+1})}}},
   \]
-  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the endpoints $\tm{x_i}$, $\tm{y_i}$ of the same channel.
+  such that: no process $\tm{P_i}$ is a cut or a mix; no process $\tm{P_i}$ is a link acting on a bound channel $\tm{x_i}$ or $\tm{x'_i}$; and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on dual endpoints $\tm{x_i}$ and $\tm{x'_i}$ of the same channel.
 \end{defi}
 \begin{lem}
   If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on
   an external communication, \ie,
-  $\tm{P}\equiv\tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1\mid\dots\mid P_{n+m+1})}}}$
+  $\tm{P}\equiv\tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1\mid\dots\mid P_{n+m+1})}}}$
   such that at least one process $\tm{P_i}$ acts on a free name.
 \end{lem}
 \begin{proof}
   We have
   \(
-  \tm{P} \equiv \tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
+  \tm{P} \equiv \tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \)
   such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the endpoints of the same channel. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Therefore, at least $m+1$ of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
@@ -937,9 +953,9 @@ However, there is no typing derivation for this term. We illustrate this with th
 \begin{proof}
   We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
   \[
-  \tm{P} \equiv \tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
+  \tm{P} \equiv \tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
-  and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
+  and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on dual endpoints $\tm{x_i}$ and $\tm{x'_i}$ of the same channel, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
 \end{proof}
 \begin{thm}[Termination]\label{thm:hcp-termination}
   If $\seq[P]{\mathcal{G}}$, then there are no infinite $\Longrightarrow$-reduction sequences.
@@ -954,7 +970,7 @@ In this section, we will discuss our main contribution: an extension of \hcp whi
   \(
   \begin{array}{c}
     \tm{(\piPar{%
-    \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+    \piUSend{x}{\sliceofcake}{\piUSend{x}{\nope}{\store}}
     }{%
     \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
     })}
@@ -981,25 +997,25 @@ store communicates with \Ami \emph{and} \Boe over a channel of type \ty{\cake
   \parr \cake}.
 However, this \emph{only} models interactions such as the following:
 \begin{prooftree}
-  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{z}{\cake^\bot} }$}
+  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
   \AXC{$\seq[{ \boe }]{ \Delta, \tmty{x}{\cake^\bot} }$}
   \NOM{H-Mix}
   \BIC{$\seq[{ (\piPar{\ami}{\boe}) }]{
-      \Gamma, \tmty{z}{\cake^\bot} \hsep \Delta, \tmty{x}{\cake^\bot} }$}
+      \Gamma, \tmty{y}{\cake^\bot} \hsep \Delta, \tmty{x}{\cake^\bot} }$}
   \SYM{(\tens)}
-  \UIC{$\seq[{ \cpSend{x}{z}{\ami}{\boe} }]{
+  \UIC{$\seq[{ \cpSend{x}{y}{\ami}{\boe} }]{
       \Gamma, \Delta, \tmty{x}{\cake^\bot \tens \cake^\bot} }$}
-  \AXC{$\seq[{ \store }]{ \Theta, \tmty{w}{\cake}, \tmty{y}{\cake} }$}
+  \AXC{$\seq[{ \store }]{ \Theta, \tmty{y'}{\cake}, \tmty{x'}{\cake} }$}
   \SYM{(\parr)}
-  \UIC{$\seq[{ \cpRecv{y}{w}{\store} }]{
-      \Theta, \tmty{y}{\cake \parr \cake} }$}
+  \UIC{$\seq[{ \cpRecv{x'}{y'}{\store} }]{
+      \Theta, \tmty{x'}{\cake \parr \cake} }$}
   \NOM{H-Mix}
-  \BIC{$\seq[{ (\piPar{\cpSend{x}{z}{\ami}{\boe}}{\cpRecv{y}{w}{\store}}) }]{
+  \BIC{$\seq[{ (\piPar{\cpSend{x}{y}{\ami}{\boe}}{\cpRecv{x'}{y'}{\store}}) }]{
       \Gamma, \Delta, \tmty{x}{\cake^\bot \tens \cake^\bot}
       \hsep
-      \Theta, \tmty{y}{\cake \parr \cake} }$}
+      \Theta, \tmty{x'}{\cake \parr \cake} }$}
   \NOM{Cut}
-  \UIC{$\seq[{ \piNew{x}{y}{(\piPar{\cpSend{x}{z}{\ami}{\boe}}{\cpRecv{y}{w}{\store}})} }]{
+  \UIC{$\seq[{ \piNew{x}{x'}{(\piPar{\cpSend{x}{y}{\ami}{\boe}}{\cpRecv{x'}{y'}{\store}})} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 In this interaction, \Ami will get whatever the store decides to send on \tm{x}, and \Boe will get whatever the store decides to send on \tm{y}. This means that this interactions gives the choice of who receives what \emph{to the store}. This is not an accurate model of our original example, where the choice of who receives the cake is non-deterministic and depends on factors outside of any of the participants' control!
@@ -1008,7 +1024,7 @@ Modelling racy behaviour, such as that in our example, is essential to describin
 \begin{center}
   \(
   \tm{(\piPar{%
-      \piSend{x}{\sliceofcake}{\piSend{x}{\nope}{\store}}
+      \piUSend{x}{\sliceofcake}{\piUSend{x}{\nope}{\store}}
     }{%
       \piPar{\piRecv{x}{y}{\ami}}{\piRecv{x}{z}{\boe}}
     })}
@@ -1054,15 +1070,15 @@ definition for the typing judgement.
 To determine the new typing rules, we essentially answer the question
 ``What typing constructs do we need to complete the following proof?''
 \begin{prooftree}
-  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{y}{\cake^\bot} }$}
+  \AXC{$\seq[{ \ami }]{ \Gamma, \tmty{x'}{\cake^\bot} }$}
   \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
   \AXC{$\seq[{ \boe }]{ \Delta, \tmty{y'}{\cake^\bot} }$}
   \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
   \AXC{$\seq[{ \store }]{ \Theta, \tmty{z}{\cake}, \tmty{z'}{\cake} }$}
   \noLine\UIC{$\smash{\vdots}\vphantom{\vdash}$}
   \noLine\TIC{$\seq[{
-      \piNew{x}{y}{(\piPar{\ncPool{\ncCnt{x}{z}{\ami}}{\ncCnt{x}{z'}{\boe}}}{
-        \ncSrv{y}{w}{\ncSrv{y}{w'}{\store}}})} }]{
+      \piNew{x}{x'}{(\piPar{\ncPool{\ncCnt{x}{z}{\ami}}{\ncCnt{x}{z'}{\boe}}}{
+        \ncSrv{x'}{w}{\ncSrv{x'}{w'}{\store}}})} }]{
       \Gamma, \Delta, \Theta }$}
 \end{prooftree}
 The constructs $\tm{\ncCnt{x}{y}{P}}$ and $\tm{\ncSrv{x}{y}{P}}$ introduce a single client or server action, respectively---hence, channels of type $\ty{\take[1]{}}$ and $\ty{\give[1]{}}$. However, when we cut, we want to cut on both interactions simultaneously. We need rules for the \emph{contraction} of shared channel names.
@@ -1133,9 +1149,9 @@ Finally, we need to extend the reduction rules to allow for the reduction of cli
   \[
     \begin{array}{llll}
       \ncRedBetaStar{}
-      & \tm{\piNew{x}{y}{(\piPar{(\piPar{\ncCnt{x}{z}{P}}{\ncSrv{y}{w}{Q}})}{R})}}
+      & \tm{\piNew{x}{x'}{(\piPar{(\piPar{\ncCnt{x}{y}{P}}{\ncSrv{x'}{y'}{Q}})}{R})}}
       & \Longrightarrow \;
-      & \tm{\piNew{x}{y}{(\piPar{\piNew{z}{w}{(\piPar{P}{Q})}}{R})}}
+      & \tm{\piNew{x}{x'}{(\piPar{\piNew{y}{y'}{(\piPar{P}{Q})}}{R})}}
     \end{array}
   \]
 \end{defi}
@@ -1144,9 +1160,9 @@ The difference between $\ncRedBetaStar{}$ and $\cpRedBetaTensParr$ is that the f
 So where does the non-determinism in \nodcap come from? Let us say we have a term of the following form:
 \[
   \tm{
-    \piNew{x}{y}{(\piPar
-    {\ncPool{\ncCnt{x}{z_1}{P_1}}{\dots \mid \ncCnt{x}{z_n}{P_n}}}
-    {\ncSrv{y}{w_1}{\dots\ncSrv{y}{w_n}{Q}}})}
+    \piNew{x}{x'}{(\piPar
+    {\ncPool{\ncCnt{x}{y_1}{P_1}}{\dots \mid \ncCnt{x}{y_n}{P_n}}}
+    {\ncSrv{x'}{y'_1}{\dots\ncSrv{x'}{y'_n}{Q}}})}
   }
 \]
 As parallel composition is commutative and associative, we can rewrite this term to pair any client in the pool with the server before applying $\ncRedBetaStar{}$. Thus, like in the \textpi-calculus, the non-determinism is introduced by the structural congruence.
@@ -1156,10 +1172,10 @@ Does this mean that, for an arbitrary client pool $\tm{P}$ in $\tm{\piNew{x}{y}{
   \arraycolsep=0pt
   \tm{
   \begin{array}{lrl}
-    \piNew{x}{y}{}
-    &  ((&\; \ncPool{\ncCnt{x}{z_1}{P_1}}{\dots\mid\ncCnt{x}{z_n}{P_n}}\\
-    &\mid&\; \cpWait{a}{\ncPool{\ncCnt{x}{z_{n+1}}{P_{n+1}}}{\dots \mid \ncCnt{x}{z_m}{P_m}}}\;)\\
-    &\mid&\; \ncSrv{y}{w_1}{\dots\ncSrv{y}{w_m}{Q}}\;)
+    \piNew{x}{x'}{}
+    &  ((&\; \ncPool{\ncCnt{x}{y_1}{P_1}}{\dots\mid\ncCnt{x}{y_n}{P_n}}\\
+    &\mid&\; \cpWait{a}{\ncPool{\ncCnt{x}{y_{n+1}}{P_{n+1}}}{\dots \mid \ncCnt{x}{y_m}{P_m}}}\;)\\
+    &\mid&\; \ncSrv{x'}{y'_1}{\dots\ncSrv{x'}{y'_m}{Q}}\;)
   \end{array}}
 \]
 If we reduce this term, then only the clients $\tm{\ncCnt{x}{z_1}{P_1}} \dots \tm{\ncCnt{x}{z_n}{P_n}}$ will be assigned server interactions, and we end up with the following canonical form:
@@ -1167,9 +1183,9 @@ If we reduce this term, then only the clients $\tm{\ncCnt{x}{z_1}{P_1}} \dots \t
   \arraycolsep=0pt
   \tm{
   \begin{array}{lrl}
-    \piNew{x}{y}{}
-    &   (&\; \cpWait{a}{\ncPool{\ncCnt{x}{z_{n+1}}{P_{n+1}}}{\dots\mid\ncCnt{x}{z_m}{P_m}}}\\
-    &\mid&\; \ncSrv{y}{w_{n+1}}{\dots\ncSrv{y}{w_m}{Q}}\;)
+    \piNew{x}{x'}{}
+    &   (&\; \cpWait{a}{\ncPool{\ncCnt{x}{y_{n+1}}{P_{n+1}}}{\dots\mid\ncCnt{x}{y_m}{P_m}}}\\
+    &\mid&\; \ncSrv{x'}{y'_{n+1}}{\dots\ncSrv{x'}{y'_m}{Q}}\;)
   \end{array}}
 \]
 This matches our intuition and the behaviour of the \textpi-calculus.
@@ -1206,13 +1222,13 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
 \begin{lem}
   If a well-typed process $\tm{P}$ is in canonical form, then it is blocked on
   an external communication, \ie,
-  $\tm{P}\equiv\tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1\mid\dots\mid P_{n+m+1})}}}$
+  $\tm{P}\equiv\tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1\mid\dots\mid P_{n+m+1})}}}$
   such that at least one process $\tm{P_i}$ acts on a free name.
 \end{lem}
 \begin{proof}
   We have
   \(
-  \tm{P} \equiv \tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
+  \tm{P} \equiv \tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \)
   such that no $\tm{P_i}$ is a cut or a link acting on a bound channel, and no two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same bound channel with dual actions. The prefix of cuts and mixes introduces $n$ channels. Each application of cut requires an application of mix, so the prefix introduces $n+m+1$ processes. Each application of $\textsc{Cont}_{!}$ requires an application of mix, so there are at most $m$ clients acting on the same bound channel. Therefore, at least \emph{one} of the processes $\tm{P_i}$ must be acting on a free channel, i.e., blocked on an external communication.
 \end{proof}
@@ -1222,9 +1238,9 @@ The new definition of canonical forms is slightly more precise than \cref{def:hc
 \begin{proof}
   We consider the maximum prefix of cuts and mixes of $\tm{P}$ such that
   \[
-  \tm{P} \equiv \tm{\piNew{x_1}{y_1}{\dots\piNew{x_n}{y_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
+  \tm{P} \equiv \tm{\piNew{x_1}{x'_1}{\dots\piNew{x_n}{x'_n}{(P_1 \ppar \dots \ppar P_{n+m+1})}}},
   \]
-  and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting on the same channel $\tm{x_i}$ with dual actions, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
+  and no $\tm{P_i}$ is a cut. If any process $\tm{P_i}$ is a link, we reduce by $(\cpLink{}{})$. If any two processes $\tm{P_i}$ and $\tm{P_j}$ are acting dual endpoints $\tm{x_i}$ and $\tm{x'_i}$ of the same channel, we rewrite by $\equiv$ and reduce by the appropriate $\beta$-rule. Otherwise, $\tm{P}$ is in canonical form.
 \end{proof}
 \begin{thm}[Termination]\label{thm:nodcap-termination}
   If $\seq[P]{\mathcal{G}}$, then there are no infinite $\Longrightarrow$-reduction sequences.
@@ -1239,17 +1255,17 @@ In \cref{sec:local-choice}, we discussed the non-deterministic local choice oper
   \arraycolsep=0pt
   \tm{
   \begin{array}{lrlrl}
-    \piNew{x}{y}{}
-    &((  & \; \ncCnt{x}{z}{\cpInl{z}{\cpHalt{z}}} \\
-    &\mid& \; \ncCnt{x}{w}{\cpInr{w}{\cpHalt{w}}} \; )\\
-    &\mid& \; \ncSrv{y}{z}{\ncSrv{y}{w}{z\:{\triangleright}}}\\
+    \piNew{x}{x'}{}
+    &((  & \; \ncCnt{x}{y}{\cpInl{y}{\cpHalt{y}}} \\
+    &\mid& \; \ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}} \; )\\
+    &\mid& \; \ncSrv{x'}{y'}{\ncSrv{x'}{z'}{y'\:{\triangleright}}}\\
     &    & \quad
            \begin{array}{rl}
-             \{ & \texttt{inl}: \; \piNew{u}{v}{(\piPar{\cpCase{w}{\cpWait{w}{\cpHalt{u}}}{
-                  \cpWait{w}{\cpHalt{u}}}}{\cpWait{v}{P}})}
+             \{ & \texttt{inl}: \; \piNew{w}{w'}{(\piPar{\cpCase{z'}{\cpWait{z'}{\cpHalt{w}}}{
+                  \cpWait{z'}{\cpHalt{w}}}}{\cpWait{w'}{P}})}
              \\
-             ; & \texttt{inr}: \; \piNew{u}{v}{(\piPar{\cpCase{w}{\cpWait{w}{\cpHalt{u}}}{
-                 \cpWait{w}{\cpHalt{u}}}}{\cpWait{v}{Q}})} \; \})
+             ; & \texttt{inr}: \; \piNew{w}{w'}{(\piPar{\cpCase{z'}{\cpWait{z'}{\cpHalt{w}}}{
+                 \cpWait{z'}{\cpHalt{w}}}}{\cpWait{w'}{Q}})} \; \})
            \end{array}
   \end{array}
   }
@@ -1257,9 +1273,9 @@ In \cref{sec:local-choice}, we discussed the non-deterministic local choice oper
 This term is a cut between two processes.
 \begin{itemize}
 \item
-  On the left-hand side, we have a pool of two processes, $\tm{\ncCnt{x}{z}{\cpInl{z}{\cpHalt{z}}}}$ and $\tm{\ncCnt{x}{w}{\cpInr{w}{\cpHalt{w}}}}$. Each makes a choice: the first sends $\tm{\texttt{inl}}$, and the second sends $\tm{\texttt{inr}}$. 
+  On the left-hand side, we have a pool of two processes, $\tm{\ncCnt{x}{y}{\cpInl{y}{\cpHalt{y}}}}$ and $\tm{\ncCnt{x}{z}{\cpInr{z}{\cpHalt{z}}}}$. Each makes a choice: the first sends $\tm{\texttt{inl}}$, and the second sends $\tm{\texttt{inr}}$. 
 \item
-  On the right-hand side, we have a server with both $\tm{P}$ and $\tm{Q}$. This server has two channels on which a choice is offered, $\tm{z}$ and $\tm{w}$. The choice on $\tm{z}$ selects between $\tm{P}$ and $\tm{Q}$. The choice on $\tm{w}$ does not affect the outcome of the process at all. Instead, it is discarded.
+  On the right-hand side, we have a server with both $\tm{P}$ and $\tm{Q}$. This server has two channels on which a choice is offered, $\tm{y'}$ and $\tm{z'}$. The choice on $\tm{y'}$ selects between $\tm{P}$ and $\tm{Q}$. The choice on $\tm{z'}$ does not affect the outcome of the process at all. Instead, it is discarded.
 \end{itemize}
 When these clients and the server are put together, the choices offered by the server will be non-deterministically lined up with the clients which make choices, and either $\tm{P}$ or $\tm{Q}$ will run.
 
@@ -1283,22 +1299,22 @@ So far, our account of a non-determinism in client/server interactions only allo
 These rules are derivable using a link. For instance, we can derive the rule for the case in which there are more clients than servers as follows:
 \begin{prooftree}
   \AXC{$\seq[{ P }]{ \Gamma, \tmty{x}{\take[n+m]{A}} }$}
-  \AXC{$\seq[{ Q }]{ \Delta, \tmty{y}{\give[n]{A^\bot}} }$}
-  \AXC{$\seq[{ \cpLink{y'}{w} }]{
-      \tmty{y'}{\give[m]{A^{\bot}}}, \tmty{w}{\take[m]{A}} }$}
+  \AXC{$\seq[{ Q }]{ \Delta, \tmty{x'}{\give[n]{A^\bot}} }$}
+  \AXC{$\seq[{ \cpLink{x''}{w} }]{
+      \tmty{x''}{\give[m]{A^{\bot}}}, \tmty{w}{\take[m]{A}} }$}
   \NOM{H-Mix}
-  \BIC{$\seq[{ (\piPar{Q}{\cpLink{y'}{w}}) }]{
-      \Delta, \tmty{y}{\give[n]{A^\bot}} \hsep
-      \tmty{y'}{\give[m]{A^{\bot}}}, \tmty{w}{\take[m]{A}} }$}
+  \BIC{$\seq[{ (\piPar{Q}{\cpLink{x''}{w}}) }]{
+      \Delta, \tmty{x'}{\give[n]{A^\bot}} \hsep
+      \tmty{x''}{\give[m]{A^{\bot}}}, \tmty{w}{\take[m]{A}} }$}
   \SYM{\textsc{Cont}_{!}}
-  \UIC{$\seq[{ {(\piPar{Q}{\cpLink{y}{w}})} }]{
-      \Delta, \tmty{y}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
+  \UIC{$\seq[{ {(\piPar{Q}{\cpLink{x'}{w}})} }]{
+      \Delta, \tmty{x'}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
   \NOM{H-Mix}
-  \BIC{$\seq[{ (\piPar{P}{(\piPar{Q}{\cpLink{x}{w}})}) }]{
+  \BIC{$\seq[{ (\piPar{P}{(\piPar{Q}{\cpLink{x'}{w}})}) }]{
       \Gamma, \tmty{x}{\take[n+m]{A}} \hsep
-      \Delta, \tmty{y}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
+      \Delta, \tmty{x'}{\give[n+m]{A^\bot}}, \tmty{w}{\take[m]{A}} }$}
   \NOM{Cut}
-  \UIC{$\seq[{ \piNew{x}{y}{(\piPar{P}{(\piPar{Q}{\cpLink{x}{w}})})} }]{
+  \UIC{$\seq[{ \piNew{x}{x'}{(\piPar{P}{(\piPar{Q}{\cpLink{x'}{w}})})} }]{
       \Gamma, \Delta, \tmty{w}{\take[m]{A}} }$}
 \end{prooftree}
 
@@ -1341,6 +1357,7 @@ Our account of \hcp did not include the exponentials \ty{\give A} and \ty{\take 
 
 With quantification over resource variables, we can give precise accounts of both \cp's exponentials and idealised servers and clients. \cp exponentials could be embedded into this framework using the definitions $\ty{\take{A}} ::= \ty{\forall{n}\take[n]{A}}$ and $\ty{\give{A}} ::= \ty{\exists{n}{\give[n]{A}}}$. We would also have types that precisely matched our intuitions for server and client behavior: an \ty{A} server is of type \ty{\forall{n}{\give[n] A}}, as it serves an unbounded number of requests with the requests being interdependent, while a collection of \ty{A} clients is of type \ty{\exists{n}{\take[n] A}}, as we have a specific number of clients with each client being independent.
 
+\bibliographystyle{alpha}
 \bibliography{main}
 
 \end{document}

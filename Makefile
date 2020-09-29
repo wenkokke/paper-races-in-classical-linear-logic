@@ -1,68 +1,20 @@
-TEXLIVEONFLY := $(shell command -v texliveonfly 2> /dev/null)
+MAINTEX := $(realpath doc/coordination2019/main.tex)
+MAINDIR := $(realpath $(dir $(MAINTEX)))
+MAINPDF := $(MAINTEX:.tex=.pdf)
+SOURCES := $(realpath $(shell find $(MAINDIR) -type f -and \( -name '*.tex' -or -name '*.bib' \)))
 
-DOC := $(foreach dir,$(dir $(wildcard doc/*/main.tex)),$(shell basename $(dir)))
-PDF := $(addprefix pdfs/,$(addsuffix .pdf,$(DOC)))
+default: build
 
-all: pdfs/release.zip
+.PHONY: build
+build: $(MAINPDF)
 
-pdfs/release.zip: $(PDF)
-	zip $@ $^
+.PHONY: watch
+watch:
+	@fswatch -o $(SOURCES) | xargs -n1 -I{} make
 
-pdfs/:
-	mkdir -p pdfs/
+.PHONY: clean
+clean:
+	@cd $(dir $(MAINTEX)) && latexmk -C $(notdir $(MAINTEX))
 
-define DOC_template
-pdfs/$(1).pdf: pdfs/
-	cd doc/$(1);\
-		$(TEXLIVEONFLY)                             \
-			-c latexmk                                \
-			-a "-pdflatex=pdflatex                    \
-			    -f                                    \
-			    -pdf                                  \
-			    -outdir=../../pdfs                  \
-	        -latexoption=-interaction=nonstopmode \
-	        -latexoption=-halt-on-error           \
-	        -jobname=$(1)"                        \
-			main.tex
-
-
-.phony: pdfs/$(1).pdf
-endef
-
-$(foreach doc,$(DOC),$(eval $(call DOC_template,$(doc))))
-
-setup:
-ifndef TEXLIVEONFLY
-	curl -L http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz | tar xz -C $(HOME)
-	cd $(HOME)/install-tl-*;\
-		yes i | ./install-tl --profile=$(TRAVISpdfs_DIR)/texlive.profile
-	tlmgr install                 \
-		luatex                      \
-		biber                       \
-		latexmk                     \
-		texliveonfly                \
-		greek-fontenc               \
-		babel                       \
-		babel-greek                 \
-		babel-english               \
-		cbfonts                     \
-		cbfonts-fd                  \
-		textgreek                   \
-		koma-script                 \
-		collection-fontsrecommended \
-		collection-fontsextra       \
-		collection-bibtexextra
-endif
-
-fira-sans:
-	wget https://github.com/carrois/Fira/archive/master.zip
-	unzip master.zip
-	sudo mkdir -p /usr/share/fonts/opentype/fira_code
-	sudo mkdir -p /usr/share/fonts/opentype/fira_mono
-	sudo mkdir -p /usr/share/fonts/opentype/fira_sans
-	sudo cp Fira-master/Fira_Code_3_2/Fonts/FiraCode_OTF_32/* /usr/share/fonts/opentype/fira_code
-	sudo cp Fira-master/Fira_Mono_3_2/Fonts/FiraMono_OTF_32/* /usr/share/fonts/opentype/fira_mono
-	sudo cp Fira-master/Fira_Sans_4_2/Fonts/FiraSans_OTF_4203/Normal/Roman/* /usr/share/fonts/opentype/fira_sans
-	sudo cp Fira-master/Fira_Sans_4_2/Fonts/FiraSans_OTF_4203/Normal/Italic/* /usr/share/fonts/opentype/fira_sans
-
-.phony: setup fira-sans
+$(MAINPDF): $(SOURCES)
+	@cd $(dir $(MAINTEX)) && latexmk -pdf $(notdir $(MAINTEX)) -halt-on-error
